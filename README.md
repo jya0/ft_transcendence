@@ -1,2 +1,2 @@
 # ft_transcendence
-Final 42 project mighty full stack project with, Khalifa, Ahmed, Saim, Radi, Yao.
+Final 42 mighty full stack project with, Khalifa, Ahmed, Saim, Radi, Yao.
