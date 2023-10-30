@@ -2,6 +2,18 @@ import type { NextAuthOptions, Session, DefaultSession } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import FortyTwoProvider from "next-auth/providers/42-school";
 
+interface CampusUser {
+  is_primary: boolean;
+  campus_id: string;
+}
+
+const invalidPrimaryCampus = (profile: any) => {
+  const campusId = profile.campus_users.find(
+    (cu: CampusUser) => cu.is_primary
+  )?.campus_id;
+
+  return campusId?.toString() !== process.env.CAMPUS_ID;
+};
 
 export const options: NextAuthOptions = {
   providers: [
@@ -15,6 +27,7 @@ export const options: NextAuthOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET as string,
+
   // callbacks: {
   //   async session({ session, token, user, newSession }) {
   //     const { name, email, image } = user;
@@ -22,4 +35,31 @@ export const options: NextAuthOptions = {
   //     return session;
   //   },
   // },
+
+  callbacks: {
+    // to pass a value from the sign-in to the frontend, client-side,
+    // you can use a combination of the session and jwt callback like so:
+    async jwt({ token, profile, account }) {
+      if (profile && account) {
+        // we pass user_id, login and access_token to the frontend via token
+        token.user_id = profile?.id;
+        token.login = profile.login;
+        token.accessToken = account.access_token;
+        token.picture = profile?.image_url;
+      }
+      return token;
+    },
+    async session({ session, token, user }) {
+      // we received user_id, login and access_token from the jwt callback
+      if (token) {
+        session.user.login = token.login;
+        session.user.user_id = token.user_id;
+        session.accessToken = token.accessToken;
+        session.user.image = token.picture;
+        
+        console.log("session", token.picture);
+      }
+      return session;
+    },
+  },
 };

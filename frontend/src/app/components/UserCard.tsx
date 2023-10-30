@@ -55,7 +55,11 @@ export default function Card({ user, pagetype }: Props) {
 
   return (
     <section className="flex flex-col gap-4">
-      <img src={url} className="w-40 h-40 rounded-full center"></img>
+      {!user?.image ? (
+        <img src={url} className="w-40 h-40 rounded-full center"></img>
+      ) : (
+        userImage
+      )}
       {greeting}
       {emailDisplay}
       {userImage}
