@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 
 type User =
   | {
@@ -14,22 +13,11 @@ type Props = {
   pagetype: string;
 };
 
-export default function Card({ user, pagetype }: Props) {
+export default function Card({ user }: Props) {
   console.log(user);
 
-  const url = `https://cdn.intra.42.fr/users/29e69b5ea6d41364e29ba5eefca3b4a5/${user?.email?.slice(
-    0,
-    user.email.indexOf("@")
-  )}.jpg`;
+  const url = `https://cdn.intra.42.fr/users/29e69b5ea6d41364e29ba5eefca3b4a5/${user?.login}.jpg`;
 
-  const imageLoader = () => {
-    return `https://cdn.intra.42.fr/users/29e69b5ea6d41364e29ba5eefca3b4a5/${user?.email?.slice(
-      0,
-      user.email.indexOf("@")
-    )}.jpg`;
-  };
-
-  console.log(imageLoader);
   const greeting = user?.name ? (
     <div className="flex flex-col items-center p-6 bg-white rounded-lg font-bold text-5xl text-black">
       Hello {user?.name}!
@@ -42,28 +30,23 @@ export default function Card({ user, pagetype }: Props) {
     </div>
   ) : null;
 
-  const userImage = user?.image ? (
-    <Image
-      className="border-4 border-black dark:border-slate-500 drop-shadow-xl shadow-black rounded-full mx-auto mt-8"
-      src={user.image}
-      width={200}
-      height={200}
-      alt={user?.name ?? "Profile Pic"}
-      priority={true}
-    />
-  ) : null;
+  const userImage = (source: string | undefined) =>
+    source ? (
+      <Image
+        className="border-4 border-black dark:border-slate-500 drop-shadow-xl shadow-black rounded-full mx-auto mt-8 h-[200px] w-[200px]]"
+        src={source}
+        width={200}
+        height={200}
+        alt={user?.name ?? "Profile Pic"}
+        priority={true}
+      />
+    ) : null;
 
   return (
     <section className="flex flex-col gap-4">
-      {!user?.image ? (
-        <img src={url} className="w-40 h-40 rounded-full center"></img>
-      ) : (
-        userImage
-      )}
+      {!user?.image ? userImage(url) : userImage(user?.image)}
       {greeting}
       {emailDisplay}
-      {userImage}
-      <p className="text-2xl text-center">{pagetype} Page!</p>
     </section>
   );
 }

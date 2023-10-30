@@ -28,13 +28,6 @@ export const options: NextAuthOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET as string,
 
-  // callbacks: {
-  //   async session({ session, token, user, newSession }) {
-  //     const { name, email, image } = user;
-  //     session.user = { name, email, image };
-  //     return session;
-  //   },
-  // },
 
   callbacks: {
     // to pass a value from the sign-in to the frontend, client-side,
@@ -45,7 +38,6 @@ export const options: NextAuthOptions = {
         token.user_id = profile?.id;
         token.login = profile.login;
         token.accessToken = account.access_token;
-        token.picture = profile?.image_url;
       }
       return token;
     },
@@ -55,9 +47,6 @@ export const options: NextAuthOptions = {
         session.user.login = token.login;
         session.user.user_id = token.user_id;
         session.accessToken = token.accessToken;
-        session.user.image = token.picture;
-        
-        console.log("session", token.picture);
       }
       return session;
     },
