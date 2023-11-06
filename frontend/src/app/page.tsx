@@ -3,6 +3,7 @@ import { options } from "./api/auth/[...nextauth]/options";
 import { getServerSession } from "next-auth/next";
 import SignOut from "./components/SignOut";
 import { redirect } from "next/navigation";
+import ChannelHome from "./components/ChannelHome";
 
 export default async function Home() {
   const session = await getServerSession(options);
@@ -16,6 +17,13 @@ export default async function Home() {
         user={session?.user}
         image={session?.image}
         achievement={session?.acheivements}
+      />
+      <p className="text-sm font-bold mt-5">A Simple card component</p>
+      <ChannelHome
+        avatar={"https://avatars.githubusercontent.com/u/109759977?v=4"}
+        name={"Ahmed"}
+        memberCount={24}
+        channelLink={"/"}
       />
       <SignOut />
     </main>

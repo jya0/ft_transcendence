@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 type Props = {
-  achievements?: [];
+  achievements?: string[];
 };
 
 export const ShowAchievements = ({ achievements }: Props) => {

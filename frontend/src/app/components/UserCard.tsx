@@ -14,7 +14,7 @@ type User =
 type Props = {
   user: User;
   image?: string;
-  achievement?: [];
+  achievement?: string[];
 };
 
 export default function Card({ user, image, achievement }: Props) {
