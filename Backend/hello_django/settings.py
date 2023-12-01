@@ -13,6 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+# if os != "linux":
+#     from dotenv import load_dotenv
+#     load_dotenv()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -41,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "upload",
+    "authentication"
 ]
 
 MIDDLEWARE = [
@@ -51,6 +57,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    # 'authentication.middleware.AuthenticationMiddleware',
+
 ]
 
 ROOT_URLCONF = "hello_django.urls"
@@ -66,6 +75,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                # 'authentication.context_processors.auth',
             ],
         },
     },

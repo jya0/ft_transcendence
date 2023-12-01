@@ -16,6 +16,7 @@ re: fclean all
 clean: down
 	@docker system prune -a
 
+# !! will stop all containers, remove all images even valgrind !!
 fclean:
 	@if [ ! -z "$$(docker ps -aq)" ]; then \
 		docker stop $$(docker ps -aq); \
