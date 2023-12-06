@@ -16,7 +16,7 @@ module.exports = {
 		  protocol: 'https',
 		  hostname: 'cdn.intra.42.fr',
 		  port: '',
-		  pathname: '/users/**',
+		  pathname: '/**',
 		},
 	  ],
 	},

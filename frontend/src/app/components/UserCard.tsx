@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
-import Link from "next/link";
+import { ShowAchievements } from "./ShowAchievements";
+import { useState } from "react";
 
 type User =
   | {
@@ -11,25 +13,13 @@ type User =
 
 type Props = {
   user: User;
-  pagetype: string;
+  image?: string;
+  achievement?: string[];
 };
 
-export default function Card({ user, pagetype }: Props) {
-  console.log(user);
+export default function Card({ user, image, achievement }: Props) {
+  const [showAchievs, setShowAchievs] = useState(false);
 
-  const url = `https://cdn.intra.42.fr/users/29e69b5ea6d41364e29ba5eefca3b4a5/${user?.email?.slice(
-    0,
-    user.email.indexOf("@")
-  )}.jpg`;
-
-  const imageLoader = () => {
-    return `https://cdn.intra.42.fr/users/29e69b5ea6d41364e29ba5eefca3b4a5/${user?.email?.slice(
-      0,
-      user.email.indexOf("@")
-    )}.jpg`;
-  };
-
-  console.log(imageLoader);
   const greeting = user?.name ? (
     <div className="flex flex-col items-center p-6 bg-white rounded-lg font-bold text-5xl text-black">
       Hello {user?.name}!
@@ -42,24 +32,30 @@ export default function Card({ user, pagetype }: Props) {
     </div>
   ) : null;
 
-  const userImage = user?.image ? (
-    <Image
-      className="border-4 border-black dark:border-slate-500 drop-shadow-xl shadow-black rounded-full mx-auto mt-8"
-      src={user.image}
-      width={200}
-      height={200}
-      alt={user?.name ?? "Profile Pic"}
-      priority={true}
-    />
-  ) : null;
+  const userImage = (source: string | null | undefined) =>
+    source ? (
+      <Image
+        className="border-4 border-black dark:border-slate-500 drop-shadow-xl shadow-black rounded-full mx-auto mt-8 h-[200px] w-[200px]]"
+        src={source}
+        width={200}
+        height={200}
+        alt={user?.name ?? "Profile Pic"}
+        priority={true}
+      />
+    ) : null;
 
   return (
     <section className="flex flex-col gap-4">
-      <img src={url} className="w-40 h-40 rounded-full center"></img>
+      {image ? userImage(image) : userImage(user?.image)}
       {greeting}
       {emailDisplay}
-      {userImage}
-      <p className="text-2xl text-center">{pagetype} Page!</p>
+      <button
+        className="p-2 bg-white rounded-lg font-bold text-2xl text-black w-1/3 mx-auto"
+        onClick={() => setShowAchievs(!showAchievs)}
+      >
+        {!showAchievs ? "Show Achievements" : "Hide Achievements"}
+      </button>
+      {showAchievs && <ShowAchievements achievements={achievement} />}
     </section>
   );
 }
