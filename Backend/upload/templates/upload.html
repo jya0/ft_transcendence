@@ -1,6 +1,6 @@
 {% block content %}
 
-<form action="{% url "upload" %}" method="post" enctype="multipart/form-data">
+<form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   <input type="file" name="image_file">
   <input type="submit" value="submit" />
@@ -9,10 +9,12 @@
 {% if image_url %}
 <p>File uploaded at: <a href="{{ image_url }}">{{ image_url }}</a></p>
 {% endif %}
+{% if user.is_authenticated == False %}
 <button><a
-    href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d1c739a3014bf96ecc6eb483129c05b2dd3077b1eedd06006f285fa2ced16748&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2F&response_type=code">
+    href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-d1c739a3014bf96ecc6eb483129c05b2dd3077b1eedd06006f285fa2ced16748&redirect_uri=http%3A%2F%2F127.0.0.1%3A8000%2Fauth&response_type=code">
     login 42</a></button>
-    {% if user.is_authenticated %}
+{% endif %}    
+{% if user.is_authenticated %}
     <p>Welcome, {{ user.username }}!</p>
     <a href="{% url 'logout' %}">Logout</a>
     {% else %}
