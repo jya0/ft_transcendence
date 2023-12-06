@@ -9,5 +9,5 @@ class AuthenticationMiddleware:
 
     def __call__(self, request):
         if not request.user.is_authenticated and not request.path.startswith('/admin'):
-            return redirect(reverse('login'))  # Redirect to your login URL
+            return redirect(reverse('/'))  # Redirect to your login URL
         return self.get_response(request)
