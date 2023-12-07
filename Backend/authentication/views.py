@@ -12,11 +12,9 @@ def my_view(request):
     return render(request, "login.html")
 
 
-@login_required
 def logout(request):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-    auth_logout(request)
+    if request.user.is_authenticated:
+        auth_logout(request)
     return redirect("/")
 
 
@@ -44,15 +42,9 @@ def auth(request):
             display_name = user_response.json()["displayname"]
             print("----> USER -> ", username, display_name)
             User = get_user_model()
-            if username:
-                if not User.objects.filter(username=username).exists():
-                    user = User.objects.create_user(
-                        username=username, password=username)
-                else:
-                    user = User.objects.get(username=username)
-
-                authenticated_user = authenticate(
-                    request, username=username, password=username)
+            user = User.objects.filter(username=username).first()
+            if user:
+                authenticated_user = authenticate(request, username=username)
                 if authenticated_user is not None:
                     auth_login(request, authenticated_user)
                     return HttpResponseRedirect("/")
