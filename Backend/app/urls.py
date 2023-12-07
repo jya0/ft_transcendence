@@ -4,14 +4,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from upload.views import image_upload
-from authentication.views import auth
+from authentication.views import auth, logout
 
 urlpatterns = [
     path("", image_upload, name="upload"),
     path("auth/", auth, name="auth"),
     path("admin/", admin.site.urls),
-    path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path("login/", auth_views.LoginView.as_view(), name="login"),
+    path('logout/', logout, name='logged_out'),
 ]
 
 
