@@ -8,10 +8,7 @@ from authentication.views import auth, logout
 
 urlpatterns = [
     path("", image_upload, name="upload"),
-    path("auth/", auth, name="auth"),
-    path("admin/", admin.site.urls),
-    path("login/", auth_views.LoginView.as_view(), name="login"),
-    path('logout/', logout, name='logged_out'),
+    path("", include("authentication.urls")),
 ]
 
 
