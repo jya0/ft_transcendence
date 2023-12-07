@@ -14,8 +14,10 @@ def my_view(request):
 
 @login_required
 def logout(request):
+    if not request.user.is_authenticated:
+        return redirect("/login")
     auth_logout(request)
-    return redirect("index")
+    return redirect("/")
 
 
 def auth(request):
