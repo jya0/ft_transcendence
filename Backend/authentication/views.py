@@ -42,23 +42,23 @@ def auth(request):
             display_name = user_response.json()["displayname"]
             print("----> USER -> ", username, display_name)
             User = get_user_model()
-            print("----> F USER -> ", User)
-            if user_response is not None and User.objects.filter(username=username).exists() == False:
-                user = User.objects.create_user(
-                    username=username, password=None)
-                user.save()
-                print("----> some - USER -> ", user)
-                try:
-                    authenticated_user = authenticate(
-                        request, username=username, password=username)
-                    print("----> authenticated_user -> ", authenticated_user)
-                except:
-                    messages.error(request, "Unable to authenticate the user")
-                auth_login(request, authenticated_user)
-                # auth_login(request, user)
+            if username:
+                if not User.objects.filter(username=username).exists():
+                    user = User.objects.create_user(
+                        username=username, password=username)
+                else:
+                    user = User.objects.get(username=username)
 
-            # messages.error(request, "Unable to authenticate the user")
-            return HttpResponseRedirect(f"/")
+                authenticated_user = authenticate(
+                    request, username=username, password=username)
+                if authenticated_user is not None:
+                    auth_login(request, authenticated_user)
+                    return HttpResponseRedirect("/")
+                else:
+                    messages.error(request, "Authentication failed")
+            else:
+                messages.error(request, "Failed to fetch user data")
+            return HttpResponseRedirect("/")
 
         else:
             messages.info(request, "Invalid authorization code")
