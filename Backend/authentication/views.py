@@ -15,7 +15,9 @@ def my_view(request):
 def logout(request):
     if request.user.is_authenticated:
         auth_logout(request)
-    return redirect("/")
+    response = HttpResponseRedirect("/")
+    response.delete_cookie('sessionid')
+    return response
 
 
 def auth(request):
@@ -53,12 +55,16 @@ def auth(request):
                 print("authenticated_user -> ", authenticated_user)
                 if authenticated_user is not None:
                     auth_login(request, authenticated_user)
-                    return HttpResponseRedirect("/")
+                    print("auth_login -------> ", authenticated_user)
+                    print("id -----------> ", request.session.session_key)
+                    response = HttpResponseRedirect("/")
+                    return response
                 else:
                     messages.error(request, "Authentication failed")
             else:
-                if username is not "Admin":
+                if username != "Admin":
                     messages.error(request, "Failed to fetch user data")
+            print("this called ------------>")
             return HttpResponseRedirect("/")
 
         else:

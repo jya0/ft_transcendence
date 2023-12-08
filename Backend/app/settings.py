@@ -26,6 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
+FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
 
 DEBUG = True  # bool(int(os.environ.get("DEBUG", default=0)))
 
