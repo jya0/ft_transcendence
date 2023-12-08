@@ -2,29 +2,24 @@
 
 <form action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
   {% csrf_token %}
-  <input type="file" name="image_file">
+  <input type="file" name="image_file" />
   <input type="submit" value="submit" />
 </form>
 
 {% if image_url %}
 <p>File uploaded at: <a href="{{ image_url }}">{{ image_url }}</a></p>
-{% endif %}
-{% if messages %}
-    <script>
-        // console error messages
-        {% for message in messages %}
-            console.error("{{ message }}");
-        {% endfor %}
-    </script>
-{% endif %}
-
-{% if user.is_authenticated == False %}
-<button><a
-    href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-69155ca3ecf1f57fa6e8660a9988bbdd7f03a45128ea80a454d6f13939c4bca5&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fauth&response_type=code">
-    login 42</a></button>
-{% endif %}    
-{% if user.is_authenticated %}
-    <p>Welcome, {{ user.username }}!</p>
-    <a href="{% url 'logged_out' %}">Logout</a>
-    {% endif %}    
-{% endblock %}
+{% endif %} {% if messages %}
+<script>
+  // console error messages
+  {% for message in messages %}
+      console.error("{{ message }}");
+  {% endfor %}
+</script>
+{% endif %} {% if user.is_authenticated == False %}
+<button>
+  <a href="{{ FORTY_TWO_URL }}"> login 42</a>
+</button>
+{% endif %} {% if user.is_authenticated %}
+<p>Welcome, {{ user.username }}!</p>
+<a href="{% url 'logged_out' %}">Logout</a>
+{% endif %} {% endblock %}
