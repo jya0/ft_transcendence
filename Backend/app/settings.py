@@ -150,6 +150,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "mediafiles"
 
+#!! comment this line if you want to use admin login  !!
 AUTHENTICATION_BACKENDS = [
     # Other backends
     'authentication.user_auth.Custom42AuthBackend',
