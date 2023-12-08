@@ -19,9 +19,6 @@ def logout(request):
 
 
 def auth(request):
-    if request.user.is_authenticated:
-        print("########## authed ############")
-        return redirect("/")
     if request.method == "GET":
         code = request.GET.get("code")
         if code:
@@ -34,24 +31,34 @@ def auth(request):
             }
             auth_response = requests.post(
                 "https://api.intra.42.fr/oauth/token", data=data)
-            print("------- > ", auth_response.json(), "<----------")
             access_token = auth_response.json()["access_token"]
             user_response = requests.get(
                 "https://api.intra.42.fr/v2/me", headers={"Authorization": f"Bearer {access_token}"})
             username = user_response.json()["login"]
+            email = user_response.json()["email"]
             display_name = user_response.json()["displayname"]
-            print("----> USER -> ", username, display_name)
+            picture = user_response.json()["image"]
             User = get_user_model()
-            user = User.objects.filter(username=username).first()
-            if user:
-                authenticated_user = authenticate(request, username=username)
+            if username:
+                if not User.objects.filter(username=username).exists():
+                    user = User.objects.create_user(
+                        username=username, email=email)
+                    print("create -> ", user)
+                else:
+                    user = User.objects.get(username=username)
+                    print("get -> ", user)
+
+                authenticated_user = authenticate(
+                    request, username=username)
+                print("authenticated_user -> ", authenticated_user)
                 if authenticated_user is not None:
                     auth_login(request, authenticated_user)
                     return HttpResponseRedirect("/")
                 else:
                     messages.error(request, "Authentication failed")
             else:
-                messages.error(request, "Failed to fetch user data")
+                if username is not "Admin":
+                    messages.error(request, "Failed to fetch user data")
             return HttpResponseRedirect("/")
 
         else:
