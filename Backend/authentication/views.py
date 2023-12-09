@@ -41,6 +41,10 @@ def auth(request):
             display_name = user_response.json()["displayname"]
             picture = user_response.json()["image"]
             User = get_user_model()
+            if not User.objects.filter(username='admin').exists():
+                superuser = User.objects.create_superuser(
+                    'admin', 'admin@example.com', 'admin')
+                print("admin_user -> ", superuser)
             if username:
                 if not User.objects.filter(username=username).exists():
                     user = User.objects.create_user(
@@ -62,7 +66,7 @@ def auth(request):
                 else:
                     messages.error(request, "Authentication failed")
             else:
-                if username != "Admin":
+                if username != "admin":
                     messages.error(request, "Failed to fetch user data")
             print("this called ------------>")
             return HttpResponseRedirect("/")
