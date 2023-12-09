@@ -13,9 +13,9 @@ def image_upload(request):
         filename = fs.save(image_file.name, image_file)
         image_url = fs.url(filename)
         print(image_url)
-        return render(request, "upload.html", {
+        return render(request, "home.html", {
             "image_url": image_url, 'FORTY_TWO_URL': FORTY_TWO_URL
         })
-    return render(request, "upload.html", {
+    return render(request, "home.html", {
         'FORTY_TWO_URL': FORTY_TWO_URL
     })
