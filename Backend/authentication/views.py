@@ -5,6 +5,7 @@ import requests
 import os
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, get_user_model
+from .models import UserProfile
 
 
 @login_required
@@ -44,23 +45,38 @@ def auth(request):
             if not User.objects.filter(username='admin').exists():
                 superuser = User.objects.create_superuser(
                     'admin', 'admin@example.com', 'admin')
-                print("admin_user -> ", superuser)
             if username:
                 if not User.objects.filter(username=username).exists():
                     user = User.objects.create_user(
-                        username=username, email=email)
-                    print("create -> ", user)
+                        username=username, email=email, password=username)
+                    user_profile = UserProfile.objects.create(
+                        user=user,
+                        username=user.username,
+                        email=user.email,
+                        first_name=display_name.split()[0],
+                        last_name=display_name.split()[1],
+                        display_name=display_name,
+                        picture=picture,
+                        is_active=user.is_active,
+                        last_login=user.last_login,
+                        date_joined=user.date_joined,
+                        password=user.password)
+                    user_profile.save()
+
                 else:
                     user = User.objects.get(username=username)
-                    print("get -> ", user)
+                    user_profile = UserProfile.objects.get(user=user)
 
                 authenticated_user = authenticate(
-                    request, username=username)
-                print("authenticated_user -> ", authenticated_user)
+                    request, username=username, password=username)
+
+                # displaying user details
+                atrribute = vars(user_profile)
+                for key, value in atrribute.items():
+                    print(key, ' : ', value)
+
                 if authenticated_user is not None:
                     auth_login(request, authenticated_user)
-                    print("auth_login -------> ", authenticated_user)
-                    print("id -----------> ", request.session.session_key)
                     response = HttpResponseRedirect("/")
                     return response
                 else:
@@ -68,7 +84,6 @@ def auth(request):
             else:
                 if username != "admin":
                     messages.error(request, "Failed to fetch user data")
-            print("this called ------------>")
             return HttpResponseRedirect("/")
 
         else:
