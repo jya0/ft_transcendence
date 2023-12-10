@@ -1,6 +1,13 @@
-{% block content %} {% load custom_tags %}
-<form action="{% url 'home' %}" method="post" enctype="multipart/form-data">
+{% block content %}
+
+<form
+  class="form-horizontal"
+  action="{% url 'home' %}"
+  method="post"
+  enctype="multipart/form-data"
+>
   {% csrf_token %}
+
   <input type="file" name="image_file" />
   <input type="submit" value="submit" />
 </form>
@@ -15,26 +22,23 @@
   {% endfor %}
 </script>
 {% endif %} {% if user.is_authenticated == False %}
-<button>
-  <a href="{{ FORTY_TWO_URL }}"> login 42</a>
-</button>
+<a class="btn btn-link" href="{{ FORTY_TWO_URL }}"> login 42</a>
 {% endif %} {% if user.is_authenticated %}
 <p>Welcome, {{ user.username }}!</p>
 <div class="container">User Data</div>
 <a href="{% url 'logged_out' %}">Logout</a>
-{% endif %} {% endblock %}
+{% endif %}
 
 <script>
-  fetch("/get_user_data")
+  fetch("/get_user_data/")
     .then((response) => response.json())
     .then((data) => {
       console.log("Success:", data);
       const container = document.querySelector(".container");
       data.forEach((obj) => {
         Object.entries(obj).forEach((key, value) => {
-          const p = document.createElement("p");
-          p.textContent = `${key[0].toUpperCase()}: ${key[1]}`;
-          container.appendChild(p);
+          container.innerHTML +=
+            "<p>" + key[0].toUpperCase() + ": " + key[1] + "</p>";
         });
       });
     })
@@ -42,3 +46,4 @@
       console.error("Error:", error);
     });
 </script>
+{% endblock %}
