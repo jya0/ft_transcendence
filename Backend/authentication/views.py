@@ -6,6 +6,9 @@ import os
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, get_user_model
 from .models import UserProfile
+from django.http import JsonResponse
+import json
+from django.core.serializers.json import DjangoJSONEncoder
 
 
 @login_required
@@ -19,6 +22,13 @@ def logout(request):
     response = HttpResponseRedirect("/")
     response.delete_cookie('sessionid')
     return response
+
+
+@login_required
+def get_user_data(request):
+    user_data = UserProfile.objects.filter(
+        username=request.user.username).values()
+    return JsonResponse(list(user_data), safe=False)
 
 
 def auth(request):
@@ -71,9 +81,9 @@ def auth(request):
                     request, username=username, password=username)
 
                 # displaying user details
-                atrribute = vars(user_profile)
-                for key, value in atrribute.items():
-                    print(key, ' : ', value)
+                # atrribute = vars(user_profile)
+                # for key, value in atrribute.items():
+                #     print(key, ' : ', value)
 
                 if authenticated_user is not None:
                     auth_login(request, authenticated_user)
