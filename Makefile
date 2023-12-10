@@ -1,10 +1,14 @@
 
 all:
-	@docker-compose -f ./docker-compose.yml up -d
+	@sh ./host_ip.sh
+	@docker-compose -f ./docker-compose.yml up
 
 build:
 	@docker-compose -f ./docker-compose.yml up -d --build
 
+only:
+	@docker-compose -f ./docker-compose-without-pdAdmin.yml up --build
+	
 down:
 	@docker-compose -f ./docker-compose.yml down
 
@@ -13,6 +17,9 @@ up:
 
 re: fclean all
 
+stop:
+	@docker-compose -f ./docker-compose.yml stop
+	
 clean: down
 	@docker system prune -a
 
