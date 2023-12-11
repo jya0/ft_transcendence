@@ -4,9 +4,11 @@ all:
 	@docker-compose -f ./docker-compose.yml up
 
 build:
+	@sh ./host_ip.sh
 	@docker-compose -f ./docker-compose.yml up -d --build
 
 only:
+	@sh ./host_ip.sh
 	@docker-compose -f ./docker-compose-without-pdAdmin.yml up --build
 	
 down:
