@@ -5,6 +5,7 @@ import requests
 import os
 from django.http import HttpResponseRedirect
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout, get_user_model
+# from .models import UserProfile
 from .models import UserProfile
 from django.http import JsonResponse
 import json
@@ -56,26 +57,20 @@ def auth(request):
                 superuser = User.objects.create_superuser(
                     'admin', 'admin@example.com', 'admin')
             if username:
-                if not User.objects.filter(username=username).exists():
-                    user = User.objects.create_user(
-                        username=username, email=email, password=username)
+                if not UserProfile.objects.filter(username=username).exists():
                     user_profile = UserProfile.objects.create(
-                        user=user,
-                        username=user.username,
-                        email=user.email,
+                        username=username,
+                        email=email,
+                        password=username,
+                        bio="",
+                        display_name=display_name,
                         first_name=display_name.split()[0],
                         last_name=display_name.split()[1],
-                        display_name=display_name,
-                        picture=picture,
-                        is_active=user.is_active,
-                        last_login=user.last_login,
-                        date_joined=user.date_joined,
-                        password=user.password)
+                    )
                     user_profile.save()
 
                 else:
-                    user = User.objects.get(username=username)
-                    user_profile = UserProfile.objects.get(user=user)
+                    user_profile = UserProfile.objects.get(username=username)
 
                 authenticated_user = authenticate(
                     request, username=username, password=username)
