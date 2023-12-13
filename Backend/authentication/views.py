@@ -8,12 +8,13 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from .models import UserProfile
 from django.http import JsonResponse
 import json
+import os
 from django.core.serializers.json import DjangoJSONEncoder
 
 
 @login_required
 def my_view(request):
-    return render(request, "login.html")
+    return render(request, "home.html")
 
 
 def logout(request):
@@ -98,7 +99,70 @@ def auth(request):
 
         else:
             messages.info(request, "Invalid authorization code")
-            return redirect("login")
+            return redirect("/")
     else:
         messages.info(request, "Invalid method")
-        return redirect("login")
+        return redirect("/")
+
+
+def twoFactorView(request):
+    print(request.user)
+    return render(request, "2fa.html")
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        print(username, password)
+        user = authenticate(request, username=username, password=password)
+        print(user)
+        if user is not None:
+            print("------------->>>", user)
+            auth_login(request, user)
+            return redirect('/')
+        else:
+            print("------------->>>", user)
+            messages.info(request, 'Username OR password is incorrect')
+    return redirect('/')
+
+
+def register_view(request):
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        print(username, email, password)
+        User = get_user_model()
+        if username:
+            if not User.objects.filter(username=username).exists():
+                user = User.objects.create_user(
+                    username=username, email=email, password=username)
+                user_profile = UserProfile.objects.create(
+                    user=user,
+                    username=user.username,
+                    email=user.email,
+                    first_name=first_name,
+                    last_name=last_name,
+                    display_name=first_name + " " + last_name,
+                    picture="https://cdn.intra.42.fr/users/medium_default.png",
+                    is_active=user.is_active,
+                    last_login=user.last_login,
+                    date_joined=user.date_joined,
+                    password=user.password)
+                user_profile.save()
+                user = authenticate(
+                    request, username=username, password=password)
+                print("------------->>>", user)
+                if user is not None:
+                    auth_login(request, user)
+                    return redirect('/')
+                else:
+                    messages.error(
+                        request, 'Username OR password is incorrect')
+            else:
+                messages.info(request, 'Username already exists')
+
+    return render(request, 'register.html')
