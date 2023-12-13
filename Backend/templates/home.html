@@ -1,20 +1,4 @@
-{% extends "base.html" %} {% block content %}
-
-<form
-  class="form-horizontal"
-  action="{% url 'home' %}"
-  method="post"
-  enctype="multipart/form-data"
->
-  {% csrf_token %}
-
-  <input type="file" name="image_file" />
-  <input type="submit" value="submit" />
-</form>
-
-{% if image_url %}
-<p>File uploaded at: <a href="{{ image_url }}">{{ image_url }}</a></p>
-{% endif %} {% if messages %}
+{% extends "base.html" %} {% block content %} {% if messages %}
 <script>
   // console error messages
   {% for message in messages %}
@@ -22,28 +6,94 @@
   {% endfor %}
 </script>
 {% endif %} {% if user.is_authenticated == False %}
-<a class="btn btn-link" href="{{ FORTY_TWO_URL }}"> login 42</a>
+<br />
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <form
+        class="form-horizontal"
+        action="{% url 'home' %}"
+        method="post"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+
+        <input type="file" name="image_file" />
+        <input type="submit" value="submit" />
+      </form>
+
+      {% if image_url %}
+      <p>File uploaded at: <a href="{{ image_url }}">{{ image_url }}</a></p>
+      {% endif %}
+      <br />
+      <h2>Login</h2>
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            name="username"
+            required
+          />
+        </div>
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+        {% if messages %} {% for message in messages %}
+        <p class="alert alert-{{message.tags}}">{{ message }}</p>
+        {% endfor %} {% endif %}
+      </form>
+      <br />
+      <button class="btn btn-primary">
+        <a style="color: white" href="{{ FORTY_TWO_URL }}"> login 42</a>
+      </button>
+      <button class="btn btn-primary">
+        <a style="color: white" href="{% url 'register' %}"> Register</a>
+      </button>
+      <br />
+    </div>
+  </div>
+</div>
 {% endif %} {% if user.is_authenticated %}
-<p>Welcome, {{ user.username }}!</p>
-<div class="container">User Data</div>
-<a href="{% url 'logged_out' %}">Logout</a>
+<p id="user-auth">Welcome, {{ user.username }}!</p>
+<div class="container">----------> User Data <------------</div>
+
+<button class="btn btn-primary">
+  <a style="color: white" href="{% url 'logged_out' %}">Logout</a>
+</button>
 {% endif %}
 
 <script>
-  fetch("/get_user_data/")
-    .then((response) => response.json())
-    .then((data) => {
-      console.log("Success:", data);
-      const container = document.querySelector(".container");
-      data.forEach((obj) => {
-        Object.entries(obj).forEach((key, value) => {
-          container.innerHTML +=
-            "<p>" + key[0].toUpperCase() + ": " + key[1] + "</p>";
+  if (document.getElementById("user-auth")) {
+    console.log("user is authenticated");
+    fetch("/get_user_data/")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        const container = document.querySelector(".container");
+        data.forEach((obj) => {
+          Object.entries(obj).forEach((key, value) => {
+            container.innerHTML +=
+              "<p>" + key[0].toUpperCase() + ": " + key[1] + "</p>";
+          });
         });
+      })
+      .catch((error) => {
+        console.error("Error:", error);
       });
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+  } else {
+    console.log("user is not authenticated");
+  }
 </script>
 {% endblock %}
