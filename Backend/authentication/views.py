@@ -174,12 +174,19 @@ def register_view(request):
     return render(request, 'register.html')
 
 
+@login_required
 def enableTwoFactorView(request, username):
     # if request.user.username != 'admin':
+    if request.user.username != username:
+        return HttpResponse('You are not authorized to view this page')
     return twoFactorView(request)
 
 
+@login_required
 def user_qr_code(request, username):
+    print("------------->>>", request.user.username, username)
+    if request.user.username != username:
+        return HttpResponse('You are not authorized to view this page')
     username = request.user.username
     qr_code = qrcode.make(f'{username+username}')
     qr_code_path = f'{BASE_DIR}/mediafiles/{username}_qr_code.png'
