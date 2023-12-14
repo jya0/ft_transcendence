@@ -10,6 +10,12 @@ from django.http import JsonResponse
 import json
 import os
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.models import User
+import qrcode
+from pathlib import Path
+from django.http import HttpResponse
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 @login_required
@@ -166,3 +172,17 @@ def register_view(request):
                 messages.info(request, 'Username already exists')
 
     return render(request, 'register.html')
+
+
+def enableTwoFactorView(request, username):
+    # if request.user.username != 'admin':
+    return twoFactorView(request)
+
+
+def user_qr_code(request, username):
+    username = request.user.username
+    qr_code = qrcode.make(f'{username+username}')
+    qr_code_path = f'{BASE_DIR}/mediafiles/{username}_qr_code.png'
+    qr_code.save(qr_code_path)
+    with open(qr_code_path, 'rb') as f:
+        return HttpResponse(f.read(), content_type='image/png')
