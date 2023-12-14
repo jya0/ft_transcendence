@@ -19,3 +19,6 @@ class UserProfile(models.Model):
     last_login = models.DateTimeField(auto_now=True)
     date_joined = models.DateTimeField(default=datetime(2023, 1, 1))
     password = models.CharField(max_length=100, default="None")
+
+    def __str__(self):
+        return self.username

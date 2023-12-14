@@ -14,6 +14,8 @@ from django.contrib.auth.models import User
 import qrcode
 from pathlib import Path
 from django.http import HttpResponse
+from django.db import IntegrityError
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,35 +53,48 @@ def auth(request):
             }
             auth_response = requests.post(
                 "https://api.intra.42.fr/oauth/token", data=data)
-            access_token = auth_response.json()["access_token"]
+            try:
+                access_token = auth_response.json().get("access_token")
+            except:
+                messages.info(request, "Invalid authorization code")
+                return redirect("/")
             user_response = requests.get(
                 "https://api.intra.42.fr/v2/me", headers={"Authorization": f"Bearer {access_token}"})
-            username = user_response.json()["login"]
-            email = user_response.json()["email"]
-            display_name = user_response.json()["displayname"]
-            picture = user_response.json()["image"]
+            try:
+                username = user_response.json()["login"]
+                email = user_response.json()["email"]
+                display_name = user_response.json()["displayname"]
+                picture = user_response.json()["image"]
+            except:
+                messages.info(request, "Failed to fetch user data")
+                return redirect("/")
             User = get_user_model()
             if not User.objects.filter(username='admin').exists():
                 superuser = User.objects.create_superuser(
                     'admin', 'admin@example.com', 'admin')
             if username:
                 if not User.objects.filter(username=username).exists():
-                    user = User.objects.create_user(
-                        username=username, email=email, password=username)
-                    user_profile = UserProfile.objects.create(
-                        user=user,
-                        username=user.username,
-                        email=user.email,
-                        first_name=display_name.split()[0],
-                        last_name=display_name.split()[1],
-                        display_name=display_name,
-                        picture=picture,
-                        is_active=user.is_active,
-                        last_login=user.last_login,
-                        date_joined=user.date_joined,
-                        password=user.password)
-                    user_profile.save()
-
+                    try:
+                        user = User.objects.create_user(
+                            username=username, email=email, password=username)
+                        user_profile = UserProfile.objects.create(
+                            user=user,
+                            username=user.username,
+                            email=user.email,
+                            first_name=display_name.split()[0],
+                            last_name=display_name.split()[1],
+                            display_name=display_name,
+                            picture=picture,
+                            is_active=user.is_active,
+                            last_login=user.last_login,
+                            date_joined=user.date_joined,
+                            password=user.password)
+                        user_profile.save()
+                    except IntegrityError as e:
+                        message = str(e).split(':')[1]
+                        messages.info(request, message)
+                        user.delete()
+                        return render(request, 'home.html', {'error': message})
                 else:
                     user = User.objects.get(username=username)
                     user_profile = UserProfile.objects.get(user=user)
@@ -144,24 +159,29 @@ def register_view(request):
         User = get_user_model()
         if username:
             if not User.objects.filter(username=username).exists():
-                user = User.objects.create_user(
-                    username=username, email=email, password=username)
-                user_profile = UserProfile.objects.create(
-                    user=user,
-                    username=user.username,
-                    email=user.email,
-                    first_name=first_name,
-                    last_name=last_name,
-                    display_name=first_name + " " + last_name,
-                    picture="https://cdn.intra.42.fr/users/medium_default.png",
-                    is_active=user.is_active,
-                    last_login=user.last_login,
-                    date_joined=user.date_joined,
-                    password=user.password)
-                user_profile.save()
+                try:
+                    user = User.objects.create_user(
+                        username=username, email=email, password=username)
+                    user_profile = UserProfile.objects.create(
+                        user=user,
+                        username=user.username,
+                        email=user.email,
+                        first_name=first_name,
+                        last_name=last_name,
+                        display_name=first_name + " " + last_name,
+                        picture="https://cdn.intra.42.fr/users/medium_default.png",
+                        is_active=user.is_active,
+                        last_login=user.last_login,
+                        date_joined=user.date_joined,
+                        password=user.password)
+                    user_profile.save()
+                except Exception as e:
+                    message = str(e).split(':')[1]
+                    messages.info(request, message)
+                    user.delete()
+                    return render(request, 'register.html', {'error': message})
                 user = authenticate(
                     request, username=username, password=password)
-                print("------------->>>", user)
                 if user is not None:
                     auth_login(request, user)
                     return redirect('/')
