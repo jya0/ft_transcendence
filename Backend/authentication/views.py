@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import requests
@@ -15,6 +15,8 @@ import qrcode
 from pathlib import Path
 from django.http import HttpResponse
 from django.db import IntegrityError
+from .utils import send_otp
+from datetime import datetime
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -127,7 +129,25 @@ def auth(request):
 
 
 def twoFactorView(request):
-    print(request.user)
+    if request.method == 'POST':
+        otp = request.POST.get('otp')
+        print(otp)
+        if otp:
+            if request.session['otp_secret_key'] == otp:
+                current_datetime = datetime.now()
+                stored_datetime = datetime.fromisoformat(
+                    request.session['otp_valid_date'])
+                if current_datetime < stored_datetime:
+                    print("OTP verified")
+                    user = get_object_or_404(
+                        User, username=request.session['username'])
+                    auth_login(request, user)
+                    request.session['is_verified'] = True
+                    return redirect('/')
+                else:
+                    messages.info(request, "OTP expired")
+            else:
+                messages.info(request, "Invalid OTP")
     return render(request, "2fa.html")
 
 
@@ -139,9 +159,14 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         print(user)
         if user is not None:
-            print("------------->>>", user)
-            auth_login(request, user)
-            return redirect('/')
+            print("------------->>> login view", user)
+            request.session['username'] = username
+            send_otp(request)
+            print("shouldn't be here---------->")
+            return render(request, '2fa.html')
+            # get_object_or_404(UserProfile, username=username)
+            # auth_login(request, user)
+            return redirect('/2fa')
         else:
             print("------------->>>", user)
             messages.info(request, 'Username OR password is incorrect')
