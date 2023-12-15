@@ -17,6 +17,9 @@ from django.http import HttpResponse
 from django.db import IntegrityError
 from .utils import send_otp
 from datetime import datetime
+import secrets
+import re
+import pyotp
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -228,13 +231,34 @@ def enableTwoFactorView(request, username):
 
 
 @login_required
-def user_qr_code(request, username):
+def user_qr_code(request, username, random_string):
     print("------------->>>", request.user.username, username)
     if request.user.username != username:
         return HttpResponse('You are not authorized to view this page')
-    username = request.user.username
-    qr_code = qrcode.make(f'{username+username}')
-    qr_code_path = f'{BASE_DIR}/mediafiles/{username}_qr_code.png'
+    # username = request.user.username
+
+    # scanned_data = "otpauth://totp/YourApp:Username?secret=DHLW6DYQFW4VMUAYC6BE7VHJCWK7HUS6&issuer=YourApp&period=60"
+    otp_base32 = pyotp.random_base32()
+    print("------------->>>", otp_base32)
+    totp = pyotp.TOTP(otp_base32, interval=60)
+    otp = totp.now()
+    print("------------->>>", otp)
+    request.session['otp_secret_key'] = otp
+    scanned_data = totp.provisioning_uri(
+        name=username, issuer_name='Pongos')
+
+    random_string = re.search(r'secret=([^&]+)', scanned_data)
+    username = re.search(r'Username=([^&]+)', scanned_data)
+
+    # print("------------->>>", random_string, username)
+    # random_string = secrets.token_hex(8)
+    qr_code = qrcode.make(f'{scanned_data}')
+    qr_code_path = f'{BASE_DIR}/mediafiles/{username}{random_string}.png'
     qr_code.save(qr_code_path)
+    # request_after = request.GET.get('otp', None)
+    # print("------------->>>", request_after)
+    totp = pyotp.TOTP(otp_base32)
+    # if not totp.verify(otp_base32):
+    #     return False
     with open(qr_code_path, 'rb') as f:
         return HttpResponse(f.read(), content_type='image/png')

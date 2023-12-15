@@ -19,5 +19,7 @@ urlpatterns = [
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),
     path('<str:username>/', enableTwoFactorView, name='user_two_factor'),
-    path('<str:username>/qr_code/', user_qr_code, name='user_qr_code')
+    # path('<str:username>/qr_code/', user_qr_code, name='user_qr_code'),
+    path('<str:username>/<str:random_string>/',
+         user_qr_code, name='user_qr_code'),
 ]
