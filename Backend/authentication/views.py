@@ -1,3 +1,4 @@
+from time import sleep
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -132,6 +133,9 @@ def auth(request):
 
 
 def twoFactorView(request):
+    user = get_object_or_404(UserProfile, username=request.user.username)
+    if not user.is_2fa_enabled:
+        return redirect('/enable_or_disable_2fa')
     if request.method == 'POST':
         otp = request.POST.get('otp')
         print(otp)
@@ -151,7 +155,7 @@ def twoFactorView(request):
                     messages.info(request, "OTP expired")
             else:
                 messages.info(request, "Invalid OTP")
-    return render(request, "2fa.html")
+    return render(request, "2fa.html", {'user': user})
 
 
 def login_view(request):
@@ -164,14 +168,19 @@ def login_view(request):
         if user is not None:
             print("------------->>> login view", user)
             request.session['username'] = username
-            send_otp(request)
-            print("shouldn't be here---------->")
-            return render(request, '2fa.html')
+            user = get_object_or_404(UserProfile, username=username)
+            print("------------->>>", user.is_2fa_enabled)
+            if user.is_2fa_enabled:
+                send_otp(request)
+                return render(request, '2fa.html')
             # get_object_or_404(UserProfile, username=username)
             # auth_login(request, user)
-            return redirect('/2fa')
+            user = get_object_or_404(User, username=username)
+            auth_login(request, user)
+            request.session['is_verified'] = True
+            return redirect('/')
+            # return render(request, 'enable_or_disable_2fa.html')
         else:
-            print("------------->>>", user)
             messages.info(request, 'Username OR password is incorrect')
     return redirect('/')
 
@@ -222,11 +231,29 @@ def register_view(request):
     return render(request, 'register.html')
 
 
+def enable_or_disable_2fa(request):
+    # Get the current user
+    user = get_object_or_404(UserProfile, username=request.user.username)
+    if request.method == 'POST':
+        user.is_2fa_enabled = not user.is_2fa_enabled
+        user.save()
+        message = messages.info(
+            request, '2FA enabled successfully' if user.is_2fa_enabled else '2FA disabled successfully')
+        if user.is_2fa_enabled:
+            send_otp(request)
+            print("sent otp.....")
+            return redirect('/2fa')
+
+        return redirect('/', {'error': message, 'user': user})
+    return render(request, 'enable_or_disable_2fa.html', {'user': user})
+
+
 @login_required
 def enableTwoFactorView(request, username):
     # if request.user.username != 'admin':
-    if request.user.username != username:
-        return HttpResponse('You are not authorized to view this page')
+    # if request.user.username != username:
+    #     return HttpResponse('You are not authorized to view this page')
+    print("here")
     return twoFactorView(request)
 
 

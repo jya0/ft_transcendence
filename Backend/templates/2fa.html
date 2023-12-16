@@ -1,5 +1,6 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block content %} 
 
+{% if user.is_2fa_enabled == True %}
 <form action="{% url '2fa' %}" method="POST">
   {% csrf_token %}
   <input type="text" name="otp" placeholder="Enter OTP" />
@@ -7,7 +8,8 @@
   <button type="submit" class="btn btn-primary">Verify OTP</button>
 </form>
 <br />
-<button class="btn btn-primary">
-  <a style="color: white"> Enable 2fa</a>
-</button>
+{% endif %}
+{% if messages %} {% for message in messages %}
+<div class="alert alert-{{message.tags}}">{{message}}</div>
+{% endfor %} {% endif%} 
 {% endblock %}
