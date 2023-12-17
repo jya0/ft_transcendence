@@ -92,7 +92,7 @@ def auth(request):
                 else:
                     user_profile = UserProfile.objects.get(username=username)
 
-                # print("Jwt ---------> ", decode_jwt(generate_jwt(user_profile.id)))
+                print("Jwt ---------> ", decode_jwt(generate_jwt(user_profile.id)))
                 if user_profile.is_2fa_enabled:
                     request.session['username'] = username
                     send_otp(request)

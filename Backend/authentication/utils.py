@@ -40,7 +40,7 @@ def send_otp(request):
 def generate_jwt(user_id):
     payload = {
         'user_id': user_id,
-        'exp': datetime.utcnow() + timedelta(days=1),
+        'exp': (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S"),
     }
 
     encoded_payload = base64.urlsafe_b64encode(
@@ -66,7 +66,9 @@ def decode_jwt(jwt_token):
     expected_signature = base64.urlsafe_b64encode(hmac.new(secret_key.encode(
         'utf-8'), encoded_payload.encode('utf-8'), hashlib.sha256).digest())
 
-    if encoded_signature == expected_signature:
+    print(type(expected_signature), type(encoded_signature.encode('utf-8')))
+    if encoded_signature.encode('utf-8') == expected_signature:
+        print("payload", payload)
         return payload
     else:
         raise ValueError('Invalid signature')
