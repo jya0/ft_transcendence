@@ -67,6 +67,7 @@
 </div>
 {% endif %} {% if user.is_authenticated %}
 <p id="user-auth">Welcome, {{ user.username }}!</p>
+<img src="{{ user.picture.link }}" id='user_pic' alt="profile image" />
 <div class="container">----------> User Data <------------</div>
 
 <button class="btn btn-primary">
@@ -95,6 +96,9 @@
   } else {
     console.log("user is not authenticated");
   }
+  let userPic = document.getElementById('user_pic')
+  userPic.style.cssText = 'border: 2px solid black; margin: 10px; height: 100px; width: 100px; border-radius: 50%;'
+
 </script>
 
 {% endblock %}

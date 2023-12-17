@@ -10,7 +10,6 @@ from .models import UserProfile
 import json
 import os
 from django.core.serializers.json import DjangoJSONEncoder
-from django.contrib.auth.models import User
 import qrcode
 from pathlib import Path
 from django.http import HttpResponse
@@ -33,16 +32,13 @@ def my_view(request):
 def logout(request):
     if request.user.is_authenticated:
         user = get_object_or_404(UserProfile, username=request.user.username)
-        # user.is_active = False
-        user.is_online = False
-        user.save()
         auth_logout(request)
     response = HttpResponseRedirect("/")
     response.delete_cookie('sessionid')
     return response
 
 
-@login_required
+@login_required(login_url='/')
 def get_user_data(request):
     user_data = UserProfile.objects.filter(
         username=request.user.username).values()
@@ -86,7 +82,7 @@ def auth(request):
                             first_name=display_name.split()[0],
                             last_name=display_name.split()[1],
                             display_name=display_name,
-                            picture="https://cdn.intra.42.fr/users/medium_default.png",
+                            picture=picture,
                             date_joined=datetime.now())
                         user_profile.save()
                     except IntegrityError:
@@ -101,10 +97,8 @@ def auth(request):
                     request.session['username'] = username
                     send_otp(request)
                     print("sent otp.....")
-                    # return redirect('/2fa', {'user': user_profile})
                     return render(request, '2fa.html', {'user': user_profile})
-                user_profile.is_online = True
-                user_profile.save()
+
                 auth_login(request, user_profile)
                 response = HttpResponseRedirect("/")
                 return response
@@ -159,14 +153,11 @@ def login_view(request):
         if user is not None:
             request.session['username'] = username
             user = get_object_or_404(UserProfile, username=username)
-            print("------------->>>", user.is_2fa_enabled)
             if user.is_2fa_enabled:
                 send_otp(request)
                 auth_login(request, user)
-                user.is_online = True
                 return render(request, '2fa.html', {'user': user})
             auth_login(request, user)
-            user.is_online = True
             request.session['is_verified'] = True
             return redirect('/')
         else:

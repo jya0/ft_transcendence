@@ -1,5 +1,6 @@
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
+from django.db.models import JSONField
 
 # Create your models here.
 
@@ -9,7 +10,7 @@ class UserProfile(AbstractUser):
     email = models.EmailField(unique=True)
     display_name = models.CharField(max_length=50, unique=False)
     avatar = models.TextField(default="None")
-    picture = models.CharField(max_length=1000, default="None")
+    picture = JSONField(default=dict)
     is_2fa_enabled = models.BooleanField(default=False)
     is_online = models.BooleanField(default=False)
 
