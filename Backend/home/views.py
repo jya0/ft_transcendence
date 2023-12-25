@@ -25,3 +25,11 @@ def image_upload(request):
     return render(request, "home.html", {
         'FORTY_TWO_URL': FORTY_TWO_URL
     })
+
+
+def main_view(request):
+    return render(request, "home.html", {'FORTY_TWO_URL': FORTY_TWO_URL})
+
+
+# need to main page of button login
+# click on button login and redirect to main page, then go back to main page

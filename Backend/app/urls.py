@@ -3,11 +3,11 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-from home.views import image_upload
+from home.views import image_upload, main_view
 from authentication.views import auth, logout
 
 urlpatterns = [
-    path("", image_upload, name="home"),
+    path("", main_view, name="main-page"),
     path("", include("authentication.urls")),
 ]
 

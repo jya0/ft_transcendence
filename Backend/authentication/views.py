@@ -1,7 +1,11 @@
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 from time import sleep
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.template.loader import get_template
+from django.template import Context, Template
 import requests
 import os
 from django.http import HttpResponseRedirect, JsonResponse
@@ -123,6 +127,9 @@ def twoFactorView(request):
         UserProfile, username=request.session['username'])
     if request.method == 'POST':
         if not user.is_2fa_enabled:
+            template = get_template('enable_or_disable_2fa.html')  # new
+            # new
+            return HttpResponse(template.render({'user': user}, request))
             return redirect('/enable_or_disable_2fa')
         otp = request.POST.get('otp')
         print(otp)
@@ -219,6 +226,13 @@ def enable_or_disable_2fa(request):
             request.session['username'] = user.username
             send_otp(request)
             print("sent otp.....")
+            template = get_template('2fa.html')  # new
+            context = Context({'user': user})  # Example context data
+
+            rendered_template = template.render(context)
+
+            return HttpResponse(rendered_template, content_type='text/html')
+            return HttpResponse(template.render({'user': user}, request))
             return redirect('/2fa')
 
         return redirect('/', {'error': message, 'user': user})
@@ -266,3 +280,48 @@ def user_qr_code(request, username, random_string):
     #     return False
     with open(qr_code_path, 'rb') as f:
         return HttpResponse(f.read(), content_type='image/png')
+
+
+BASE_DIR = settings.BASE_DIR
+
+
+def url_router_js(request):
+    with open(BASE_DIR / 'templates/js/url-router.js', 'r') as js_file:
+        response = HttpResponse(
+            js_file.read(), content_type='application/javascript')
+        return response
+
+
+# @csrf_exempt
+# def home_view(request):
+#     user = get_object_or_404(UserProfile, username=request.user.username)
+#     template = get_template('home.html')
+#     template_content = template.template.source  # Fetches the template content
+
+#     return HttpResponse(template_content, content_type='text/plain')
+
+
+# a new era of SSR SPA
+def home_view(request):
+    user = get_object_or_404(UserProfile, username=request.user.username)
+    # Example template content
+    template = get_template('home.html')
+    template_content = template.template.source
+    template = Template(template_content)
+    context = Context({'user': user})
+
+    rendered_template = template.render(context)
+
+    return HttpResponse(rendered_template, content_type='text/plain')
+
+
+def register_form(request):
+    # Example template content
+    template = get_template('register.html')
+    template_content = template.template.source
+    template = Template(template_content)
+    context = Context({'user': None})
+
+    rendered_template = template.render(context)
+
+    return HttpResponse(rendered_template, content_type='text/plain')
