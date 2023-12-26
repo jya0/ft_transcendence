@@ -238,66 +238,7 @@ def enable_or_disable_2fa(request):
     return render(request, 'enable_or_disable_2fa.html', {'user': user})
 
 
-@login_required
-def enableTwoFactorView(request, username):
-    # if request.user.username != 'admin':
-    # if request.user.username != username:
-    #     return HttpResponse('You are not authorized to view this page')
-    print("here")
-    return twoFactorView(request)
-
-
-@login_required
-def user_qr_code(request, username, random_string):
-    print("------------->>>", request.user.username, username)
-    if request.user.username != username:
-        return HttpResponse('You are not authorized to view this page')
-    # username = request.user.username
-
-    # scanned_data = "otpauth://totp/YourApp:Username?secret=DHLW6DYQFW4VMUAYC6BE7VHJCWK7HUS6&issuer=YourApp&period=60"
-    otp_base32 = pyotp.random_base32()
-    print("------------->>>", otp_base32)
-    totp = pyotp.TOTP(otp_base32, interval=60)
-    otp = totp.now()
-    print("------------->>>", otp)
-    request.session['otp_secret_key'] = otp
-    scanned_data = totp.provisioning_uri(
-        name=username, issuer_name='Pongos')
-
-    random_string = re.search(r'secret=([^&]+)', scanned_data)
-    username = re.search(r'Username=([^&]+)', scanned_data)
-
-    # print("------------->>>", random_string, username)
-    # random_string = secrets.token_hex(8)
-    qr_code = qrcode.make(f'{scanned_data}')
-    qr_code_path = f'{BASE_DIR}/mediafiles/{username}{random_string}.png'
-    qr_code.save(qr_code_path)
-    # request_after = request.GET.get('otp', None)
-    # print("------------->>>", request_after)
-    totp = pyotp.TOTP(otp_base32)
-    # if not totp.verify(otp_base32):
-    #     return False
-    with open(qr_code_path, 'rb') as f:
-        return HttpResponse(f.read(), content_type='image/png')
-
-
 BASE_DIR = settings.BASE_DIR
-
-
-def url_router_js(request):
-    with open(BASE_DIR / 'templates/js/url-router.js', 'r') as js_file:
-        response = HttpResponse(
-            js_file.read(), content_type='application/javascript')
-        return response
-
-
-# @csrf_exempt
-# def home_view(request):
-#     user = get_object_or_404(UserProfile, username=request.user.username)
-#     template = get_template('home.html')
-#     template_content = template.template.source  # Fetches the template content
-
-#     return HttpResponse(template_content, content_type='text/plain')
 
 
 # a new era of SSR SPA
