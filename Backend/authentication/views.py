@@ -42,7 +42,6 @@ def logout(request):
     return response
 
 
-@login_required(login_url='/')
 def get_user_data(request):
     user_data = UserProfile.objects.filter(
         username=request.user.username).values()
@@ -104,7 +103,7 @@ def auth(request):
                     return render(request, '2fa.html', {'user': user_profile})
 
                 auth_login(request, user_profile)
-                response = HttpResponseRedirect("/")
+                response = HttpResponseRedirect("http://localhost/")
                 return response
 
             else:
