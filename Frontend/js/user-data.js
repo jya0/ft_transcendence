@@ -16,8 +16,12 @@ function getData() {
 		})
 		.then(data => {
 			userData = data[0];
+			if (!userData) {
+				console.log("No user data");
+				return;
+			}
 			console.log("User data:", data);
-			const container = document.querySelector(".container");
+			const container = document.querySelector(".content");
 			data.forEach((obj) => {
 				Object.entries(obj).forEach((key, value) => {
 					container.innerHTML +=
@@ -26,8 +30,10 @@ function getData() {
 			});
 
 			const userPic = document.getElementById('user-pic');
-			userPic.src = userData.picture.link;
-			userPic.style.cssText = 'border: 2px solid black; margin: 10px; height: 100px; width: 100px; border-radius: 50%;'
+			if (userData) {
+				userPic.src = userData.picture.link;
+				userPic.style.cssText = 'border: 2px solid black; margin: 10px; height: 100px; width: 100px; border-radius: 50%;'
+			}
 		})
 		.catch(error => {
 			console.error('Error fetching user data:', error);
