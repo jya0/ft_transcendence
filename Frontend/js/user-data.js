@@ -25,6 +25,27 @@ function handle42Auth() {
 		});
 }
 
+function handleLogout() {
+	fetch('http://localhost:8000/logout', {
+		credentials: 'include',
+	})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then(data => {
+			if (data.message === 'Logged out successfully') {
+				document.getElementById('content').innerHTML = 'You have been logged out successfully';
+			}
+			document.getElementById('logout').remove();
+		})
+		.catch(error => {
+			console.error('Error fetching data:', error);
+		});
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	const dynamicLinks = document.querySelectorAll('.dynamic-link');
 
@@ -36,7 +57,6 @@ document.addEventListener('DOMContentLoaded', () => {
 			fetchBackendData(`http://localhost:8000${route}/`)
 				.then(data => {
 					console.log('Data fetched:', data);
-					// Handle the fetched data
 					updateDataContainer(data);
 				})
 				.catch(error => {

@@ -38,9 +38,7 @@ def logout(request):
     if request.user.is_authenticated:
         user = get_object_or_404(UserProfile, username=request.user.username)
         auth_logout(request)
-    response = HttpResponseRedirect("/")
-    response.delete_cookie('sessionid')
-    return response
+    return JsonResponse({'message': 'Logged out successfully'}, status=200)
 
 
 def get_user_data(request):
@@ -66,8 +64,7 @@ def auth(request):
             try:
                 access_token = auth_response.json().get("access_token")
             except:
-                messages.info(request, "Invalid authorization code")
-                return redirect("/")
+                return JsonResponse({'message': 'Invalid authorization code'}, status=400)
             user_response = requests.get(
                 "https://api.intra.42.fr/v2/me", headers={"Authorization": f"Bearer {access_token}"})
             try:
@@ -76,8 +73,7 @@ def auth(request):
                 display_name = user_response.json()["displayname"]
                 picture = user_response.json()["image"]
             except:
-                messages.info(request, "Failed to fetch user data")
-                return redirect("/")
+                return JsonResponse({'message': 'Failed to fetch user data'}, status=400)
             if username:
                 if not UserProfile.objects.filter(username=username).exists():
                     try:
@@ -91,18 +87,16 @@ def auth(request):
                             date_joined=datetime.now())
                         user_profile.save()
                     except IntegrityError:
-                        message = "This email is already in use. Please choose a different one."
-                        messages.info(request, message)
-                        return render(request, 'home.html', {'error': message})
+                        return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=400)
                 else:
                     user_profile = UserProfile.objects.get(username=username)
 
-                print("Jwt ---------> ", decode_jwt(generate_jwt(user_profile.id)))
+                # print("Jwt ---------> ", decode_jwt(generate_jwt(user_profile.id)))
                 if user_profile.is_2fa_enabled:
                     request.session['username'] = username
                     send_otp(request)
                     print("sent otp.....")
-                    return render(request, '2fa.html', {'user': user_profile})
+                    return JsonResponse({'message': 'OTP sent to your email'}, status=200)
 
                 auth_login(request, user_profile)
                 response = HttpResponseRedirect("http://localhost/")
@@ -111,14 +105,12 @@ def auth(request):
             else:
                 if username != "admin":
                     messages.error(request, "Failed to fetch user data")
-            return HttpResponseRedirect("/")
+            return JsonResponse({'message': 'Failed to fetch user data'}, status=400)
 
         else:
-            messages.info(request, "Invalid authorization code")
-            return redirect("/")
+            return JsonResponse({'message': 'Invalid method'}, status=400)
     else:
-        messages.info(request, "Invalid method")
-        return redirect("/")
+        return JsonResponse({'message': 'Invalid method'}, status=400)
 
 
 def twoFactorView(request):
@@ -128,9 +120,6 @@ def twoFactorView(request):
         UserProfile, username=request.session['username'])
     if request.method == 'POST':
         if not user.is_2fa_enabled:
-            template = get_template('enable_or_disable_2fa.html')  # new
-            # new
-            return HttpResponse(template.render({'user': user}, request))
             return redirect('/enable_or_disable_2fa')
         otp = request.POST.get('otp')
         print(otp)
@@ -227,15 +216,6 @@ def enable_or_disable_2fa(request):
             request.session['username'] = user.username
             send_otp(request)
             print("sent otp.....")
-            template = get_template('2fa.html')  # new
-            template_content = template.template.source
-            template = Template(template_content)
-            context = Context({'user': user})  # Example context data
-
-            rendered_template = template.render(context)
-
-            return HttpResponse(rendered_template, content_type='text/plain')
-            return HttpResponse(template.render({'user': user}, request))
             return redirect('/2fa')
 
         return redirect('/', {'error': message, 'user': user})
