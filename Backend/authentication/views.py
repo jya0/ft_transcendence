@@ -23,6 +23,7 @@ from datetime import datetime
 import secrets
 import re
 import pyotp
+from django.views.decorators.cache import never_cache
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,6 +49,7 @@ def get_user_data(request):
     return JsonResponse(list(user_data), safe=False)
 
 
+@never_cache
 def auth(request):
     if request.method == "GET":
         code = request.GET.get("code")
@@ -267,3 +269,9 @@ def register_form(request):
     rendered_template = template.render(context)
 
     return HttpResponse(rendered_template, content_type='text/plain')
+
+
+@never_cache
+def intra_link(request):
+    forty_two_url = os.environ.get('FORTY_TWO_URL')
+    return JsonResponse({'forty_two_url': forty_two_url})

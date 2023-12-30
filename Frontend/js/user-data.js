@@ -1,5 +1,28 @@
 function handle42Auth() {
-	window.location.href = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-69155ca3ecf1f57fa6e8660a9988bbdd7f03a45128ea80a454d6f13939c4bca5&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fauth&response_type=code";
+	const timestamp = new Date().getTime();
+	fetch('http://localhost:8000/42_intra_link', {
+		credentials: 'include',
+		method: 'GET',
+		headers: {
+			'Cache-Control': 'no-cache',
+		},
+	})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then(data => {
+			console.log('Data fetched:', data);
+			// Handle the fetched data
+			forty_two_url = data.forty_two_url + `&state=${timestamp}` + `&random=${Math.random()}`;
+			console.log(forty_two_url);
+			window.location.href = forty_two_url;
+		})
+		.catch(error => {
+			console.error('Error fetching data:', error);
+		});
 }
 
 document.addEventListener('DOMContentLoaded', () => {

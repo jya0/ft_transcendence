@@ -43,33 +43,6 @@
     </div>
     <script src="/js/url-router.js"></script>
     <script src="/js/user-data.js"></script>
-    <script>
-        if (document.getElementById("home-div")) {
-
-            console.log("loadHome");
-            let homeData;
-            fetch("http://localhost:8000/home/", {
-                credentials: "include",
-            })
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.text();
-                })
-                .then((data) => {
-                    console.log("Home data:", data);
-                    let content = document.getElementById("content");
-                    if (content) {
-                        content.innerHTML = data;
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error fetching user data:", error);
-                });
-
-        }
-    </script>
 </body>
 
 </html>

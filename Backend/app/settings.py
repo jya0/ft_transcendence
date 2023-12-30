@@ -91,6 +91,13 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost',
 ]
 
+CORS_ALLOW_HEADERS = [
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Credentials',
+    'Content-Type',
+    'Cache-Control',
+]
+
 WSGI_APPLICATION = "app.wsgi.application"
 
 AUTH_USER_MODEL = "authentication.UserProfile"

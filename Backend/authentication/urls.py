@@ -1,7 +1,7 @@
 from pathlib import Path
 from django.urls import path
 from django.contrib import admin
-from authentication.views import auth, logout, get_user_data, twoFactorView, login_view, register_view, enable_or_disable_2fa, home_view, register_form
+from authentication.views import auth, logout, get_user_data, twoFactorView, login_view, register_view, enable_or_disable_2fa, home_view, register_form, intra_link
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -22,4 +22,6 @@ urlpatterns = [
     path('register_form/', register_form, name='register_form'),
     path('enable_or_disable_2fa/', enable_or_disable_2fa,
          name='enable_or_disable_2fa'),
+
+    path('42_intra_link/', intra_link, name='intra_link')
 ]
