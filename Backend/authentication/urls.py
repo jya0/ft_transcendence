@@ -12,6 +12,10 @@ urlpatterns = [
     path('logout/', logout, name='logged_out'),
     path('get_user_data/', get_user_data, name='get_user_data'),
     path('home/', home_view, name='2fa'),
+    # for testing dinamic ssr spa routes
+    path('contact/', home_view, name='2fa'),
+    path('about/', home_view, name='2fa'),
+
     path('2fa/', twoFactorView, name='2fa'),
     path('login/', login_view, name='login'),
     path('register/', register_view, name='register'),

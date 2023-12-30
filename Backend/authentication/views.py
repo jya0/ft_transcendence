@@ -226,11 +226,13 @@ def enable_or_disable_2fa(request):
             send_otp(request)
             print("sent otp.....")
             template = get_template('2fa.html')  # new
+            template_content = template.template.source
+            template = Template(template_content)
             context = Context({'user': user})  # Example context data
 
             rendered_template = template.render(context)
 
-            return HttpResponse(rendered_template, content_type='text/html')
+            return HttpResponse(rendered_template, content_type='text/plain')
             return HttpResponse(template.render({'user': user}, request))
             return redirect('/2fa')
 

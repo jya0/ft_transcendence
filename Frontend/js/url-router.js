@@ -1,4 +1,4 @@
-const urlPageTitle = "JS Single Page Application Router";
+const urlPageTitle = "Pong Os";
 
 // create document click that watches the nav links only
 document.addEventListener("click", (e) => {
@@ -32,6 +32,11 @@ const urlRoutes = {
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the contact page",
 	},
+	"/home": {
+		template: `/components/home.html`,
+		title: "Contact Us | " + urlPageTitle,
+		description: "This is the contact page",
+	},
 };
 
 // create a function that watches the url and calls the urlLocationHandler
@@ -46,6 +51,7 @@ const urlRoute = (event) => {
 // create a function that handles the url location
 const urlLocationHandler = async () => {
 	const location = window.location.pathname; // get the url path
+	console.log("location:", location);
 	// if the path length is 0, set it to primary page route
 	if (location.length == 0) {
 		location = "/";

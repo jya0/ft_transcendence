@@ -19,9 +19,10 @@
                     <div class="card">
                         <div class="card-body">
                             <nav>
-                                <a href="/">Home</a>
-                                <a href="/about">About</a>
-                                <a href="/contact">Contact</a>
+                                <a href="/" class="dynamic-link">Home</a>
+                                <a href="/about" class="dynamic-link">About</a>
+                                <a href="/contact" class="dynamic-link">Contact</a>
+                                <a href="/home" class="dynamic-link">Home</a>
                             </nav>
                         </div>
                     </div>
@@ -34,15 +35,41 @@
                     <img id="user-pic"></img>
                     <div id="content">
                     </div>
+                    <div id="data-container">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <script src="/js/url-router.js"></script>
     <script src="/js/user-data.js"></script>
-</body>
+    <script>
+        if (document.getElementById("home-div")) {
 
-</html>
+            console.log("loadHome");
+            let homeData;
+            fetch("http://localhost:8000/home/", {
+                credentials: "include",
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.text();
+                })
+                .then((data) => {
+                    console.log("Home data:", data);
+                    let content = document.getElementById("content");
+                    if (content) {
+                        content.innerHTML = data;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching user data:", error);
+                });
+
+        }
+    </script>
 </body>
 
 </html>
