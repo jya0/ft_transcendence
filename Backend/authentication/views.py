@@ -24,6 +24,7 @@ import secrets
 import re
 import pyotp
 from django.views.decorators.cache import never_cache
+from django.forms.models import model_to_dict
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -106,7 +107,6 @@ def auth(request):
                 if username != "admin":
                     messages.error(request, "Failed to fetch user data")
             return JsonResponse({'message': 'Failed to fetch user data'}, status=400)
-
         else:
             return JsonResponse({'message': 'Invalid method'}, status=400)
     else:
@@ -227,7 +227,10 @@ BASE_DIR = settings.BASE_DIR
 
 # a new era of SSR SPA
 def home_view(request):
-    user = get_object_or_404(UserProfile, username=request.user.username)
+    try:
+        user = get_object_or_404(UserProfile, username=request.user.username)
+    except:
+        return JsonResponse({'message': 'User not found'}, status=400)
     # Example template content
     template = get_template('home.html')
     template_content = template.template.source

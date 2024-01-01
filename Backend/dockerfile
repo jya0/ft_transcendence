@@ -15,7 +15,7 @@ RUN apt-get update
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt && apt install -y netcat \
-	&& pip install qrcode && pip install pyotp && pip install django-cors-headers
+	&& pip install qrcode && pip install pyotp && pip install django-cors-headers && pip install djangorestframework
 
 # copy entrypoint.sh
 COPY . /app
