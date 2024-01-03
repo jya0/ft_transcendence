@@ -14,11 +14,10 @@ from .models import UserProfile
 import json
 import os
 from django.core.serializers.json import DjangoJSONEncoder
-import qrcode
 from pathlib import Path
 from django.http import HttpResponse
 from django.db import IntegrityError
-from .utils import send_otp, generate_jwt, decode_jwt
+from .utils import send_otp, generate_jwt, verify_jwt
 from datetime import datetime
 import secrets
 import re
@@ -43,6 +42,7 @@ def logout(request):
 
 
 def get_user_data(request):
+    print(request.user.username)
     user_data = UserProfile.objects.filter(
         username=request.user.username).values()
     return JsonResponse(list(user_data), safe=False)
@@ -205,7 +205,6 @@ def register_view(request):
 def enable_or_disable_2fa(request):
     if not request.user.is_authenticated:
         return redirect('/')
-    print("user ----------> ", request.user.username)
     user = get_object_or_404(UserProfile, username=request.user.username)
     if request.method == 'POST':
         user.is_2fa_enabled = not user.is_2fa_enabled

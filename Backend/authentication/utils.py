@@ -38,37 +38,64 @@ def send_otp(request):
 
 
 def generate_jwt(user_id):
-    payload = {
-        'user_id': user_id,
-        'exp': (datetime.utcnow() + timedelta(days=1)).strftime("%Y-%m-%d %H:%M:%S"),
+    header = {
+        "alg": "HS256",
+        "typ": "JWT"
     }
 
+    payload = {
+        'user_id': user_id,
+        'exp': (datetime.utcnow() + timedelta(minutes=1)).timestamp(),
+    }
+
+    encoded_header = base64.urlsafe_b64encode(
+        json.dumps(header).encode('utf-8')).decode('utf-8')
+
     encoded_payload = base64.urlsafe_b64encode(
-        json.dumps(payload).encode('utf-8'))
+        json.dumps(payload).encode('utf-8')).decode('utf-8')
 
     secret_key = os.environ.get("JWT_SECRET", 'secret')
     signature = hmac.new(secret_key.encode('utf-8'),
-                         encoded_payload, hashlib.sha256).digest()
-    encoded_signature = base64.urlsafe_b64encode(signature)
+                         f"{encoded_header}.{encoded_payload}".encode('utf-8'),
+                         hashlib.sha256).digest()
 
-    jwt_token = f"{encoded_payload.decode('utf-8')}.{encoded_signature.decode('utf-8')}"
+    encoded_signature = base64.urlsafe_b64encode(signature).decode('utf-8')
+
+    jwt_token = f"{encoded_header}.{encoded_payload}.{encoded_signature}"
 
     return jwt_token
 
 
-def decode_jwt(jwt_token):
-    encoded_payload, encoded_signature = jwt_token.split('.')
+def verify_jwt(token):
 
-    payload = json.loads(base64.urlsafe_b64decode(
-        encoded_payload.encode('utf-8')).decode('utf-8'))
+    parts = token.split('.')
+    if len(parts) != 3:
+        return False
 
+    encoded_signature = parts[2].encode('utf-8')
     secret_key = os.environ.get("JWT_SECRET", 'secret')
-    expected_signature = base64.urlsafe_b64encode(hmac.new(secret_key.encode(
-        'utf-8'), encoded_payload.encode('utf-8'), hashlib.sha256).digest())
+    computed_signature = hmac.new(secret_key.encode('utf-8'),
+                                  f"{parts[0]}.{parts[1]}".encode('utf-8'),
+                                  hashlib.sha256).digest()
+    computed_encoded_signature = base64.urlsafe_b64encode(computed_signature)
 
-    print(type(expected_signature), type(encoded_signature.encode('utf-8')))
-    if encoded_signature.encode('utf-8') == expected_signature:
-        print("payload", payload)
-        return payload
-    else:
-        raise ValueError('Invalid signature')
+    if computed_encoded_signature != encoded_signature:
+        return False
+    payload = json.loads(base64.urlsafe_b64decode(
+        parts[1] + '===').decode('utf-8'))
+    expiration = payload.get('exp', 0)
+    if expiration < datetime.utcnow().timestamp():
+        return False
+
+    return payload
+
+
+# jwt_token = generate_jwt(1)
+# print(jwt_token)
+
+# verified_payload = verify_jwt(jwt_token)
+# if verified_payload:
+#     print("JWT Token Verified")
+#     print("Payload:", verified_payload)
+# else:
+#     print("Invalid JWT Token")
