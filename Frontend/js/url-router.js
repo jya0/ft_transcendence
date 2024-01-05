@@ -62,6 +62,7 @@ const urlLocationHandler = async () => {
 	const html = await fetch(route.template).then((response) => response.text());
 	// set the content of the content div to the html
 	document.getElementById("content").innerHTML = html;
+	document.getElementById("data-container").innerHTML = '';
 	// set the title of the document to the title of the route
 	document.title = route.title;
 	// set the description of the document to the description of the route

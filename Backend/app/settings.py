@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "home",
     "authentication",
-    # "restapi",
+    "restapi",
     'corsheaders',
 ]
 
