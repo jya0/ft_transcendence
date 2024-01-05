@@ -19,7 +19,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from pathlib import Path
 from django.http import HttpResponse
 from django.db import IntegrityError
-from .utils import send_otp, generate_jwt, verify_jwt
+from .utils import send_otp, generate_jwt, verify_jwt, get_user_token
 from datetime import datetime
 import secrets
 import re
@@ -28,6 +28,7 @@ from django.views.decorators.cache import never_cache
 from django.forms.models import model_to_dict
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken
+from getpass import getpass
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -109,16 +110,9 @@ def auth(request):
                 return JsonResponse({'message': 'OTP sent to your email'}, status=200)
 
             auth_login(request, user_profile)
-            refresh = RefreshToken.for_user(user_profile)
-            token = {
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
-            }
-            user_token = token['access']
-            print("user_token: ", user_token)
-            request.session['user_token'] = user_token
+            access_token = get_user_token(request, username, username)
             response = HttpResponseRedirect(
-                f"http://localhost/?token={user_token}")
+                f"http://localhost/?token={access_token}")
             return response
 
         response = JsonResponse(

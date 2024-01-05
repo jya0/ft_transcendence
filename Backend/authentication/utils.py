@@ -10,6 +10,7 @@ import base64
 import hashlib
 import hmac
 import os
+import requests
 
 
 def send_otp(request):
@@ -99,3 +100,23 @@ def verify_jwt(token):
 #     print("Payload:", verified_payload)
 # else:
 #     print("Invalid JWT Token")
+
+def get_user_token(request, username, password):
+    base_url = request.build_absolute_uri('/')[:-1]
+    data = {
+        'username': username,
+        'password': password,
+    }
+    json_data = json.dumps(data)
+    response = requests.post(f"{base_url}/token/", data=json_data, headers={
+        'Content-Type': 'application/json'})
+    if response.status_code == 200:
+        token_pair = response.json()
+        access_token = token_pair['access']
+        refresh_token = token_pair['refresh']
+        print(f'Access Token: {access_token}')
+        print(f'Refresh Token: {refresh_token}')
+        return access_token
+    else:
+        print('Token generation failed.')
+        return None
