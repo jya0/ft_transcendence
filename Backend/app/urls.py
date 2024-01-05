@@ -17,6 +17,7 @@ urlpatterns = [
     path('', main_view, name="main-page"),
     path('', include(router.urls)),
     path("", include("authentication.urls")),
+    path("", include("restapi.urls")),
 ]
 
 urlpatterns += router.urls

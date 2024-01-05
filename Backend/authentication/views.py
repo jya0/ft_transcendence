@@ -1,3 +1,5 @@
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from time import sleep
@@ -24,6 +26,7 @@ import re
 import pyotp
 from django.views.decorators.cache import never_cache
 from django.forms.models import model_to_dict
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +44,10 @@ def logout(request):
     return JsonResponse({'message': 'Logged out successfully'}, status=200)
 
 
+@api_view(['GET'])
+@login_required
+@permission_classes([IsAuthenticated])
+@authentication_classes([JWTAuthentication])
 def get_user_data(request):
     print(request.user.username)
     user_data = UserProfile.objects.filter(
@@ -86,6 +93,7 @@ def auth(request):
                             display_name=display_name,
                             picture=picture,
                             date_joined=datetime.now())
+                        user_profile.set_password(username)
                         user_profile.save()
                     except IntegrityError:
                         return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=400)
@@ -224,10 +232,13 @@ def enable_or_disable_2fa(request):
 BASE_DIR = settings.BASE_DIR
 
 
-# a new era of SSR SPA
+@api_view(['GET'])
+@login_required
+@permission_classes([IsAuthenticated])
 def home_view(request):
     try:
         user = get_object_or_404(UserProfile, username=request.user.username)
+        print("---------> ", user)
     except:
         return JsonResponse({'message': 'User not found'}, status=400)
     # Example template content
@@ -255,5 +266,5 @@ def register_form(request):
 
 @never_cache
 def intra_link(request):
-    forty_two_url = os.environ.get('FORTY_TWO_URL')
+    forty_two_url = settings.FORTY_TWO_URL
     return JsonResponse({'forty_two_url': forty_two_url})

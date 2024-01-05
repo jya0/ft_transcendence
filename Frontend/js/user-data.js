@@ -70,7 +70,7 @@ function fetchBackendData(route) {
 
 	return fetch(route, { credentials: 'include' })
 		.then(response => {
-			if (!response.ok) {	
+			if (!response.ok) {
 				console.log(response.json());
 				throw new Error('Network response was not ok');
 			}
@@ -86,9 +86,45 @@ function updateDataContainer(data) {
 
 }
 
+function handleToken() {
+	const credentials = {
+		username: 'ahassan',
+		password: 'ahassan'
+	};
+
+	fetch('http://localhost:8000/token/', {
+		method: 'POST',
+		credentials: 'include',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(credentials),
+	})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then(data => {
+			localStorage.setItem('token', data.access);
+			localStorage.setItem('refresh', data.refresh);
+			console.log('Data fetched:', data);
+		})
+		.catch(error => {
+			alert(error);
+		});
+}
+
 function getData() {
 	let userData;
-	fetch('http://localhost:8000/get_user_data/', { credentials: 'include' })
+	fetch('http://localhost:8000/get_user_data/', {
+		credentials: 'include',
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('token')}`,
+			'Content-Type': 'application/json'
+		},
+	})
 		.then(response => {
 			if (!response.ok) {
 				throw new Error('Network response was not ok');
