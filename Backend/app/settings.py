@@ -35,7 +35,7 @@ DEBUG = True  # bool(int(os.environ.get("DEBUG", default=0)))
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-# CSRF_TRUSTED_ORIGINS = ["http://localhost:1337"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost"]
 
 # Application definition
 
@@ -113,11 +113,11 @@ CORS_ALLOW_HEADERS = [
     'Authorization',
 ]
 
-# SIMPLE_JWT = {
-#     "AUTH_HEADER_TYPES": ["Bearer"],
-#     "ACCESS_TOKEN_LIFETIME": timedelta(seconds=30),
-#     "REFRESH_TOKEN_LIFETIME": timedelta(minutes=1),
-# }
+SIMPLE_JWT = {
+    "AUTH_HEADER_TYPES": ["Bearer"],
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=300),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=10),
+}
 
 WSGI_APPLICATION = "app.wsgi.application"
 

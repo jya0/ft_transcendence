@@ -121,7 +121,7 @@ function getData() {
 	fetch('http://localhost:8000/get_user_data/', {
 		credentials: 'include',
 		headers: {
-			'Authorization': `Bearer ${localStorage.getItem('token')}`,
+			'Authorization': `Bearer ${localStorage.getItem('token') ? localStorage.getItem('token') : localStorage.getItem('access_token')}`,
 			'Content-Type': 'application/json'
 		},
 	})

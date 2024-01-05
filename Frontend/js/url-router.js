@@ -77,3 +77,18 @@ window.onpopstate = urlLocationHandler;
 window.route = urlRoute;
 // call the urlLocationHandler function to handle the initial url
 urlLocationHandler();
+
+const urlParams = new URLSearchParams(window.location.search);
+const token = urlParams.get('token');
+
+if (token) {
+	console.log('Token:', token);
+	localStorage.setItem('access_token', token);
+}
+
+const url = new URL(window.location.href);
+url.search = '';
+const mainUrl = url.toString();
+
+history.replaceState({}, '', mainUrl);
+

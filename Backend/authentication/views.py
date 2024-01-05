@@ -27,6 +27,7 @@ import pyotp
 from django.views.decorators.cache import never_cache
 from django.forms.models import model_to_dict
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -57,68 +58,75 @@ def get_user_data(request):
 
 @never_cache
 def auth(request):
-    if request.method == "GET":
-        code = request.GET.get("code")
-        if code:
-            data = {
-                "grant_type": "authorization_code",
-                "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),
-                "client_secret": os.environ.get("FORTY_TWO_CLIENT_SECRET"),
-                "code": code,
-                "redirect_uri": os.environ.get("FORTY_TWO_REDIRECT_URI"),
-            }
-            auth_response = requests.post(
-                "https://api.intra.42.fr/oauth/token", data=data)
-            try:
-                access_token = auth_response.json().get("access_token")
-            except:
-                return JsonResponse({'message': 'Invalid authorization code'}, status=400)
-            user_response = requests.get(
-                "https://api.intra.42.fr/v2/me", headers={"Authorization": f"Bearer {access_token}"})
-            try:
-                username = user_response.json()["login"]
-                email = user_response.json()["email"]
-                display_name = user_response.json()["displayname"]
-                picture = user_response.json()["image"]
-            except:
-                return JsonResponse({'message': 'Failed to fetch user data'}, status=400)
-            if username:
-                if not UserProfile.objects.filter(username=username).exists():
-                    try:
-                        user_profile = UserProfile.objects.create(
-                            username=username,
-                            email=email,
-                            first_name=display_name.split()[0],
-                            last_name=display_name.split()[1],
-                            display_name=display_name,
-                            picture=picture,
-                            date_joined=datetime.now())
-                        user_profile.set_password(username)
-                        user_profile.save()
-                    except IntegrityError:
-                        return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=400)
-                else:
-                    user_profile = UserProfile.objects.get(username=username)
-
-                # print("Jwt ---------> ", decode_jwt(generate_jwt(user_profile.id)))
-                if user_profile.is_2fa_enabled:
-                    request.session['username'] = username
-                    send_otp(request)
-                    print("sent otp.....")
-                    return JsonResponse({'message': 'OTP sent to your email'}, status=200)
-
-                auth_login(request, user_profile)
-                response = HttpResponseRedirect("http://localhost/")
-                return response
-
+    code = request.GET.get("code")
+    if code:
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),
+            "client_secret": os.environ.get("FORTY_TWO_CLIENT_SECRET"),
+            "code": code,
+            "redirect_uri": os.environ.get("FORTY_TWO_REDIRECT_URI"),
+        }
+        auth_response = requests.post(
+            "https://api.intra.42.fr/oauth/token", data=data)
+        try:
+            access_token = auth_response.json().get("access_token")
+        except:
+            return JsonResponse({'message': 'Invalid authorization code'}, status=400)
+        user_response = requests.get(
+            "https://api.intra.42.fr/v2/me", headers={"Authorization": f"Bearer {access_token}"})
+        try:
+            username = user_response.json()["login"]
+            email = user_response.json()["email"]
+            display_name = user_response.json()["displayname"]
+            picture = user_response.json()["image"]
+        except:
+            response = JsonResponse(
+                {'message': 'Failed to fetch user data'}, status=400)
+            return HttpResponseRedirect("http://localhost/")
+        if username:
+            if not UserProfile.objects.filter(username=username).exists():
+                try:
+                    user_profile = UserProfile.objects.create(
+                        username=username,
+                        email=email,
+                        first_name=display_name.split()[0],
+                        last_name=display_name.split()[1],
+                        display_name=display_name,
+                        picture=picture,
+                        date_joined=datetime.now())
+                    user_profile.set_password(username)
+                    user_profile.save()
+                except IntegrityError:
+                    return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=400)
             else:
-                if username != "admin":
-                    messages.error(request, "Failed to fetch user data")
-            return JsonResponse({'message': 'Failed to fetch user data'}, status=400)
-        else:
-            return JsonResponse({'message': 'Invalid method'}, status=400)
+                user_profile = UserProfile.objects.get(username=username)
+
+            if user_profile.is_2fa_enabled:
+                request.session['username'] = username
+                send_otp(request)
+                print("sent otp.....")
+                return JsonResponse({'message': 'OTP sent to your email'}, status=200)
+
+            auth_login(request, user_profile)
+            refresh = RefreshToken.for_user(user_profile)
+            token = {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            }
+            user_token = token['access']
+            print("user_token: ", user_token)
+            request.session['user_token'] = user_token
+            response = HttpResponseRedirect(
+                f"http://localhost/?token={user_token}")
+            return response
+
+        response = JsonResponse(
+            {'message': 'Failed to fetch user data'}, status=400)
+        return HttpResponseRedirect("http://localhost/")
     else:
-        return JsonResponse({'message': 'Invalid method'}, status=400)
+        response = JsonResponse({'message': 'Invalid code'}, status=400)
+        return HttpResponseRedirect("http://localhost/")
 
 
 def twoFactorView(request):
