@@ -44,17 +44,21 @@ const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
 	// window.history.pushState(state, unused, target link);
-	window.history.pushState({}, "", event.target.href);
+	if (localStorage.getItem('access_token'))
+		window.history.pushState({}, "", event.target.href);
 	urlLocationHandler();
 };
 
 // create a function that handles the url location
 const urlLocationHandler = async () => {
-	const location = window.location.pathname; // get the url path
+	let location = window.location.pathname; // get the url path
 	console.log("location:", location);
 	// if the path length is 0, set it to primary page route
 	if (location.length == 0) {
 		location = "/";
+	}
+	if (!localStorage.getItem('access_token')) {
+		location = '/home';
 	}
 	// get the route object from the urlRoutes object
 	const route = urlRoutes[location] || urlRoutes["404"];

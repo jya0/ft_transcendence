@@ -1,7 +1,6 @@
 function handle42Auth() {
 	const timestamp = new Date().getTime();
 	fetch('http://localhost:8000/42_intra_link', {
-		credentials: 'include',
 		method: 'GET',
 		headers: {
 			'Cache-Control': 'no-cache',
@@ -26,6 +25,8 @@ function handle42Auth() {
 }
 
 function handleLogout() {
+	localStorage.clear();
+
 	fetch('http://localhost:8000/logout', {
 		credentials: 'include',
 	})
@@ -39,7 +40,9 @@ function handleLogout() {
 			if (data.message === 'Logged out successfully') {
 				document.getElementById('content').innerHTML = 'You have been logged out successfully';
 			}
-			document.getElementById('logout').remove();
+			else {
+				document.getElementById('logout').remove();
+			}
 		})
 		.catch(error => {
 			console.error('Error fetching data:', error);
@@ -50,29 +53,33 @@ document.addEventListener('DOMContentLoaded', () => {
 	const dynamicLinks = document.querySelectorAll('.dynamic-link');
 
 	dynamicLinks.forEach(link => {
-		link.addEventListener('click', event => {
+		link.addEventListener('click', async event => {
 			event.preventDefault();
 			const route = event.target.getAttribute('href');
 			console.log('Fetching data from:', route);
-			fetchBackendData(`http://localhost:8000${route}/`)
+			await fetchBackendData(`http://localhost:8000${route}/`)
 				.then(data => {
 					console.log('Data fetched:', data);
 					updateDataContainer(data);
 				})
-				.catch(error => {
-					console.error('Error fetching data:', error);
-				});
 		});
 	});
 });
 
-function fetchBackendData(route) {
+async function fetchBackendData(route) {
 
-	return fetch(route, { credentials: 'include' })
+	return await fetch(route, {
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('token') ? localStorage.getItem('token') : localStorage.getItem('access_token')}`,
+		},
+	})
 		.then(response => {
 			if (!response.ok) {
-				console.log(response.json());
-				throw new Error('Network response was not ok');
+				if (response.status === 401 || response.status === 403) {
+					alert('Unauthorized');
+				} else {
+					alert(`Network response was not ok ${response.status}`);
+				}
 			}
 			return response.text();
 		});
@@ -119,7 +126,7 @@ function handleToken() {
 function getData() {
 	let userData;
 	fetch('http://localhost:8000/get_user_data/', {
-		credentials: 'include',
+		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('token') ? localStorage.getItem('token') : localStorage.getItem('access_token')}`,
 			'Content-Type': 'application/json'
@@ -127,7 +134,7 @@ function getData() {
 	})
 		.then(response => {
 			if (!response.ok) {
-				throw new Error('Network response was not ok');
+				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
 			}
 			return response.json();
 		})
@@ -152,7 +159,4 @@ function getData() {
 				userPic.style.cssText = 'border: 2px solid black; margin: 10px; height: 100px; width: 100px; border-radius: 50%;'
 			}
 		})
-		.catch(error => {
-			console.error('Error fetching user data:', error);
-		});
 }

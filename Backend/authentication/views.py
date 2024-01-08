@@ -43,13 +43,13 @@ def logout(request):
     if request.user.is_authenticated:
         user = get_object_or_404(UserProfile, username=request.user.username)
         auth_logout(request)
-    return JsonResponse({'message': 'Logged out successfully'}, status=200)
+        return JsonResponse({'message': 'Logged out successfully'}, status=200)
+    return JsonResponse({'message': 'already logged out'}, status=200)
 
 
 @api_view(['GET'])
 @login_required
 @permission_classes([IsAuthenticated])
-@authentication_classes([JWTAuthentication])
 def get_user_data(request):
     print(request.user.username)
     user_data = UserProfile.objects.filter(
@@ -267,6 +267,7 @@ def register_form(request):
 
 
 @never_cache
+@api_view(['GET'])
 def intra_link(request):
     forty_two_url = settings.FORTY_TWO_URL
     return JsonResponse({'forty_two_url': forty_two_url})
