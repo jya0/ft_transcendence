@@ -3,10 +3,9 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
-from home.views import image_upload, main_view
-from authentication.views import auth, logout
 from rest_framework import routers
 from restapi import views
+from upload.views import main_view
 
 
 router = routers.DefaultRouter()
@@ -18,6 +17,8 @@ urlpatterns = [
     path('', include(router.urls)),
     path("", include("authentication.urls")),
     path("", include("restapi.urls")),
+    path("api/", include("api.urls")),
+
 ]
 
 urlpatterns += router.urls

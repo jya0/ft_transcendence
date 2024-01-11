@@ -13,30 +13,17 @@ import os
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from .models import UserProfile
-import json
 import os
-from django.core.serializers.json import DjangoJSONEncoder
 from pathlib import Path
 from django.http import HttpResponse
 from django.db import IntegrityError
 from .utils import send_otp, generate_jwt, verify_jwt, get_user_token
 from datetime import datetime
-import secrets
-import re
-import pyotp
 from django.views.decorators.cache import never_cache
 from django.forms.models import model_to_dict
-from rest_framework.decorators import api_view, authentication_classes, permission_classes
-from rest_framework_simplejwt.tokens import RefreshToken
-from getpass import getpass
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-@login_required
-def my_view(request):
-    return render(request, "home.html")
 
 
 def logout(request):
@@ -45,16 +32,6 @@ def logout(request):
         auth_logout(request)
         return JsonResponse({'message': 'Logged out successfully'}, status=200)
     return JsonResponse({'message': 'already logged out'}, status=200)
-
-
-@api_view(['GET'])
-@login_required
-@permission_classes([IsAuthenticated])
-def get_user_data(request):
-    print(request.user.username)
-    user_data = UserProfile.objects.filter(
-        username=request.user.username).values()
-    return JsonResponse(list(user_data), safe=False)
 
 
 @never_cache
@@ -229,45 +206,3 @@ def enable_or_disable_2fa(request):
 
         return redirect('/', {'error': message, 'user': user})
     return render(request, 'enable_or_disable_2fa.html', {'user': user})
-
-
-BASE_DIR = settings.BASE_DIR
-
-
-@api_view(['GET'])
-@login_required
-@permission_classes([IsAuthenticated])
-def home_view(request):
-    try:
-        user = get_object_or_404(UserProfile, username=request.user.username)
-        print("---------> ", user)
-    except:
-        return JsonResponse({'message': 'User not found'}, status=400)
-    # Example template content
-    template = get_template('home.html')
-    template_content = template.template.source
-    template = Template(template_content)
-    context = Context({'user': user})
-
-    rendered_template = template.render(context)
-
-    return HttpResponse(rendered_template, content_type='text/plain')
-
-
-def register_form(request):
-    # Example template content
-    template = get_template('register.html')
-    template_content = template.template.source
-    template = Template(template_content)
-    context = Context({'user': None})
-
-    rendered_template = template.render(context)
-
-    return HttpResponse(rendered_template, content_type='text/plain')
-
-
-@never_cache
-@api_view(['GET'])
-def intra_link(request):
-    forty_two_url = settings.FORTY_TWO_URL
-    return JsonResponse({'forty_two_url': forty_two_url})

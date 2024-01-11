@@ -1,6 +1,6 @@
 function handle42Auth() {
 	const timestamp = new Date().getTime();
-	fetch('http://localhost:8000/42_intra_link', {
+	fetch('http://localhost:8000/api/42_intra_link', {
 		method: 'GET',
 		headers: {
 			'Cache-Control': 'no-cache',
@@ -78,7 +78,7 @@ async function fetchBackendData(route) {
 				if (response.status === 401 || response.status === 403) {
 					alert('Unauthorized');
 				} else {
-					alert(`Network response was not ok ${response.status}`);
+					// alert(`Network response was not ok ${response.status}`);
 				}
 			}
 			return response.text();
@@ -125,7 +125,7 @@ function handleToken() {
 
 function getData() {
 	let userData;
-	fetch('http://localhost:8000/get_user_data/', {
+	fetch('http://localhost:8000/api/get_user_data/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('token') ? localStorage.getItem('token') : localStorage.getItem('access_token')}`,
