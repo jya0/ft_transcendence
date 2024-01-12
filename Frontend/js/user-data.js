@@ -50,42 +50,6 @@ function handleLogout() {
 		});
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-	const dynamicLinks = document.querySelectorAll('.dynamic-link');
-
-	dynamicLinks.forEach(link => {
-		link.addEventListener('click', async event => {
-			event.preventDefault();
-			const route = event.target.getAttribute('href');
-			console.log('Fetching data from:', route);
-			await fetchBackendData(`http://localhost:8000/api/${route}/`)
-				.then(data => {
-					console.log('Data fetched:', data);
-					updateDataContainer(data);
-				})
-		});
-	});
-});
-
-async function fetchBackendData(route) {
-
-	return await fetch(route, {
-		headers: {
-			'Authorization': `Bearer ${localStorage.getItem('token') ? localStorage.getItem('token') : localStorage.getItem('access_token')}`,
-		},
-	})
-		.then(response => {
-			if (!response.ok) {
-				if (response.status === 401 || response.status === 403) {
-					alert('Unauthorized');
-				} else {
-					// alert(`Network response was not ok ${response.status}`);
-				}
-			}
-			return response.text();
-		});
-}
-
 function updateDataContainer(data) {
 	// Update the UI with the fetched data
 	const dataContainer = document.getElementById('data-container');
