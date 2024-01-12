@@ -1,7 +1,6 @@
 
 all:
 	@sh ./script.sh
-	@mv sample.env .env
 	@docker-compose -f ./docker-compose.yml up
 
 build:

@@ -10,3 +10,9 @@ USER_IP=$(ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | hea
 sed -i '' "s|HOST_IP|$USER_IP|g" .env
 
 echo "changed "HOST_IP=$GREEN$USER_IP"$RESET"
+
+if [ -f sample.env ]; then
+	mv sample.env .env
+fi
+
+
