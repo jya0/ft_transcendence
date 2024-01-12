@@ -17,35 +17,30 @@ const urlRoutes = {
 		title: "404 | " + urlPageTitle,
 		description: "Page not found",
 	},
-	"/": {
-		template: "/components/index.html",
-		title: "Login | " + urlPageTitle,
-		description: "Login Page",
-	},
 	"/desktop": {
-		template: "/components/about.html",
+		template: "/components/desktop.html",
 		title: "About Us | " + urlPageTitle,
-		description: "This is the about page",
+		description: "This is the desktop page",
 	},
-	"/profile": {
-		template: "/components/contact.html",
+	"/myprofile": {
+		template: "/components/myprofile.html",
 		title: "Contact Us | " + urlPageTitle,
-		description: "This is the contact page",
+		description: "This is the myprofile page",
 	},
 	"/play": {
-		template: `/components/home.html`,
+		template: `/components/play.html`,
 		title: "Contact Us | " + urlPageTitle,
-		description: "This is the contact page",
+		description: "This is the play page",
 	},
     "/users": {
-		template: `/components/home.html`,
+		template: `/components/users.html`,
 		title: "Contact Us | " + urlPageTitle,
-		description: "This is the contact page",
+		description: "This is the users page",
 	},
-    "/profile/user": {
-		template: "/components/contact.html",
+    "/profile": {
+		template: "/components/playerprofile.html",
 		title: "Contact Us | " + urlPageTitle,
-		description: "This is the contact page",
+		description: "This is the profile page",
 	},
 };
 
@@ -54,7 +49,7 @@ const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
 	// window.history.pushState(state, unused, target link);
-	if (localStorage.getItem('access_token'))
+	// if (localStorage.getItem('access_token'))
 		window.history.pushState({}, "", event.target.href);
 	urlLocationHandler();
 };
@@ -67,9 +62,9 @@ const urlLocationHandler = async () => {
 	if (location.length == 0) {
 		location = "/";
 	}
-	if (!localStorage.getItem('access_token')) {
-		location = '/home';
-	}
+	// if (!localStorage.getItem('access_token')) {
+	// 	location = '/home';
+	// }
 	// get the route object from the urlRoutes object
 	const route = urlRoutes[location] || urlRoutes["404"];
 	// get the html from the template
@@ -94,7 +89,7 @@ urlLocationHandler();
 
 const urlParams = new URLSearchParams(window.location.search);
 const token = urlParams.get('token');
-
+console.log(token)
 if (token) {
 	console.log('Token:', token);
 	localStorage.setItem('access_token', token);

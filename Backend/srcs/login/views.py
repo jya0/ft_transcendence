@@ -74,6 +74,7 @@ def auth(request):
         except:
             response = JsonResponse(
                 {'message': 'Failed to fetch user data'}, status=400)
+            return response 
             return HttpResponseRedirect("http://localhost:8090/")
         if username:
             if not UserProfile.objects.filter(username=username).exists():
@@ -101,15 +102,18 @@ def auth(request):
 
             auth_login(request, user_profile)
             access_token = get_user_token(request, username, username)
+            print("---------> token", access_token)
             response = HttpResponseRedirect(
                 f"http://localhost:8090/?token={access_token}")
             return response
 
         response = JsonResponse(
             {'message': 'Failed to fetch user data'}, status=400)
+        return response 
         return HttpResponseRedirect("http://localhost:8090/")
     else:
         response = JsonResponse({'message': 'Invalid code'}, status=400)
+        return response 
         return HttpResponseRedirect("http://localhost:8090/")
     
 def twoFactor(request):
