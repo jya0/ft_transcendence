@@ -17,6 +17,11 @@ const urlRoutes = {
 		title: "404 | " + urlPageTitle,
 		description: "Page not found",
 	},
+    "/": {
+		template: "components/index.html",
+		title: "login | " + urlPageTitle,
+		description: "This is the desktop page",
+	},
 	"/desktop": {
 		template: "/components/desktop.html",
 		title: "About Us | " + urlPageTitle,
