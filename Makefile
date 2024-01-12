@@ -1,20 +1,20 @@
 
 all:
-	@sh ./host_ip.sh
+	@sh ./script.sh
 	@docker-compose -f ./docker-compose.yml up
 
 build:
-	@sh ./host_ip.sh
+	@sh ./script.sh
 	@docker-compose -f ./docker-compose.yml up -d --build
 
 only:
-	@sh ./host_ip.sh
+	@sh ./script.sh
 	@docker-compose -f ./docker-compose-without-pdAdmin.yml up --build
 	
 down:
 	@docker-compose -f ./docker-compose.yml down
 
-up:
+up:x
 	@docker-compose -f ./docker-compose.yml up -d
 
 re: fclean all

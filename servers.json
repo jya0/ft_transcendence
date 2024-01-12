@@ -1,0 +1,13 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "db server",
+            "Group": "server group 1",
+            "Port": 5432,
+            "Username": "django",
+            "Host": "postgresdb",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+        }
+    }
+}

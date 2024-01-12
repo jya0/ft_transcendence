@@ -1,39 +1,60 @@
 version: '3.8'
 
 services:
-  web:
+  nginx:
+    container_name: Frontend
+    image: nginx
+    env_file:
+      - ./.env
+    restart: on-failure
+    ports:
+      - 8090:8090
+    volumes:
+      - ./Frontend:/usr/share/nginx/html
+      - ./Frontend/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    depends_on:
+      - app
+    networks:
+      - backend
+
+  app:
     build:
       context: ./Backend
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./Backend:/app/
+      - ./Backend/srcs:/app/
     ports:
       - 8000:8000
     env_file:
       - ./.env
+    restart: on-failure
     depends_on:
-      - db
+      - postgresdb
     networks:
-      - backend_network  
+      - backend
 
-  # postgresql container
-  db:
-    image: postgres:15
+  postgresdb:
+    container_name: postgresdb
+    image: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
+    restart: on-failure
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_USER=${SQL_USER}
       - POSTGRES_PASSWORD=${SQL_PASSWORD}
       - POSTGRES_DB=${SQL_DATABASE}
     networks:
-      - backend_network  
-
-  # has to be removed in production...
-  db-admin: 
+      - backend
+    
+  pgadmin:
+    container_name: pgadmin
     image: dpage/pgadmin4
     volumes:
+      - ./servers.json:/pgadmin4/servers.json
       - pgadmin_data:/var/lib/pgadmin/
     env_file:
       - ./.env
@@ -41,12 +62,12 @@ services:
       - PGADMIN_DEFAULT_EMAIL=user@example.com # user name 
       - PGADMIN_DEFAULT_PASSWORD=${SQL_PASSWORD} # pass django
     ports:
-      - 80:80 
+      - "8888:80"
     networks:
-      - backend_network
+      - backend
 
 networks:
-  backend_network:
+  backend:
     driver: bridge
 
 volumes:
