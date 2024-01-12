@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  line-height: normal;
+}
+
+:root {
+  /* fonts */
+  --heading-1: "Argent Pixel CF";
+  --font-pp-neuebit: "PP NeueBit";
+
+  /* font sizes */
+  --font-size-341xl: 360px;
+  --heading-1-size: 57.3px;
+
+  /* Colors */
+  --color-gainsboro: #e1e0df;
+  --color-gray-100: #080b0c;
+}
