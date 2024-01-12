@@ -19,21 +19,31 @@ const urlRoutes = {
 	},
 	"/": {
 		template: "/components/index.html",
-		title: "Home | " + urlPageTitle,
-		description: "This is the home page",
+		title: "Login | " + urlPageTitle,
+		description: "Login Page",
 	},
-	"/about": {
+	"/desktop": {
 		template: "/components/about.html",
 		title: "About Us | " + urlPageTitle,
 		description: "This is the about page",
 	},
-	"/contact": {
+	"/profile": {
 		template: "/components/contact.html",
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the contact page",
 	},
-	"/home": {
+	"/play": {
 		template: `/components/home.html`,
+		title: "Contact Us | " + urlPageTitle,
+		description: "This is the contact page",
+	},
+    "/users": {
+		template: `/components/home.html`,
+		title: "Contact Us | " + urlPageTitle,
+		description: "This is the contact page",
+	},
+    "/profile/user": {
+		template: "/components/contact.html",
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the contact page",
 	},
