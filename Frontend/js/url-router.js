@@ -17,10 +17,10 @@ const urlRoutes = {
 		title: "404 | " + urlPageTitle,
 		description: "Page not found",
 	},
-    "/": {
-		template: "components/index.html",
+	"/": {
+		template: "components/login.html",
 		title: "login | " + urlPageTitle,
-		description: "This is the desktop page",
+		description: "This is the login page",
 	},
 	"/desktop": {
 		template: "/components/desktop.html",
@@ -37,12 +37,12 @@ const urlRoutes = {
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the play page",
 	},
-    "/users": {
+	"/users": {
 		template: `/components/users.html`,
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the users page",
 	},
-    "/profile": {
+	"/profile": {
 		template: "/components/playerprofile.html",
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the profile page",
@@ -55,7 +55,7 @@ const urlRoute = (event) => {
 	event.preventDefault();
 	// window.history.pushState(state, unused, target link);
 	// if (localStorage.getItem('access_token'))
-		window.history.pushState({}, "", event.target.href);
+	window.history.pushState({}, "", event.target.href);
 	urlLocationHandler();
 };
 
@@ -64,19 +64,40 @@ const urlLocationHandler = async () => {
 	let location = window.location.pathname; // get the url path
 	console.log("location:", location);
 	// if the path length is 0, set it to primary page route
+	if (location[location.length - 1] === '/') {
+		location = location.slice(0, location.length - 1);
+	}
+
 	if (location.length == 0) {
 		location = "/";
 	}
-	// if (!localStorage.getItem('access_token')) {
-	// 	location = '/home';
-	// }
 	// get the route object from the urlRoutes object
+	if (location === '/' && localStorage.getItem('access_token')) {
+		location = '/desktop';
+	}
 	const route = urlRoutes[location] || urlRoutes["404"];
 	// get the html from the template
 	const html = await fetch(route.template).then((response) => response.text());
 	// set the content of the content div to the html
+	if (location === '/') {
+		document.getElementById("main-nav").remove();
+		// document.getElementById("main-nav").style.display = "none";
+		// document.getElementById("backend-buttons").remove();
+	}
 	document.getElementById("content").innerHTML = html;
 	document.getElementById("data-container").innerHTML = '';
+
+	// Create a function to insert CSS files into the HTML document
+	const insertCSS = (filePath) => {
+		const link = document.createElement("link");
+		link.rel = "stylesheet";
+		link.href = filePath;
+		document.head.appendChild(link);
+	};
+
+	// Call the insertCSS function with the path of your CSS files
+	insertCSS("/assets/css/global.csss");
+	insertCSS("/assets/css/index.css");
 	// set the title of the document to the title of the route
 	document.title = route.title;
 	// set the description of the document to the description of the route
@@ -119,7 +140,7 @@ if (token) {
 				return;
 			}
 			console.log("User data:", data);
-			
+
 			localStorage.setItem('username', userData['username']);
 		})
 }
