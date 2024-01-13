@@ -1,7 +1,25 @@
-.b {
+/* .b {
   position: relative;
+} */
+
+html,
+body {
+  height: 100%;
+  margin: 0;
 }
-.button-primary {
+
+body {
+  background-image: url(../public/cover.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top;
+}
+
+
+.button-primary,
+button {
+  cursor: pointer;
+  font: white;
   border-radius: 4px;
   background-color: rgba(8, 11, 12, 0.8);
   box-shadow: -10px 10px 4px rgba(0, 0, 0, 0.25);
@@ -12,26 +30,31 @@
   padding: 8px 20px;
   font-size: 32px;
 }
+
 .parent,
 .unlock-pongos-parent {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .unlock-pongos-parent {
   justify-content: flex-start;
   gap: 20px;
   font-size: var(--heading-1-size);
   font-family: var(--heading-1);
 }
+
 .parent {
   justify-content: center;
 }
+
 .frame,
 .frame1 {
   width: 427px;
   overflow: hidden;
 }
+
 .frame1 {
   height: 900px;
   flex-shrink: 0;
@@ -40,6 +63,7 @@
   align-items: center;
   justify-content: flex-end;
 }
+
 .frame {
   position: absolute;
   top: -260px;
@@ -50,6 +74,7 @@
   color: var(--color-gainsboro);
   font-family: var(--font-pp-neuebit);
 }
+
 .frame,
 .frame2,
 .wrapper {
@@ -57,10 +82,12 @@
   flex-direction: column;
   align-items: center;
 }
+
 .wrapper {
   justify-content: center;
   padding: 10px;
 }
+
 .frame2 {
   position: absolute;
   top: -260px;
@@ -70,27 +97,32 @@
   overflow: hidden;
   justify-content: flex-start;
 }
+
 .div1,
 .div2 {
   position: relative;
   display: inline-block;
   flex-shrink: 0;
 }
+
 .div1 {
   width: 270px;
   height: 302px;
 }
+
 .div2 {
   font-size: 200px;
   color: var(--color-gainsboro);
   width: 125px;
 }
+
 .group {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: flex-start;
 }
+
 .frame3,
 .frame4 {
   width: 395px;
@@ -99,11 +131,13 @@
   flex-direction: column;
   align-items: center;
 }
+
 .frame4 {
   height: 1284px;
   flex-shrink: 0;
   justify-content: flex-end;
 }
+
 .frame3 {
   position: absolute;
   top: -260px;
@@ -111,17 +145,89 @@
   height: 1544px;
   justify-content: flex-start;
 }
-.login-hello {
+
+.container {
   position: relative;
   width: 100%;
   height: 100vh;
   overflow: hidden;
-  background-image: url(./public/14579711-5488082-1@2x.png);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: top;
   text-align: left;
-  font-size: var(--font-size-341xl);
+  font-size: var(--font-size-151xl);
   color: var(--color-gray-100);
   font-family: var(--heading-1);
+}
+
+
+
+
+#unlock-pongos-parent {
+  position: relative;
+  width: 50%;
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+}
+
+.b,
+.password {
+  font-size: 32px;
+
+}
+
+.password {
+  color: white;
+}
+
+a {
+  color: white;
+}
+
+#main-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 16px;
+
+  /* Adjust the background color if needed */
+}
+
+.card {
+  background-color: transparent;
+}
+
+#card-nav,
+card {
+  width: 150px;
+  height: 200px;
+  background-color: none;
+}
+
+nav a {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  /* Adjust the text color */
+  transition: background-color 0.3s;
+}
+
+nav a:hover {
+  background-color: transparent;
+  /* Adjust the background color on hover */
+}
+
+#backend-buttons {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  /* Ensure it's above the navbar */
+}
+
+.col-md-8 {
+  margin-left: 180px;
+  /* Adjust the margin to make space for the fixed navbar */
 }
