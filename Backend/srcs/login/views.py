@@ -26,6 +26,7 @@ def logout(request):
         return JsonResponse({'message': 'Logged out successfully'}, status=200)
     return JsonResponse({'message': 'already logged out'}, status=200)
 
+
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -46,6 +47,7 @@ def login(request):
         else:
             messages.info(request, 'Username or password is incorrect')
     return redirect('/')
+
 
 @never_cache
 def auth(request):
@@ -74,7 +76,7 @@ def auth(request):
         except:
             response = JsonResponse(
                 {'message': 'Failed to fetch user data'}, status=400)
-            return response 
+            return response
             return HttpResponseRedirect("http://localhost:8090/")
         if username:
             if not UserProfile.objects.filter(username=username).exists():
@@ -104,18 +106,19 @@ def auth(request):
             access_token = get_user_token(request, username, username)
             print("---------> token", access_token)
             response = HttpResponseRedirect(
-                f"http://localhost:8090/?token={access_token}")
+                f"http://localhost:8090/desktop?token={access_token}")
             return response
 
         response = JsonResponse(
             {'message': 'Failed to fetch user data'}, status=400)
-        return response 
+        return response
         return HttpResponseRedirect("http://localhost:8090/")
     else:
         response = JsonResponse({'message': 'Invalid code'}, status=400)
-        return response 
+        return response
         return HttpResponseRedirect("http://localhost:8090/")
-    
+
+
 def twoFactor(request):
     if not request.user.is_authenticated:
         return redirect('/')
@@ -141,6 +144,7 @@ def twoFactor(request):
             else:
                 messages.info(request, "Invalid OTP")
     return render(request, "2fa.html", {'user': user})
+
 
 def enable_or_disable_2fa(request):
     if not request.user.is_authenticated:
