@@ -231,3 +231,20 @@ nav a:hover {
   margin-left: 180px;
   /* Adjust the margin to make space for the fixed navbar */
 }
+
+#startButton {
+  position: fixed;
+  top: 80%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+}
+
+canvas {
+  position: absolute;
+  top: 20%;
+  left: 0%;
+  z-index: -1;
+  width: 100%;
+  height: 50%;
+}

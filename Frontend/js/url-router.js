@@ -1,4 +1,5 @@
 const urlPageTitle = "Pong Os";
+import { loadGame } from './pong.js';
 
 // create document click that watches the nav links only
 document.addEventListener("click", (e) => {
@@ -13,43 +14,35 @@ document.addEventListener("click", (e) => {
 // create an object that maps the url to the template, title, and description
 const urlRoutes = {
 	404: {
-		template: "/components/404.html",
 		title: "404 | " + urlPageTitle,
 		description: "Page not found",
 	},
 	"/": {
-		template: "components/login.html",
 		title: "login | " + urlPageTitle,
 		description: "This is the login page",
 	},
 	"/desktop": {
-		template: "/components/desktop.html",
 		title: "About Us | " + urlPageTitle,
 		description: "This is the desktop page",
 	},
 	"/myprofile": {
-		template: "/components/myprofile.html",
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the myprofile page",
 	},
 	"/play": {
-		template: `/components/play.html`,
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the play page",
 	},
 	"/users": {
-		template: `/components/users.html`,
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the users page",
 	},
 	"/profile": {
-		template: "/components/playerprofile.html",
 		title: "Contact Us | " + urlPageTitle,
 		description: "This is the profile page",
 	},
 };
 
-// create a function that watches the url and calls the urlLocationHandler
 const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
@@ -59,11 +52,21 @@ const urlRoute = (event) => {
 	urlLocationHandler();
 };
 
-// create a function that handles the url location
-const urlLocationHandler = async () => {
+const insertCSS = (filePath) => {
+	const link = document.createElement("link");
+	link.rel = "stylesheet";
+	link.href = filePath;
+	document.head.appendChild(link);
+};
+
+insertCSS("/assets/css/global.csss");
+insertCSS("/assets/css/index.css");
+
+const urlLocationHandler = () => {
+	tokenHandler();
+	document.getElementById("content").innerHTML = ``;
 	let location = window.location.pathname; // get the url path
 	console.log("location:", location);
-	// if the path length is 0, set it to primary page route
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
 	}
@@ -71,39 +74,81 @@ const urlLocationHandler = async () => {
 	if (location.length == 0) {
 		location = "/";
 	}
-	// get the route object from the urlRoutes object
 	if (location === '/' && localStorage.getItem('access_token')) {
+		console.log('location:', 'user is logged in');
 		location = '/desktop';
 	}
+	if (!localStorage.getItem('access_token'))
+		location = '/';
 	const route = urlRoutes[location] || urlRoutes["404"];
-	// get the html from the template
-	const html = await fetch(route.template).then((response) => response.text());
-	// set the content of the content div to the html
+	// const html = await fetch(route.template).then((response) => response.text());
+
 	if (location === '/') {
 		document.getElementById("main-nav").remove();
-		// document.getElementById("main-nav").style.display = "none";
-		// document.getElementById("backend-buttons").remove();
+		document.getElementById("content").innerHTML = `<div class="login-hello">
+														<div class="frame">
+														  <div class="frame1">
+															<div class="parent">
+															  <b class="smile">☺</b>
+															  <div class="unlock-pongos-parent">
+																<div class="b">Unlock PongOS</div>
+																<div class="button-primary" onClick="handle42Auth()">
+																  <div class="password">Password ...</div>
+																</div>
+															  </div>
+															</div>
+														  </div>
+														</div>
+														<div class="frame2">
+														  <div class="wrapper">
+															<div class="b">—</div>
+														  </div>
+														</div>
+														<div class="frame3">
+														  <div class="frame4">
+															<div class="group">
+															  <div class="div1">—</div>
+															  <div class="div2">•</div>
+															</div>
+														  </div>
+														</div>
+	  													</div>`;
 	}
-	document.getElementById("content").innerHTML = html;
-	document.getElementById("data-container").innerHTML = '';
+	if (location === '/play') {
+		if (!document.getElementById("pongCanvas")) {
+			const canvasButton = document.createElement('button');
+			const canvasElement = document.createElement('canvas');
+			document.getElementById('content').appendChild(canvasButton);
+			document.getElementById('content').appendChild(canvasElement);
+			console.log('canvasButton:', canvasButton);
+			canvasButton.id = 'startButton';
+			canvasButton.innerHTML = 'Start Game';
+			canvasElement.id = 'pongCanvas';
+			loadGame();
+		}
+		document.title = route.title;
+		return;
+	}
+	else if (location === '/desktop') {
+		document.getElementById("content").innerHTML = `<h1>Welcome to ${location}</h1>`;
+	}
+	else if (location === '/myprofile') {
+		document.getElementById("content").innerHTML = `<h1>Welcome to ${location}</h1>
+														<button id="logout" class="btn btn-primary" 
+														onClick="handleLogout()">Logout</button>`;
+	}
+	else if (location === '/profile') {
+		document.getElementById("content").innerHTML = `<h1>Welcome to player ${location}</h1>`;
+	}
+	if (document.getElementById("pongCanvas")) {
+		console.log('pongCanvas exists');
+		const canvasElement = document.getElementById("pongCanvas");
+		canvasElement.remove();
+		const canvasButton = document.getElementById('startButton');
+		canvasButton.remove();
+	}
 
-	// Create a function to insert CSS files into the HTML document
-	const insertCSS = (filePath) => {
-		const link = document.createElement("link");
-		link.rel = "stylesheet";
-		link.href = filePath;
-		document.head.appendChild(link);
-	};
-
-	// Call the insertCSS function with the path of your CSS files
-	insertCSS("/assets/css/global.csss");
-	insertCSS("/assets/css/index.css");
-	// set the title of the document to the title of the route
 	document.title = route.title;
-	// set the description of the document to the description of the route
-	document
-		.querySelector('meta[name="description"]')
-		.setAttribute("content", route.description);
 };
 
 // add an event listener to the window that watches for url changes
@@ -113,40 +158,42 @@ window.route = urlRoute;
 // call the urlLocationHandler function to handle the initial url
 urlLocationHandler();
 
-const urlParams = new URLSearchParams(window.location.search);
-const token = urlParams.get('token');
-console.log(token)
-if (token) {
-	console.log('Token:', token);
-	localStorage.setItem('access_token', token);
-	let userData;
-	fetch('http://localhost:8000/api/get_user_data/', {
-		method: 'GET',
-		headers: {
-			'Authorization': `Bearer ${token}`,
-			'Content-Type': 'application/json'
-		},
-	})
-		.then(response => {
-			if (!response.ok) {
-				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			}
-			return response.json();
+function tokenHandler() {
+	const urlParams = new URLSearchParams(window.location.search);
+	const token = urlParams.get('token');
+	console.log(token)
+	if (token) {
+		console.log('Token:', token);
+		localStorage.setItem('access_token', token);
+		let userData;
+		fetch('http://localhost:8000/api/get_user_data/', {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${token}`,
+				'Content-Type': 'application/json'
+			},
 		})
-		.then(data => {
-			userData = data[0];
-			if (!userData) {
-				console.log("No user data");
-				return;
-			}
-			console.log("User data:", data);
+			.then(response => {
+				if (!response.ok) {
+					response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then(data => {
+				userData = data[0];
+				if (!userData) {
+					console.log("No user data");
+					return;
+				}
+				console.log("User data:", data);
 
-			localStorage.setItem('username', userData['username']);
-		})
+				localStorage.setItem('username', userData['username']);
+			})
+	}
+
+	const url = new URL(window.location.href);
+	url.search = '';
+	const mainUrl = url.toString();
+
+	history.replaceState({}, '', mainUrl);
 }
-
-const url = new URL(window.location.href);
-url.search = '';
-const mainUrl = url.toString();
-
-history.replaceState({}, '', mainUrl);
