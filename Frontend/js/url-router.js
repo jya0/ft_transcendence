@@ -23,19 +23,19 @@ const urlRoutes = {
 		description: "This is the desktop page",
 	},
 	"/myprofile": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "myprofile | " + urlPageTitle,
 		description: "This is the myprofile page",
 	},
 	"/play": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "play | " + urlPageTitle,
 		description: "This is the play page",
 	},
 	"/users": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "users | " + urlPageTitle,
 		description: "This is the users page",
 	},
 	"/profile": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "profile | " + urlPageTitle,
 		description: "This is the profile page",
 	},
 };
@@ -62,7 +62,7 @@ const insertCSS = (filePath) => {
 
 function setMainWindowframe() {
 	insertOrCreateContent();
-	document.getElementById("content").innerHTML = `<div class="window-frame">
+	document.getElementById("content").innerHTML = `<div class="window-frame" id="main-window">
 	<div class="top-bar">
 	  <img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
 
@@ -96,38 +96,12 @@ const urlLocationHandler = () => {
 	if (!localStorage.getItem('access_token'))
 		location = '/';
 	const route = urlRoutes[location] || urlRoutes["404"];
-	// const html = await fetch(route.template).then((response) => response.text());
 
 	if (location === '/') {
 		document.getElementById("navbar").remove();
-		document.getElementById("content").innerHTML = `<div class="login-hello">
-														<div class="frame">
-														  <div class="frame1">
-															<div class="parent">
-															  <b class="smile">☺</b>
-															  <div class="unlock-pongos-parent">
-																<div class="b">Unlock PongOS</div>
-																<div class="button-primary" onClick="handle42Auth()">
-																  <div class="password">Login ...</div>
-																</div>
-															  </div>
-															</div>
-														  </div>
-														</div>
-														<div class="frame2">
-														  <div class="wrapper">
-															<div class="b">—</div>
-														  </div>
-														</div>
-														<div class="frame3">
-														  <div class="frame4">
-															<div class="group">
-															  <div class="div1">—</div>
-															  <div class="div2">•</div>
-															</div>
-														  </div>
-														</div>
-	  													</div>`;
+		fetch('/components/login.html').then(response => response.text()).then(data => {
+			document.getElementById("content").innerHTML = data;
+		});
 	}
 	if (location === '/play') {
 		setMainWindowframe();
@@ -155,11 +129,14 @@ const urlLocationHandler = () => {
 														onClick="handleLogout()">Logout</button>`;
 	}
 	else if (location === '/profile') {
-		document.getElementById("content").innerHTML = `<h1>Welcome to player ${location}</h1>`;
 		setMainWindowframe();
+		fetch('/components/myprofile.html').then(response => response.text()).then(data => {
+			document.getElementsByClassName("window")[0].innerHTML = data;
+		});
 	}
 	else if (location === '/users') {
 		setMainWindowframe();
+		document.getElementById("main-window").innerHTML += `yet to come`;
 	}
 	if (document.getElementById("pongCanvas")) {
 		console.log('pongCanvas exists');
