@@ -10,6 +10,12 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top;
+  text-decoration: none;
+
+  margin: 0;
+  /* reset margin to ensure full page coverage */
+  padding: 0;
+  /* reset padding to ensure full page coverage */
 }
 
 /* ------------- overrride color here ------------ */
@@ -180,41 +186,11 @@ button {
 }
 
 a {
+  text-decoration: none;
   color: white;
 }
 
-#main-nav {
-  position: fixed;
-  top: 0;
-  right: 0;
-  height: 10%;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  font-size: 16px;
-  background-color: transparent;
-}
 
-
-#card-nav,
-.card {
-  width: 150px;
-  height: 200px;
-  background-color: transparent;
-}
-
-nav a {
-  display: block;
-  padding: 10px;
-  text-decoration: none;
-  /* Adjust the text color */
-  transition: background-color 0.3s;
-}
-
-nav a:hover {
-  background-color: transparent;
-  /* Adjust the background color on hover */
-}
 
 #backend-buttons {
   position: fixed;

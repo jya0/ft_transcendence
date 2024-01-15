@@ -8,8 +8,7 @@ export const loadGame = () => {
 	canvas.width = window.innerWidth / 2;
 	canvas.height = window.innerWidth / 2;
 
-	const paddle = { width: 10, height: 100, speed: 4 };
-	console.log(Math.random());
+	const paddle = { width: 10, height: 300, speed: 8 };
 	const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
 	const score = { left: 0, right: 0 };
 	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
