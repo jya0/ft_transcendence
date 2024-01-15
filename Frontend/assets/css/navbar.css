@@ -1,0 +1,74 @@
+.group-icon {
+  width: 40px;
+  height: 32.4px;
+}
+
+.group-icon,
+.home1 {
+  position: relative;
+}
+
+.home {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--gap-8xs);
+}
+
+.home>* {
+  align-self: flex-start;
+}
+
+b {
+  text-decoration: none;
+  font-style: italic;
+  color: white;
+
+}
+
+a {
+  text-decoration: none;
+}
+
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-8xs);
+}
+
+.group-icon2,
+.pong {
+  position: relative;
+  width: 40px;
+  height: 40px;
+}
+
+.pong {
+  display: inline-block;
+  width: 30px;
+  height: 11px;
+  flex-shrink: 0;
+}
+
+#navbar {
+  position: fixed;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-3xl);
+  flex-wrap: wrap;
+  top: 20%;
+  right: 5%;
+  border-radius: var(--br-5xs);
+  background-color: rgba(0, 0, 0, 0.67);
+  height: 551px;
+  overflow: hidden;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  gap: var(--gap-21xl);
+}

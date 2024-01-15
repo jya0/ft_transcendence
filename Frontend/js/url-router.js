@@ -2,11 +2,8 @@ const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
 
 // create document click that watches the nav links only
-document.addEventListener("click", (e) => {
+document.querySelector('#navbar').addEventListener("click", (e) => {
 	const { target } = e;
-	if (!target.matches("nav a")) {
-		return;
-	}
 	e.preventDefault();
 	urlRoute();
 });
@@ -46,9 +43,10 @@ const urlRoutes = {
 const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
-	// window.history.pushState(state, unused, target link);
-	// if (localStorage.getItem('access_token'))
-	window.history.pushState({}, "", event.target.href);
+	let href = event.target.href;
+	if (event.target.tagName !== 'A')
+		href = event.target.parentElement.href;
+	window.history.pushState({}, "", href);
 	urlLocationHandler();
 };
 
@@ -63,6 +61,7 @@ const insertCSS = (filePath) => {
 // insertCSS("/assets/css/index.css");
 
 function setMainWindowframe() {
+	insertOrCreateContent();
 	document.getElementById("content").innerHTML = `<div class="window-frame">
 	<div class="top-bar">
 	  <img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
@@ -79,6 +78,7 @@ function setMainWindowframe() {
 
 const urlLocationHandler = () => {
 	tokenHandler();
+	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	let location = window.location.pathname; // get the url path
 	console.log("location:", location);
@@ -99,7 +99,7 @@ const urlLocationHandler = () => {
 	// const html = await fetch(route.template).then((response) => response.text());
 
 	if (location === '/') {
-		document.getElementById("main-nav").remove();
+		document.getElementById("navbar").remove();
 		document.getElementById("content").innerHTML = `<div class="login-hello">
 														<div class="frame">
 														  <div class="frame1">
@@ -159,18 +159,7 @@ const urlLocationHandler = () => {
 		setMainWindowframe();
 	}
 	else if (location === '/users') {
-		document.getElementById("content").innerHTML = `<div class="window-frame">
-        <div class="top-bar">
-          <img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
-
-          <div class="options">
-            <img class="vector-icon" alt="" src="./assets/public/vector.svg" />
-
-            <img class="dot-grid-icon" alt="" src="./assets/public/dot-grid.svg" />
-          </div>
-          </div>
-        	<div class="window"></div>
-        </div>`;
+		setMainWindowframe();
 	}
 	if (document.getElementById("pongCanvas")) {
 		console.log('pongCanvas exists');
@@ -228,4 +217,13 @@ function tokenHandler() {
 	const mainUrl = url.toString();
 
 	history.replaceState({}, '', mainUrl);
+}
+
+
+function insertOrCreateContent() {
+	if (!document.getElementById("content")) {
+		const content = document.createElement('div');
+		content.id = 'content';
+		document.body.appendChild(content);
+	}
 }
