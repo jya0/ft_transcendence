@@ -59,8 +59,23 @@ const insertCSS = (filePath) => {
 	document.head.appendChild(link);
 };
 
-insertCSS("/assets/css/global.csss");
-insertCSS("/assets/css/index.css");
+// insertCSS("/assets/css/global.css");
+// insertCSS("/assets/css/index.css");
+
+function setMainWindowframe() {
+	document.getElementById("content").innerHTML = `<div class="window-frame">
+	<div class="top-bar">
+	  <img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
+
+	  <div class="options">
+		<img class="vector-icon" alt="" src="./assets/public/vector.svg" />
+
+		<img class="dot-grid-icon" alt="" src="./assets/public/dot-grid.svg" />
+	  </div>
+	  </div>
+		<div class="window"></div>
+	</div>`;
+}
 
 const urlLocationHandler = () => {
 	tokenHandler();
@@ -93,7 +108,7 @@ const urlLocationHandler = () => {
 															  <div class="unlock-pongos-parent">
 																<div class="b">Unlock PongOS</div>
 																<div class="button-primary" onClick="handle42Auth()">
-																  <div class="password">Password ...</div>
+																  <div class="password">Login ...</div>
 																</div>
 															  </div>
 															</div>
@@ -115,11 +130,12 @@ const urlLocationHandler = () => {
 	  													</div>`;
 	}
 	if (location === '/play') {
+		setMainWindowframe();
 		if (!document.getElementById("pongCanvas")) {
 			const canvasButton = document.createElement('button');
 			const canvasElement = document.createElement('canvas');
-			document.getElementById('content').appendChild(canvasButton);
-			document.getElementById('content').appendChild(canvasElement);
+			document.getElementsByClassName('window')[0].appendChild(canvasButton);
+			document.getElementsByClassName('window')[0].appendChild(canvasElement);
 			console.log('canvasButton:', canvasButton);
 			canvasButton.id = 'startButton';
 			canvasButton.innerHTML = 'Start Game';
@@ -130,15 +146,31 @@ const urlLocationHandler = () => {
 		return;
 	}
 	else if (location === '/desktop') {
-		document.getElementById("content").innerHTML = `<h1>Welcome to ${location}</h1>`;
+		setMainWindowframe();
 	}
 	else if (location === '/myprofile') {
+		setMainWindowframe();
 		document.getElementById("content").innerHTML = `<h1>Welcome to ${location}</h1>
 														<button id="logout" class="btn btn-primary" 
 														onClick="handleLogout()">Logout</button>`;
 	}
 	else if (location === '/profile') {
 		document.getElementById("content").innerHTML = `<h1>Welcome to player ${location}</h1>`;
+		setMainWindowframe();
+	}
+	else if (location === '/users') {
+		document.getElementById("content").innerHTML = `<div class="window-frame">
+        <div class="top-bar">
+          <img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
+
+          <div class="options">
+            <img class="vector-icon" alt="" src="./assets/public/vector.svg" />
+
+            <img class="dot-grid-icon" alt="" src="./assets/public/dot-grid.svg" />
+          </div>
+          </div>
+        	<div class="window"></div>
+        </div>`;
 	}
 	if (document.getElementById("pongCanvas")) {
 		console.log('pongCanvas exists');
