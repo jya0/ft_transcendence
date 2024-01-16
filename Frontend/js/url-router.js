@@ -149,13 +149,10 @@ const urlLocationHandler = async () => {
 			let inputValue = input.value;
 
 			if (!inputValue) {
-
-
-				insertAllUsers(users, false);
+				insertAllUsers(users);
 				return;
 			}
-			// users = users.filter((user) => user.username.startsWith(inputValue));
-			insertAllUsers(users.filter((user) => user.username.startsWith(inputValue)), true);
+			insertAllUsers(users.filter((user) => user.username.startsWith(inputValue)));
 		});
 	}
 	if (document.getElementById("pongCanvas")) {
@@ -201,8 +198,6 @@ function tokenHandler() {
 				if (!userData) {
 					return;
 				}
-
-
 				localStorage.setItem('username', userData['username']);
 			})
 	}
@@ -222,7 +217,6 @@ function insertOrCreateContent() {
 		document.body.appendChild(content);
 	}
 }
-
 
 async function getAllUsers(override) {
 	let location = window.location.pathname;
@@ -246,12 +240,11 @@ async function getAllUsers(override) {
 	}).then(data => {
 		users = data.filter(user => user.username !== "admin");
 		return users;
-		insertAllUsers(users, override);
 	});
 	return users;
 }
 
-function insertAllUsers(users, override) {
+function insertAllUsers(users) {
 	document.getElementById('player-card-div').innerHTML = '';
 	if (!users) {
 		return;
@@ -277,10 +270,6 @@ function insertAllUsers(users, override) {
 		<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
 		type="button">view profile</button></div>
 		</div>`;
-		if (override) {
-			document.getElementById('player-card-div').innerHTML = playerCard;
-		}
-		else
-			document.getElementById('player-card-div').innerHTML += playerCard;
+		document.getElementById('player-card-div').innerHTML += playerCard;
 	});
 }
