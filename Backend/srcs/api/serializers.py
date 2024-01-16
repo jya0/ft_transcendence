@@ -19,7 +19,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserProfile
-        fields = ['url', 'username', 'email', 'groups']
+        fields = ['id', 'email', 'display_name', 'avatar', 'username',
+                  'picture', 'is_2fa_enabled', 'is_online', 'groups']
 
 
 class GroupSerializer(serializers.ModelSerializer):

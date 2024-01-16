@@ -18,6 +18,7 @@ router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     path("get_user_data/", get_user_data, name="get_user_data"),
+    path("get_all_users/", get_all_users, name="get_all_users"),
     path('home/', home_view, name='2fa'),
     path('42_intra_link/', intra_link, name='intra_link'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
