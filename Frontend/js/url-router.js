@@ -22,7 +22,7 @@ const urlRoutes = {
 		description: "This is the login page",
 	},
 	"/desktop": {
-		title: "About Us | " + urlPageTitle,
+		title: "About me | " + urlPageTitle,
 		description: "This is the desktop page",
 	},
 	"/myprofile": {
@@ -166,7 +166,7 @@ function tokenHandler() {
 		console.log('Token:', token);
 		localStorage.setItem('access_token', token);
 		let userData;
-		fetch('http://localhost:8000/api/get_user_data/', {
+		fetch('http://10.12.4.7:8000/api/get_user_data/', {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${token}`,
