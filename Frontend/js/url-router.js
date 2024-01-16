@@ -76,30 +76,28 @@ function setMainWindowframe() {
 	</div>`;
 }
 
-const urlLocationHandler = () => {
+const urlLocationHandler = async () => {
 	tokenHandler();
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
-	let location = window.location.pathname; // get the url path
-	console.log("location:", location);
+	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
 	}
-
 	if (location.length == 0) {
 		location = "/";
 	}
 	if (location === '/' && localStorage.getItem('access_token')) {
-		console.log('location:', 'user is logged in');
 		location = '/desktop';
 	}
-	if (!localStorage.getItem('access_token'))
+	if (!localStorage.getItem('access_token')) {
 		location = '/';
+	}
 	const route = urlRoutes[location] || urlRoutes["404"];
 
 	if (location === '/') {
 		document.getElementById("navbar").remove();
-		fetch('/components/login.html').then(response => response.text()).then(data => {
+		await fetch('/components/login.html').then(response => response.text()).then(data => {
 			document.getElementById("content").innerHTML = data;
 		});
 	}
@@ -110,7 +108,7 @@ const urlLocationHandler = () => {
 			const canvasElement = document.createElement('canvas');
 			document.getElementsByClassName('window')[0].appendChild(canvasButton);
 			document.getElementsByClassName('window')[0].appendChild(canvasElement);
-			console.log('canvasButton:', canvasButton);
+
 			canvasButton.id = 'startButton';
 			canvasButton.innerHTML = 'Start Game';
 			canvasElement.id = 'pongCanvas';
@@ -130,59 +128,38 @@ const urlLocationHandler = () => {
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
-		fetch('/components/myprofile.html').then(response => response.text()).then(data => {
+		await fetch('/components/myprofile.html').then(response => response.text()).then(data => {
 			document.getElementsByClassName("window")[0].innerHTML = data;
 		});
 	}
 	else if (location === '/users') {
 		setMainWindowframe();
-		fetch('/components/player-card.html').then(response => response.text()).then(data => {
+		await fetch('/components/player-card.html').then(response => response.text()).then(data => {
 			document.getElementsByClassName("window")[0].innerHTML = data;
 		});
-		fetch('http://localhost:8000/users/', {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-				'Content-Type': 'application/json'
-			},
-		}).then(response => {
-			if (!response.ok) {
-				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			}
-			return response.json();
-		}).then(data => {
-			console.log(data);
-			let users = data.filter(user => user.username !== "admin");
-			users.forEach(user => {
-				console.log(user);
-				const playerCard = `
-					<div class="row row-cols-4 justify-content-center">
-						<div class="col-auto border border-1 border-dark">
-							<img src="${user.picture.link}"
-								style="width: 100%; height:100px; border-radius: 50%;">
-						</div>
-						<div class="col-4 border border-1 border-dark">
-							<div class="row justify-content-left text-uppercase">
-								<h4>${user.username}</h4>
-							</div>
-							<div class="row justify-content-left text-uppercase"><a>status: ${user.is_online ? "online" : "offline"}</a></div>
-							<div class="row justify-content-left text-uppercase">
-								<h5>ranking</h5>
-							</div>
-						</div>
-						<div class="col-auto g-0 border border-1 border-dark"><button
-								class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button></div>
-						<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
-								type="button">view profile</button></div>
-					</div>`;
-				document.getElementById('player-card-div').innerHTML += playerCard;
-			});
+		let users = getAllUsers();
+
+		const input = document.getElementById("search-user");
+		users.then((data) => {
+			users = data;
+			insertAllUsers(users);
 		});
+		// handling search input
+		input.addEventListener("keyup", () => {
+			let inputValue = input.value;
+
+			if (!inputValue) {
 
 
+				insertAllUsers(users, false);
+				return;
+			}
+			// users = users.filter((user) => user.username.startsWith(inputValue));
+			insertAllUsers(users.filter((user) => user.username.startsWith(inputValue)), true);
+		});
 	}
 	if (document.getElementById("pongCanvas")) {
-		console.log('pongCanvas exists');
+
 		const canvasElement = document.getElementById("pongCanvas");
 		canvasElement.remove();
 		const canvasButton = document.getElementById('startButton');
@@ -202,9 +179,8 @@ urlLocationHandler();
 function tokenHandler() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const token = urlParams.get('token');
-	console.log(token)
 	if (token) {
-		console.log('Token:', token);
+
 		localStorage.setItem('access_token', token);
 		let userData;
 		fetch('http://localhost:8000/api/get_user_data/', {
@@ -223,10 +199,9 @@ function tokenHandler() {
 			.then(data => {
 				userData = data[0];
 				if (!userData) {
-					console.log("No user data");
 					return;
 				}
-				console.log("User data:", data);
+
 
 				localStorage.setItem('username', userData['username']);
 			})
@@ -246,4 +221,66 @@ function insertOrCreateContent() {
 		content.id = 'content';
 		document.body.appendChild(content);
 	}
+}
+
+
+async function getAllUsers(override) {
+	let location = window.location.pathname;
+	if (location[location.length - 1] === '/') {
+		location = location.slice(0, location.length - 1);
+	}
+	if (location !== '/users')
+		return;
+	let users;
+	await fetch('http://localhost:8000/users/', {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			'Content-Type': 'application/json'
+		},
+	}).then(response => {
+		if (!response.ok) {
+			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+		}
+		return response.json();
+	}).then(data => {
+		users = data.filter(user => user.username !== "admin");
+		return users;
+		insertAllUsers(users, override);
+	});
+	return users;
+}
+
+function insertAllUsers(users, override) {
+	document.getElementById('player-card-div').innerHTML = '';
+	if (!users) {
+		return;
+	}
+	users.forEach(user => {
+		const playerCard = `
+		<div class="row row-cols-4 justify-content-center">
+		<div class="col-auto border border-1 border-dark">
+		<img src="${user.picture.link}"
+		style="width: 100%; height:100px; border-radius: 50%;">
+		</div>
+		<div class="col-4 border border-1 border-dark">
+		<div class="row justify-content-left text-uppercase">
+		<h4>${user.username}</h4>
+		</div>
+		<div class="row justify-content-left text-uppercase"><a>status: ${user.is_online ? "online 🟢" : "offline ⚪"}</a></div>
+		<div class="row justify-content-left text-uppercase">
+		<h5>ranking</h5>
+		</div>
+		</div>
+		<div class="col-auto g-0 border border-1 border-dark"><button
+		class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button></div>
+		<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
+		type="button">view profile</button></div>
+		</div>`;
+		if (override) {
+			document.getElementById('player-card-div').innerHTML = playerCard;
+		}
+		else
+			document.getElementById('player-card-div').innerHTML += playerCard;
+	});
 }
