@@ -13,6 +13,7 @@ from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import Group
 from rest_framework import permissions, viewsets
 from .serializers import GroupSerializer, UserSerializer
+from django.core.serializers import serialize
 
 # Create your views here.
 
@@ -72,3 +73,12 @@ def home_view(request):
 def intra_link(request):
     forty_two_url = settings.FORTY_TWO_URL
     return JsonResponse({'forty_two_url': forty_two_url})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_users(request):
+    users = UserProfile.objects.exclude(username='admin')
+    
+    users_json = serialize('json', users)
+    return JsonResponse(users_json, safe=False)

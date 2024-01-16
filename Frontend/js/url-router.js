@@ -136,7 +136,50 @@ const urlLocationHandler = () => {
 	}
 	else if (location === '/users') {
 		setMainWindowframe();
-		document.getElementById("main-window").innerHTML += `yet to come`;
+		fetch('/components/player-card.html').then(response => response.text()).then(data => {
+			document.getElementsByClassName("window")[0].innerHTML = data;
+		});
+		fetch('http://localhost:8000/users/', {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+				'Content-Type': 'application/json'
+			},
+		}).then(response => {
+			if (!response.ok) {
+				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			}
+			return response.json();
+		}).then(data => {
+			console.log(data);
+			let users = data.filter(user => user.username !== "admin");
+			users.forEach(user => {
+				console.log(user);
+				const playerCard = `
+					<div class="row row-cols-4 justify-content-center">
+						<div class="col-auto border border-1 border-dark">
+							<img src="${user.picture.link}"
+								style="width: 100%; height:100px; border-radius: 50%;">
+						</div>
+						<div class="col-4 border border-1 border-dark">
+							<div class="row justify-content-left text-uppercase">
+								<h4>${user.username}</h4>
+							</div>
+							<div class="row justify-content-left text-uppercase"><a>status: ${user.is_online ? "online" : "offline"}</a></div>
+							<div class="row justify-content-left text-uppercase">
+								<h5>ranking</h5>
+							</div>
+						</div>
+						<div class="col-auto g-0 border border-1 border-dark"><button
+								class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button></div>
+						<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
+								type="button">view profile</button></div>
+					</div>`;
+				document.getElementById('player-card-div').innerHTML += playerCard;
+			});
+		});
+
+
 	}
 	if (document.getElementById("pongCanvas")) {
 		console.log('pongCanvas exists');
