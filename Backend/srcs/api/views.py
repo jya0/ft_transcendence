@@ -53,17 +53,15 @@ def get_user_data(request):
 def two_fa_toggle(request):
     try:
         user = get_object_or_404(UserProfile, username=request.user.username)
-        print("---------> ", user)
     except:
         return JsonResponse({'message': 'UserProfile not found'}, status=400)
-    # Example template content
-    template = get_template('enable_or_disable_2fa.html')
+
+    template = get_template('user_profile.html')
     template_content = template.template.source
     template = Template(template_content)
     context = Context({'user': user})
 
     rendered_template = template.render(context)
-
     return HttpResponse(rendered_template, content_type='text/plain')
 
 
