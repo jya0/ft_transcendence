@@ -11,7 +11,7 @@ from django.http import HttpResponse
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import Group
 from rest_framework import permissions, viewsets
-from .serializers import GroupSerializer, UserSerializer
+from .serializers import GroupSerializer, UserSerializer, UserProfileSerializer, MatchSerializer, TournamentSerializer
 from django.core.serializers import serialize
 from login.models import UserProfile, Match, Tournament
 from django.db.models import Q
@@ -88,16 +88,15 @@ def intra_link(request):
 # @permission_classes([IsAuthenticated])
 def get_all_users(request):
     users = UserProfile.objects.exclude(username='admin')
-    
-    users_json = serialize('json', users)
-    return JsonResponse(users_json, safe=False)
+    serializer = UserProfileSerializer(users, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def get_user_data(request, intra):
     user = UserProfile.objects.filter(Q(intra=intra)).all()
-    user_json = serialize('json', user)
-    return JsonResponse(user_json, safe=False)
+    serializer = UserProfileSerializer(user, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 
 # ______________________________________________________________________________________
@@ -108,8 +107,8 @@ def get_user_data(request, intra):
 # @permission_classes([IsAuthenticated])
 def get_all_tournaments(request):
     tourns = Tournament.objects.all()
-    tourns_json = serialize('json', tourns)
-    return JsonResponse(tourns_json, safe=False)
+    serializer = TournamentSerializer(tourns, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 
 
@@ -117,8 +116,8 @@ def get_all_tournaments(request):
 # @permission_classes([IsAuthenticated])
 def get_user_tournaments(request, intra):
     user_tourns = Match.objects.filter(~Q(tournament_id=1) & (Q(id1__intra=intra) | Q(id2__intra=intra))).distinct('tournament_id')
-    user_tourns_json = serialize('json', user_tourns)
-    return JsonResponse(user_tourns_json, safe=False)
+    serializer = MatchSerializer(user_tourns, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 # ______________________________________________________________________________________
 # ______________________________________________________________________________________
@@ -128,13 +127,13 @@ def get_user_tournaments(request, intra):
 # @permission_classes([IsAuthenticated])
 def get_all_games(request):
     games = Match.objects.all()
-    games_json = serialize('json', games)
-    return JsonResponse(games_json, safe=False)
+    serializer = MatchSerializer(games, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def get_user_games(request, intra):
-    games = Match.objects.filter((Q(id1__intra=intra)| Q(id2__intra=intra)) & Q(ongoing=False) & Q(open_lobby=False))
-    games_json = serialize('json', games)
-    return JsonResponse(games_json, safe=False)
+    games = Match.objects.filter((Q(id1__intra=intra) | Q(id2__intra=intra)) & Q(ongoing=False) & Q(open_lobby=False))
+    serializer = MatchSerializer(games, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
