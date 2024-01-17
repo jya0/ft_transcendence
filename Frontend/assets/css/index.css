@@ -207,7 +207,7 @@ a {
 
 #startOnlineButton {
   position: fixed;
-  top: 80%;
+  top: 75%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: white;
@@ -217,7 +217,17 @@ a {
 
 #startLocalButton {
   position: fixed;
-  top: 90%;
+  top: 85%;
+  left: 50%;
+  /* margin-left: 40px; */
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 11;
+}
+
+#startLocalTournButton {
+  position: fixed;
+  top: 95%;
   left: 50%;
   /* margin-left: 40px; */
   transform: translate(-50%, -50%);
