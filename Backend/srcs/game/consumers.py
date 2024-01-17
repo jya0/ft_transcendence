@@ -54,7 +54,6 @@ class ChatConsumer(WebsocketConsumer):
             game =  Match.objects.filter(Q(open_lobby=True))[0]
             player = UserProfile.objects.filter(Q(intra=username))[0]
             if (open_lobby == True):
-                
                 #case 1: no players yet
                 if (game.id1.intra == 'default'):
                     print("looks like ur the first player!!!!")
@@ -131,16 +130,16 @@ class ChatConsumer(WebsocketConsumer):
                 }))
 
 
-    # def disconnect(self, code):
-    #     self.send(text_data=json.dumps({
-    #         'type': 'close',
-    #     }))
+    def disconnect(self, code):
+        # self.send(text_data=json.dumps({
+        #     'type': 'close',
+        # }))
 
-        # async_to_sync(self.channel_layer.group_discard)(
-        #     self.room_group_name,
-        #     self.channel_name
-        # )
-        # self.close()
+        async_to_sync(self.channel_layer.group_discard)(
+            self.room_group_name,
+            self.channel_name
+        )
+        self.close()
         # is_playing = Match.objects.filter((Q(id1__id='rriyas') | Q(id2__id='rriyas')) & ongoing=True).exists()
         
         # open_games = Match.objects.all().count()
