@@ -1,6 +1,17 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
 
+let user = localStorage.getItem('user');
+user = JSON.parse(user)
+let username = user['username'];
+let image = user['image'];
+let is_2fa_enabled = user['is_2fa_enabled'];
+let is_online = user['is_online'];
+let picture = user['picture'];
+let email = user['email'];
+let userToken = user['access_token'];
+let userId = user['id'];
+
 // create document click that watches the nav links only
 document.querySelector('#navbar').addEventListener("click", (e) => {
 	const { target } = e;
@@ -150,8 +161,7 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		const username = localStorage.getItem('username');
-		await fetch(`http://localhost:8000/api/two_fa_toggle/?username=${username}`, {
+		await fetch(`http://localhost:8000/api/two_fa_toggle/?username=${localStorage.getItem('username')}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -166,7 +176,7 @@ const urlLocationHandler = async () => {
 			document.getElementsByClassName("window")[0].innerHTML = data;
 
 			document.getElementById('file').addEventListener('change', loadFile, false);
-			document.getElementById('uploadButton').addEventListener('click', async() => {
+			document.getElementById('uploadButton').addEventListener('click', async () => {
 				let fileInput = document.getElementById('file');
 				let file = fileInput.files[0];
 
@@ -196,6 +206,34 @@ const urlLocationHandler = async () => {
 
 		}).catch((error) => {
 			console.error('Error:', error);
+		});
+
+		document.getElementById('2fa-button').addEventListener('click', () => {
+			console.log(userId)
+			fetch(`http://localhost:8000/users/${userId}/`, {
+				method: 'PATCH',
+				headers: {
+					'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					'is_2fa_enabled': !is_2fa_enabled,
+				}),
+			}).then(response => {
+				if (!response.ok) {
+					response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+				}
+				return response.text();
+			}).then(data => {
+				console.log(data);
+			}).catch((error) => {
+				console.error('Error:', error);
+			});
+			is_2fa_enabled = !is_2fa_enabled;
+
+			if (is_2fa_enabled) {
+				document.getElementsByClassName('window')[0].innerHTML = '';
+			}
 		});
 
 	}
@@ -266,6 +304,15 @@ function tokenHandler() {
 					return;
 				}
 				localStorage.setItem('username', userData['username']);
+				localStorage.setItem('user', JSON.stringify(userData));
+				username = userData['username'];
+				image = userData['image'];
+				is_2fa_enabled = userData['is_2fa_enabled'];
+				is_online = userData['is_online'];
+				picture = userData['picture'];
+				email = userData['email'];
+				userId = userData['id'];
+				userToken = token;
 			})
 	}
 
