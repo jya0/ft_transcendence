@@ -40,7 +40,6 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-@login_required
 @permission_classes([IsAuthenticated])
 def get_user_data(request):
     print(request.user.username)
@@ -50,16 +49,15 @@ def get_user_data(request):
 
 
 @api_view(['GET'])
-@login_required
 @permission_classes([IsAuthenticated])
-def home_view(request):
+def two_fa_toggle(request):
     try:
         user = get_object_or_404(UserProfile, username=request.user.username)
         print("---------> ", user)
     except:
         return JsonResponse({'message': 'UserProfile not found'}, status=400)
     # Example template content
-    template = get_template('home.html')
+    template = get_template('enable_or_disable_2fa.html')
     template_content = template.template.source
     template = Template(template_content)
     context = Context({'user': user})
@@ -87,7 +85,6 @@ def get_all_users(request):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-@csrf_exempt
 def update_user_profile(request):
     if request.FILES.get('image'):
         user = UserProfile.objects.get(username=request.user.username)

@@ -94,7 +94,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:8090', 'http://127.0.0.1:8090'
 ]
@@ -105,7 +105,8 @@ CORS_ALLOW_HEADERS = [
     'Content-Type',
     'Cache-Control',
     'Authorization',
-	'X-CSRFToken',
+    'X-CSRFToken',
+    'token',
 ]
 
 SIMPLE_JWT = {
