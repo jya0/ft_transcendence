@@ -232,10 +232,20 @@ nav a:hover {
   /* Adjust the margin to make space for the fixed navbar */
 }
 
-#startButton {
+#startOnlineButton {
   position: fixed;
   top: 80%;
   left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+}
+
+
+#startLocalButton {
+  position: fixed;
+  top: 90%;
+  left: 50%;
+  /* margin-left: 40px; */
   transform: translate(-50%, -50%);
   color: white;
 }
