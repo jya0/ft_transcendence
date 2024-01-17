@@ -2,14 +2,26 @@ const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
 
 // create document click that watches the nav links only
-document.addEventListener("click", (e) => {
+document.querySelector('#navbar').addEventListener("click", (e) => {
 	const { target } = e;
-	if (!target.matches("nav a")) {
-		return;
-	}
 	e.preventDefault();
 	urlRoute();
 });
+
+function getCookie(name) {
+	let cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		const cookies = document.cookie.split(';');
+		for (let i = 0; i < cookies.length; i++) {
+			const cookie = cookies[i].trim();
+			if (cookie.substring(0, name.length + 1) === name + '=') {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+}
 
 // create an object that maps the url to the template, title, and description
 const urlRoutes = {
@@ -26,19 +38,19 @@ const urlRoutes = {
 		description: "This is the desktop page",
 	},
 	"/myprofile": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "myprofile | " + urlPageTitle,
 		description: "This is the myprofile page",
 	},
 	"/play": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "play | " + urlPageTitle,
 		description: "This is the play page",
 	},
 	"/users": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "users | " + urlPageTitle,
 		description: "This is the users page",
 	},
 	"/profile": {
-		title: "Contact Us | " + urlPageTitle,
+		title: "profile | " + urlPageTitle,
 		description: "This is the profile page",
 	},
 };
@@ -46,9 +58,10 @@ const urlRoutes = {
 const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
-	// window.history.pushState(state, unused, target link);
-	// if (localStorage.getItem('access_token'))
-	window.history.pushState({}, "", event.target.href);
+	let href = event.target.href;
+	if (event.target.tagName !== 'A')
+		href = event.target.parentElement.href;
+	window.history.pushState({}, "", href);
 	urlLocationHandler();
 };
 
@@ -59,62 +72,57 @@ const insertCSS = (filePath) => {
 	document.head.appendChild(link);
 };
 
-insertCSS("/assets/css/global.csss");
-insertCSS("/assets/css/index.css");
+// insertCSS("/assets/css/global.css");
+// insertCSS("/assets/css/index.css");
 
-const urlLocationHandler = () => {
+function setMainWindowframe() {
+	insertOrCreateContent();
+	document.getElementById("content").innerHTML = `<div class="window-frame" id="main-window">
+	<div class="top-bar">
+	  <img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
+
+	  <div class="options">
+		<img class="vector-icon" alt="" src="./assets/public/vector.svg" />
+
+		<img class="dot-grid-icon" alt="" src="./assets/public/dot-grid.svg" />
+	  </div>
+	  </div>
+		<div class="window"></div>
+	</div>`;
+}
+
+let loadFile = function (event) {
+	let image = document.getElementById('output');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+
+const urlLocationHandler = async () => {
 	tokenHandler();
+	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
-	let location = window.location.pathname; // get the url path
-	console.log("location:", location);
+	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
 	}
-
 	if (location.length == 0) {
 		location = "/";
 	}
 	if (location === '/' && localStorage.getItem('access_token')) {
-		console.log('location:', 'user is logged in');
 		location = '/desktop';
 	}
-	if (!localStorage.getItem('access_token'))
+	if (!localStorage.getItem('access_token')) {
 		location = '/';
+	}
 	const route = urlRoutes[location] || urlRoutes["404"];
-	// const html = await fetch(route.template).then((response) => response.text());
 
 	if (location === '/') {
-		document.getElementById("main-nav").remove();
-		document.getElementById("content").innerHTML = `<div class="login-hello">
-														<div class="frame">
-														  <div class="frame1">
-															<div class="parent">
-															  <b class="smile">☺</b>
-															  <div class="unlock-pongos-parent">
-																<div class="b">Unlock PongOS</div>
-																<div class="button-primary" onClick="handle42Auth()">
-																  <div class="password">Password ...</div>
-																</div>
-															  </div>
-															</div>
-														  </div>
-														</div>
-														<div class="frame2">
-														  <div class="wrapper">
-															<div class="b">—</div>
-														  </div>
-														</div>
-														<div class="frame3">
-														  <div class="frame4">
-															<div class="group">
-															  <div class="div1">—</div>
-															  <div class="div2">•</div>
-															</div>
-														  </div>
-														</div>
-	  													</div>`;
+		document.getElementById("navbar").remove();
+		await fetch('/components/login.html').then(response => response.text()).then(data => {
+			document.getElementById("content").innerHTML = data;
+		});
 	}
 	if (location === '/play') {
+		setMainWindowframe();
 		if (!document.getElementById("pongCanvas")) {
 			const canvasButtonOnline = document.createElement('button');
 			const canvasButtonLocal = document.createElement('button');
@@ -139,18 +147,94 @@ const urlLocationHandler = () => {
 		return;
 	}
 	else if (location === '/desktop') {
-		document.getElementById("content").innerHTML = `<h1>Welcome to ${location}</h1>`;
+		setMainWindowframe();
 	}
 	else if (location === '/myprofile') {
-		document.getElementById("content").innerHTML = `<h1>Welcome to ${location}</h1>
+		setMainWindowframe();
+
+		document.getElementById("content").innerHTML += `<h1>Welcome to ${location}</h1>
 														<button id="logout" class="btn btn-primary" 
 														onClick="handleLogout()">Logout</button>`;
 	}
 	else if (location === '/profile') {
-		document.getElementById("content").innerHTML = `<h1>Welcome to player ${location}</h1>`;
+		setMainWindowframe();
+		await fetch('/components/myprofile.html').then(response => response.text()).then(data => {
+			document.getElementsByClassName("window")[0].innerHTML = data;
+
+			document.getElementById('file').addEventListener('change', loadFile, false);
+			document.getElementById('uploadButton').addEventListener('click', () => {
+				let fileInput = document.getElementById('file');
+				let file = fileInput.files[0];
+
+				if (file) {
+					let formData = new FormData();
+					formData.append('image', file);
+					formData.append('username', localStorage.getItem('username'));
+					fetch('http://localhost:8000/api/update_user_profile/', {
+						method: 'POST',
+						body: formData,
+						headers: {
+							'X-CSRFToken': getCookie('csrftoken'),
+							'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+						},
+						credentials: 'include',
+					})
+						.then(response => response.json())
+						.then(data => {
+							// inser success message
+							console.log(data);
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				}
+			});
+		});
+
+		const username = localStorage.getItem('username');
+		await fetch(`http://localhost:8000/api/two_fa_toggle/?username=${username}`, {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+		}).then(response => {
+			if (!response.ok) {
+				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			}
+			return response.text();
+		}).then(data => {
+			console.log(data);
+			document.getElementById('2fa-toggle').innerHTML = data;
+		}).catch((error) => {
+			console.error('Error:', error);
+		});
+
+	}
+	else if (location === '/users') {
+		setMainWindowframe();
+		await fetch('/components/player-card.html').then(response => response.text()).then(data => {
+			document.getElementsByClassName("window")[0].innerHTML = data;
+		});
+		let users = getAllUsers();
+
+		const input = document.getElementById("search-user");
+		users.then((data) => {
+			users = data;
+			insertAllUsers(users);
+		});
+		// handling search input
+		input.addEventListener("keyup", () => {
+			let inputValue = input.value;
+
+			if (!inputValue) {
+				insertAllUsers(users);
+				return;
+			}
+			insertAllUsers(users.filter((user) => user.username.startsWith(inputValue)));
+		});
 	}
 	if (document.getElementById("pongCanvas")) {
-		console.log('pongCanvas exists');
+
 		const canvasElement = document.getElementById("pongCanvas");
 		canvasElement.remove();
 		const canvasButtonOnline = document.getElementById('startOnlineButton');
@@ -178,7 +262,7 @@ function tokenHandler() {
 	console.log(username)
 
 	if (token) {
-		console.log('Token:', token);
+
 		localStorage.setItem('access_token', token);
 		let userData;
 		fetch(`http://10.12.4.7:8000/api/users/${username}`, {
@@ -197,11 +281,8 @@ function tokenHandler() {
 			.then(data => {                  
 				userData = data[0];
 				if (!userData) {
-					console.log("No user data");
 					return;
 				}
-				console.log("User data:", data);
-
 				localStorage.setItem('username', userData['username']);
 			})
 	}
@@ -212,3 +293,87 @@ function tokenHandler() {
 
 	history.replaceState({}, '', mainUrl);
 }
+
+
+function insertOrCreateContent() {
+	if (!document.getElementById("content")) {
+		const content = document.createElement('div');
+		content.id = 'content';
+		document.body.appendChild(content);
+	}
+}
+
+async function getAllUsers(override) {
+	let location = window.location.pathname;
+	if (location[location.length - 1] === '/') {
+		location = location.slice(0, location.length - 1);
+	}
+	if (location !== '/users')
+		return;
+	let users;
+	await fetch('http://localhost:8000/users/', {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			'Content-Type': 'application/json'
+		},
+	}).then(response => {
+		if (!response.ok) {
+			if (response.status === 401 || response.status === 403) {
+				localStorage.clear();
+				document.cookie = 'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+				document.cookie = 'sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+				window.location.href = '/';
+				return;
+			}
+			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+		}
+		return response.json();
+	}).then(data => {
+		console.log(data);
+		users = data.filter(user => user.username !== "admin");
+		return users;
+	}).catch((error) => {
+		console.error('Error:', error);
+	});
+	return users;
+}
+
+function insertAllUsers(users) {
+	document.getElementById('player-card-div').innerHTML = '';
+	if (!users) {
+		return;
+	}
+	users.forEach(user => {
+		const playerCard = `
+							<div class="row row-cols-4 justify-content-center">
+							<div class="col-auto border border-1 border-dark">
+							<img src="${user.image ? user.image : user.picture.link}"
+							style="width: 100%; height:100px; border-radius: 50%;">
+							</div>
+							<div class="col-4 border border-1 border-dark">
+							<div class="row justify-content-left text-uppercase">
+							<h4>${user.username}</h4>
+							</div>
+							<div class="row justify-content-left text-uppercase"><a>status: ${user.is_online ? "online 🟢" : "offline ⚪"}</a></div>
+							<div class="row justify-content-left text-uppercase">
+							<h5>ranking</h5>
+							</div>
+							</div>
+							<div class="col-auto g-0 border border-1 border-dark"><button
+							class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button></div>
+							<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
+							type="button">view profile</button></div>
+							</div>`;
+		document.getElementById('player-card-div').innerHTML += playerCard;
+	});
+}
+
+
+// window.addEventListener('beforeunload', function (event) {
+// 	// Perform actions before the page is unloaded (e.g., show a confirmation dialog)
+// 	// You can return a string to display a custom confirmation message
+// 	const confirmationMessage = 'Are you sure you want to leave?';
+// 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
+// 	return confirmationMessage; // For some older browsers
+// });

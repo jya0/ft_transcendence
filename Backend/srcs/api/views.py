@@ -16,6 +16,9 @@ from django.core.serializers import serialize
 from login.models import UserProfile, Match, Tournament
 from django.db.models import Q
 from django.forms.models import model_to_dict
+from .serializers import GroupSerializer, UserSerializer
+from django.core.serializers import serialize
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -41,7 +44,6 @@ class GroupViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['GET'])
-@login_required
 @permission_classes([IsAuthenticated])
 def get_user_data(request):
     print(request.user.username)
@@ -51,16 +53,15 @@ def get_user_data(request):
 
 
 @api_view(['GET'])
-@login_required
 @permission_classes([IsAuthenticated])
-def home_view(request):
+def two_fa_toggle(request):
     try:
         user = get_object_or_404(UserProfile, username=request.user.username)
         print("---------> ", user)
     except:
         return JsonResponse({'message': 'UserProfile not found'}, status=400)
     # Example template content
-    template = get_template('home.html')
+    template = get_template('enable_or_disable_2fa.html')
     template_content = template.template.source
     template = Template(template_content)
     context = Context({'user': user})
@@ -85,14 +86,14 @@ def intra_link(request):
 # USER ENDPOINTS
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_all_users(request):
     users = UserProfile.objects.exclude(username='admin')
     serializer = UserProfileSerializer(users, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_user_data(request, intra):
     user = UserProfile.objects.filter(Q(intra=intra)).all()
     serializer = UserProfileSerializer(user, many=True)
@@ -104,7 +105,7 @@ def get_user_data(request, intra):
 # TOOURNAMENT ENDPOINTS
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_all_tournaments(request):
     tourns = Tournament.objects.all()
     serializer = TournamentSerializer(tourns, many=True)
@@ -113,7 +114,7 @@ def get_all_tournaments(request):
 
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_user_tournaments(request, intra):
     user_tourns = Match.objects.filter(~Q(tournament_id=1) & (Q(id1__intra=intra) | Q(id2__intra=intra))).distinct('tournament_id')
     serializer = MatchSerializer(user_tourns, many=True)
@@ -124,16 +125,27 @@ def get_user_tournaments(request, intra):
 # GAME ENDPOINTS
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_all_games(request):
     games = Match.objects.all()
     serializer = MatchSerializer(games, many=True)
     return JsonResponse(serializer.data, safe=False)
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_user_games(request, intra):
     games = Match.objects.filter((Q(id1__intra=intra) | Q(id2__intra=intra)) & Q(ongoing=False) & Q(open_lobby=False))
     serializer = MatchSerializer(games, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_user_profile(request):
+    if request.FILES.get('image'):
+        user = UserProfile.objects.get(username=request.user.username)
+        user.image = request.FILES['image']
+        user.save(update_fields=['image'])
+        return JsonResponse({'message': 'Profile updated successfully'}, status=200)
+    else:
+        return JsonResponse({'error': 'Image not provided'}, status=400)

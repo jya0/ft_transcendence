@@ -14,6 +14,7 @@ class UserProfile(AbstractUser):
     picture = JSONField(default=dict)
     is_2fa_enabled = models.BooleanField(default=False)
     is_online = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='mediafiles/', default='')
 
     # Use unique related names
     user_permissions = models.ManyToManyField(
@@ -21,14 +22,17 @@ class UserProfile(AbstractUser):
     )
 
     REQUIRED_FIELDS = ['email']
+
     def __str__(self):
         return self.display_name
+
 
 class Settings(models.Model):
     avatar = models.TextField(default="None")
     display_name = models.CharField(max_length=50, unique=True, primary_key=True)
     id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     is_2fa_enabled = models.BooleanField(default=False)
+
     def __str__(self):
         return self.display_name
 
@@ -43,6 +47,7 @@ class Tournament(models.Model):
     winner = models.CharField(max_length=50, unique=False, default="1")
     tournament_id = models.AutoField(primary_key=True)
     status = models.BooleanField(default=False)
+
 
 
 class Match(models.Model):
