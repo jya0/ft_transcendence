@@ -162,6 +162,7 @@ const urlLocationHandler = async () => {
 			}
 			return response.text();
 		}).then(data => {
+			// console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
 
 			document.getElementById('file').addEventListener('change', loadFile, false);

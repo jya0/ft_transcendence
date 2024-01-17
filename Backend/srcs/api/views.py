@@ -53,16 +53,17 @@ def get_user_data(request):
 def two_fa_toggle(request):
     try:
         user = get_object_or_404(UserProfile, username=request.user.username)
+        users_list = UserProfile.objects.all().exclude(username='admin')
     except:
         return JsonResponse({'message': 'UserProfile not found'}, status=400)
 
     template = get_template('user_profile.html')
     template_content = template.template.source
     template = Template(template_content)
-    context = Context({'user': user})
+    context = Context({'user': user, 'users_list': users_list})
 
     rendered_template = template.render(context)
-    return HttpResponse(rendered_template, content_type='text/plain')
+    return HttpResponse(rendered_template, content_type='text/html')
 
 
 @never_cache
