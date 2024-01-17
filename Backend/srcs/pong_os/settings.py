@@ -105,6 +105,7 @@ CORS_ALLOW_HEADERS = [
     'Content-Type',
     'Cache-Control',
     'Authorization',
+	'X-CSRFToken',
 ]
 
 SIMPLE_JWT = {

@@ -8,6 +8,21 @@ document.querySelector('#navbar').addEventListener("click", (e) => {
 	urlRoute();
 });
 
+function getCookie(name) {
+	let cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		const cookies = document.cookie.split(';');
+		for (let i = 0; i < cookies.length; i++) {
+			const cookie = cookies[i].trim();
+			if (cookie.substring(0, name.length + 1) === name + '=') {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+}
+
 // create an object that maps the url to the template, title, and description
 const urlRoutes = {
 	404: {
@@ -76,6 +91,11 @@ function setMainWindowframe() {
 	</div>`;
 }
 
+let loadFile = function (event) {
+	let image = document.getElementById('output');
+	image.src = URL.createObjectURL(event.target.files[0]);
+};
+
 const urlLocationHandler = async () => {
 	tokenHandler();
 	insertOrCreateContent();
@@ -122,7 +142,8 @@ const urlLocationHandler = async () => {
 	}
 	else if (location === '/myprofile') {
 		setMainWindowframe();
-		document.getElementById("content").innerHTML = `<h1>Welcome to ${location}</h1>
+
+		document.getElementById("content").innerHTML += `<h1>Welcome to ${location}</h1>
 														<button id="logout" class="btn btn-primary" 
 														onClick="handleLogout()">Logout</button>`;
 	}
@@ -130,6 +151,33 @@ const urlLocationHandler = async () => {
 		setMainWindowframe();
 		await fetch('/components/myprofile.html').then(response => response.text()).then(data => {
 			document.getElementsByClassName("window")[0].innerHTML = data;
+			document.getElementById('file').addEventListener('change', loadFile, false);
+			document.getElementById('uploadButton').addEventListener('click', () => {
+				let fileInput = document.getElementById('file');
+				let file = fileInput.files[0];
+
+				if (file) {
+					let formData = new FormData();
+					formData.append('image', file);
+					formData.append('username', localStorage.getItem('username'));
+					fetch('http://localhost:8000/api/update_user_profile/', {
+						method: 'POST',
+						body: formData,
+						headers: {
+							'X-CSRFToken': getCookie('csrftoken'),
+							'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+						},
+						credentials: 'include',
+					})
+						.then(response => response.json())
+						.then(data => {
+							console.log(data);
+						})
+						.catch(error => {
+							console.error('Error:', error);
+						});
+				}
+			});
 		});
 	}
 	else if (location === '/users') {
@@ -234,12 +282,21 @@ async function getAllUsers(override) {
 		},
 	}).then(response => {
 		if (!response.ok) {
+			if (response.status === 401 || response.status === 403) {
+				localStorage.removeItem('access_token');
+				localStorage.removeItem('username');
+				window.location.href = '/';
+				return;
+			}
 			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
 		}
 		return response.json();
 	}).then(data => {
+		console.log(data);
 		users = data.filter(user => user.username !== "admin");
 		return users;
+	}).catch((error) => {
+		console.error('Error:', error);
 	});
 	return users;
 }
@@ -251,25 +308,25 @@ function insertAllUsers(users) {
 	}
 	users.forEach(user => {
 		const playerCard = `
-		<div class="row row-cols-4 justify-content-center">
-		<div class="col-auto border border-1 border-dark">
-		<img src="${user.picture.link}"
-		style="width: 100%; height:100px; border-radius: 50%;">
-		</div>
-		<div class="col-4 border border-1 border-dark">
-		<div class="row justify-content-left text-uppercase">
-		<h4>${user.username}</h4>
-		</div>
-		<div class="row justify-content-left text-uppercase"><a>status: ${user.is_online ? "online 🟢" : "offline ⚪"}</a></div>
-		<div class="row justify-content-left text-uppercase">
-		<h5>ranking</h5>
-		</div>
-		</div>
-		<div class="col-auto g-0 border border-1 border-dark"><button
-		class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button></div>
-		<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
-		type="button">view profile</button></div>
-		</div>`;
+							<div class="row row-cols-4 justify-content-center">
+							<div class="col-auto border border-1 border-dark">
+							<img src="${user.image ? user.image : user.picture.link}"
+							style="width: 100%; height:100px; border-radius: 50%;">
+							</div>
+							<div class="col-4 border border-1 border-dark">
+							<div class="row justify-content-left text-uppercase">
+							<h4>${user.username}</h4>
+							</div>
+							<div class="row justify-content-left text-uppercase"><a>status: ${user.is_online ? "online 🟢" : "offline ⚪"}</a></div>
+							<div class="row justify-content-left text-uppercase">
+							<h5>ranking</h5>
+							</div>
+							</div>
+							<div class="col-auto g-0 border border-1 border-dark"><button
+							class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button></div>
+							<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
+							type="button">view profile</button></div>
+							</div>`;
 		document.getElementById('player-card-div').innerHTML += playerCard;
 	});
 }
