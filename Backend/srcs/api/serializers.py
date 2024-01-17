@@ -1,16 +1,35 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from login.models import UserProfile, Match
+from login.models import UserProfile, Match, Tournament
+
+
+# class UserProfileSerializer(serializers.ModelSerializer):
+#     groups = serializers.PrimaryKeyRelatedField(
+#         many=True, queryset=Group.objects.all())
+
+#     class Meta:
+#         model = UserProfile
+#         fields = ['id', 'email', 'display_name', 'avatar',
+#                   'picture', 'is_2fa_enabled', 'is_online', 'groups']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    groups = serializers.PrimaryKeyRelatedField(
-        many=True, queryset=Group.objects.all())
-
     class Meta:
         model = UserProfile
-        fields = ['id', 'email', 'display_name', 'avatar',
-                  'picture', 'is_2fa_enabled', 'is_online', 'groups']
+        fields = '__all__'
+
+
+
+class TournamentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tournament
+        fields = '__all__'
+
+class MatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
+        fields = '__all__'
+
 
 
 class UserSerializer(serializers.ModelSerializer):
