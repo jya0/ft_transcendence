@@ -17,8 +17,20 @@ router.register(r'groups', views.GroupViewSet)
 
 
 urlpatterns = [
-    path("get_user_data/", get_user_data, name="get_user_data"),
     path('home/', home_view, name='2fa'),
+
+
+    path("users/", get_all_users, name="get_all_users"),
+    path("users/<str:intra>", get_user_data, name="get_user_data"),
+    path("tournaments/", get_all_tournaments, name="get_all_tournaments"),
+    path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
+    path("games/", get_all_games, name="get_all_games"),
+    path("games/<str:intra>", get_user_games, name="get_user_games"),
+
+
+
+
+
     path('42_intra_link/', intra_link, name='intra_link'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
