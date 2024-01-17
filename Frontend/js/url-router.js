@@ -149,11 +149,23 @@ const urlLocationHandler = async () => {
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
-		await fetch('/components/myprofile.html').then(response => response.text()).then(data => {
+
+		const username = localStorage.getItem('username');
+		await fetch(`http://localhost:8000/api/two_fa_toggle/?username=${username}`, {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+		}).then(response => {
+			if (!response.ok) {
+				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			}
+			return response.text();
+		}).then(data => {
 			document.getElementsByClassName("window")[0].innerHTML = data;
 
 			document.getElementById('file').addEventListener('change', loadFile, false);
-			document.getElementById('uploadButton').addEventListener('click', () => {
+			document.getElementById('uploadButton').addEventListener('click', async() => {
 				let fileInput = document.getElementById('file');
 				let file = fileInput.files[0];
 
@@ -161,7 +173,7 @@ const urlLocationHandler = async () => {
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', localStorage.getItem('username'));
-					fetch('http://localhost:8000/api/update_user_profile/', {
+					await fetch('http://localhost:8000/api/update_user_profile/', {
 						method: 'POST',
 						body: formData,
 						headers: {
@@ -180,22 +192,7 @@ const urlLocationHandler = async () => {
 						});
 				}
 			});
-		});
 
-		const username = localStorage.getItem('username');
-		await fetch(`http://localhost:8000/api/two_fa_toggle/?username=${username}`, {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-			},
-		}).then(response => {
-			if (!response.ok) {
-				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			}
-			return response.text();
-		}).then(data => {
-			console.log(data);
-			document.getElementById('2fa-toggle').innerHTML = data;
 		}).catch((error) => {
 			console.error('Error:', error);
 		});
