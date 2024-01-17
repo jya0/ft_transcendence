@@ -10,7 +10,7 @@ def create_new_game_lobby():
     dummy = Tournament.objects.all()[0]
     Match.objects.create(tournament_id_id=dummy.tournament_id, id1_id=2, id2_id=3, score1=0, score2=0, ongoing=False)
 
-class ChatConsumer(WebsocketConsumer):
+class GameConsumer(WebsocketConsumer):
     lobbyCount = 0
 
     def connect(self):

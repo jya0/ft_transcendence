@@ -127,20 +127,31 @@ const urlLocationHandler = async () => {
 			const canvasElement = document.createElement('canvas');
 			
 			const canvasButtonOnline = document.createElement('button');
-			const canvasButtonLocal = document.createElement('button');
+			const canvasButtonLocalGame = document.createElement('button');
+			const canvasButtonLocalTourn = document.createElement('button');
+
 			
 			document.getElementsByClassName('window')[0].appendChild(canvasElement);
 			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnline);
-			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocal);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalGame);
+
 
 			console.log('canvasButtonOnline:', canvasButtonOnline);
-			console.log('canvasButtonLocal:', canvasButtonLocal);
+			console.log('canvasButtonLocalGame:', canvasButtonLocalGame);
+			console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
+
 
 			canvasButtonOnline.id = 'startOnlineButton';
 			canvasButtonOnline.innerHTML = 'Start Online Game';
 
-			canvasButtonLocal.id = 'startLocalButton';
-			canvasButtonLocal.innerHTML = 'Start Local Game';
+			canvasButtonLocalGame.id = 'startLocalButton';
+			canvasButtonLocalGame.innerHTML = 'Start Local Game';
+
+			canvasButtonLocalTourn.id = 'startLocalTournButton';
+			canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
+
+
 			canvasElement.id = 'pongCanvas';
 			loadGame();
 		}
@@ -241,9 +252,14 @@ const urlLocationHandler = async () => {
 		const canvasButtonOnline = document.getElementById('startOnlineButton');
 		canvasButtonOnline.remove();
 
-		const canvasButtonLocal = document.getElementById('startLocalButton');
-		canvasButtonLocal.remove();
+		const canvasButtonLocalGame = document.getElementById('startLocalButton');
+		canvasButtonLocalGame.remove();
+
+		const canvasButtonLocalTourn = document.getElementById('startLocalTournButton');
+		canvasButtonLocalTourn.remove();
+
 	}
+
 
 	document.title = route.title;
 };
