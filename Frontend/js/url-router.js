@@ -124,14 +124,18 @@ const urlLocationHandler = async () => {
 	if (location === '/play') {
 		setMainWindowframe();
 		if (!document.getElementById("pongCanvas")) {
+			const canvasElement = document.createElement('canvas');
+			
 			const canvasButtonOnline = document.createElement('button');
 			const canvasButtonLocal = document.createElement('button');
+			
+			document.getElementsByClassName('window')[0].appendChild(canvasElement);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnline);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocal);
+			// document.getElementById('content').appendChild(canvasButtonOnline);
+			// document.getElementById('content').appendChild(canvasButtonLocal);
+			// document.getElementById('content').appendChild(canvasElement);
 
-			const canvasElement = document.createElement('canvas');
-			document.getElementById('content').appendChild(canvasButtonOnline);
-			document.getElementById('content').appendChild(canvasButtonLocal);
-
-			document.getElementById('content').appendChild(canvasElement);
 			console.log('canvasButtonOnline:', canvasButtonOnline);
 			console.log('canvasButtonLocal:', canvasButtonLocal);
 
