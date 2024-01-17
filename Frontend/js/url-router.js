@@ -132,9 +132,6 @@ const urlLocationHandler = async () => {
 			document.getElementsByClassName('window')[0].appendChild(canvasElement);
 			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnline);
 			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocal);
-			// document.getElementById('content').appendChild(canvasButtonOnline);
-			// document.getElementById('content').appendChild(canvasButtonLocal);
-			// document.getElementById('content').appendChild(canvasElement);
 
 			console.log('canvasButtonOnline:', canvasButtonOnline);
 			console.log('canvasButtonLocal:', canvasButtonLocal);
@@ -174,7 +171,7 @@ const urlLocationHandler = async () => {
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', localStorage.getItem('username'));
-					fetch('http://localhost:8000/api/update_user_profile/', {
+					fetch('http://10.12.4.7:8000/api/update_user_profile/', {
 						method: 'POST',
 						body: formData,
 						headers: {
@@ -196,7 +193,7 @@ const urlLocationHandler = async () => {
 		});
 
 		const username = localStorage.getItem('username');
-		await fetch(`http://localhost:8000/api/two_fa_toggle/?username=${username}`, {
+		await fetch(`http://10.12.4.7:8000/api/two_fa_toggle/?username=${username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -315,7 +312,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	await fetch('http://localhost:8000/users/', {
+	await fetch('http://10.12.4.7:8000/users/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,

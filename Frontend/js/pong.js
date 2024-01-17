@@ -137,6 +137,8 @@ export const loadGame = () => {
 		document.getElementById("startLocalButton").innerHTML = buttonText;
 		isGameOver = true;
 		socketStatus = false;
+		leftPlayer = false;
+		rightPlayer = true;
 	}
 	
 
@@ -186,9 +188,7 @@ export const loadGame = () => {
 	});
 
 	let player_count = 0;
-
 	let url = `ws://10.12.4.7:8000/ws/socket-server/`
-
 	let gameSocket;
 	
 	function initiateSocket() {
@@ -230,7 +230,7 @@ export const loadGame = () => {
 			else if(data.type == 'close') {
 				gameOver = true;
 				player_count = 1;
-				// gameSocket.close();
+				gameSocket.close();
 			}
 			else {
 				// console.log("woops not yet...")
@@ -272,7 +272,7 @@ export const loadGame = () => {
 		localPlayerMode = false;
 		startLocalButton.disabled = true;
 		startOnlineButton.disabled = true;
-
+		leftPlayer = true;
 		console.log("YUUUUUU");
 		if (btnCounter == 0) {
 			initiateSocket();
