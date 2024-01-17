@@ -10,7 +10,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['id', 'email', 'display_name', 'avatar',
-                  'picture', 'is_2fa_enabled', 'is_online', 'groups']
+                  'picture', 'is_2fa_enabled', 'is_online', 'image', 'groups']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['id', 'email', 'display_name', 'avatar', 'username',
-                  'picture', 'is_2fa_enabled', 'is_online', 'groups']
+                  'picture', 'is_2fa_enabled', 'is_online', 'image', 'groups']
 
 
 class GroupSerializer(serializers.ModelSerializer):

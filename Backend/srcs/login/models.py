@@ -3,33 +3,6 @@ from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db.models import JSONField
 from django.contrib.auth.models import Group, Permission
 
-# Create your models here.
-# class UserProfile(AbstractUser):
-#     id = models.AutoField(primary_key=True)
-#     email = models.EmailField(unique=True)
-#     display_name = models.CharField(max_length=50, unique=False)
-#     is_2fa_enabled = models.BooleanField(default=False)
-#     is_online = models.BooleanField(default=False)
-
-#     # USERNAME_FIELD = 'email'
-#     REQUIRED_FIELDS = ['email']
-
-#     def __str__(self):
-#         return self.display_name
-    
-
-# class UserProfile(AbstractUser):
-#     id = models.AutoField(primary_key=True, default=0)
-#     intra = models.TextField(default="None")
-#     email = models.EmailField(unique=True)
-#     password = models.CharField(max_length=50, unique=False)
-#     is_online = models.BooleanField(default=False)
-#     date_joined = models.DateTimeField() #get current date time
-#     last_login = models.DateTimeField() #get current date time
-#     display_name = models.CharField(max_length=50, unique=False)
-#     picture = JSONField(default=dict)
-#     def __str__(self):
-#         return self.intra
 
 class UserProfile(AbstractUser):
     groups = models.ManyToManyField(Group, related_name='user_profiles')
@@ -40,6 +13,7 @@ class UserProfile(AbstractUser):
     picture = JSONField(default=dict)
     is_2fa_enabled = models.BooleanField(default=False)
     is_online = models.BooleanField(default=False)
+    image = models.ImageField(upload_to='mediafiles/', default='')
 
     # Use unique related names
     user_permissions = models.ManyToManyField(
@@ -47,22 +21,29 @@ class UserProfile(AbstractUser):
     )
 
     REQUIRED_FIELDS = ['email']
+
     def __str__(self):
         return self.display_name
+
 
 class Settings(models.Model):
     avatar = models.TextField(default="None")
-    display_name = models.CharField(max_length=50, unique=True, primary_key=True)
+    display_name = models.CharField(
+        max_length=50, unique=True, primary_key=True)
     intra = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     is_2fa_enabled = models.BooleanField(default=False)
+
     def __str__(self):
         return self.display_name
 
 
-#no primary key - try to create a composite key
+# no primary key - try to create a composite key
 class Friendship(models.Model):
-    intra1 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='user1')
-    intra2 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='user2')
+    intra1 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='user1')
+    intra2 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='user2')
+
     def __str__(self):
         return (self.intra1 + self.intra2)
 
@@ -71,24 +52,32 @@ class Tournament(models.Model):
     intra = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     tournament_id = models.AutoField(primary_key=True)
     status = models.BooleanField(default=False)
+
     def __str__(self):
         return self.intra
+
 
 class Match(models.Model):
     match_id = models.AutoField(primary_key=True)
     tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE)
-    intra1 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='player1')
-    intra2 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='player2')
+    intra1 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='player1')
+    intra2 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='player2')
     winner = models.CharField(max_length=50)
     score1 = models.IntegerField()
     score2 = models.IntegerField()
+
     def __str__(self):
         return self.match_id
-    
-#no primary key - try to create a composite key
+
+# no primary key - try to create a composite key
+
+
 class Nickname(models.Model):
     nick = models.CharField(max_length=50)
     intra = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING)
     tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+
     def __str__(self):
         return self.nick

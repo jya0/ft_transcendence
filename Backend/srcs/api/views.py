@@ -14,6 +14,7 @@ from django.contrib.auth.models import Group
 from rest_framework import permissions, viewsets
 from .serializers import GroupSerializer, UserSerializer
 from django.core.serializers import serialize
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -79,6 +80,19 @@ def intra_link(request):
 @permission_classes([IsAuthenticated])
 def get_all_users(request):
     users = UserProfile.objects.exclude(username='admin')
-    
+
     users_json = serialize('json', users)
     return JsonResponse(users_json, safe=False)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@csrf_exempt
+def update_user_profile(request):
+    if request.FILES.get('image'):
+        user = UserProfile.objects.get(username=request.user.username)
+        user.image = request.FILES['image']
+        user.save(update_fields=['image'])
+        return JsonResponse({'message': 'Profile updated successfully'}, status=200)
+    else:
+        return JsonResponse({'error': 'Image not provided'}, status=400)

@@ -7,7 +7,14 @@
 				<div class="col-4 border border-1 border-dark">
 					<div class="row row-cols-2">
 						<div class="col">
-							<img src="./assets/public/users/ghost.svg" alt="Avatar" class="img-fluid rounded-start"></img>
+							<div>
+								<input type="file" accept="image/*" name="image" id="file" style="display: none;">
+								<label for="file" style="cursor: pointer;">Upload Image</label>
+								<img id="output" width="200" />
+							</div>
+							<button id="uploadButton">Upload</button>
+							<img src="./assets/public/users/ghost.svg" alt="Avatar"
+								class="img-fluid rounded-start"></img>
 						</div>
 						<div class="col card-body">
 							<h5 class="card-title">username</h5>
@@ -58,8 +65,8 @@
 				</div>
 			</div>
 		</div>
-	
-		<!-- <div class="col" style="width: 75%;">
+
+		<div class="col" style="width: 75%;">
 			<div class="col">
 				<div class="d-flex align-items-stretch justify-content-between">
 					<div class="p-2">name</div>
@@ -95,7 +102,7 @@
 					<div class="p-2">name</div>
 				</div>
 			</div>
-		</div> -->
+		</div>
 
 	</div>
 

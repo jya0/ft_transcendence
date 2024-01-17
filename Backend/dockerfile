@@ -16,7 +16,7 @@ RUN pip install --upgrade pip
 
 COPY ./srcs/requirements.txt .
 
-RUN pip install --upgrade pip && pip install -r requirements.txt && apt install -y netcat \
+RUN pip install --upgrade pip && pip install pillow && pip install -r requirements.txt && apt install -y netcat \
 	&& pip install pyotp && pip install django-cors-headers && pip install djangorestframework && pip install djangorestframework-simplejwt[crypto]
 
 # copy entrypoint.sh
