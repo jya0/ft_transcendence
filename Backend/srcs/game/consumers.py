@@ -24,6 +24,7 @@ class ChatConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        print('sup mfs')
         self.accept()
        
         # self.send(text_data=json.dumps({
@@ -49,6 +50,7 @@ class ChatConsumer(WebsocketConsumer):
         if (type == 'start'):
             status = 'waiting'
             open_lobby = Match.objects.filter(Q(open_lobby=True)).exists()
+            print(open_lobby)
             game =  Match.objects.filter(Q(open_lobby=True))[0]
             player = UserProfile.objects.filter(Q(intra=username))[0]
             if (open_lobby == True):
@@ -66,6 +68,7 @@ class ChatConsumer(WebsocketConsumer):
                         game.id2 = player
                         status = 'start'
                         game.open_lobby = False
+                        game.ongoing = True
                         create_new_game_lobby()
                 game.save()
                 #@todo:
@@ -75,6 +78,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'start_game',
+                    'sender' : username,
                     'status' : status
                 }
             )
@@ -92,11 +96,28 @@ class ChatConsumer(WebsocketConsumer):
             )
 
 
+        if (type == 'end'):
+            current_game = Match.objects.filter((Q(id1__intra=username)|Q(id2__intra=username)) & Q(ongoing=True))[0]
+            player = UserProfile.objects.filter(Q(intra=username))[0]
+            score1 = text_data_json['score1']
+            score2 = text_data_json['score2']
+            current_game.ongoing = False
+            if (score1 > score2):
+                current_game.winner = current_game.id1.intra
+            else:
+                current_game.winner = current_game.id2.intra
+            current_game.score1 = score1
+            current_game.score2 = score2
+            current_game.save()
+            self.close()
+
+
     def start_game(self, event):
         message = event['status']
-
+        sender = event['sender']
         self.send(text_data=json.dumps({
             'type' : 'start',
+            'sender' : sender,
             'status' : message
         }))
 
@@ -119,7 +140,7 @@ class ChatConsumer(WebsocketConsumer):
         #     self.room_group_name,
         #     self.channel_name
         # )
-        self.close()
+        # self.close()
         # is_playing = Match.objects.filter((Q(id1__id='rriyas') | Q(id2__id='rriyas')) & ongoing=True).exists()
         
         # open_games = Match.objects.all().count()

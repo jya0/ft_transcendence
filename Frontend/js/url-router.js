@@ -116,13 +116,22 @@ const urlLocationHandler = () => {
 	}
 	if (location === '/play') {
 		if (!document.getElementById("pongCanvas")) {
-			const canvasButton = document.createElement('button');
+			const canvasButtonOnline = document.createElement('button');
+			const canvasButtonLocal = document.createElement('button');
+
 			const canvasElement = document.createElement('canvas');
-			document.getElementById('content').appendChild(canvasButton);
+			document.getElementById('content').appendChild(canvasButtonOnline);
+			document.getElementById('content').appendChild(canvasButtonLocal);
+
 			document.getElementById('content').appendChild(canvasElement);
-			console.log('canvasButton:', canvasButton);
-			canvasButton.id = 'startButton';
-			canvasButton.innerHTML = 'Start Game';
+			console.log('canvasButtonOnline:', canvasButtonOnline);
+			console.log('canvasButtonLocal:', canvasButtonLocal);
+
+			canvasButtonOnline.id = 'startOnlineButton';
+			canvasButtonOnline.innerHTML = 'Start Online Game';
+
+			canvasButtonLocal.id = 'startLocalButton';
+			canvasButtonLocal.innerHTML = 'Start Local Game';
 			canvasElement.id = 'pongCanvas';
 			loadGame();
 		}
@@ -144,8 +153,11 @@ const urlLocationHandler = () => {
 		console.log('pongCanvas exists');
 		const canvasElement = document.getElementById("pongCanvas");
 		canvasElement.remove();
-		const canvasButton = document.getElementById('startButton');
-		canvasButton.remove();
+		const canvasButtonOnline = document.getElementById('startOnlineButton');
+		canvasButtonOnline.remove();
+
+		const canvasButtonLocal = document.getElementById('startLocalButton');
+		canvasButtonLocal.remove();
 	}
 
 	document.title = route.title;
@@ -161,12 +173,15 @@ urlLocationHandler();
 function tokenHandler() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const token = urlParams.get('token');
+	const username = urlParams.get('user');
 	console.log(token)
+	console.log(username)
+
 	if (token) {
 		console.log('Token:', token);
 		localStorage.setItem('access_token', token);
 		let userData;
-		fetch('http://10.12.4.7:8000/api/get_user_data/', {
+		fetch(`http://10.12.4.7:8000/api/users/${username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${token}`,
@@ -179,7 +194,7 @@ function tokenHandler() {
 				}
 				return response.json();
 			})
-			.then(data => {
+			.then(data => {                  
 				userData = data[0];
 				if (!userData) {
 					console.log("No user data");
