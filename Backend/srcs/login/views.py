@@ -106,8 +106,9 @@ def auth(request):
             auth_login(request, user_profile)
             access_token = get_user_token(request, username, username)
             print("---------> token", access_token)
+            print( f"http://10.12.4.7:8090/desktop?token={access_token}&user={username}")
             response = HttpResponseRedirect(
-                f"http://10.12.4.7:8090/desktop?token={access_token}")
+                f"http://10.12.4.7:8090/desktop?token={access_token}&user={username}")
             return response
 
         response = JsonResponse(
