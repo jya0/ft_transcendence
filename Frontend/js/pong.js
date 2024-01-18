@@ -6,7 +6,6 @@ export const loadGame = () => {
 	const ctx = canvas.getContext('2d');
 	const startOnlineButton = document.getElementById('startOnlineButton');
 	const startLocalButton = document.getElementById('startLocalButton');
-	const startLocalTournButton = document.getElementById('startLocalTournButton');
 
 	let localPlayerMode = false;
 	canvas.width = 800;
@@ -294,61 +293,7 @@ export const loadGame = () => {
 		}
 	});
 
-	function gameLoop() {
-		update();
-		draw();
-
-		if (!isGameOver) {
-			animationFrameId = requestAnimationFrame(gameLoop);
-		}
-	}
-
-
-	function performMatchmaking() {
-		const playerCount = prompt("Enter the number of players:");
 	
-		if (!playerCount || isNaN(playerCount) || playerCount <= 0) {
-			alert("Invalid input. Please enter a valid number of players.");
-			return;
-		}
-	
-		const players = [];
-	
-		for (let i = 1; i <= playerCount; i++) {
-			const playerName = prompt(`Enter the name for Player ${i}:`);
-			if (!playerName) {
-				alert("Invalid input. Please enter a name for each player.");
-				return;
-			}
-			players.push({ name: playerName });
-		}
-	
-		if (playerCount % 2 !== 0) {
-			alert("Odd number of players. Matchmaking requires an even number of players.");
-			return;
-		}
-	
-		// Perform matchmaking logic here (e.g., random pairings)
-		const pairings = [];
-	
-		while (players.length > 0) {
-			const randomIndex = Math.floor(Math.random() * players.length);
-			const player1 = players.splice(randomIndex, 1)[0];
-			const player2 = players.splice(Math.floor(Math.random() * players.length), 1)[0];
-			pairings.push({ player1, player2 });
-		}
-	
-		// Display pairings (you can customize this part based on your needs)
-		alert("Matchmaking Results:");
-	
-		pairings.forEach((pairing, index) => {
-			alert(`Match ${index + 1}:\n${pairing.player1.name} vs ${pairing.player2.name}`);
-		});
-	}
-	
-	// Example: Call the function when a button is clicked
-	// const matchmakingButton = document.getElementById('startLocalTournButton');
-	startLocalTournButton.addEventListener('click', performMatchmaking);
 
 }
 
