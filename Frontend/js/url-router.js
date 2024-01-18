@@ -157,7 +157,9 @@ const urlLocationHandler = async () => {
 	const route = urlRoutes[location] || urlRoutes["404"];
 
 	if (location === '/') {
-		document.getElementById("navbar").remove();
+		if (document.getElementById("navbar")) {
+			document.getElementById("navbar").remove();
+		}
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
 			document.getElementById("content").innerHTML = data;
 		});
@@ -258,6 +260,7 @@ const urlLocationHandler = async () => {
 
 				if (data === '2FA disabled successfully') {
 					document.getElementById('2fa-button').innerHTML = 'Enable 2FA';
+					alert('2FA disabled successfully');
 				} else {
 					await fetch('/components/login.html').then(response => response.text()).then(data => {
 						document.getElementById("navbar").remove();
@@ -353,6 +356,11 @@ function tokenHandler() {
 				userId = userData['id'];
 				userToken = token;
 			})
+		const url = new URL(window.location.href);
+		url.search = '';
+		const mainUrl = url.toString();
+
+		history.replaceState({}, '', mainUrl);
 	}
 	if (otp === 'validate_otp') {
 		console.log('validate otp');
@@ -407,7 +415,7 @@ function tokenHandler() {
 					if (data.message === 'OTP is valid') {
 						console.log(data);
 						localStorage.setItem('access_token', token);
-						document.getElementsById('content').remove();
+						document.getElementsByClassName("window")[0].innerHTML = '';
 						alert('OTP is valid, enjoy pongos');
 						return false;
 					}
