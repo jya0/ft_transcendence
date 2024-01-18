@@ -1,3 +1,4 @@
+from login.views import ssr_render
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -92,3 +93,22 @@ def update_user_profile(request):
         return JsonResponse({'message': 'Profile updated successfully'}, status=200)
     else:
         return JsonResponse({'error': 'Image not provided'}, status=400)
+
+
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def get_user_profile(request):
+    print(request.GET.get('username'))
+    user = UserProfile.objects.get(username=request.GET.get('username'))
+    users_list = UserProfile.objects.all().exclude(username='admin')
+    # ssr = ssr_render(request, 'user_profile.html', user, 'other') will be placed after getting friend list
+
+    template = get_template('user_profile.html')
+    template_content = template.template.source
+    template = Template(template_content)
+    context = Context(
+        {'user': user, 'users_list': users_list, 'messages': 'other'})
+
+    rendered_template = template.render(context)
+    return HttpResponse(rendered_template, content_type='text/html')
+    return ssr
