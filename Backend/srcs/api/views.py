@@ -4,7 +4,6 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from login.models import UserProfile
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
@@ -13,6 +12,11 @@ from django.http import HttpResponse
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import Group
 from rest_framework import permissions, viewsets
+from .serializers import GroupSerializer, UserSerializer, UserProfileSerializer, MatchSerializer, TournamentSerializer
+from django.core.serializers import serialize
+from login.models import UserProfile, Match, Tournament
+from django.db.models import Q
+from django.forms.models import model_to_dict
 from .serializers import GroupSerializer, UserSerializer
 from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
@@ -74,13 +78,65 @@ def intra_link(request):
     return JsonResponse({'forty_two_url': forty_two_url})
 
 
+
+
+
+# ______________________________________________________________________________________
+# ______________________________________________________________________________________
+# USER ENDPOINTS
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_all_users(request):
     users = UserProfile.objects.exclude(username='admin')
+    serializer = UserProfileSerializer(users, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
-    users_json = serialize('json', users)
-    return JsonResponse(users_json, safe=False)
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_data(request, intra):
+    user = UserProfile.objects.filter(Q(intra=intra)).all()
+    serializer = UserProfileSerializer(user, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+# ______________________________________________________________________________________
+# ______________________________________________________________________________________
+# TOOURNAMENT ENDPOINTS
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_tournaments(request):
+    tourns = Tournament.objects.all()
+    serializer = TournamentSerializer(tourns, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_tournaments(request, intra):
+    user_tourns = Match.objects.filter(~Q(tournament_id=1) & (Q(id1__intra=intra) | Q(id2__intra=intra))).distinct('tournament_id')
+    serializer = MatchSerializer(user_tourns, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+# ______________________________________________________________________________________
+# ______________________________________________________________________________________
+# GAME ENDPOINTS
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_games(request):
+    games = Match.objects.all()
+    serializer = MatchSerializer(games, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_games(request, intra):
+    games = Match.objects.filter((Q(id1__intra=intra) | Q(id2__intra=intra)) & Q(ongoing=False) & Q(open_lobby=False))
+    serializer = MatchSerializer(games, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(['POST'])
