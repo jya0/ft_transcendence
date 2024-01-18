@@ -1,5 +1,5 @@
 // import {io} from "socket.io-client";
-export const loadT = () => {
+export const loadTournament = () => {
 
     const canvas = document.getElementById('pongCanvas');
     const ctx = canvas.getContext('2d');
