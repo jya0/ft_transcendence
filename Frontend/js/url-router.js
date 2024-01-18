@@ -1,5 +1,9 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
+import { loadTournament } from './pongTourn.js';
+import { loadT } from './tournament.js';
+
+
 
 // create document click that watches the nav links only
 document.querySelector('#navbar').addEventListener("click", (e) => {
@@ -117,7 +121,7 @@ const urlLocationHandler = async () => {
 
 	if (location === '/') {
 		document.getElementById("navbar").remove();
-		await fetch('/components/login.html').then(response => response.text()).then(data => {
+		await fetch('/components/login.html').then(ponse => response.text()).then(data => {
 			document.getElementById("content").innerHTML = data;
 		});
 	}
@@ -128,18 +132,18 @@ const urlLocationHandler = async () => {
 			
 			const canvasButtonOnline = document.createElement('button');
 			const canvasButtonLocalGame = document.createElement('button');
-			const canvasButtonLocalTourn = document.createElement('button');
+			// const canvasButtonLocalTourn = document.createElement('button');
 
 			
 			document.getElementsByClassName('window')[0].appendChild(canvasElement);
 			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnline);
-			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
 			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalGame);
+			// document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
 
 
 			console.log('canvasButtonOnline:', canvasButtonOnline);
 			console.log('canvasButtonLocalGame:', canvasButtonLocalGame);
-			console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
+			// console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
 
 
 			canvasButtonOnline.id = 'startOnlineButton';
@@ -148,12 +152,43 @@ const urlLocationHandler = async () => {
 			canvasButtonLocalGame.id = 'startLocalButton';
 			canvasButtonLocalGame.innerHTML = 'Start Local Game';
 
-			canvasButtonLocalTourn.id = 'startLocalTournButton';
-			canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
+			// canvasButtonLocalTourn.id = 'startLocalTournButton';
+			// canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
 
 
 			canvasElement.id = 'pongCanvas';
 			loadGame();
+		}
+		document.title = route.title;
+		return;
+	}
+
+	else if (location === '/tournament') {
+		setMainWindowframe();
+
+		if (!document.getElementById("pongCanvas")) {
+			
+			const canvasElement = document.createElement('canvas');
+			const canvasButtonLocalTourn = document.createElement('button');
+			const canvasButtonOnlineTourn = document.createElement('button');
+
+	
+			document.getElementsByClassName('window')[0].appendChild(canvasElement);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnlineTourn);
+
+	
+			console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
+			console.log('canvasButtonOnlineTourn:', canvasButtonOnlineTourn);
+	
+			canvasButtonLocalTourn.id = 'startLocalTournButton';
+			canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
+
+			canvasButtonOnlineTourn.id = 'startOnlineTournButton';
+			canvasButtonOnlineTourn.innerHTML = 'Start Online Tournament';
+	
+			canvasElement.id = 'pongCanvas';
+			loadT(); // You may need to modify loadGame() to handle tournament-specific logic
 		}
 		document.title = route.title;
 		return;
@@ -259,7 +294,6 @@ const urlLocationHandler = async () => {
 		canvasButtonLocalTourn.remove();
 
 	}
-
 
 	document.title = route.title;
 };
