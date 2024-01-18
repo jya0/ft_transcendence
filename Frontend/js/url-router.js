@@ -1,5 +1,8 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
+import { loadTournament } from './tournament.js';
+
+
 
 
 let username
@@ -73,7 +76,7 @@ const urlRoutes = {
 		description: "This is the login page",
 	},
 	"/desktop": {
-		title: "About Us | " + urlPageTitle,
+		title: "About me | " + urlPageTitle,
 		description: "This is the desktop page",
 	},
 	"/myprofile": {
@@ -167,15 +170,67 @@ const urlLocationHandler = async () => {
 	if (location === '/play') {
 		setMainWindowframe();
 		if (!document.getElementById("pongCanvas")) {
-			const canvasButton = document.createElement('button');
 			const canvasElement = document.createElement('canvas');
-			document.getElementsByClassName('window')[0].appendChild(canvasButton);
-			document.getElementsByClassName('window')[0].appendChild(canvasElement);
 
-			canvasButton.id = 'startButton';
-			canvasButton.innerHTML = 'Start Game';
+			const canvasButtonOnline = document.createElement('button');
+			const canvasButtonLocalGame = document.createElement('button');
+			// const canvasButtonLocalTourn = document.createElement('button');
+
+
+			document.getElementsByClassName('window')[0].appendChild(canvasElement);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnline);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalGame);
+			// document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
+
+
+			console.log('canvasButtonOnline:', canvasButtonOnline);
+			console.log('canvasButtonLocalGame:', canvasButtonLocalGame);
+			// console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
+
+
+			canvasButtonOnline.id = 'startOnlineButton';
+			canvasButtonOnline.innerHTML = 'Start Online Game';
+
+			canvasButtonLocalGame.id = 'startLocalButton';
+			canvasButtonLocalGame.innerHTML = 'Start Local Game';
+
+			// canvasButtonLocalTourn.id = 'startLocalTournButton';
+			// canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
+
+
 			canvasElement.id = 'pongCanvas';
 			loadGame();
+		}
+		document.title = route.title;
+		return;
+	}
+
+	else if (location === '/tournament') {
+		setMainWindowframe();
+
+		if (!document.getElementById("pongCanvas")) {
+
+			const canvasElement = document.createElement('canvas');
+			const canvasButtonLocalTourn = document.createElement('button');
+			const canvasButtonOnlineTourn = document.createElement('button');
+
+
+			document.getElementsByClassName('window')[0].appendChild(canvasElement);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
+			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnlineTourn);
+
+
+			console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
+			console.log('canvasButtonOnlineTourn:', canvasButtonOnlineTourn);
+
+			canvasButtonLocalTourn.id = 'startLocalTournButton';
+			canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
+
+			canvasButtonOnlineTourn.id = 'startOnlineTournButton';
+			canvasButtonOnlineTourn.innerHTML = 'Start Online Tournament';
+
+			canvasElement.id = 'pongCanvas';
+			loadTournament(); // You may need to modify loadGame() to handle tournament-specific logic
 		}
 		document.title = route.title;
 		return;
@@ -302,8 +357,15 @@ const urlLocationHandler = async () => {
 
 		const canvasElement = document.getElementById("pongCanvas");
 		canvasElement.remove();
-		const canvasButton = document.getElementById('startButton');
-		canvasButton.remove();
+		const canvasButtonOnline = document.getElementById('startOnlineButton');
+		canvasButtonOnline.remove();
+
+		const canvasButtonLocalGame = document.getElementById('startLocalButton');
+		canvasButtonLocalGame.remove();
+
+		const canvasButtonLocalTourn = document.getElementById('startLocalTournButton');
+		canvasButtonLocalTourn.remove();
+
 	}
 
 	document.title = route.title;
@@ -327,7 +389,7 @@ function tokenHandler() {
 		console.log('token---------->');
 		localStorage.setItem('access_token', token);
 		let userData;
-		fetch('http://localhost:8000/api/get_user_data/', {
+		fetch(`http://10.12.4.7:8000/api/users/${username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${token}`,
@@ -456,7 +518,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	await fetch('http://localhost:8000/users/', {
+	await fetch('http://10.12.4.7:8000/users/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,

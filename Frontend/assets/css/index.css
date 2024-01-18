@@ -205,10 +205,41 @@ a {
   /* Adjust the margin to make space for the fixed navbar */
 }
 
-#startButton {
+#startOnlineButton {
   position: fixed;
-  top: 80%;
+  top: 75%;
   left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 11;
+}
+
+
+#startLocalButton {
+  position: fixed;
+  top: 85%;
+  left: 50%;
+  /* margin-left: 40px; */
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 11;
+}
+
+#startLocalTournButton {
+  position: fixed;
+  top: 35%;
+  left: 50%;
+  /* margin-left: 40px; */
+  transform: translate(-50%, -50%);
+  color: white;
+  z-index: 11;
+}
+
+#startOnlineTournButton {
+  position: fixed;
+  top: 45%;
+  left: 50%;
+  /* margin-left: 40px; */
   transform: translate(-50%, -50%);
   color: white;
   z-index: 11;
@@ -291,4 +322,72 @@ canvas {
   width: 100%;
   height: 1024px;
   overflow: hidden;
+}
+
+
+
+#tournamentSetupForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    z-index: 21;
+}
+
+#tournamentSetupForm label {
+    margin-bottom: 8px;
+}
+
+#tournamentSetupForm input {
+    padding: 8px;
+    margin-bottom: 16px;
+}
+
+#tournamentSetupForm button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#tournamentSetupForm button:hover {
+    background-color: #45a049;
+}
+
+/* Style for the player name input container */
+#playerNameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#playerNameContainer p {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 16px;
+}
+
+#playerNameContainer label {
+    margin-bottom: 8px;
+}
+
+#playerNameContainer input {
+    padding: 8px;
+    margin-bottom: 16px;
+}
+
+#playerNameContainer button {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#playerNameContainer button:hover {
+  background-color: #45a049;
 }

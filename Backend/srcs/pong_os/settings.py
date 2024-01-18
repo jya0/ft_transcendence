@@ -31,12 +31,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8090"]
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8090", "http://10.12.4.7:8090", "http://10.12.4.7:8000"]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,6 +52,13 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
 ]
+
+CHANNEL_LAYERS = {
+    'default' : {
+        'BACKEND' : 'channels.layers.InMemoryChannelLayer'
+    }
+}
+
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
@@ -81,6 +89,9 @@ TEMPLATES = [
     },
 ]
 
+
+ASGI_APPLICATION = 'pong_os.asgi.application'
+
 WSGI_APPLICATION = 'pong_os.wsgi.application'
 
 AUTH_USER_MODEL = "login.UserProfile"
@@ -96,6 +107,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8090','http://127.0.0.1:8090', 'http://10.12.4.7:8090', 'http://10.12.4.7:8000',
     'http://localhost:8090', 'http://127.0.0.1:8090'
 ]
 

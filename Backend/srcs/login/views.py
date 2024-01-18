@@ -82,7 +82,7 @@ def auth(request):
             response = JsonResponse(
                 {'message': 'Failed to fetch user data'}, status=400)
             return response
-            return HttpResponseRedirect("http://localhost:8090/")
+            return HttpResponseRedirect("http://10.12.4.7:8090/")
         if username:
             if not UserProfile.objects.filter(username=username).exists():
                 try:
@@ -92,6 +92,7 @@ def auth(request):
                         first_name=display_name.split()[0],
                         last_name=display_name.split()[1],
                         display_name=display_name,
+                        intra = email.split('@')[0],
                         picture=picture,
                         date_joined=datetime.now())
                     user_profile.set_password(username)
@@ -113,18 +114,19 @@ def auth(request):
             auth_login(request, user_profile)
             access_token = get_user_token(request, username, username)
             print("---------> token", access_token)
+            print( f"http://10.12.4.7:8090/desktop?token={access_token}&user={username}")
             response = HttpResponseRedirect(
-                f"http://localhost:8090/desktop?token={access_token}")
+                f"http://10.12.4.7:8090/desktop?token={access_token}&user={username}")
             return response
 
         response = JsonResponse(
             {'message': 'Failed to fetch user data'}, status=400)
         return response
-        return HttpResponseRedirect("http://localhost:8090/")
+        return HttpResponseRedirect("http://10.12.4.7:8090/")
     else:
         response = JsonResponse({'message': 'Invalid code'}, status=400)
         return response
-        return HttpResponseRedirect("http://localhost:8090/")
+        return HttpResponseRedirect("http://10.12.4.7:8090/")
 
 
 def twoFactor(request):
