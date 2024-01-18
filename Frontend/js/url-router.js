@@ -1,7 +1,6 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
-import { loadTournament } from './pongTourn.js';
-import { loadT } from './tournament.js';
+import { loadTournament } from './tournament.js';
 
 
 
@@ -188,7 +187,7 @@ const urlLocationHandler = async () => {
 			canvasButtonOnlineTourn.innerHTML = 'Start Online Tournament';
 	
 			canvasElement.id = 'pongCanvas';
-			loadT(); // You may need to modify loadGame() to handle tournament-specific logic
+			loadTournament(); // You may need to modify loadGame() to handle tournament-specific logic
 		}
 		document.title = route.title;
 		return;
