@@ -3,22 +3,10 @@ from rest_framework import serializers
 from login.models import UserProfile, Match, Tournament
 
 
-# class UserProfileSerializer(serializers.ModelSerializer):
-#     groups = serializers.PrimaryKeyRelatedField(
-#         many=True, queryset=Group.objects.all())
-
-#     class Meta:
-#         model = UserProfile
-#         fields = ['id', 'email', 'display_name', 'avatar',
-#                   'picture', 'is_2fa_enabled', 'is_online', 'groups']
-
-
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = '__all__'
-        # fields = ['id', 'email', 'display_name', 'avatar',
-        #           'picture', 'is_2fa_enabled', 'is_online', 'image', 'groups']
 
 
 class TournamentSerializer(serializers.ModelSerializer):
@@ -31,7 +19,12 @@ class MatchSerializer(serializers.ModelSerializer):
         model = Match
         fields = '__all__'
 
-        
+class FriendSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
+        fields = '__all__'
+
+
 
 
 class UserSerializer(serializers.ModelSerializer):
