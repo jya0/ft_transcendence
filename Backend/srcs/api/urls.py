@@ -23,6 +23,8 @@ urlpatterns = [
     path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
     path("games/", get_all_games, name="get_all_games"),
     path("games/<str:intra>", get_user_games, name="get_user_games"),
+    path("friends/", get_all_friends, name="get_all_friends"),
+    path("friends/<str:intra>", get_user_friends, name="get_user_friends"),
 
 
     path("update_user_profile/", update_user_profile, name="update_user_profile"),

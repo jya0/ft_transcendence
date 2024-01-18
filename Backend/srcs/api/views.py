@@ -14,7 +14,7 @@ from django.contrib.auth.models import Group
 from rest_framework import permissions, viewsets
 from .serializers import GroupSerializer, UserSerializer, UserProfileSerializer, MatchSerializer, TournamentSerializer
 from django.core.serializers import serialize
-from login.models import UserProfile, Match, Tournament
+from login.models import UserProfile, Match, Tournament, Friendship
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from .serializers import GroupSerializer, UserSerializer
@@ -138,6 +138,35 @@ def get_user_games(request, intra):
     serializer = MatchSerializer(games, many=True)
     return JsonResponse(serializer.data, safe=False)
 
+# ______________________________________________________________________________________
+# ______________________________________________________________________________________
+# FRIEND ENDPOINTS
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_friends(request):
+    friends = Friendship.objects.all()
+    serializer = MatchSerializer(friends, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_friends(request, intra):
+    user_friends = Friendship.objects.filter(Q(id1__intra=intra) | Q(id2__intra=intra))
+    serializer = MatchSerializer(user_friends, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+# ______________________________________________________________________________________
+# ______________________________________________________________________________________
+
+
+
+
+
+
+
+
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -149,6 +178,7 @@ def update_user_profile(request):
         return JsonResponse({'message': 'Profile updated successfully'}, status=200)
     else:
         return JsonResponse({'error': 'Image not provided'}, status=400)
+
 
 
 # @api_view(['GET'])
