@@ -17,4 +17,6 @@ python manage.py makemigrations login
 python manage.py migrate
 echo "from login.models import UserProfile; UserProfile.objects.create_superuser('admin', 'admin@admin.com', 'admin')" | python manage.py shell
 
+cat pong_os/random_users.py  | python manage.py shell
+
 exec "$@"

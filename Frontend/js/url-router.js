@@ -1,16 +1,28 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
 
+
+let username
+let image
+let is_2fa_enabled
+let is_online
+let picture
+let email
+let userToken
+let userId
 let user = localStorage.getItem('user');
-user = JSON.parse(user)
-let username = user['username'];
-let image = user['image'];
-let is_2fa_enabled = user['is_2fa_enabled'];
-let is_online = user['is_online'];
-let picture = user['picture'];
-let email = user['email'];
-let userToken = user['access_token'];
-let userId = user['id'];
+
+if (user) {
+	user = JSON.parse(user)
+	username = user['username'];
+	image = user['image'];
+	is_2fa_enabled = user['is_2fa_enabled'];
+	is_online = user['is_online'];
+	picture = user['picture'];
+	email = user['email'];
+	userToken = user['access_token'];
+	userId = user['id'];
+}
 
 // create document click that watches the nav links only
 document.querySelector('#navbar').addEventListener("click", (e) => {
@@ -108,7 +120,9 @@ let loadFile = function (event) {
 };
 
 const urlLocationHandler = async () => {
-	tokenHandler();
+	if (tokenHandler()) {
+		return;
+	}
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	let location = window.location.pathname;
@@ -208,31 +222,36 @@ const urlLocationHandler = async () => {
 			console.error('Error:', error);
 		});
 
-		document.getElementById('2fa-button').addEventListener('click', () => {
-			console.log(userId)
-			fetch(`http://localhost:8000/users/${userId}/`, {
-				method: 'PATCH',
-				headers: {
-					'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					'is_2fa_enabled': !is_2fa_enabled,
-				}),
-			}).then(response => {
-				if (!response.ok) {
-					response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-				}
-				return response.text();
-			}).then(data => {
-				console.log(data);
-			}).catch((error) => {
-				console.error('Error:', error);
-			});
-			is_2fa_enabled = !is_2fa_enabled;
+		document.getElementById('2fa-button').addEventListener('click', async () => {
+			console.log(userId);
 
-			if (is_2fa_enabled) {
-				document.getElementsByClassName('window')[0].innerHTML = '';
+			try {
+				const response = await fetch(`http://localhost:8000/enable_or_disable_2fa/?username=${localStorage.getItem('username')}`, {
+					method: 'POST',
+					headers: {
+						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+						'x-csrftoken': getCookie('csrftoken'),
+					},
+				});
+
+				if (!response.ok) {
+					throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
+				}
+
+				const data = await response.text();
+
+				if (data === '2FA disabled successfully') {
+					document.getElementById('2fa-button').innerHTML = 'Enable 2FA';
+				} else {
+					await fetch('/components/login.html').then(response => response.text()).then(data => {
+						document.getElementById("navbar").remove();
+						document.getElementById("content").innerHTML = data;
+						localStorage.clear();
+					});
+					alert('2FA enabled successfully, please login again')
+				}
+			} catch (error) {
+				console.error('Error:', error);
 			}
 		});
 
@@ -281,8 +300,12 @@ urlLocationHandler();
 function tokenHandler() {
 	const urlParams = new URLSearchParams(window.location.search);
 	const token = urlParams.get('token');
-	if (token) {
-
+	const otp = urlParams.get('otp');
+	const urlUsername = urlParams.get('username');
+	console.log(token);
+	console.log(otp);
+	if (token && !otp) {
+		console.log('token---------->');
 		localStorage.setItem('access_token', token);
 		let userData;
 		fetch('http://localhost:8000/api/get_user_data/', {
@@ -315,12 +338,80 @@ function tokenHandler() {
 				userToken = token;
 			})
 	}
+	if (otp === 'validate_otp') {
+		console.log('validate otp');
+		// setMainWindowframe();
+		document.getElementById("content").innerHTML = `<div class="window-frame" id="main-window">
+		<div class="top-bar">
+		  <img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
 
-	const url = new URL(window.location.href);
-	url.search = '';
-	const mainUrl = url.toString();
+		  <div class="options">
+			<img class="vector-icon" alt="" src="./assets/public/vector.svg" />
 
-	history.replaceState({}, '', mainUrl);
+			<img class="dot-grid-icon" alt="" src="./assets/public/dot-grid.svg" />
+		  </div>
+		  </div>
+			<div class="window"></div>
+		</div>`;
+		document.getElementsByClassName('window')[0].innerHTML = `
+									<div class="mb-3 p-20px">
+									<label for="otp-input" class="form-label">OTP Code</label>
+									<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
+									</div>
+									<button type="submit-otp" id="submit-otp" class="btn btn-primary">Validate OTP</button>
+								`;
+
+		document.getElementById('submit-otp').addEventListener('click', async () => {
+			let otp = document.getElementById('otp-input').value;
+			if (!otp) {
+				alert('Please enter OTP code');
+				return;
+			}
+			const requestBody = new URLSearchParams();
+			requestBody.append('username', urlUsername);
+			requestBody.append('otp', otp);
+
+			await fetch('http://localhost:8000/validate_otp/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'Authorization': `Bearer ${token}`,
+					'x-csrftoken': getCookie('csrftoken'),
+				},
+				body: requestBody.toString(),
+			})
+				.then(response => {
+					if (!response.ok) {
+						throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					// Handle the response data here
+					if (data.message === 'OTP is valid') {
+						console.log(data);
+						localStorage.setItem('access_token', token);
+						document.getElementsById('content').remove();
+						alert('OTP is valid, enjoy pongos');
+						return false;
+					}
+					else {
+						alert('Invalid OTP code');
+					}
+
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		});
+		const url = new URL(window.location.href);
+		url.search = '';
+		const mainUrl = url.toString();
+
+		history.replaceState({}, '', mainUrl);
+		return true;
+	}
+	return false;
 }
 
 
@@ -375,25 +466,26 @@ function insertAllUsers(users) {
 	}
 	users.forEach(user => {
 		const playerCard = `
-							<div class="row row-cols-4 justify-content-center">
-							<div class="col-auto border border-1 border-dark">
-							<img src="${user.image ? user.image : user.picture.link}"
-							style="width: 100%; height:100px; border-radius: 50%;">
-							</div>
-							<div class="col-4 border border-1 border-dark">
-							<div class="row justify-content-left text-uppercase">
-							<h4>${user.username}</h4>
-							</div>
-							<div class="row justify-content-left text-uppercase"><a>status: ${user.is_online ? "online 🟢" : "offline ⚪"}</a></div>
-							<div class="row justify-content-left text-uppercase">
-							<h5>ranking</h5>
-							</div>
-							</div>
-							<div class="col-auto g-0 border border-1 border-dark"><button
-							class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button></div>
-							<div class="col-auto g-0 border border-1 border-dark"><button class="h-100 w-100 btn btn-info text-capitalize"
-							type="button">view profile</button></div>
-							</div>`;
+								<div class="row p-0 g-0">
+									<div class="col border border-1 border-dark ratio ratio-1x1">
+										<div class="ratio ratio-1x1" style="background-color: rebeccapurple;">
+											<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
+										</div>
+									</div>
+									<div class="col-6 border border-1 border-dark overflow-auto mh-100 mw-50">
+										<ul class="list-group">
+											<li class="list-group-item justify-content-left text-uppercase"><h4>${user.username}</h4></li>
+											<li class="list-group-item justify-content-left text-uppercase"><a>${user.is_online ? "online 🟢" : "offline ⚪"}</a></li>
+											<li class="list-group-item justify-content-left text-uppercase"><h5>ranking</h5></li>
+										</ul>
+									</div>
+									<div class="col border border-1 border-dark ratio ratio-1x1">
+										<button class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button>
+									</div>
+									<div class="col border border-1 border-dark ratio ratio-1x1">
+										<button class="h-100 w-100 btn btn-info text-capitalize" type="button">view profile</button>
+									</div>
+								</div>`;
 		document.getElementById('player-card-div').innerHTML += playerCard;
 	});
 }

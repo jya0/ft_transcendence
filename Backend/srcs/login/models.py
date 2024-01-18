@@ -14,6 +14,8 @@ class UserProfile(AbstractUser):
     is_2fa_enabled = models.BooleanField(default=False)
     is_online = models.BooleanField(default=False)
     image = models.ImageField(upload_to='mediafiles/', default='')
+    otp_secret_key = models.CharField(max_length=16, default='')
+    otp_valid_date = models.DateTimeField(default=None, blank=True, null=True)
 
     # Use unique related names
     user_permissions = models.ManyToManyField(

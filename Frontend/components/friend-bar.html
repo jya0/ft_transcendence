@@ -7,15 +7,14 @@
 		<div class="container">
 			<div class="row p-0 g-0">
 				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<!-- <img class="img-fluid mh-10 mw-10" src="https://cdn.pixabay.com/photo/2015/06/22/08/40/child-817373_1280.jpg"> -->
 					<div class="ratio ratio-1x1" style="background-color: rebeccapurple;">
-						<img src="https://cdn.pixabay.com/photo/2015/06/22/08/40/child-817373_1280.jpg" class="img-fluid rounded-circle" alt="...">
+						<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
 					</div>
 				</div>
 				<div class="col-6 border border-1 border-dark overflow-auto mh-100 mw-50">
 					<ul class="list-group">
-						<li class="list-group-item justify-content-left text-uppercase"><h4>username</h4></li>
-						<li class="list-group-item justify-content-left text-uppercase"><a>online status</a></li>
+						<li class="list-group-item justify-content-left text-uppercase"><h4>${user.username}</h4></li>
+						<li class="list-group-item justify-content-left text-uppercase"><a>${user.is_online ? "online 🟢" : "offline ⚪"}</a></li>
 						<li class="list-group-item justify-content-left text-uppercase"><h5>ranking</h5></li>
 					</ul>
 				</div>

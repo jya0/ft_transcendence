@@ -1,5 +1,5 @@
 import pyotp
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from django.shortcuts import get_object_or_404
 from .models import UserProfile
 import smtplib
@@ -12,16 +12,21 @@ import hmac
 import os
 import requests
 
+
 def send_otp(request):
+    user = get_object_or_404(UserProfile, username=request.user.username)
     totp = pyotp.TOTP(pyotp.random_base32(), interval=60)
     otp = totp.now()
     request.session['otp_secret_key'] = otp
+    user.otp_secret_key = otp
     print("OTP:", otp)
     valid_date = datetime.now() + timedelta(minutes=1)
     request.session['otp_valid_date'] = valid_date.isoformat()
+    valid_date_utc_aware = valid_date.replace(tzinfo=timezone.utc)
+    user.otp_valid_date = valid_date_utc_aware
+    print("OTP valid date:", valid_date.isoformat())
+    user.save()
     print(f"your otp is {otp} and it is valid for 1 minute")
-    user = get_object_or_404(
-        UserProfile, username=request.session['username'])
     subject = "Your OTP"
     message = f"Your OTP is: {otp}"
     msg = MIMEMultipart()
@@ -35,6 +40,8 @@ def send_otp(request):
         server.login("42pongos@gmail.com", "hazmgnmudgrzrxey")
         server.sendmail("42pongos@gmail.com", user.email, msg.as_string())
     print("OTP sent successfully ", "send_otp view")
+    return otp
+
 
 def generate_jwt(user_id):
     header = {
@@ -62,6 +69,7 @@ def generate_jwt(user_id):
 
     return jwt_token
 
+
 def verify_jwt(token):
 
     parts = token.split('.')
@@ -82,6 +90,7 @@ def verify_jwt(token):
     if expiration < datetime.utcnow().timestamp():
         return False
     return payload
+
 
 def get_user_token(request, username, password):
     base_url = request.build_absolute_uri('/')[:-1]

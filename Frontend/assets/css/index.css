@@ -232,6 +232,7 @@ canvas {
   box-sizing: border-box;
   width: 1142px;
   height: 800px;
+  overflow: auto;
 }
 
 .dot-grid-icon,

@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta, timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
@@ -6,10 +7,14 @@ from .models import UserProfile
 from django.views.decorators.cache import never_cache
 from django.db import IntegrityError
 from datetime import datetime
-
+from django.template.loader import get_template
+from django.template import Context, Template
 from .utils import send_otp, generate_jwt, verify_jwt, get_user_token
 import os
 import requests
+from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
+
 
 FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
 
@@ -100,7 +105,10 @@ def auth(request):
                 request.session['username'] = username
                 send_otp(request)
                 print("sent otp.....")
-                return JsonResponse({'message': 'OTP sent to your email'}, status=200)
+                access_token = get_user_token(request, username, username)
+                response = HttpResponseRedirect(
+                    f"http://localhost:8090/desktop?otp=validate_otp&token={access_token}&username={username}")
+                return response
 
             auth_login(request, user_profile)
             access_token = get_user_token(request, username, username)
@@ -146,20 +154,46 @@ def twoFactor(request):
     return render(request, "2fa.html", {'user': user})
 
 
+@api_view(['POST'])
 def enable_or_disable_2fa(request):
-    if not request.user.is_authenticated:
-        return redirect('/')
     user = get_object_or_404(UserProfile, username=request.user.username)
-    if request.method == 'POST':
-        user.is_2fa_enabled = not user.is_2fa_enabled
-        user.save()
-        message = messages.info(
-            request, '2FA enabled successfully' if user.is_2fa_enabled else '2FA disabled successfully')
-        if user.is_2fa_enabled:
-            request.session['username'] = user.username
-            send_otp(request)
-            print("sent otp.....")
-            return redirect('/2fa')
+    user.is_2fa_enabled = not user.is_2fa_enabled
+    user.save()
+    message = messages.info(
+        request, '2FA enabled successfully' if user.is_2fa_enabled else '2FA disabled successfully')
+    if user.is_2fa_enabled:
+        request.session['username'] = user.username
+        # response = ssr_render(
+        #     request, 'enable_or_disable_2fa.html', user, message)
+        return HttpResponse("2FA Enabled successfully")
+    return HttpResponse("2FA disabled successfully")
 
-        return redirect('/', {'error': message, 'user': user})
-    return render(request, 'enable_or_disable_2fa.html', {'user': user})
+
+@api_view(['POST'])
+def validate_otp(request):
+    user = get_object_or_404(UserProfile, username=request.user.username)
+    print('user -   ---- > ', user.otp_secret_key)
+    otp = request.POST.get('otp')
+    print('get -   ---- > ', otp)
+    if otp and user.otp_secret_key == otp:
+        current_datetime = datetime.now(timezone.utc)
+        stored_datetime = user.otp_valid_date
+        print('stored_datetime date->', stored_datetime)
+        print('current_datetime date->', current_datetime)
+
+        if current_datetime <= stored_datetime:
+            request.session['is_verified'] = True
+            auth_login(request, user)
+            return JsonResponse({'message': 'OTP is valid'})
+
+    return JsonResponse({'message': 'Invalid OTP'}, status=200)
+
+
+def ssr_render(request, template_name, user, messages):
+    template = get_template(template_name)
+    template_content = template.template.source
+    template = Template(template_content)
+    context = Context({'user': user, 'messages': messages})
+
+    rendered_template = template.render(context)
+    return HttpResponse(rendered_template, content_type='text/html')
