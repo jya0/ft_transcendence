@@ -92,4 +92,3 @@ def update_user_profile(request):
         return JsonResponse({'message': 'Profile updated successfully'}, status=200)
     else:
         return JsonResponse({'error': 'Image not provided'}, status=400)
-
