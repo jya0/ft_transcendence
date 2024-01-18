@@ -24,6 +24,22 @@ if (user) {
 	userId = user['id'];
 }
 
+const viewUserProfile = (username) => {
+	console.log(`Viewing profile for ${username}`);
+	const url = `http://localhost:8000/api/get_user_profile/?username=${username}`;
+
+	fetch(url)
+		.then(response => response.text())
+		.then(data => {
+			console.log(data);
+			document.getElementsByClassName("window")[0].innerHTML = data;
+			// Handle the response data here
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		});
+}
+
 // create document click that watches the nav links only
 document.querySelector('#navbar').addEventListener("click", (e) => {
 	const { target } = e;
@@ -423,6 +439,7 @@ function insertOrCreateContent() {
 	}
 }
 
+
 async function getAllUsers(override) {
 	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
@@ -464,30 +481,40 @@ function insertAllUsers(users) {
 	if (!users) {
 		return;
 	}
+
 	users.forEach(user => {
 		const playerCard = `
-								<div class="row p-0 g-0">
-									<div class="col border border-1 border-dark ratio ratio-1x1">
-										<div class="ratio ratio-1x1" style="background-color: rebeccapurple;">
-											<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
-										</div>
-									</div>
-									<div class="col-6 border border-1 border-dark overflow-auto mh-100 mw-50">
-										<ul class="list-group">
-											<li class="list-group-item justify-content-left text-uppercase"><h4>${user.username}</h4></li>
-											<li class="list-group-item justify-content-left text-uppercase"><a>${user.is_online ? "online 🟢" : "offline ⚪"}</a></li>
-											<li class="list-group-item justify-content-left text-uppercase"><h5>ranking</h5></li>
-										</ul>
-									</div>
-									<div class="col border border-1 border-dark ratio ratio-1x1">
-										<button class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button>
-									</div>
-									<div class="col border border-1 border-dark ratio ratio-1x1">
-										<button class="h-100 w-100 btn btn-info text-capitalize" type="button">view profile</button>
-									</div>
-								</div>`;
+			<div class="row p-0 g-0">
+				<div class="col border border-1 border-dark ratio ratio-1x1">
+					<div class="ratio ratio-1x1" style="background-color: rebeccapurple;">
+						<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
+					</div>
+				</div>
+				<div class="col-6 border border-1 border-dark overflow-auto mh-100 mw-50">
+					<ul class="list-group">
+						<li class="list-group-item justify-content-left text-uppercase"><h4>${user.username}</h4></li>
+						<li class="list-group-item justify-content-left text-uppercase"><a>${user.is_online ? "online 🟢" : "offline ⚪"}</a></li>
+						<li class="list-group-item justify-content-left text-uppercase"><h5>ranking</h5></li>
+					</ul>
+				</div>
+				<div class="col border border-1 border-dark ratio ratio-1x1">
+					<button class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button>
+				</div>
+				<div class="col border border-1 border-dark ratio ratio-1x1">
+					<button class="h-100 w-100 btn btn-info text-capitalize view-profile-btn" type="button">View Profile</button>
+				</div>
+			</div>`;
+
 		document.getElementById('player-card-div').innerHTML += playerCard;
+
 	});
+	const buttons = document.getElementsByClassName('view-profile-btn');
+	for (let i = 0; i < buttons.length; i++) {
+		const button = buttons[i];
+		button.addEventListener('click', function () {
+			viewUserProfile(users[i].username);
+		});
+	}
 }
 
 
