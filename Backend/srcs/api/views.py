@@ -22,7 +22,7 @@ from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 
-
+import json
 # # Create your views here.
 
 # BASE_DIR = settings.BASE_DIR
@@ -106,21 +106,21 @@ from django.contrib import messages
 # # ______________________________________________________________________________________
 # # TOOURNAMENT ENDPOINTS
 
-# @api_view(['GET'])
+@api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-# def get_all_tournaments(request):
-#     tourns = Tournament.objects.all()
-#     serializer = TournamentSerializer(tourns, many=True)
-#     return JsonResponse(serializer.data, safe=False)
+def get_all_tournaments(request):
+    tourns = Tournament.objects.all()
+    serializer = TournamentSerializer(tourns, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 
 
-# @api_view(['GET'])
+@api_view(['GET'])
 # @permission_classes([IsAuthenticated])
-# def get_user_tournaments(request, intra):
-#     user_tourns = Match.objects.filter(~Q(tournament_id=1) & (Q(id1__intra=intra) | Q(id2__intra=intra))).distinct('tournament_id')
-#     serializer = MatchSerializer(user_tourns, many=True)
-#     return JsonResponse(serializer.data, safe=False)
+def get_user_tournaments(request, intra):
+    user_tourns = Match.objects.filter(~Q(tournament_id=1) & (Q(id1__intra=intra) | Q(id2__intra=intra))).distinct('tournament_id')
+    serializer = MatchSerializer(user_tourns, many=True)
+    return JsonResponse(serializer.data, safe=False)
 
 # # ______________________________________________________________________________________
 # # ______________________________________________________________________________________
@@ -357,7 +357,8 @@ def get_user_friends(request, intra):
             friend_intras.append(friend.id2.intra)
         elif friend.id2.intra == intra:
             friend_intras.append(friend.id1.intra)
-    return JsonResponse({'friends': friend_intras})
+    jf = json.dumps(friend_intras)
+    return HttpResponse(jf)
 
 
 
@@ -366,11 +367,10 @@ def get_user_friends(request, intra):
 def user_view(request, intra):
     try:
         user = get_object_or_404(UserProfile, username=intra)
-        print(intra)
         users_list = Friendship.objects.filter(Q(id1=user)|Q(id2=user)).all()
     except:
         return JsonResponse({'message': 'UserProfile not found'}, status=400)
-
+ 
     template = get_template('user_profile.html')
     template_content = template.template.source
     template = Template(template_content)

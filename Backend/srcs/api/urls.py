@@ -18,8 +18,6 @@ router.register(r'groups', views.GroupViewSet)
 
 # urlpatterns = [
 
-#     path("tournaments/", get_all_tournaments, name="get_all_tournaments"),
-#     path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
 #     path("games/", get_all_games, name="get_all_games"),
 #     path("games/<str:intra>", get_user_games, name="get_user_games"),
 #     path("friends/", get_all_friends, name="get_all_friends"),
@@ -37,6 +35,8 @@ router.register(r'groups', views.GroupViewSet)
 urlpatterns = [
     # path("users/", all_users_view, name="all_users_view"),
 
+    path("tournaments/", get_all_tournaments, name="get_all_tournaments"),
+    path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
     path("friends/<str:intra>", get_user_friends, name="get_user_friends"),
 
     path("users/<str:intra>", user_view, name="user_view"),
