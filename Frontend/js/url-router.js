@@ -41,6 +41,40 @@ const viewUserProfile = (username) => {
 		});
 }
 
+ const addFriend = async (button, username, newFriend) => {
+	console.log(`Forming friendship for ${username} with ${newFriend}`);
+	try {
+		const response = await fetch(`http://localhost:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
+			method: 'POST',
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+				'x-csrftoken': getCookie('csrftoken'),
+			},
+		});
+
+		if (!response.ok) {
+			throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
+		}
+
+		const data = await response.text();
+		console.log("Data = ");
+		console.log(data);
+		if (data === 'Added') {
+			button.innerHTML = 'Remove Friend';
+			alert('Friend Added successfully :(');
+		} else {
+			button.innerHTML = 'Add Friend';
+			alert('Friend Removed succesfully :)');
+		}
+	} catch (error) {
+		console.error('Error:', error);
+	}
+}
+
+
+
+
+
 // create document click that watches the nav links only
 document.querySelector('#navbar').addEventListener("click", (e) => {
 	const { target } = e;
@@ -236,13 +270,13 @@ const urlLocationHandler = async () => {
 	else if (location === '/desktop') {
 		setMainWindowframe();
 	}
-	// else if (location === '/myprofile') {
-	// 	setMainWindowframe();
+	else if (location === '/myprofile') {
+		setMainWindowframe();
 
-	// 	document.getElementById("content").innerHTML += `<h1>Welcome to ${location}</h1>
-	// 													<button id="logout" class="btn btn-primary" 
-	// 													onClick="handleLogout()">Logout</button>`;
-	// }
+		document.getElementById("content").innerHTML += `<h1>Welcome to ${location}</h1>
+														<button id="logout" class="btn btn-primary" 
+														onClick="handleLogout()">Logout</button>`;
+	}
 	else if (location === '/profile') {
 		setMainWindowframe();
 
@@ -536,14 +570,67 @@ async function getAllUsers(override) {
 	});
 	return users;
 }
+function elementExistsInArray(array, element) {
+    for (let i = 0; i < array.length; i++) {
+        if (array[i] === element) {
+            return true;
+        }
+    }
+    return false;
+}
+async function getAllFriends(override) {
+	let location = window.location.pathname;
+	if (location[location.length - 1] === '/') {
+		location = location.slice(0, location.length - 1);
+	}
+	if (location !== '/users')
+		return;
+	let users = [];
+	await fetch(`http://localhost:8000/api/friends/${localStorage.getItem('username')}`, {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			'Content-Type': 'application/json'
+		},
+	}).then(response => {
+		if (!response.ok) {
+			if (response.status === 401 || response.status === 403) {
+				localStorage.clear();
+				document.cookie = 'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+				document.cookie = 'sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+				window.location.href = '/';
+				return;
+			}
+			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+		}
+		return response.json();
+	}).then(data => {
+		// console.log(data);
+		users = data;
+		console.log(users);
+		return users;
+	}).catch((error) => {
+		console.error('Error:', error);
+	});
+	return users;
+}
 
-function insertAllUsers(users) {
+
+
+async function insertAllUsers(users) {
 	document.getElementById('player-card-div').innerHTML = '';
 	if (!users) {
 		return;
 	}
+	let friends = await getAllFriends();
 
+	//call getAllFriends here:
+	console.log(friends);
+	
 	users.forEach(user => {
+		let isFriend = false;
+		console.log(user.username);
+		isFriend = elementExistsInArray(friends, user.intra)
 		const playerCard = `
 			<div class="row p-0 g-0">
 				<div class="col border border-1 border-dark ratio ratio-1x1">
@@ -553,13 +640,13 @@ function insertAllUsers(users) {
 				</div>
 				<div class="col-6 border border-1 border-dark overflow-auto mh-100 mw-50">
 					<ul class="list-group">
-						<li class="list-group-item justify-content-left text-uppercase"><h4>${user.username}</h4></li>
+						<li class="list-group-item justify-content-left text-uppercase"><h4>${user.intra}</h4></li>
 						<li class="list-group-item justify-content-left text-uppercase"><a>${user.is_online ? "online 🟢" : "offline ⚪"}</a></li>
 						<li class="list-group-item justify-content-left text-uppercase"><h5>ranking</h5></li>
 					</ul>
 				</div>
 				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<button class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button>
+					<button class="h-100 w-100 btn btn-primary text-capitalize add-friend-btn" type="button">${isFriend ? "Remove Friend" : "Add Friend"}</button>
 				</div>
 				<div class="col border border-1 border-dark ratio ratio-1x1">
 					<button class="h-100 w-100 btn btn-info text-capitalize view-profile-btn" type="button">View Profile</button>
@@ -574,6 +661,13 @@ function insertAllUsers(users) {
 		const button = buttons[i];
 		button.addEventListener('click', function () {
 			viewUserProfile(users[i].username);
+		});
+	}
+	const addFriendButtons = document.getElementsByClassName('add-friend-btn');
+	for (let i = 0; i < addFriendButtons.length; i++) {
+		const button = addFriendButtons[i];
+		button.addEventListener('click', function () {
+			addFriend(button, localStorage.getItem('username'), users[i].username);
 		});
 	}
 }

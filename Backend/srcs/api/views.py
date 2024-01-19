@@ -12,7 +12,7 @@ from django.http import HttpResponse
 from django.views.decorators.cache import never_cache
 from django.contrib.auth.models import Group
 from rest_framework import permissions, viewsets
-from .serializers import GroupSerializer, UserSerializer, UserProfileSerializer, MatchSerializer, TournamentSerializer
+from .serializers import GroupSerializer, UserSerializer, UserProfileSerializer, MatchSerializer, TournamentSerializer, FriendSerializer
 from django.core.serializers import serialize
 from login.models import UserProfile, Match, Tournament, Friendship
 from django.db.models import Q
@@ -20,6 +20,8 @@ from django.forms.models import model_to_dict
 from .serializers import GroupSerializer, UserSerializer
 from django.core.serializers import serialize
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+
 
 # # Create your views here.
 
@@ -339,6 +341,26 @@ def get_user_profile(request):
 #     rendered_template = template.render(context)
 #     return HttpResponse(rendered_template, content_type='text/html')
 
+
+
+
+
+
+@api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+def get_user_friends(request, intra):
+    user_friends = Friendship.objects.filter(Q(id1__intra=intra) | Q(id2__intra=intra))
+    friend_intras = []
+
+    for friend in user_friends:
+        if friend.id1.intra == intra:
+            friend_intras.append(friend.id2.intra)
+        elif friend.id2.intra == intra:
+            friend_intras.append(friend.id1.intra)
+    return JsonResponse({'friends': friend_intras})
+
+
+
 @api_view(['GET'])
 # @permission_classes([IsAuthenticated])
 def user_view(request, intra):
@@ -356,3 +378,31 @@ def user_view(request, intra):
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
+
+
+
+@api_view(['POST'])
+def add_or_remove_friend(request):
+    print(request.GET.get('user1'))
+    print(request.GET.get('user2'))
+    user1 = get_object_or_404(UserProfile, intra=request.GET.get('user1'))
+    user2 = get_object_or_404(UserProfile, intra=request.GET.get('user2'))
+
+    newFriend = False
+    if (not Friendship.objects.filter(Q(id1=user1)&Q(id2=user2)).exists() and not Friendship.objects.filter(Q(id1=user2)&Q(id2=user1)).exists()):
+        newFriend = True
+        Friendship.objects.create(id1=user1,id2=user2)
+    elif (Friendship.objects.filter(Q(id1=user1)&Q(id2=user2)).exists()):
+        f = Friendship.objects.filter(Q(id1=user1)&Q(id2=user2))
+        f.delete()
+    elif (Friendship.objects.filter(Q(id1=user2)&Q(id2=user1)).exists()):
+        f = Friendship.objects.filter(Q(id1=user1)&Q(id2=user2))
+        f.delete()
+    print("New friend :")
+    print(newFriend)
+
+    message = messages.info(
+        request, 'Added' if newFriend else 'Removed')
+    if newFriend:
+        return HttpResponse("Added")
+    return HttpResponse("Removed")

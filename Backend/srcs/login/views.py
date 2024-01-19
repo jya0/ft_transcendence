@@ -171,6 +171,10 @@ def enable_or_disable_2fa(request):
     return HttpResponse("2FA disabled successfully")
 
 
+
+
+
+
 @api_view(['POST'])
 def validate_otp(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
