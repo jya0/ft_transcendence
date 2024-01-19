@@ -176,6 +176,8 @@ export const loadGame = () => {
 				handleOnlineWinner();
 			startOnlineButton.disabled = false;
 			startLocalButton.disabled = false;
+			startLocalButton.style.visibility='visible';
+			startOnlineButton.style.visibility='visible';
 
 		}
 	}
@@ -260,6 +262,9 @@ export const loadGame = () => {
 		localPlayerMode = true;
 		startLocalButton.disabled = true;
 		startOnlineButton.disabled = true;
+		startLocalButton.style.visibility='hidden';
+		startOnlineButton.style.visibility='hidden';
+
 		if (isGameOver || !animationFrameId) {
 			isGameOver = false;
 			score.left = 0;

@@ -16,27 +16,18 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 
 
-# urlpatterns = [
 
-#     path("games/", get_all_games, name="get_all_games"),
-#     path("games/<str:intra>", get_user_games, name="get_user_games"),
-#     path("friends/", get_all_friends, name="get_all_friends"),
-
-
-#     path("update_user_profile/", update_user_profile, name="update_user_profile"),
-#     path("get_user_profile/", get_user_profile, name="get_user_profile"),
-#     path("two_fa_toggle/", two_fa_toggle, name='2fa_toggle'),
-#     path('42_intra_link/', intra_link, name='intra_link'),
-#     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-#     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-#     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-# ]
 
 urlpatterns = [
     # path("users/", all_users_view, name="all_users_view"),
+    # path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
 
     path("tournaments/", get_all_tournaments, name="get_all_tournaments"),
-    path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
+    path("join/", join_tournament, name="join_tournament"),
+    path("create_tournament/", create_tournament, name="create_tournament"),
+
+    
+
     path("friends/<str:intra>", get_user_friends, name="get_user_friends"),
 
     path("users/<str:intra>", user_view, name="user_view"),

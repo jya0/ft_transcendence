@@ -23,7 +23,7 @@ export const loadTournament = () => {
     let animationFrameId;
 
     let socketStatus = false;
-
+    let btnCounter = 0;
     let keyPressed;
     let leftPlayer = false;
     let rightPlayer = true;
@@ -131,7 +131,7 @@ export const loadTournament = () => {
         let buttonText;
 
         if (tournReady == false)
-            return ;
+            return;
 
         //show results
         if (g_count != 2) {
@@ -139,10 +139,10 @@ export const loadTournament = () => {
             alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
             console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
         }
-        
+
         //update winners
         if (g_count == 0 || g_count == 1) {
-            winners.push((pairings[g_count][0] > pairings[g_count][1])? pairings[g_count][0]: pairings[g_count][1]);
+            winners.push((pairings[g_count][0] > pairings[g_count][1]) ? pairings[g_count][0] : pairings[g_count][1]);
         }
 
 
@@ -362,7 +362,7 @@ export const loadTournament = () => {
         startLocalButton.disabled = true;
         startOnlineButton.disabled = true;
 
-        
+
 
         // Display a form to get the number of players and their names
         const formContainer = document.createElement('div');
@@ -373,7 +373,7 @@ export const loadTournament = () => {
 				<button id="formButton" type="submit">Start Tournament</button>
 			</form>
 		`;
-        formContainer.id='tourn-player-count';
+        formContainer.id = 'tourn-player-count';
 
 
         document.getElementsByClassName('window-frame')[0].appendChild(formContainer);
@@ -476,28 +476,189 @@ export const loadTournament = () => {
     }
 
 
+
+    function displayMenu() {
+        const menuContainer = document.createElement('div');
+        menuContainer.id = 'menu-container';
+
+        // Fetch the list of online tournaments from the backend
+        fetch('http://localhost:8000/api/tournaments')
+            .then(response => response.json())
+            .then(tournaments => {
+                const tournamentList = document.createElement('ul');
+                tournamentList.innerHTML = '<p>Online Tournaments:</p>';
+                tournamentList.id = 'tourn-list';
+                console.log(tournaments);
+                tournaments.forEach(tournament => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = tournament.name;
+
+                    const joinButton = document.createElement('button');
+                    joinButton.textContent = 'Join';
+                    joinButton.addEventListener('click', () => joinTournament(tournament.name));
+
+                    listItem.appendChild(joinButton);
+                    tournamentList.appendChild(listItem);
+                });
+
+                menuContainer.appendChild(tournamentList);
+            })
+            .catch(error => console.error('Error fetching tournaments:', error));
+
+        // Button to create a new tournament
+        const createButton = document.createElement('button');
+        createButton.textContent = 'Create New Tournament';
+        createButton.addEventListener('click', createNewTournament);
+
+        menuContainer.appendChild(createButton);
+
+        // Append the menu to the document
+        document.getElementsByClassName('window-frame')[0].appendChild(menuContainer);
+    }
+
+    function createNewTournament() {
+        // Check if the input field already exists
+        const inputField = document.getElementById('tournamentNameInput');
+        if (inputField) {
+            alert('Please enter a tournament name before creating a new tournament.');
+            return;
+        }
+
+        // Create an input field for the tournament name
+        const tournamentNameInput = document.createElement('input');
+        tournamentNameInput.type = 'text';
+        tournamentNameInput.id = 'tournamentNameInput';
+        tournamentNameInput.placeholder = 'Enter tournament name';
+
+        // Button to submit the tournament name
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Submit';
+        submitButton.id = 'submitButton';
+        submitButton.addEventListener('click', () => submitTournament());
+
+        // Append the input field and submit button next to the create button
+        const menuContainer = document.getElementById('menu-container');
+        menuContainer.appendChild(tournamentNameInput);
+        menuContainer.appendChild(submitButton);
+    }
+
+    function submitTournament() {
+        const tournamentName = document.getElementById('tournamentNameInput').value;
+        if (!tournamentName) {
+            alert('Please enter a tournament name.');
+            return;
+        }
+
+        // Perform logic to create a new tournament
+        // You can make a POST request to the backend and handle the response
+        fetch(`http://localhost:8000/api/create_tournament/?name=${tournamentName}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // Include any necessary data for creating a tournament
+                // (e.g., tournament name, settings, etc.)
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the backend
+                if (data.message === 'Please choose another tournament name') {
+                    alert('Please choose another tournament name');
+                } else if (data.message === 'Tournament created successfully') {
+                    alert('Tournament created successfully');
+                } else {
+                    console.error('Unexpected response:', data);
+                }
+            })
+            .catch(error => console.error('Error creating tournament:', error));
+
+        // Remove the input field and submit button after creating the tournament
+        const tournamentNameInput = document.getElementById('tournamentNameInput');
+        const submitButton = document.getElementById('submitButton');
+        tournamentNameInput.parentNode.removeChild(tournamentNameInput);
+        submitButton.remove();
+
+        const tournamentList = document.getElementById('tourn-list');
+        const listItem = document.createElement('li');
+                    listItem.textContent = tournamentName;
+
+                    const joinButton = document.createElement('button');
+                    joinButton.textContent = 'Join';
+                    joinButton.addEventListener('click', () => joinTournament(tournamentName));
+
+                    listItem.appendChild(joinButton);
+                    tournamentList.appendChild(listItem);
+    }
+
+
+
+    function joinTournament(tournamentName) {
+        // Perform logic to join the selected tournament
+        // You can make an API call or update the game state accordingly
+        console.log(`Joining tournament with name ${tournamentName}`);
+
+        fetch(`http://localhost:8000/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // Include any necessary data for creating a tournament
+                // (e.g., tournament name, settings, etc.)
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                // Handle the response from the backend
+                if (data.message === 'Tournament joined successfully') {
+                    alert('Tournament joined successfully');
+                } else if (data.message === "Sorry ur late. tournament is full :/") {
+                    alert("Sorry ur late. tournament is full :/");
+                } else if(data.message ===  "You are already in the tournament") {
+                    alert('idiot ur already in the damn tournament');
+                }
+                else {
+                    console.error('Failed to join tournament', data);
+                }
+            })
+            .catch(error => console.error('Error joining tournament:', error));
+    }
+
+
+
+
+
     startOnlineButton.addEventListener('click', () => {
         localPlayerMode = false;
         startLocalButton.disabled = true;
         startOnlineButton.disabled = true;
         leftPlayer = true;
         console.log("YUUUUUU");
+
+        displayMenu();
+
+
+
         if (btnCounter == 0) {
             initiateSocket();
-            document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
+            // document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
             console.log("first press - ready to play!");
             btnCounter = btnCounter + 1;
             return;
         }
 
-        if (isGameOver || !animationFrameId) {
-            startOnlineButton.disabled = true;
-            isGameOver = false;
-            score.left = 0;
-            score.right = 0;
-            resetBall();
-            animationFrameId = requestAnimationFrame(gameLoop);
-        }
+        // if (isGameOver || !animationFrameId) {
+        //     startOnlineButton.disabled = true;
+        //     isGameOver = false;
+        //     score.left = 0;
+        //     score.right = 0;
+        //     resetBall();
+        //     animationFrameId = requestAnimationFrame(gameLoop);
+        // }
     });
 
     function gameLoop() {
