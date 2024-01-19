@@ -367,14 +367,26 @@ def get_user_friends(request, intra):
 def user_view(request, intra):
     try:
         user = get_object_or_404(UserProfile, username=intra)
-        users_list = Friendship.objects.filter(Q(id1=user)|Q(id2=user)).all()
+        friendships = Friendship.objects.filter(Q(id1=user)|Q(id2=user)).all()
     except:
         return JsonResponse({'message': 'UserProfile not found'}, status=400)
- 
+    #@todo: get all friends in this list of friendships:
+
+    # Get a list of unique friends
+    friends_list = []
+    for friendship in friendships:
+        if friendship.id1 != user:
+            friends_list.append(friendship.id1)
+        else:
+            friends_list.append(friendship.id2)
+
+    # Remove duplicate friends
+    unique_friends = list(set(friends_list))
+
     template = get_template('user_profile.html')
     template_content = template.template.source
     template = Template(template_content)
-    context = Context({'user': user, 'users_list': users_list})
+    context = Context({'user': user, 'users_list': unique_friends})
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
