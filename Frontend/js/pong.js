@@ -189,7 +189,7 @@ export const loadGame = () => {
 	});
 
 	let player_count = 0;
-	let url = `ws://10.12.4.7:8000/ws/socket-server/`
+	let url = `ws://localhost:8000/ws/socket-server/`
 	let gameSocket;
 	
 	function initiateSocket() {
@@ -292,7 +292,14 @@ export const loadGame = () => {
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 	});
+	function gameLoop() {
+		update();
+		draw();
 
+		if (!isGameOver) {
+			animationFrameId = requestAnimationFrame(gameLoop);
+		}
+	}
 	
 
 }

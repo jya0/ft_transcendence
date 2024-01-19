@@ -3,8 +3,6 @@ import { loadGame } from './pong.js';
 import { loadTournament } from './tournament.js';
 
 
-
-
 let username
 let image
 let is_2fa_enabled
@@ -29,7 +27,7 @@ if (user) {
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://localhost:8000/api/get_user_profile/?username=${username}`;
+	const url = `http://localhost:8000/api/users/${username}`;
 
 	fetch(url)
 		.then(response => response.text())
@@ -76,7 +74,7 @@ const urlRoutes = {
 		description: "This is the login page",
 	},
 	"/desktop": {
-		title: "About me | " + urlPageTitle,
+		title: "About Us | " + urlPageTitle,
 		description: "This is the desktop page",
 	},
 	"/myprofile": {
@@ -238,17 +236,17 @@ const urlLocationHandler = async () => {
 	else if (location === '/desktop') {
 		setMainWindowframe();
 	}
-	else if (location === '/myprofile') {
-		setMainWindowframe();
+	// else if (location === '/myprofile') {
+	// 	setMainWindowframe();
 
-		document.getElementById("content").innerHTML += `<h1>Welcome to ${location}</h1>
-														<button id="logout" class="btn btn-primary" 
-														onClick="handleLogout()">Logout</button>`;
-	}
+	// 	document.getElementById("content").innerHTML += `<h1>Welcome to ${location}</h1>
+	// 													<button id="logout" class="btn btn-primary" 
+	// 													onClick="handleLogout()">Logout</button>`;
+	// }
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://localhost:8000/api/two_fa_toggle/?username=${localStorage.getItem('username')}`, {
+		await fetch(`http://localhost:8000/api/users/${localStorage.getItem('username')}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -357,15 +355,8 @@ const urlLocationHandler = async () => {
 
 		const canvasElement = document.getElementById("pongCanvas");
 		canvasElement.remove();
-		const canvasButtonOnline = document.getElementById('startOnlineButton');
-		canvasButtonOnline.remove();
-
-		const canvasButtonLocalGame = document.getElementById('startLocalButton');
-		canvasButtonLocalGame.remove();
-
-		const canvasButtonLocalTourn = document.getElementById('startLocalTournButton');
-		canvasButtonLocalTourn.remove();
-
+		const canvasButton = document.getElementById('startButton');
+		canvasButton.remove();
 	}
 
 	document.title = route.title;
@@ -389,7 +380,7 @@ function tokenHandler() {
 		console.log('token---------->');
 		localStorage.setItem('access_token', token);
 		let userData;
-		fetch(`http://10.12.4.7:8000/api/users/${username}`, {
+		fetch('http://localhost:8000/api/get_user_data/', {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${token}`,
@@ -518,7 +509,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	await fetch('http://10.12.4.7:8000/users/', {
+	await fetch('http://localhost:8000/api/get_all_users/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -587,6 +578,14 @@ function insertAllUsers(users) {
 	}
 }
 
+// window.addEventListener('beforeunload', function (event) {
+// 	// Perform actions before the page is unloaded (e.g., show a confirmation dialog)
+// 	// You can return a string to display a custom confirmation message
+// 	const confirmationMessage = 'Are you sure you want to leave?';
+// 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
+// 	return confirmationMessage; // For some older browsers
+// });
+
 
 // window.addEventListener('beforeunload', function (event) {
 // 	// Perform actions before the page is unloaded (e.g., show a confirmation dialog)
@@ -595,3 +594,5 @@ function insertAllUsers(users) {
 // 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
 // 	return confirmationMessage; // For some older browsers
 // });
+
+

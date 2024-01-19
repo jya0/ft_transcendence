@@ -1,5 +1,5 @@
 # Import necessary modules
-from login.models import UserProfile
+from login.models import UserProfile, Friendship
 from faker import Faker
 
 # Create a Faker instance
@@ -27,3 +27,13 @@ for _ in range(num_users):
 
     print(
         f'User "{username}" created successfully with email "{email}" and display name "{display_name}".')
+
+u1 = UserProfile.objects.all()[0]
+u2 = UserProfile.objects.all()[1]
+u3 = UserProfile.objects.all()[2]
+u4 = UserProfile.objects.all()[3]
+u5 = UserProfile.objects.all()[4]
+Friendship.objects.create(id1=u2,id2=u1)
+Friendship.objects.create(id1=u2,id2=u3)
+Friendship.objects.create(id1=u2,id2=u4)
+Friendship.objects.create(id1=u2,id2=u5)
