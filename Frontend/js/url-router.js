@@ -563,7 +563,7 @@ async function getAllUsers(override) {
 		return response.json();
 	}).then(data => {
 		console.log(data);
-		users = data.filter(user => user.username !== "admin");
+		users = data.filter(user => (user.username !== "admin" && user.username !== localStorage.getItem('username')));
 		return users;
 	}).catch((error) => {
 		console.error('Error:', error);
@@ -623,7 +623,6 @@ async function insertAllUsers(users) {
 		return;
 	}
 	let friends = await getAllFriends();
-
 	//call getAllFriends here:
 	console.log(friends);
 	
