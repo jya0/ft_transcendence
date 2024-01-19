@@ -22,9 +22,9 @@ echo "from login.models import UserProfile; UserProfile.objects.create_superuser
 echo "from login.models import UserProfile; UserProfile.objects.create_superuser('temp2', 'temp2@temp2.com', 'temp2')" | python manage.py shell
 
 #A dummy tournament is also created to link to online 1v1 games with no asssociated tournament:
-echo "from login.models import UserProfile, Tournament, Match; \
-Tournament.objects.create(status=True); \
-dummy = Tournament.objects.all()[0]; \
+echo "from login.models import UserProfile, Tournament, Match;\
+Tournament.objects.create(status=True);\
+dummy = Tournament.objects.all()[0];\
 Match.objects.create(tournament_id_id=dummy.tournament_id, id1_id=2, id2_id=3, score1=0, score2=0, ongoing=False);"| python manage.py shell
 
 cat pong_os/random_users.py  | python manage.py shell
