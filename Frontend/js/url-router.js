@@ -29,19 +29,27 @@ const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
 	const url = `http://localhost:8000/api/users/${username}`;
 
-	fetch(url)
+	fetch(url, {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+		},
+	})
 		.then(response => response.text())
 		.then(data => {
 			console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
-			// Handle the response data here
+			document.getElementById('add-friend').addEventListener('click', async () => {
+				let button = document.getElementById('add-friend');
+				addFriend(button, localStorage.getItem('username'), username);
+			});
 		})
 		.catch(error => {
 			console.error('Error:', error);
 		});
 }
 
- const addFriend = async (button, username, newFriend) => {
+const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
 		const response = await fetch(`http://localhost:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
@@ -280,7 +288,7 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://localhost:8000/api/users/${localStorage.getItem('username')}`, {
+		await fetch(`http://localhost:8000/api/users/${localStorage.getItem('username')}?username=${localStorage.getItem('username')}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -571,12 +579,12 @@ async function getAllUsers(override) {
 	return users;
 }
 function elementExistsInArray(array, element) {
-    for (let i = 0; i < array.length; i++) {
-        if (array[i] === element) {
-            return true;
-        }
-    }
-    return false;
+	for (let i = 0; i < array.length; i++) {
+		if (array[i] === element) {
+			return true;
+		}
+	}
+	return false;
 }
 async function getAllFriends(override) {
 	let location = window.location.pathname;
@@ -625,7 +633,7 @@ async function insertAllUsers(users) {
 	let friends = await getAllFriends();
 	//call getAllFriends here:
 	console.log(friends);
-	
+
 	users.forEach(user => {
 		let isFriend = false;
 		console.log(user.username);
