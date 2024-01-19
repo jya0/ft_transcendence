@@ -7,8 +7,8 @@ from django.contrib.auth.models import Group, Permission
 class UserProfile(AbstractUser):
     groups = models.ManyToManyField(Group, related_name='user_profiles')
     id = models.AutoField(primary_key=True)
+    intra = models.CharField(max_length=50, unique=False)
     email = models.EmailField(unique=True)
-    intra = models.CharField(max_length=50, default="default")
     display_name = models.CharField(max_length=50, unique=False)
     avatar = models.TextField(default="None")
     picture = JSONField(default=dict)
@@ -29,6 +29,7 @@ class UserProfile(AbstractUser):
         return self.display_name
 
 
+
 class Settings(models.Model):
     avatar = models.TextField(default="None")
     display_name = models.CharField(max_length=50, unique=True, primary_key=True)
@@ -40,8 +41,10 @@ class Settings(models.Model):
 
 
 class Friendship(models.Model):
+    id = models.AutoField(primary_key=True)
     id1 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='user1')
     id2 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='user2')
+    REQUIRED_FIELDS = ['id1', 'id2']
 
 
 
@@ -63,9 +66,3 @@ class Match(models.Model):
     score2 = models.IntegerField()
     ongoing = models.BooleanField(default=False)
 
-    
-class Nickname(models.Model):
-    nid = models.AutoField(primary_key=True)
-    nick = models.CharField(max_length=50)
-    id = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING)
-    tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE)

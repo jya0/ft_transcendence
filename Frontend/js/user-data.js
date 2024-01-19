@@ -1,6 +1,6 @@
 function handle42Auth() {
 	const timestamp = new Date().getTime();
-	fetch('http://10.12.4.7:8000/api/42_intra_link', {
+	fetch('http://localhost:8000/api/42_intra_link', {
 		method: 'GET',
 		headers: {
 			'Cache-Control': 'no-cache',
@@ -28,7 +28,7 @@ function handle42Auth() {
 function handleLogout() {
 	localStorage.clear();
 
-	fetch('http://10.12.4.7:8000/logout', {
+	fetch('http://localhost:8000/logout', {
 		credentials: 'include',
 	})
 		.then(response => {
@@ -64,7 +64,7 @@ function handleToken() {
 		password : localStorage.getItem('username')
 	};
 
-	fetch('http://10.12.4.7:8000/api/token/', {
+	fetch('http://localhost:8000/api/token/', {
 		method: 'POST',
 		credentials: 'include',
 		headers: {
