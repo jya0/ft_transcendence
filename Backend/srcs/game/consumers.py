@@ -49,10 +49,11 @@ class GameConsumer(WebsocketConsumer):
         #handle new game request:
         if (type == 'start'):
             status = 'waiting'
-            open_lobby = Match.objects.filter(Q(open_lobby=True)).exists()
+            dummy = Tournament.objects.all()[0]
+            open_lobby = Match.objects.filter(Q(open_lobby=True)& Q(tournament_id_id=dummy)).exists()
             print(open_lobby)
-            game =  Match.objects.filter(Q(open_lobby=True))[0]
-            player = UserProfile.objects.filter(Q(intra=username))[0]
+            game =  Match.objects.filter(Q(open_lobby=True) & Q(tournament_id_id=dummy))[0]
+            player = UserProfile.objects.filter(Q(intra=username)).all()[0]
             if (open_lobby == True):
                 #case 1: no players yet
                 if (game.id1.intra == 'default'):
