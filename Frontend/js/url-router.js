@@ -27,7 +27,7 @@ if (user) {
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://localhost:8000/api/users/${username}`;
+	const url = `http://localhost:8000/api/users/${username}?username=${localStorage.getItem('username')}}`;
 
 	fetch(url, {
 		method: 'GET',
@@ -39,9 +39,9 @@ const viewUserProfile = (username) => {
 		.then(data => {
 			console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
-			document.getElementById('add-friend').addEventListener('click', async () => {
-				let button = document.getElementById('add-friend');
-				addFriend(button, localStorage.getItem('username'), username);
+			const addFriendButton = document.getElementById('add-friend');
+			addFriendButton.addEventListener('click', async () => {
+				addFriend(addFriendButton, localStorage.getItem('username'), username);
 			});
 		})
 		.catch(error => {
@@ -78,9 +78,6 @@ const addFriend = async (button, username, newFriend) => {
 		console.error('Error:', error);
 	}
 }
-
-
-
 
 
 // create document click that watches the nav links only

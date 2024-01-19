@@ -175,16 +175,21 @@ def user_view(request, intra):
 
     # Remove duplicate friends
     unique_friends = list(set(friends_list))
+    usernames_list = [friend.username for friend in unique_friends]
 
     template = get_template('user_profile.html')
     template_content = template.template.source
     template = Template(template_content)
+
     if request.user.username == intra:
         context = Context(
             {'user': user, 'users_list': unique_friends, 'user_tag': 'same', 'image': 'same'})
+    elif request.user.username in usernames_list:
+        context = Context(
+            {'user': user, 'users_list': unique_friends, 'user_tag': 'other', 'image': 'other', 'is_friend': True})
     else:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'user_tag': 'other', 'image': 'other'})
+            {'user': user, 'users_list': unique_friends, 'user_tag': 'other', 'image': 'other', 'is_friend': False})
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
