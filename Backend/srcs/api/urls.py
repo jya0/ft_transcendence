@@ -23,7 +23,6 @@ router.register(r'groups', views.GroupViewSet)
 #     path("games/", get_all_games, name="get_all_games"),
 #     path("games/<str:intra>", get_user_games, name="get_user_games"),
 #     path("friends/", get_all_friends, name="get_all_friends"),
-#     path("friends/<str:intra>", get_user_friends, name="get_user_friends"),
 
 
 #     path("update_user_profile/", update_user_profile, name="update_user_profile"),
@@ -37,6 +36,9 @@ router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     # path("users/", all_users_view, name="all_users_view"),
+
+    path("friends/<str:intra>", get_user_friends, name="get_user_friends"),
+
     path("users/<str:intra>", user_view, name="user_view"),
     path("get_user_data/", get_user_data, name="get_user_data"),
 
@@ -48,4 +50,6 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    path('toggle_friend/', add_or_remove_friend,
+         name='add_or_remove_friend'),
 ]

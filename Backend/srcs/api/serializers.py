@@ -1,6 +1,6 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from login.models import UserProfile, Match, Tournament
+from login.models import UserProfile, Match, Tournament, Friendship
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class MatchSerializer(serializers.ModelSerializer):
 
 class FriendSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Match
+        model = Friendship
         fields = '__all__'
 
 
