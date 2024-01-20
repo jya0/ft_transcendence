@@ -281,6 +281,7 @@ export const loadGame = () => {
 		localPlayerMode = false;
 		startLocalButton.disabled = true;
 		startOnlineButton.disabled = true;
+		startLocalButton.style.visibility = 'hidden';
 
 		console.log("YUUUUUU");
 		if (btnCounter == 0) {

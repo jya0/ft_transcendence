@@ -27,21 +27,29 @@ if (user) {
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://localhost:8000/api/users/${username}`;
+	const url = `http://localhost:8000/api/users/${username}?username=${localStorage.getItem('username')}}`;
 
-	fetch(url)
+	fetch(url, {
+		method: 'GET',
+		headers: {
+			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+		},
+	})
 		.then(response => response.text())
 		.then(data => {
 			console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
-			// Handle the response data here
+			const addFriendButton = document.getElementById('add-friend');
+			addFriendButton.addEventListener('click', async () => {
+				addFriend(addFriendButton, localStorage.getItem('username'), username);
+			});
 		})
 		.catch(error => {
 			console.error('Error:', error);
 		});
 }
 
- const addFriend = async (button, username, newFriend) => {
+const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
 		const response = await fetch(`http://localhost:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
@@ -70,9 +78,6 @@ const viewUserProfile = (username) => {
 		console.error('Error:', error);
 	}
 }
-
-
-
 
 
 // create document click that watches the nav links only
@@ -268,7 +273,79 @@ const urlLocationHandler = async () => {
 		return;
 	}
 	else if (location === '/desktop') {
-		setMainWindowframe();
+
+		function openSmallWindow() {
+			const width = 200;
+			const height = 150;
+
+
+			const left = Math.abs(Math.floor((Math.random() * window.innerWidth - width)) - 1000);
+			const top = Math.abs(Math.floor((Math.random() * window.innerHeight - height / 2)) - 500);
+			console.log(left, top);
+
+			const windowFrame = document.createElement('div');
+			windowFrame.className = 'small-window-frame';
+			windowFrame.style.left = left + 'px';
+			windowFrame.style.top = top + 'px';
+
+
+			const topBar = document.createElement('div');
+			topBar.className = 'small-top-bar';
+			windowFrame.appendChild(topBar);
+
+
+			const rectangleIcon = document.createElement('img');
+			rectangleIcon.className = 'small-top-bar-child';
+			rectangleIcon.src = './assets/public/rectangle-4.svg';
+			topBar.appendChild(rectangleIcon);
+
+			const options = document.createElement('div');
+			options.className = 'small-options';
+			topBar.appendChild(options);
+
+			const vectorIcon = document.createElement('img');
+			vectorIcon.className = 'small-vector-icon';
+			vectorIcon.src = './assets/public/vector.svg';
+			options.appendChild(vectorIcon);
+
+			const dotGridIcon = document.createElement('img');
+			dotGridIcon.className = 'small-dot-grid-icon';
+			dotGridIcon.src = './assets/public/dot-grid.svg';
+			options.appendChild(dotGridIcon);
+
+
+			const windowContent = document.createElement('div');
+			windowContent.className = 'small-window';
+
+
+			const welcomeText = document.createElement('div');
+			welcomeText.className = 'small-welcome-text';
+			welcomeText.textContent = `Welcome ${localStorage.getItem('username')}!`;
+			windowContent.appendChild(welcomeText);
+
+			windowFrame.appendChild(windowContent);
+
+
+			document.body.appendChild(windowFrame);
+
+
+			windowFrame.style.display = 'block';
+
+
+
+			setTimeout(() => {
+				document.body.removeChild(windowFrame);
+			}, 500);
+		}
+
+
+		const windowInterval = setInterval(openSmallWindow, 150);
+
+		const location = window.location.pathname;
+
+		setTimeout(() => {
+			clearInterval(windowInterval);
+		}, 1000);
 	}
 	else if (location === '/myprofile') {
 		setMainWindowframe();
@@ -280,7 +357,7 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://localhost:8000/api/users/${localStorage.getItem('username')}`, {
+		await fetch(`http://localhost:8000/api/users/${localStorage.getItem('username')}?username=${localStorage.getItem('username')}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -571,12 +648,12 @@ async function getAllUsers(override) {
 	return users;
 }
 function elementExistsInArray(array, element) {
-    for (let i = 0; i < array.length; i++) {
-        if (array[i] === element) {
-            return true;
-        }
-    }
-    return false;
+	for (let i = 0; i < array.length; i++) {
+		if (array[i] === element) {
+			return true;
+		}
+	}
+	return false;
 }
 async function getAllFriends(override) {
 	let location = window.location.pathname;
@@ -625,7 +702,7 @@ async function insertAllUsers(users) {
 	let friends = await getAllFriends();
 	//call getAllFriends here:
 	console.log(friends);
-	
+
 	users.forEach(user => {
 		let isFriend = false;
 		console.log(user.username);
