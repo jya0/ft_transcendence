@@ -370,13 +370,30 @@ const urlLocationHandler = async () => {
 		}).then(data => {
 			// console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
+			const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
+			const imageContainer = document.getElementById('imageContainer');
+			const uploadButton = document.getElementById('uploadButton');
+			const hoverText = document.getElementById('hoverText');
 
+			imageContainer.addEventListener('mouseover', function () {
+				uploadButton.style.display = 'block';
+				hoverText.style.display = 'block';
+			});
+
+			imageContainer.addEventListener('mouseout', function () {
+				uploadButton.style.display = 'none';
+				hoverText.style.display = 'none';
+			});
 			document.getElementById('file').addEventListener('change', loadFile, false);
 			document.getElementById('uploadButton').addEventListener('click', async () => {
 				let fileInput = document.getElementById('file');
 				let file = fileInput.files[0];
 
 				if (file) {
+					if (file.size > maxSizeInBytes) {
+						alert('File size is too large, Please choose a smaller file.');
+						return;
+					}
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', localStorage.getItem('username'));
@@ -397,6 +414,43 @@ const urlLocationHandler = async () => {
 						.catch(error => {
 							console.error('Error:', error);
 						});
+				}
+			});
+			// updating display name
+			const displayNameElement = document.getElementById('displayName');
+			const hoverTextNick = document.getElementById('hoverText-nickname');
+			displayNameElement.addEventListener('mouseover', function () {
+				hoverTextNick.style.display = 'block';
+			});
+
+			displayNameElement.addEventListener('mouseout', function () {
+				hoverTextNick.style.display = 'none';
+			});
+			displayNameElement.addEventListener('click', async () => {
+				const newDisplayName = prompt('Enter new display name:');
+
+				if (newDisplayName !== null) {
+					try {
+						const response = await fetch('http://localhost:8000/api/update_display_name/', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'X-CSRFToken': getCookie('csrftoken'),
+								'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+							},
+							credentials: 'include',
+							body: JSON.stringify({ display_name: newDisplayName }),
+						});
+
+						if (response.ok) {
+							displayNameElement.textContent = newDisplayName;
+							console.log('Display name updated successfully');
+						} else {
+							console.error('Failed to update display name:', response.status, response.statusText);
+						}
+					} catch (error) {
+						console.error('Error updating display name:', error);
+					}
 				}
 			});
 
