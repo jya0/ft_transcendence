@@ -1,6 +1,6 @@
 // import {io} from "socket.io-client";
 export const loadTournament = () => {
-
+    let tournament_name;
     const canvas = document.getElementById('pongCanvas');
     const ctx = canvas.getContext('2d');
     const startOnlineButton = document.getElementById('startOnlineTournButton');
@@ -25,8 +25,8 @@ export const loadTournament = () => {
     let socketStatus = false;
     let btnCounter = 0;
     let keyPressed;
-    let leftPlayer = false;
-    let rightPlayer = true;
+    let leftPlayer = true;
+    let rightPlayer = false;
     let g_count = 0;
 
     function draw() {
@@ -50,6 +50,7 @@ export const loadTournament = () => {
                 keyPressed = 'w';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
+				    'mode':'tournament',
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -59,6 +60,7 @@ export const loadTournament = () => {
                 keyPressed = 's';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
+				    'mode':'tournament',
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -70,6 +72,7 @@ export const loadTournament = () => {
                 keyPressed = 'w';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
+				    'mode':'tournament',
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -79,6 +82,7 @@ export const loadTournament = () => {
                 keyPressed = 's';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
+				    'mode':'tournament',
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -195,6 +199,7 @@ export const loadTournament = () => {
             buttonText = "You win! Press to play a new online game";
             gameSocket.send(JSON.stringify({
                 'type': 'end',
+                'mode':'tournament',
                 'username': localStorage.getItem('username'),
                 'score1': score.left,
                 'score2': score.right,
@@ -238,19 +243,19 @@ export const loadTournament = () => {
             let data = JSON.parse(e.data)
             console.log('Data: ', data)
 
-            if (btnCounter == 0)
-                return;
+            if (data.mode === 'single')
+                return ;
+
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
-                document.getElementById("startOnlineButton").innerHTML = "In-game";
+                document.getElementById("startOnlineTournButton").innerHTML = "In-game";
                 if (data.sender != localStorage.getItem('username')) {
                     rightPlayer = false;
                     leftPlayer = true;
                 }
                 console.log(leftPlayer);
                 console.log(rightPlayer);
-                startOnlineButton.disabled = false;
-                startOnlineButton.click();
+                playOnlineTournamentMatch();
             }
 
             if (data.sender == localStorage.getItem('username'))
@@ -283,11 +288,12 @@ export const loadTournament = () => {
 
             gameSocket.send(JSON.stringify({
                 'type': 'start',
+                'mode':'tournament',
+                'tournament_name':tournament_name,
                 'username': localStorage.getItem('username')
             }))
 
             player_count = 1;
-
             console.log("waiting for a second player...")
         });
         player_count = 1;
@@ -593,13 +599,11 @@ export const loadTournament = () => {
                     tournamentList.appendChild(listItem);
     }
 
-
-
     function joinTournament(tournamentName) {
         // Perform logic to join the selected tournament
         // You can make an API call or update the game state accordingly
         console.log(`Joining tournament with name ${tournamentName}`);
-
+        tournament_name = tournamentName;
         fetch(`http://localhost:8000/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
             method: 'POST',
             headers: {
@@ -616,10 +620,31 @@ export const loadTournament = () => {
                 // Handle the response from the backend
                 if (data.message === 'Tournament joined successfully') {
                     alert('Tournament joined successfully');
+                    
+                    //@TODO : Clear screen !
+                    const menuContainer = document.getElementById('menu-container');
+                    menuContainer.remove();
+                    startLocalButton.style.visibility = 'hidden';
+
+                    //@TODO : Display WAIT message
+                    document.getElementById("startOnlineTournButton").textContent = "Waiting for lobby to fill & tournament to start ..."
+                    
+                    //@TODO : Open socket
+                    initiateSocket();
+
+
                 } else if (data.message === "Sorry ur late. tournament is full :/") {
                     alert("Sorry ur late. tournament is full :/");
                 } else if(data.message ===  "You are already in the tournament") {
-                    alert('idiot ur already in the damn tournament');
+                    alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
+                    
+                    //@TODO : Clear screen !
+                    const menuContainer = document.getElementById('menu-container');
+                    menuContainer.remove();
+                    startLocalButton.style.visibility = 'hidden';
+
+                    //@TODO : Display WAIT message
+                    document.getElementById("startOnlineTournButton").textContent = "Waiting for lobby to fill & tournament to start ..."
                 }
                 else {
                     console.error('Failed to join tournament', data);
@@ -629,36 +654,26 @@ export const loadTournament = () => {
     }
 
 
-
-
+    function playOnlineTournamentMatch() {
+        localPlayerMode = false;
+        startLocalButton.disabled = true;
+        startOnlineButton.disabled = true;
+        if (isGameOver || !animationFrameId) {
+            isGameOver = false;
+            score.left = 0;
+            score.right = 0;
+            resetBall();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+    }
 
     startOnlineButton.addEventListener('click', () => {
         localPlayerMode = false;
         startLocalButton.disabled = true;
         startOnlineButton.disabled = true;
-        leftPlayer = true;
         console.log("YUUUUUU");
 
         displayMenu();
-
-
-
-        if (btnCounter == 0) {
-            initiateSocket();
-            // document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
-            console.log("first press - ready to play!");
-            btnCounter = btnCounter + 1;
-            return;
-        }
-
-        // if (isGameOver || !animationFrameId) {
-        //     startOnlineButton.disabled = true;
-        //     isGameOver = false;
-        //     score.left = 0;
-        //     score.right = 0;
-        //     resetBall();
-        //     animationFrameId = requestAnimationFrame(gameLoop);
-        // }
     });
 
     function gameLoop() {
