@@ -367,7 +367,8 @@ export const loadTournament = () => {
         localPlayerMode = true;
         startLocalButton.disabled = true;
         startOnlineButton.disabled = true;
-
+        startLocalButton.style.visibility = 'hidden';
+        startOnlineButton.style.visibility = 'hidden';
 
 
         // Display a form to get the number of players and their names
