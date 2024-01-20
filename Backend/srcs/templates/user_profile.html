@@ -33,7 +33,8 @@
 						</div>
 						<div class="col card-body">
 							<h5 class="card-title">{{ user.username }}</h5>
-							<h5 id="displayName" class="card-title text-capitalize">{{ user.nickname }}</h5>
+							<h5 id="displayName" class="card-title text-capitalize" style="cursor: pointer;">{{ user.nickname }}</h5>
+							<span id="hoverText-nickname" style="color: purple; font-size: 16px; display: none;">Change display name</span>
 							<p class="card-text text-lowercase">{% if user.is_online %}online 🟢{% else %} offline ⚪ {% endif %}</p>
 						</div>
 					</div>
