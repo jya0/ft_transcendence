@@ -238,23 +238,25 @@ def join_tournament(request):
     tourn = Tournament.objects.filter(Q(status=True) & Q(name=tournament_name)).get()
 
     joined = False
-    games = Match.objects.filter(Q(open_lobby=True) & Q(tournament_id=tourn.tournament_id)).all()
+    games = Match.objects.filter(Q(tournament_id=tourn.tournament_id)).all()
     for game in games:
+        print(game.__dict__)
         if (game.id1 == user or game.id2 == user):
             msg = "You are already in the tournament"
             return JsonResponse({'message': msg}, status=200)
-        if (game.id1.id == 2):
+        if (game.id1.intra == 'temp1'):
             g = Match.objects.get(match_id=game.match_id)
-            g.id1 = user
             g.id1 = user
             g.save()
             joined = True
-        elif (game.id2.id == 3):
+            break
+        elif (game.id2.id == 'temp2'):
             g = Match.objects.get(match_id=game.match_id)
             g.id2 = user
             g.open_lobby = False
             g.save()
             joined = True
+            break
     if joined:
         msg = 'Tournament joined successfully'
     else:
