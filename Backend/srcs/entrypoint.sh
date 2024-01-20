@@ -25,7 +25,13 @@ echo "from login.models import UserProfile; UserProfile.objects.create_superuser
 echo "from login.models import UserProfile, Tournament, Match;\
 Tournament.objects.create(name='defTourn',status=True);\
 dummy = Tournament.objects.all()[0];\
-Match.objects.create(tournament_id_id=dummy.tournament_id, id1_id=2, id2_id=3, score1=0, score2=0, ongoing=False);"| python manage.py shell
+t1 = UserProfile.objects.get(username='temp1');\
+t2 = UserProfile.objects.get(username='temp2');\
+t1.intra=t1.username;\
+t2.intra=t2.username;\
+t1.save();\
+t2.save();\
+Match.objects.create(tournament_id_id=dummy.tournament_id, id1=t1, id2=t2, score1=0, score2=0, ongoing=False);"| python manage.py shell
 
 cat pong_os/random_users.py  | python manage.py shell
 
