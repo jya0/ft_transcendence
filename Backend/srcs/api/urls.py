@@ -16,8 +16,6 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 
 
-
-
 urlpatterns = [
     # path("users/", all_users_view, name="all_users_view"),
     # path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
@@ -26,7 +24,7 @@ urlpatterns = [
     path("join/", join_tournament, name="join_tournament"),
     path("create_tournament/", create_tournament, name="create_tournament"),
 
-    
+
 
     path("friends/<str:intra>", get_user_friends, name="get_user_friends"),
 
@@ -36,6 +34,7 @@ urlpatterns = [
     path("get_all_users/", get_all_users, name="get_all_users"),
     path("update_user_profile/", update_user_profile, name="update_user_profile"),
     path("get_user_profile/", get_user_profile, name="get_user_profile"),
+    path("update_display_name/", update_display_name, name="update_display_name"),
     path("two_fa_toggle/", two_fa_toggle, name='2fa_toggle'),
     path('42_intra_link/', intra_link, name='intra_link'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
