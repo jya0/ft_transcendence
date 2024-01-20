@@ -416,6 +416,36 @@ const urlLocationHandler = async () => {
 						});
 				}
 			});
+			// updating display name
+			const displayNameElement = document.getElementById('displayName');
+
+			displayNameElement.addEventListener('click', async () => {
+				const newDisplayName = prompt('Enter new display name:');
+
+				if (newDisplayName !== null) {
+					try {
+						const response = await fetch('http://localhost:8000/api/update_display_name/', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'X-CSRFToken': getCookie('csrftoken'),
+								'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+							},
+							credentials: 'include',
+							body: JSON.stringify({ display_name: newDisplayName }),
+						});
+
+						if (response.ok) {
+							displayNameElement.textContent = newDisplayName;
+							console.log('Display name updated successfully');
+						} else {
+							console.error('Failed to update display name:', response.status, response.statusText);
+						}
+					} catch (error) {
+						console.error('Error updating display name:', error);
+					}
+				}
+			});
 
 		}).catch((error) => {
 			console.error('Error:', error);

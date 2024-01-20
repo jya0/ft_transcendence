@@ -77,6 +77,7 @@ def auth(request):
             username = user_response.json()["login"]
             email = user_response.json()["email"]
             display_name = user_response.json()["displayname"]
+            nickname = display_name
             picture = user_response.json()["image"]
         except:
             response = JsonResponse(
@@ -92,7 +93,8 @@ def auth(request):
                         first_name=display_name.split()[0],
                         last_name=display_name.split()[1],
                         display_name=display_name,
-                        intra = email.split('@')[0],
+                        nickname=nickname,
+                        intra=email.split('@')[0],
                         picture=picture,
                         date_joined=datetime.now())
                     user_profile.set_password(username)
@@ -114,7 +116,8 @@ def auth(request):
             auth_login(request, user_profile)
             access_token = get_user_token(request, username, username)
             print("---------> token", access_token)
-            print( f"http://localhost:8090/desktop?token={access_token}&user={username}")
+            print(
+                f"http://localhost:8090/desktop?token={access_token}&user={username}")
             response = HttpResponseRedirect(
                 f"http://localhost:8090/desktop?token={access_token}&user={username}")
             return response
@@ -169,10 +172,6 @@ def enable_or_disable_2fa(request):
         #     request, 'enable_or_disable_2fa.html', user, message)
         return HttpResponse("2FA Enabled successfully")
     return HttpResponse("2FA disabled successfully")
-
-
-
-
 
 
 @api_view(['POST'])
