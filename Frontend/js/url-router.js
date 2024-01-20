@@ -418,7 +418,14 @@ const urlLocationHandler = async () => {
 			});
 			// updating display name
 			const displayNameElement = document.getElementById('displayName');
+			const hoverTextNick = document.getElementById('hoverText-nickname');
+			displayNameElement.addEventListener('mouseover', function () {
+				hoverTextNick.style.display = 'block';
+			});
 
+			displayNameElement.addEventListener('mouseout', function () {
+				hoverTextNick.style.display = 'none';
+			});
 			displayNameElement.addEventListener('click', async () => {
 				const newDisplayName = prompt('Enter new display name:');
 
