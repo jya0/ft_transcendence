@@ -548,7 +548,7 @@ export const loadTournament = () => {
         menuContainer.appendChild(submitButton);
     }
 
-    function submitTournament() {
+    async function submitTournament() {
         const tournamentName = document.getElementById('tournamentNameInput').value;
         if (!tournamentName) {
             alert('Please enter a tournament name.');
@@ -557,7 +557,7 @@ export const loadTournament = () => {
 
         // Perform logic to create a new tournament
         // You can make a POST request to the backend and handle the response
-        fetch(`http://localhost:8000/api/create_tournament/?name=${tournamentName}`, {
+        await fetch(`http://localhost:8000/api/create_tournament/?name=${tournamentName}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -599,12 +599,12 @@ export const loadTournament = () => {
                     tournamentList.appendChild(listItem);
     }
 
-    function joinTournament(tournamentName) {
+    async function joinTournament(tournamentName) {
         // Perform logic to join the selected tournament
         // You can make an API call or update the game state accordingly
         console.log(`Joining tournament with name ${tournamentName}`);
         tournament_name = tournamentName;
-        fetch(`http://localhost:8000/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
+        await fetch(`http://localhost:8000/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
