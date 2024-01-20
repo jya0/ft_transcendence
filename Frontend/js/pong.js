@@ -22,8 +22,8 @@ export const loadGame = () => {
 	let socketStatus = false;
 
 	let keyPressed;
-	let leftPlayer = false;
-	let rightPlayer = true;
+	let leftPlayer = true;
+	let rightPlayer = false;
 
 	function draw() {
 		ctx.fillStyle = '#000';
@@ -46,6 +46,7 @@ export const loadGame = () => {
 				keyPressed = 'w';
 				gameSocket.send(JSON.stringify({
 					'type':'update',
+					'mode':'single',
 					'username': localStorage.getItem('username'),
 					'key':keyPressed
 				}))
@@ -55,6 +56,7 @@ export const loadGame = () => {
 				keyPressed = 's';
 				gameSocket.send(JSON.stringify({
 					'type':'update',
+					'mode':'single',
 					'username': localStorage.getItem('username'),
 					'key': keyPressed
 				}))
@@ -66,6 +68,7 @@ export const loadGame = () => {
 				keyPressed = 'w';
 				gameSocket.send(JSON.stringify({
 					'type':'update',
+					'mode':'single',
 					'username': localStorage.getItem('username'),
 					'key':keyPressed
 				}))
@@ -75,6 +78,7 @@ export const loadGame = () => {
 				keyPressed = 's';
 				gameSocket.send(JSON.stringify({
 					'type':'update',
+					'mode':'single',
 					'username': localStorage.getItem('username'),
 					'key': keyPressed
 				}))
@@ -115,9 +119,6 @@ export const loadGame = () => {
 			checkForWinner();
 			return;
 		}
-
-		
-
 	}
 
 	function resetBall() {
@@ -138,8 +139,8 @@ export const loadGame = () => {
 		document.getElementById("startLocalButton").innerHTML = buttonText;
 		isGameOver = true;
 		socketStatus = false;
-		leftPlayer = false;
-		rightPlayer = true;
+		leftPlayer = true;
+		rightPlayer = false;
 	}
 	
 
@@ -152,6 +153,7 @@ export const loadGame = () => {
 			buttonText = "You win! Press to play a new online game";
 			gameSocket.send(JSON.stringify({
 				'type':'end',
+				'mode':'single',
 				'username': localStorage.getItem('username'),
 				'score1':score.left,
 				'score2':score.right,
@@ -206,10 +208,10 @@ export const loadGame = () => {
 			if (data.type === 'start' && data["status"] == "start") {
 				player_count = 2;
 				document.getElementById("startOnlineButton").innerHTML = "In-game";
-				if (data.sender != localStorage.getItem('username'))
+				if (data.sender == localStorage.getItem('username'))
 				{
-					rightPlayer = false;
-					leftPlayer = true;
+					leftPlayer = false;
+					rightPlayer = true;
 				}
 				console.log(leftPlayer);
 				console.log(rightPlayer);
@@ -247,6 +249,7 @@ export const loadGame = () => {
 	
 			gameSocket.send(JSON.stringify({
 				'type':'start',
+				'mode':'single',
 				'username': localStorage.getItem('username')
 			}))
 			
@@ -278,7 +281,7 @@ export const loadGame = () => {
 		localPlayerMode = false;
 		startLocalButton.disabled = true;
 		startOnlineButton.disabled = true;
-		leftPlayer = true;
+
 		console.log("YUUUUUU");
 		if (btnCounter == 0) {
 			initiateSocket();
@@ -300,10 +303,12 @@ export const loadGame = () => {
 	function gameLoop() {
 		update();
 		draw();
-
+		console.log(leftPlayer);
+		console.log(rightPlayer);
 		if (!isGameOver) {
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
+
 	}
 	
 
