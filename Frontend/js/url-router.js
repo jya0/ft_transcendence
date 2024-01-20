@@ -370,6 +370,7 @@ const urlLocationHandler = async () => {
 		}).then(data => {
 			// console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
+			const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
 			const imageContainer = document.getElementById('imageContainer');
 			const uploadButton = document.getElementById('uploadButton');
 			const hoverText = document.getElementById('hoverText');
@@ -389,6 +390,10 @@ const urlLocationHandler = async () => {
 				let file = fileInput.files[0];
 
 				if (file) {
+					if (file.size > maxSizeInBytes) {
+						alert('File size is too large, Please choose a smaller file.');
+						return;
+					}
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', localStorage.getItem('username'));
