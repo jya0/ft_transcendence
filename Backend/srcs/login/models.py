@@ -53,7 +53,7 @@ class Friendship(models.Model):
 class Tournament(models.Model):
     winner = models.CharField(max_length=50, unique=False, default="1")
     tournament_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50, unique=True, default="default")
     status = models.BooleanField(default=False)
 
 
