@@ -45,7 +45,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-
 # # ______________________________________________________________________________________
 # # ______________________________________________________________________________________
 # # TOOURNAMENT ENDPOINTS
@@ -56,7 +55,6 @@ def get_all_tournaments(request):
     tourns = Tournament.objects.filter(Q(status=True))
     serializer = TournamentSerializer(tourns, many=True)
     return JsonResponse(serializer.data, safe=False)
-
 
 
 @api_view(['GET'])
@@ -111,7 +109,20 @@ def update_user_profile(request):
         user.save(update_fields=['image'])
         return JsonResponse({'message': 'Profile updated successfully'}, status=200)
     else:
-        return JsonResponse({'error': 'Image not provided'}, status=400)
+        return JsonResponse({'error': 'Image not provided'}, status=200)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_display_name(request):
+    if request.data.get('display_name'):
+        print(request.data.get('display_name'))
+        user = UserProfile.objects.get(username=request.user.username)
+        user.nickname = request.data.get('display_name')
+        user.save(update_fields=['nickname'])
+        return JsonResponse({'message': 'Profile updated successfully'}, status=200)
+    else:
+        return JsonResponse({'error': 'nickname not provided'}, status=200)
 
 
 @api_view(['GET'])
@@ -131,10 +142,6 @@ def get_user_profile(request):
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
-
-
-
-
 
 
 @api_view(['GET'])
@@ -221,21 +228,21 @@ def add_or_remove_friend(request):
     return HttpResponse("Removed")
 
 
-
-
-
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def create_tournament(request):
     name = request.GET.get('name')
     try:
         tourn = Tournament.objects.create(name=name, status=True)
-        Match.objects.create(tournament_id_id=tourn.tournament_id, id1_id=2, id2_id=3, score1=0, score2=0, ongoing=True)
-        Match.objects.create(tournament_id_id=tourn.tournament_id, id1_id=2, id2_id=3, score1=0, score2=0, ongoing=True)
+        Match.objects.create(tournament_id_id=tourn.tournament_id,
+                             id1_id=2, id2_id=3, score1=0, score2=0, ongoing=True)
+        Match.objects.create(tournament_id_id=tourn.tournament_id,
+                             id1_id=2, id2_id=3, score1=0, score2=0, ongoing=True)
 
     except:
         return JsonResponse({'message': 'Please choose another tournament name'}, status=200)
     return JsonResponse({'message': 'Tournament created successfully'}, status=200)
+
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
