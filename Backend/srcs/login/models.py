@@ -10,6 +10,7 @@ class UserProfile(AbstractUser):
     intra = models.CharField(max_length=50, unique=False)
     email = models.EmailField(unique=True)
     display_name = models.CharField(max_length=50, unique=False)
+    nickname = models.CharField(max_length=50, unique=False)
     avatar = models.TextField(default="None")
     picture = JSONField(default=dict)
     is_2fa_enabled = models.BooleanField(default=False)
@@ -29,10 +30,10 @@ class UserProfile(AbstractUser):
         return self.display_name
 
 
-
 class Settings(models.Model):
     avatar = models.TextField(default="None")
-    display_name = models.CharField(max_length=50, unique=True, primary_key=True)
+    display_name = models.CharField(
+        max_length=50, unique=True, primary_key=True)
     id = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     is_2fa_enabled = models.BooleanField(default=False)
 
@@ -42,10 +43,11 @@ class Settings(models.Model):
 
 class Friendship(models.Model):
     id = models.AutoField(primary_key=True)
-    id1 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='user1')
-    id2 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='user2')
+    id1 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='user1')
+    id2 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='user2')
     REQUIRED_FIELDS = ['id1', 'id2']
-
 
 
 class Tournament(models.Model):
@@ -55,15 +57,15 @@ class Tournament(models.Model):
     status = models.BooleanField(default=False)
 
 
-
 class Match(models.Model):
     open_lobby = models.BooleanField(default=True)
     match_id = models.AutoField(primary_key=True)
     tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE)
-    id1 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='player1')
-    id2 = models.ForeignKey(UserProfile, on_delete=models.DO_NOTHING, related_name='player2')
+    id1 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='player1')
+    id2 = models.ForeignKey(
+        UserProfile, on_delete=models.DO_NOTHING, related_name='player2')
     winner = models.CharField(max_length=50)
     score1 = models.IntegerField()
     score2 = models.IntegerField()
     ongoing = models.BooleanField(default=False)
-
