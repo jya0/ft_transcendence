@@ -235,7 +235,7 @@ def join_tournament(request):
         return JsonResponse({'message': 'Both username and tournament_name are required.'}, status=200)
 
     user = get_object_or_404(UserProfile, intra=username)
-    tourn = Tournament.objects.filter(Q(status=True) & Q(name=tournament_name)).get()
+    tourn = Tournament.objects.filter(Q(name=tournament_name)).get()
 
     joined = False
     games = Match.objects.filter(Q(tournament_id=tourn.tournament_id)).all()
