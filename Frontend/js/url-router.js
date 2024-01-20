@@ -370,7 +370,19 @@ const urlLocationHandler = async () => {
 		}).then(data => {
 			// console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
+			const imageContainer = document.getElementById('imageContainer');
+			const uploadButton = document.getElementById('uploadButton');
+			const hoverText = document.getElementById('hoverText');
 
+			imageContainer.addEventListener('mouseover', function () {
+				uploadButton.style.display = 'block';
+				hoverText.style.display = 'block';
+			});
+
+			imageContainer.addEventListener('mouseout', function () {
+				uploadButton.style.display = 'none';
+				hoverText.style.display = 'none';
+			});
 			document.getElementById('file').addEventListener('change', loadFile, false);
 			document.getElementById('uploadButton').addEventListener('click', async () => {
 				let fileInput = document.getElementById('file');
