@@ -31,7 +31,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-CSRF_TRUSTED_ORIGINS = ["http://localhost:8090", "http://10.12.4.7:8090", "http://10.12.4.7:8000"]
+CSRF_TRUSTED_ORIGINS = ["https://localhost:8090",
+                        "https://10.12.4.7:8090", "http://10.12.4.7:8000"]
 
 
 # Application definition
@@ -54,8 +55,8 @@ INSTALLED_APPS = [
 ]
 
 CHANNEL_LAYERS = {
-    'default' : {
-        'BACKEND' : 'channels.layers.InMemoryChannelLayer'
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
     }
 }
 
@@ -105,10 +106,10 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8090','http://127.0.0.1:8090', 'http://10.12.4.7:8090', 'http://10.12.4.7:8000',
-    'http://localhost:8090', 'http://127.0.0.1:8090'
+    'https://localhost:8090', 'https://127.0.0.1:8090', 'https://10.12.4.7:8090', 'http://10.12.4.7:8000',
+    'https://localhost:8090', 'https://127.0.0.1:8090'
 ]
 
 CORS_ALLOW_HEADERS = [
