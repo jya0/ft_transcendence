@@ -258,26 +258,43 @@ def join_tournament(request):
 
     joined = False
     games = Match.objects.filter(Q(tournament_id=tourn.tournament_id)).all()
-    for game in games:
-        print(game.__dict__)
-        if (game.id1 == user or game.id2 == user):
-            msg = "You are already in the tournament"
-            return JsonResponse({'message': msg}, status=200)
-        if (game.id1.intra == 'temp1'):
-            g = Match.objects.get(match_id=game.match_id)
-            g.id1 = user
-            g.save()
-            joined = True
-            break
-        elif (game.id2.id == 'temp2'):
-            g = Match.objects.get(match_id=game.match_id)
-            g.id2 = user
-            g.open_lobby = False
-            g.save()
-            joined = True
-            break
-    if joined:
-        msg = 'Tournament joined successfully'
+    
+    #Case 1: already in the tournament lobby:
+    if (games[0].id1 == user or games[0].id2 == user):
+        msg = "You are already in the tournament"
+    elif(games[0].id1 == user or games[0].id2 == user):
+        msg = "You are already in the tournament"
+    #Case 2: Game 1 empty lobby
+    elif(games[0].id1.id == 2):
+        print("Found u a spot in game 1 buddy! - slot 1")
+        g = Match.objects.get(match_id=games[0].match_id)
+        g.id1 = user
+        g.save()
+        joined = True
+    #Case 3: Game 1 half full lobby
+    elif(games[0].id2.id == 3):
+        print("Found u a spot in game 1 buddy! - slot 2")
+        g = Match.objects.get(match_id=games[0].match_id)
+        g.id2 = user
+        g.save()
+        joined = True
+    #Case 4: Game 2 empty lobby
+    elif(games[1].id1.id == 2):
+        print("Found u a spot in game 2 buddy! - slot 1")
+        g = Match.objects.get(match_id=games[1].match_id)
+        g.id1 = user
+        g.save()
+        joined = True
+    #Case 3: Game 2 half full lobby
+    elif(games[1].id2.id == 3):
+        print("Found u a spot in game 2 buddy! - slot 2")
+        g = Match.objects.get(match_id=games[1].match_id)
+        g.id2 = user
+        g.save()
+        joined = True
     else:
         msg = "Sorry, you're late. The tournament is full :/"
+        return JsonResponse({'message': msg}, status=200)
+    if joined:
+        msg = 'Tournament joined successfully'
     return JsonResponse({'message': msg}, status=200)

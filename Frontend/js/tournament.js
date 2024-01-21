@@ -51,6 +51,7 @@ export const loadTournament = () => {
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
 				    'mode':'tournament',
+                    'tournament_name':tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -61,6 +62,7 @@ export const loadTournament = () => {
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
 				    'mode':'tournament',
+                    'tournament_name':tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -73,6 +75,7 @@ export const loadTournament = () => {
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
 				    'mode':'tournament',
+                    'tournament_name':tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -83,6 +86,7 @@ export const loadTournament = () => {
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
 				    'mode':'tournament',
+                    'tournament_name':tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -153,8 +157,8 @@ export const loadTournament = () => {
         //reset
         isGameOver = false;
         socketStatus = false;
-        leftPlayer = false;
-        rightPlayer = true;
+        leftPlayer = true;
+        rightPlayer = false;
         score.left = 0;
         score.right = 0;
         resetBall();
@@ -200,12 +204,13 @@ export const loadTournament = () => {
             gameSocket.send(JSON.stringify({
                 'type': 'end',
                 'mode':'tournament',
+                'tournament_name':tournament_name,
                 'username': localStorage.getItem('username'),
                 'score1': score.left,
                 'score2': score.right,
             }))
         }
-        document.getElementById("startOnlineButton").innerHTML = buttonText;
+        document.getElementById("startOnlineTournButton").innerHTML = buttonText;
         gameSocket.close();
         isGameOver = true;
         socketStatus = false;
@@ -249,9 +254,9 @@ export const loadTournament = () => {
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 document.getElementById("startOnlineTournButton").innerHTML = "In-game";
-                if (data.sender != localStorage.getItem('username')) {
-                    rightPlayer = false;
-                    leftPlayer = true;
+                if (data.sender == localStorage.getItem('username')) {
+                    leftPlayer = false;
+                    rightPlayer = true;
                 }
                 console.log(leftPlayer);
                 console.log(rightPlayer);
@@ -367,7 +372,8 @@ export const loadTournament = () => {
         localPlayerMode = true;
         startLocalButton.disabled = true;
         startOnlineButton.disabled = true;
-
+        startLocalButton.style.visibility = 'hidden';
+        startOnlineButton.style.visibility = 'hidden';
 
 
         // Display a form to get the number of players and their names
