@@ -39,7 +39,7 @@ class GameConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        print('sup mfs')
+        print('openng a connection')
         self.accept()
 
     def receive(self, text_data):
@@ -72,17 +72,12 @@ class GameConsumer(WebsocketConsumer):
                 status = 'waiting'
                 tourn = Tournament.objects.get(name=t_name)
                 games =  Match.objects.filter(Q(tournament_id=tourn.tournament_id))
-                # print('Here are the games for this tournament boys (should be 2 pls): ')
-                # print(games[0].__dict__)
                 player = UserProfile.objects.get(intra=username)
                 lobbyFull = True
                 game = games[0]
-                # print("so: id1.intra = " + game.id1.intra + " and game.id2.intra=" + game.id2.intra)
                 if (game.id1.intra == 'temp1' or game.id2.intra == 'temp2'):
                     lobbyFull = False
-                # game = games[1]
-                # if (game.id1.intra == 'temp1' or game.id2.intra == 'temp2'):
-                #     lobbyFull = False
+
                 if (lobbyFull):
                     status = 'start'
                 async_to_sync(self.channel_layer.group_send)(
@@ -204,7 +199,7 @@ class GameConsumer(WebsocketConsumer):
                     'type' : 'update',
                     'mode' : mode,
                     'sender': sender,
-                    'key' : message
+                    'key' : message,
                 }))
 
     def disconnect(self, code):
