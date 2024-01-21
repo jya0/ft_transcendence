@@ -1,0 +1,37 @@
+@font-face {
+	font-family: "ArgentPixel";
+	src:
+	  url("../font/ArgentPixelCF-Regular.ttf") format("TrueType");
+}
+
+@font-face {
+	font-family: "Mondwest";
+	src:
+	  url("../font/PPMondwest-Regular.otf") format("OpenType");
+}
+
+@font-face {
+	font-family: "NeueBit";
+	src:
+	  url("../font/PPNeueBit-Bold.otf") format("OpenType");
+}
+
+.font--neue {
+	font-family: "NeueBit", Arial, sans-serif;
+	font-style: normal;
+	font-weight: 700;
+}
+
+.font--argent {
+	font-family: "ArgentPixel", Arial, sans-serif;
+	font-style: normal;
+	font-weight: 400;
+}
+
+.font--mondwest {
+	font-family: "Mondwest", Arial, sans-serif;
+	font-style: normal;
+	font-weight: 400;
+}
+
+.bg--
