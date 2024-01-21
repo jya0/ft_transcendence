@@ -34,4 +34,7 @@
 	font-weight: 400;
 }
 
-.bg--
+.bg--main {
+	background-image: url(../public/background--main.png);
+	background-size: cover;
+}
