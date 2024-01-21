@@ -3,7 +3,12 @@ version: '3.8'
 services:
   nginx:
     container_name: Frontend
-    image: nginx
+    build:
+      context: Frontend/Nginx/
+      dockerfile: Dockerfile
+      args:
+        SSL_CERTIFICATE: ${SSL_CERTIFICATE}
+        SSL_CERTIFICATE_KEY: ${SSL_CERTIFICATE_KEY}
     env_file:
       - ./.env
     restart: on-failure
@@ -11,7 +16,7 @@ services:
       - 8090:8090
     volumes:
       - ./Frontend:/usr/share/nginx/html
-      - ./Frontend/nginx.conf:/etc/nginx/conf.d/nginx.conf
+      # - ./Frontend/nginx.conf:/etc/nginx/conf.d/nginx.conf
     depends_on:
       - app
     networks:
@@ -49,27 +54,25 @@ services:
       - POSTGRES_DB=${SQL_DATABASE}
     networks:
       - backend
-    
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    volumes:
-      - ./servers.json:/pgadmin4/servers.json
-      - pgadmin_data:/var/lib/pgadmin/
-    env_file:
-      - ./.env
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=user@example.com # user name 
-      - PGADMIN_DEFAULT_PASSWORD=${SQL_PASSWORD} # pass django
-    ports:
-      - "8888:80"
-    networks:
-      - backend
+  # pgadmin:
+  #   container_name: pgadmin
+  #   image: dpage/pgadmin4
+  #   volumes:
+  #     - ./servers.json:/pgadmin4/servers.json
+  #     - pgadmin_data:/var/lib/pgadmin/
+  #   env_file:
+  #     - ./.env
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=user@example.com # user name 
+  #     - PGADMIN_DEFAULT_PASSWORD=${SQL_PASSWORD} # pass django
+  #   ports:
+  #     - "8888:80"
+  #   networks:
+  #     - backend
 
 networks:
   backend:
     driver: bridge
 
 volumes:
-  postgres_data:
-  pgadmin_data:
+  postgres_data: # pgadmin_data:
