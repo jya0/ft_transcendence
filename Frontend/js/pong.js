@@ -1,6 +1,8 @@
 // import {io} from "socket.io-client";
 export const loadGame = () => {
-
+	let lastTimestamp = 0;
+	const maxFrameRate = 60;
+	const frameInterval = 1000 / maxFrameRate;
 	let btnCounter = 0;
 	const canvas = document.getElementById('pongCanvas');
 	const ctx = canvas.getContext('2d');
@@ -16,6 +18,24 @@ export const loadGame = () => {
 	const score = { left: 0, right: 0 };
 	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
 	const keys = {};
+
+
+	function resetGame(params) {
+		paddle.width = 10;
+		paddle.height = 100;
+		paddle.speed = 8;
+
+		ball.x = canvas.width /2;
+		ball.y = canvas.height /2;
+		ball.speedX = 6;
+		ball.speedY = 6;ws
+		score.left = 0;
+		score.right = 0;
+		players.left = (canvas.height - paddle.height) / 2;
+		players.right = (canvas.height - paddle.height) / 2;
+	}
+
+
 	let isGameOver = false;
 	let animationFrameId;
 
@@ -24,6 +44,7 @@ export const loadGame = () => {
 	let keyPressed;
 	let leftPlayer = true;
 	let rightPlayer = false;
+
 
 	function draw() {
 		ctx.fillStyle = '#000';
@@ -41,44 +62,44 @@ export const loadGame = () => {
 
 	function updateBackend() {
 		if (rightPlayer) {
-			if (keys['w'] && players.right > 0){
+			if (keys['w'] && players.right > 0) {
 				players.right -= paddle.speed;
 				keyPressed = 'w';
 				gameSocket.send(JSON.stringify({
-					'type':'update',
-					'mode':'single',
+					'type': 'update',
+					'mode': 'single',
 					'username': localStorage.getItem('username'),
-					'key':keyPressed
+					'key': keyPressed,
 				}))
 			}
 			if (keys['s'] && players.right < canvas.height - paddle.height) {
 				players.right += paddle.speed;
 				keyPressed = 's';
 				gameSocket.send(JSON.stringify({
-					'type':'update',
-					'mode':'single',
+					'type': 'update',
+					'mode': 'single',
 					'username': localStorage.getItem('username'),
 					'key': keyPressed
 				}))
 			}
 		}
 		else {
-			if (keys['w'] && players.left > 0){
+			if (keys['w'] && players.left > 0) {
 				players.left -= paddle.speed;
 				keyPressed = 'w';
 				gameSocket.send(JSON.stringify({
-					'type':'update',
-					'mode':'single',
+					'type': 'update',
+					'mode': 'single',
 					'username': localStorage.getItem('username'),
-					'key':keyPressed
+					'key': keyPressed
 				}))
 			}
 			if (keys['s'] && players.left < canvas.height - paddle.height) {
 				players.left += paddle.speed;
 				keyPressed = 's';
 				gameSocket.send(JSON.stringify({
-					'type':'update',
-					'mode':'single',
+					'type': 'update',
+					'mode': 'single',
 					'username': localStorage.getItem('username'),
 					'key': keyPressed
 				}))
@@ -102,8 +123,7 @@ export const loadGame = () => {
 			ball.speedX *= -1;
 		}
 
-		if (localPlayerMode == true)
-		{
+		if (localPlayerMode == true) {
 			if (keys['ArrowUp'] && players.right > 0) players.right -= paddle.speed;
 			if (keys['ArrowDown'] && players.right < canvas.height - paddle.height) players.right += paddle.speed;
 			if (keys['w'] && players.left > 0) players.left -= paddle.speed;
@@ -129,34 +149,33 @@ export const loadGame = () => {
 
 	function handleLocalWinner() {
 		let buttonText;
-	
+
 		if (score.left > score.right) {
 			buttonText = "Left Player WINS! Press to play a new local game";
-		} else  {
+		} else {
 			buttonText = "Right Player WINS! Press to play a new local game";
 		}
-	
+
 		document.getElementById("startLocalButton").innerHTML = buttonText;
 		isGameOver = true;
 		socketStatus = false;
 		leftPlayer = true;
 		rightPlayer = false;
 	}
-	
+
 
 	function handleOnlineWinner() {
 		let buttonText;
-		if ((rightPlayer && score.left >= 3 )|| (leftPlayer && score.right >=3))
+		if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
 			buttonText = "You lose! Press to play a new online game";
-		else
-		{
+		else {
 			buttonText = "You win! Press to play a new online game";
 			gameSocket.send(JSON.stringify({
-				'type':'end',
-				'mode':'single',
+				'type': 'end',
+				'mode': 'single',
 				'username': localStorage.getItem('username'),
-				'score1':score.left,
-				'score2':score.right,
+				'score1': score.left,
+				'score2': score.right,
 			}))
 		}
 		document.getElementById("startOnlineButton").innerHTML = buttonText;
@@ -166,7 +185,7 @@ export const loadGame = () => {
 	}
 
 	function checkForWinner() {
-		
+
 		if (score.left >= 3 || score.right >= 3) {
 			isGameOver = true;
 			btnCounter = 0;
@@ -178,9 +197,9 @@ export const loadGame = () => {
 				handleOnlineWinner();
 			startOnlineButton.disabled = false;
 			startLocalButton.disabled = false;
-			startLocalButton.style.visibility='visible';
-			startOnlineButton.style.visibility='visible';
-
+			startLocalButton.style.visibility = 'visible';
+			startOnlineButton.style.visibility = 'visible';
+			resetGame();
 		}
 	}
 
@@ -195,21 +214,20 @@ export const loadGame = () => {
 	let player_count = 0;
 	let url = `ws://localhost:8000/ws/socket-server/`
 	let gameSocket;
-	
+
 	function initiateSocket() {
 		gameSocket = new WebSocket(url);
 
 		gameSocket.onmessage = function (e) {
 			let data = JSON.parse(e.data)
-			console.log('Data: ', data)
-	
+			// console.log('Data: ', data)
+
 			if (btnCounter == 0)
-				return ;
+				return;
 			if (data.type === 'start' && data["status"] == "start") {
 				player_count = 2;
 				document.getElementById("startOnlineButton").innerHTML = "In-game";
-				if (data.sender == localStorage.getItem('username'))
-				{
+				if (data.sender == localStorage.getItem('username')) {
 					leftPlayer = false;
 					rightPlayer = true;
 				}
@@ -218,21 +236,23 @@ export const loadGame = () => {
 				startOnlineButton.disabled = false;
 				startOnlineButton.click();
 			}
-			
-			if (data.sender == localStorage.getItem('username'))
-				return ;
 
-			if(data.type == 'update') {
+			if (data.sender == localStorage.getItem('username'))
+				return;
+
+			if (data.type == 'update') {
+			if (isGameOver) return;
+
 				if (leftPlayer) {
-					if (data['key']=='w' && players.right > 0) players.right -= paddle.speed;
-					if (data['key'] =='s' && players.right < canvas.height - paddle.height) players.right += paddle.speed;
+					if (data['key'] == 'w' && players.right > 0) players.right -= paddle.speed;
+					if (data['key'] == 's' && players.right < canvas.height - paddle.height) players.right += paddle.speed;
 				}
 				else {
-					if (data['key']=='w' && players.left > 0) players.left -= paddle.speed;
-					if (data['key'] =='s' && players.left < canvas.height - paddle.height) players.left += paddle.speed;
+					if (data['key'] == 'w' && players.left > 0) players.left -= paddle.speed;
+					if (data['key'] == 's' && players.left < canvas.height - paddle.height) players.left += paddle.speed;
 				}
 			}
-			else if(data.type == 'close') {
+			else if (data.type == 'close') {
 				gameOver = true;
 				player_count = 1;
 				gameSocket.close();
@@ -246,15 +266,15 @@ export const loadGame = () => {
 			if (socketStatus == true)
 				return
 			socketStatus = true;
-	
+
 			gameSocket.send(JSON.stringify({
-				'type':'start',
-				'mode':'single',
+				'type': 'start',
+				'mode': 'single',
 				'username': localStorage.getItem('username')
 			}))
-			
+
 			player_count = 1;
-	
+
 			console.log("waiting for a second player...")
 		});
 		player_count = 1;
@@ -265,8 +285,8 @@ export const loadGame = () => {
 		localPlayerMode = true;
 		startLocalButton.disabled = true;
 		startOnlineButton.disabled = true;
-		startLocalButton.style.visibility='hidden';
-		startOnlineButton.style.visibility='hidden';
+		startLocalButton.style.visibility = 'hidden';
+		startOnlineButton.style.visibility = 'hidden';
 
 		if (isGameOver || !animationFrameId) {
 			isGameOver = false;
@@ -301,17 +321,26 @@ export const loadGame = () => {
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 	});
-	function gameLoop() {
-		update();
-		draw();
-		console.log(leftPlayer);
-		console.log(rightPlayer);
-		if (!isGameOver) {
-			animationFrameId = requestAnimationFrame(gameLoop);
+	function gameLoop(timestamp) {
+		const elapsed = timestamp - lastTimestamp;
+
+		if (elapsed > frameInterval) {
+			update(elapsed);
+			draw();
+			lastTimestamp = timestamp - (elapsed % frameInterval);
 		}
 
+		requestAnimationFrame(gameLoop);
+
 	}
-	
+	// Add this function to print player locations
+	function printPlayerLocations() {
+		console.log('Player Locations - Left:', players.left, 'Right:', players.right);
+	}
+
+	// Call this function at regular intervals (e.g., every second)
+	setInterval(printPlayerLocations, 1000); // Adjust the interval as needed
+
 
 }
 
