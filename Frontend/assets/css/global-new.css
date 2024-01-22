@@ -38,3 +38,8 @@
 	background-image: url(../public/background--main.png);
 	background-size: cover;
 }
+
+.bg--polka {
+	background-image: radial-gradient(#F9FBFF 20%, transparent 20%); 
+	background-size: 10px 10px;
+}
