@@ -54,10 +54,13 @@ def login(request):
     return redirect('/')
 
 
-@never_cache
+@api_view(['get'])
 def auth(request):
+    if request.user.is_authenticated:
+        return JsonResponse({'message': 'Already logged in'}, status=200)
     code = request.GET.get("code")
     if code:
+        print("code", code)
         data = {
             "grant_type": "authorization_code",
             "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),
@@ -81,7 +84,7 @@ def auth(request):
             picture = user_response.json()["image"]
         except:
             response = JsonResponse(
-                {'message': 'Failed to fetch user data'}, status=400)
+                {'message': 'Failed to fetch user data in main'}, status=200)
             return response
             return HttpResponseRedirect("https://localhost:8090/")
         if username:
@@ -100,7 +103,7 @@ def auth(request):
                     user_profile.set_password(username)
                     user_profile.save()
                 except IntegrityError:
-                    return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=400)
+                    return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=200)
             else:
                 user_profile = UserProfile.objects.get(username=username)
 
@@ -109,6 +112,7 @@ def auth(request):
                 send_otp(request)
                 print("sent otp.....")
                 access_token = get_user_token(request, username, username)
+                return JsonResponse({'otp': 'validate_otp'}, status=200)
                 response = HttpResponseRedirect(
                     f"https://localhost:8090/desktop?otp=validate_otp&token={access_token}&username={username}")
                 return response
@@ -118,6 +122,14 @@ def auth(request):
             print("---------> token", access_token)
             print(
                 f"https://localhost:8090/desktop?token={access_token}&user={username}")
+            user_data = {
+                'username': user_profile.username,
+                'email': user_profile.email,
+                'display_name': user_profile.display_name,
+                'nickname': user_profile.nickname,
+            }
+            session_id = request.session.session_key
+            return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
             response = HttpResponseRedirect(
                 f"https://localhost:8090/desktop?token={access_token}&user={username}")
             return response
