@@ -1,45 +1,43 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 	<head>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title class="text-capitalize">friend bar component</title>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+		<link href="../assets/css/global-new.css" rel="stylesheet"> 
 	</head>
 	<body>
-		<div class="container">
-			<div class="row p-0 g-0">
-				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<div class="ratio ratio-1x1" style="background-color: rebeccapurple;">
-						<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
+		<div class="vh-100 vw-100 bg--main" id="REMOVE________________________________________THIS!!!">
+			<section>
+				<div class="d-flex flex-row p-0 g-0">
+					<div class="col-2 p-0 border border-1 border-dark">
+						<div class="ratio ratio-4x3 bg-black mh-100 mw-100">
+							<div class="d-flex py-1 border border-1 border-light justify-content-center">
+								<div class="ratio ratio-1x1">
+									<img src="https://www.w3schools.com/images/w3schools_green.jpg" class="img-fluid rounded-circle" alt="...">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col d-flex flex-column p-0 justify-content-center text-truncate text-break border border-1 border-dark">
+						<p class="font--argent p-0 m-0" style="font-size: 1.5vw;">${user.intra}</p>
+						<p class="font--argent p-0 m-0" style="font-size: 0.5vw;">${user.is_online ? "online 🟢" : "offline ⚪"}</p>
+						<p class="font--argent p-0 m-0" style="font-size: 1vw;">ranking</p>
+					</div>
+					<div class="col-2 p-0 text-truncate border border-1 border-dark">
+						<div class="ratio ratio-4x3">
+							<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize" type="button" style="font-size: 1vw;">View Profile</button>
+						</div>
+					</div>
+					<div class="col-2 p-0 text-truncate border border-1 border-dark">
+						<div class="ratio ratio-4x3">
+							<button class="btn bg-body-secondary rounded-0 font--argent text-capitalize add-friend-btn" type="button" style="font-size: 1vw;">${isFriend ? "Remove Friend" : "Add Friend"}</button>
+						</div>
 					</div>
 				</div>
-				<div class="col-6 border border-1 border-dark overflow-auto mh-100 mw-50">
-					<ul class="list-group">
-						<li class="list-group-item justify-content-left text-uppercase"><h4>${user.username}</h4></li>
-						<li class="list-group-item justify-content-left text-uppercase"><a>${user.is_online ? "online 🟢" : "offline ⚪"}</a></li>
-						<li class="list-group-item justify-content-left text-uppercase"><h5>ranking</h5></li>
-					</ul>
-				</div>
-				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<button class="h-100 w-100 btn btn-primary text-capitalize" type="button">add friend</button>
-				</div>
-				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<button class="h-100 w-100 btn btn-info text-capitalize" type="button">view profile</button>
-				</div>
-			</div>
+			</section>
 		</div>
-		<!-- <div class="container">
-			<div class="row h-25 border border-1 border-dark g-0 p-0">
-				<div class="col" style="background-color: violet;">
-					<div class="ratio ratio-1x1">
-						<img src="https://cdn.pixabay.com/photo/2015/06/22/08/40/child-817373_1280.jpg" class="img-fluid rounded-circle" alt="...">
-					</div>
-				</div>
-				<div class="col-11" style="background-color: violet;">
-				</div>
-			</div>
-		</div>
-		<div class="container">
-			<div class="row" style="background-color: blue; height: 25vh;"></div>
-		</div> -->
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 	</body>
-</html>
+	</html>
