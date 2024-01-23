@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Small Popups</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .popup {
+            position: absolute;
+            display: none;
+            width: 200px;
+            height: 150px;
+            background-color: #ccc;
+            padding: 10px;
+            border: 1px solid #999;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function openSmallPopup() {
+            const width = 200; // Width of the popup
+            const height = 150; // Height of the popup
+
+            // Generate random position for the popup
+            const left = Math.floor(Math.random() * (window.innerWidth - width));
+            const top = Math.floor(Math.random() * (window.innerHeight - height));
+
+            // Create a new popup div
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.style.left = left + 'px';
+            popup.style.top = top + 'px';
+
+            // Add content to the popup
+            popup.innerHTML = '<h2>This is a small popup</h2>';
+
+            // Append the popup to the body
+            document.body.appendChild(popup);
+
+            // Show the popup
+            popup.style.display = 'block';
+
+            // Close the popup after a certain duration (e.g., 3 seconds)
+            setTimeout(() => {
+                document.body.removeChild(popup);
+            }, 3000);
+        }
+
+        // Open a new popup every half second
+        const popupInterval = setInterval(openSmallPopup, 500);
+
+        // Stop generating popups after a certain duration (e.g., 10 seconds)
+        setTimeout(() => {
+            clearInterval(popupInterval);
+        }, 10000);
+    </script>
+</body>
+</html>
