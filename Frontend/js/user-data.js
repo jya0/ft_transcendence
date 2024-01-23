@@ -37,6 +37,7 @@ function handleLogout() {
 			return response.json();
 		})
 		.then(data => {
+			console.log('Data fetched:', data);
 			if (data.message === 'Logged out successfully') {
 				document.getElementById('content').innerHTML = 'You have been logged out successfully';
 			}

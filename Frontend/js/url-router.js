@@ -346,13 +346,6 @@ const urlLocationHandler = async () => {
 			clearInterval(windowInterval);
 		}, 1000);
 	}
-	else if (location === '/myprofile') {
-		setMainWindowframe();
-
-		document.getElementById("content").innerHTML += `<h1>Welcome to ${location}</h1>
-														<button id="logout" class="btn btn-primary" 
-														onClick="handleLogout()">Logout</button>`;
-	}
 	else if (location === '/profile') {
 		setMainWindowframe();
 
