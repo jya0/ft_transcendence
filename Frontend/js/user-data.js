@@ -2,12 +2,11 @@ function handle42Auth() {
 	const timestamp = new Date().getTime();
 	fetch('http://localhost:8000/api/42_intra_link', {
 		method: 'GET',
-		headers: {
-			'Cache-Control': 'no-cache',
-		},
+		credentials: 'include',
 	})
 		.then(response => {
 			if (!response.ok) {
+				alert(response.status);
 				throw new Error('Network response was not ok');
 			}
 			return response.json();
@@ -15,7 +14,7 @@ function handle42Auth() {
 		.then(data => {
 			console.log('Data fetched:', data);
 			// Handle the fetched data
-			forty_two_url = data.forty_two_url + `&state=${timestamp}` + `&random=${Math.random()}`;
+			forty_two_url = data.forty_two_url
 			console.log(forty_two_url);
 			window.location.href = forty_two_url;
 		})
@@ -60,8 +59,8 @@ function updateDataContainer(data) {
 
 function handleToken() {
 	const credentials = {
-		username : localStorage.getItem('username'),
-		password : localStorage.getItem('username')
+		username: localStorage.getItem('username'),
+		password: localStorage.getItem('username')
 	};
 
 	fetch('http://localhost:8000/api/token/', {
@@ -87,3 +86,6 @@ function handleToken() {
 			alert(error);
 		});
 }
+
+
+

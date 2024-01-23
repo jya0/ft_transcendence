@@ -1,0 +1,13 @@
+{% if user.is_2fa_enabled == True %}
+    <div class="mb-3 p-20px">
+      <label for="otp-input" class="form-label">OTP Code</label>
+      <input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code" />
+    </div>
+    <button type="submit-otp" class="btn btn-primary" id="otp-submit-button">Validate OTP</button>
+  <br />
+{% endif %}
+{% if message %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
