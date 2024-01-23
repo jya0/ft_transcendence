@@ -58,12 +58,13 @@ def get_all_tournaments(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def get_user_data(request):
-    print(request.user.username)
-    user_data = UserProfile.objects.filter(
-        username=request.user.username).values()
-    return JsonResponse(list(user_data), safe=False)
+    print('-----------  >', request['username'])
+    user_data = UserProfile.objects.get(
+        username=request['username'])
+    print(user_data)
+    return JsonResponse('user', user_data.username)
 
 
 @api_view(['GET'])
