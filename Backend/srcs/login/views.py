@@ -83,10 +83,11 @@ def auth(request):
             picture = user_response.json()["image"]
         except:
             response = JsonResponse(
-                {'message': 'Failed to fetch user data in main'}, status=200)
+                {'message': 'Failed to fetch user data in main'}, status=400)
             return response
             return HttpResponseRedirect("https://localhost:8090/")
         if username:
+            request.session['username'] = username
             if not UserProfile.objects.filter(username=username).exists():
                 try:
                     user_profile = UserProfile.objects.create(
