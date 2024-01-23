@@ -3,32 +3,15 @@ import { loadGame } from './pong.js';
 import { loadTournament } from './tournament.js';
 
 
-let username
-let image
-let is_2fa_enabled
-let is_online
-let picture
-let email
-let userToken
-let userId
-let user = localStorage.getItem('user');
-let loginIn = false;
+let user = sessionStorage.getItem('user');
 
 if (user) {
 	user = JSON.parse(user)
-	username = user['username'];
-	image = user['image'];
-	is_2fa_enabled = user['is_2fa_enabled'];
-	is_online = user['is_online'];
-	picture = user['picture'];
-	email = user['email'];
-	userToken = user['access_token'];
-	userId = user['id'];
 }
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://localhost:8000/api/users/${username}?username=${localStorage.getItem('username')}}`;
+	const url = `http://localhost:8000/api/users/${username}?username=${user.username}}`;
 
 	fetch(url, {
 		method: 'GET',
@@ -42,7 +25,7 @@ const viewUserProfile = (username) => {
 			document.getElementsByClassName("window")[0].innerHTML = data;
 			const addFriendButton = document.getElementById('add-friend');
 			addFriendButton.addEventListener('click', async () => {
-				addFriend(addFriendButton, localStorage.getItem('username'), username);
+				addFriend(addFriendButton, user.username, username);
 			});
 		})
 		.catch(error => {
@@ -331,7 +314,7 @@ const urlLocationHandler = async () => {
 
 			const welcomeText = document.createElement('div');
 			welcomeText.className = 'small-welcome-text';
-			welcomeText.textContent = `Welcome ${localStorage.getItem('username')}!`;
+			welcomeText.textContent = `Welcome ${user.username}!`;
 			windowContent.appendChild(welcomeText);
 
 			windowFrame.appendChild(windowContent);
@@ -368,7 +351,7 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://localhost:8000/api/users/${localStorage.getItem('username')}?username=${localStorage.getItem('username')}`, {
+		await fetch(`http://localhost:8000/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -407,7 +390,7 @@ const urlLocationHandler = async () => {
 					}
 					let formData = new FormData();
 					formData.append('image', file);
-					formData.append('username', localStorage.getItem('username'));
+					formData.append('username', user.username);
 					await fetch('http://localhost:8000/api/update_user_profile/', {
 						method: 'POST',
 						body: formData,
@@ -473,7 +456,7 @@ const urlLocationHandler = async () => {
 			console.log(userId);
 
 			try {
-				const response = await fetch(`http://localhost:8000/enable_or_disable_2fa/?username=${localStorage.getItem('username')}`, {
+				const response = await fetch(`http://localhost:8000/enable_or_disable_2fa/?username=${user.username}`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -579,6 +562,7 @@ async function handleUserData() {
 			},
 		})
 			.then(response => {
+				console.log('response', response)
 				if (!response.ok) {
 					response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
 					return;
@@ -593,50 +577,30 @@ async function handleUserData() {
 				}
 				userToken = data.token;
 				user = data.user;
-				let csrfToken = data.csrfToken
-				localStorage.setItem('access_token', userToken);
-				localStorage.setItem('username', user.username);
-				console.log(userToken);
-				console.log(user);
-				console.log(csrfToken);
-				console.log(data.sessionId);
-				// document.cookie = "sessionId=" + data.sessionId;
-				// console.log('authDone', authDone)
-
-				window.history.pushState({}, "", '/desktop');
-
-				window.onpopstate = urlLocationHandler;
-				// call the urlLocationHandler function to handle the initial url
-				window.route = urlRoute;
-				urlLocationHandler();
-
-				loginIn = false;
-
-
+				sessionStorage.setItem('user', JSON.stringify(user));
 				const otp = data.otp
-				console.log('otp', otp)
 				if (otp === 'validate_otp') {
 					console.log('validate otp');
 					// setMainWindowframe();
 					document.getElementById("content").innerHTML = `<div class="window-frame" id="main-window">
-				<div class="top-bar">
-				<img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
+						<div class="top-bar">
+						<img class="top-bar-child" alt="" src="./assets/public/rectangle-4.svg" />
 
-				<div class="options">
-				<img class="vector-icon" alt="" src="./assets/public/vector.svg" />
+						<div class="options">
+						<img class="vector-icon" alt="" src="./assets/public/vector.svg" />
 
-				<img class="dot-grid-icon" alt="" src="./assets/public/dot-grid.svg" />
-				</div>
-				</div>
-				<div class="window"></div>
-				</div>`;
+						<img class="dot-grid-icon" alt="" src="./assets/public/dot-grid.svg" />
+						</div>
+						</div>
+						<div class="window"></div>
+						</div>`;
 					document.getElementsByClassName('window')[0].innerHTML = `
-				<div class="mb-3 p-20px">
-				<label for="otp-input" class="form-label">OTP Code</label>
-				<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
-				</div>
-				<button type="submit-otp" id="submit-otp" class="btn btn-primary">Validate OTP</button>
-				`;
+						<div class="mb-3 p-20px">
+						<label for="otp-input" class="form-label">OTP Code</label>
+						<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
+						</div>
+						<button type="submit-otp" id="submit-otp" class="btn btn-primary">Validate OTP</button>
+						`;
 
 					document.getElementById('submit-otp').addEventListener('click', async () => {
 						let otp = document.getElementById('otp-input').value;
@@ -645,15 +609,14 @@ async function handleUserData() {
 							return;
 						}
 						const requestBody = new URLSearchParams();
-						requestBody.append('username', urlUsername);
+						requestBody.append('username', data.user.username);
 						requestBody.append('otp', otp);
 
 						await fetch('http://localhost:8000/validate_otp/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
-								'Authorization': `Bearer ${token}`,
-								'x-csrftoken': getCookie('csrftoken'),
+								'Authorization': `Bearer ${userToken}`,
 							},
 							body: requestBody.toString(),
 						})
@@ -667,10 +630,17 @@ async function handleUserData() {
 								// Handle the response data here
 								if (data.message === 'OTP is valid') {
 									console.log(data);
-									localStorage.setItem('access_token', token);
+									localStorage.setItem('access_token', userToken);
 									document.getElementsByClassName("window")[0].innerHTML = '';
 									alert('OTP is valid, enjoy pongos');
-									return false;
+									// document.getElementById("navbar").style.display = 'none';
+									window.history.pushState({}, "", '/desktop');
+
+									window.onpopstate = urlLocationHandler;
+									// call the urlLocationHandler function to handle the initial url
+									window.route = urlRoute;
+									urlLocationHandler();
+									// return false;
 								}
 								else {
 									alert('Invalid OTP code');
@@ -681,7 +651,30 @@ async function handleUserData() {
 								console.error('Error:', error);
 							});
 					});
+					return;
 				}
+				let csrfToken = data.csrfToken
+				if (userToken && user) {
+					localStorage.setItem('access_token', userToken);
+					localStorage.setItem('username', user.username);
+					console.log(userToken);
+					console.log(user);
+					console.log(csrfToken);
+					console.log(data.sessionId);
+					// document.cookie = "sessionId=" + data.sessionId;
+					// console.log('authDone', authDone)
+
+				}
+
+
+				window.history.pushState({}, "", '/desktop');
+
+				window.onpopstate = urlLocationHandler;
+				// call the urlLocationHandler function to handle the initial url
+				window.route = urlRoute;
+				urlLocationHandler();
+
+				loginIn = false;
 
 			})
 		return;
@@ -858,7 +851,9 @@ async function getAllUsers(override) {
 		return response.json();
 	}).then(data => {
 		console.log(data);
-		users = data.filter(user => (user.username !== "admin" && user.username !== localStorage.getItem('username')));
+		let sameUser = user['username'];
+		users = data.filter(item => (item.username !== "admin" && item.username !== sameUser));
+		console.log('filtered users -> ', users);
 		return users;
 	}).catch((error) => {
 		console.error('Error:', error);
@@ -881,7 +876,7 @@ async function getAllFriends(override) {
 	if (location !== '/users')
 		return;
 	let users = [];
-	await fetch(`http://localhost:8000/api/friends/${localStorage.getItem('username')}`, {
+	await fetch(`http://localhost:8000/api/friends/${user.username}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -961,7 +956,7 @@ async function insertAllUsers(users) {
 	for (let i = 0; i < addFriendButtons.length; i++) {
 		const button = addFriendButtons[i];
 		button.addEventListener('click', function () {
-			addFriend(button, localStorage.getItem('username'), users[i].username);
+			addFriend(button, user.username, users[i].username);
 		});
 	}
 }

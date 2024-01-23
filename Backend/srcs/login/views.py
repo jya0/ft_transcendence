@@ -56,9 +56,8 @@ def login(request):
 
 @api_view(['get'])
 def auth(request):
-    if request.user.is_authenticated:
-        return JsonResponse({'message': 'Already logged in'}, status=200)
     code = request.GET.get("code")
+    print('got code ---------> ', code)
     if code:
         print("code", code)
         data = {
@@ -107,12 +106,18 @@ def auth(request):
             else:
                 user_profile = UserProfile.objects.get(username=username)
 
+            user_data = {
+                'username': user_profile.username,
+                'email': user_profile.email,
+                'display_name': user_profile.display_name,
+                'nickname': user_profile.nickname,
+            }
             if user_profile.is_2fa_enabled:
-                request.session['username'] = username
-                send_otp(request)
+                print('2fa enabled------------------->')
+                send_otp(request, username)
                 print("sent otp.....")
                 access_token = get_user_token(request, username, username)
-                return JsonResponse({'otp': 'validate_otp'}, status=200)
+                return JsonResponse({'otp': 'validate_otp', 'user': user_data, 'token': access_token}, status=200)
                 response = HttpResponseRedirect(
                     f"https://localhost:8090/desktop?otp=validate_otp&token={access_token}&username={username}")
                 return response
@@ -122,12 +127,6 @@ def auth(request):
             print("---------> token", access_token)
             print(
                 f"https://localhost:8090/desktop?token={access_token}&user={username}")
-            user_data = {
-                'username': user_profile.username,
-                'email': user_profile.email,
-                'display_name': user_profile.display_name,
-                'nickname': user_profile.nickname,
-            }
             session_id = request.session.session_key
             return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
             response = HttpResponseRedirect(
