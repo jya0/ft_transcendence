@@ -58,12 +58,13 @@ def get_all_tournaments(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+# @permission_classes([IsAuthenticated])
 def get_user_data(request):
-    print(request.user.username)
-    user_data = UserProfile.objects.filter(
-        username=request.user.username).values()
-    return JsonResponse(list(user_data), safe=False)
+    print('-----------  >', request['username'])
+    user_data = UserProfile.objects.get(
+        username=request['username'])
+    print(user_data)
+    return JsonResponse('user', user_data.username)
 
 
 @api_view(['GET'])
@@ -85,8 +86,6 @@ def two_fa_toggle(request):
     return HttpResponse(rendered_template, content_type='text/html')
 
 
-@never_cache
-@api_view(['GET'])
 def intra_link(request):
     forty_two_url = settings.FORTY_TWO_URL
     return JsonResponse({'forty_two_url': forty_two_url})
@@ -258,35 +257,35 @@ def join_tournament(request):
 
     joined = False
     games = Match.objects.filter(Q(tournament_id=tourn.tournament_id)).all()
-    
-    #Case 1: already in the tournament lobby:
+
+    # Case 1: already in the tournament lobby:
     if (games[0].id1 == user or games[0].id2 == user):
         msg = "You are already in the tournament"
-    elif(games[0].id1 == user or games[0].id2 == user):
+    elif (games[0].id1 == user or games[0].id2 == user):
         msg = "You are already in the tournament"
-    #Case 2: Game 1 empty lobby
-    elif(games[0].id1.id == 2):
+    # Case 2: Game 1 empty lobby
+    elif (games[0].id1.id == 2):
         print("Found u a spot in game 1 buddy! - slot 1")
         g = Match.objects.get(match_id=games[0].match_id)
         g.id1 = user
         g.save()
         joined = True
-    #Case 3: Game 1 half full lobby
-    elif(games[0].id2.id == 3):
+    # Case 3: Game 1 half full lobby
+    elif (games[0].id2.id == 3):
         print("Found u a spot in game 1 buddy! - slot 2")
         g = Match.objects.get(match_id=games[0].match_id)
         g.id2 = user
         g.save()
         joined = True
-    #Case 4: Game 2 empty lobby
-    elif(games[1].id1.id == 2):
+    # Case 4: Game 2 empty lobby
+    elif (games[1].id1.id == 2):
         print("Found u a spot in game 2 buddy! - slot 1")
         g = Match.objects.get(match_id=games[1].match_id)
         g.id1 = user
         g.save()
         joined = True
-    #Case 3: Game 2 half full lobby
-    elif(games[1].id2.id == 3):
+    # Case 3: Game 2 half full lobby
+    elif (games[1].id2.id == 3):
         print("Found u a spot in game 2 buddy! - slot 2")
         g = Match.objects.get(match_id=games[1].match_id)
         g.id2 = user
