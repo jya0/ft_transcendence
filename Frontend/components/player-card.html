@@ -1,8 +1,27 @@
-<div class="form-outline" data-mdb-input-init style="margin: 20px ;padding: 10px; border: 1px solid;">
+<!-- <div class="form-outline" data-mdb-input-init style="margin: 20px ;padding: 10px; border: 1px solid;">
 	<input type="search" id="search-user" class="form-control" placeholder="Search User" aria-label="Search" />
 </div>
 
 <div class="form-outline" data-mdb-input-init style="margin: 20px ;padding: 10px; border: 1px solid;"
 	id="player-card-div">
-	<!-- content here -->
+</div> -->
+
+<!-- DIRECTORY DIV -->
+<div class="d-flex flex-column p-5 h-100 w-100 mh-100 mw-100 gap-3 border border-1 border-dark">
+	<div class="d-flex p-4 justify-content-center border border-1 border-dark">
+		<div class="input-group rounded border border-1 border-dark d-flex flex-row h-100 w-100">
+			<svg xmlns="${user.image ? user.image : user.picture.link}" width="60" viewBox="0 0 32 32" class="p-2">
+				<title>interface-essential-search-1</title><g><path d="m24.38 19.81 -1.53 0 0 3.05 -3.04 0 0 1.52 -3.05 0 0 1.52 4.57 0 0 1.53 1.52 0 0 1.52 1.53 0 0 1.53 1.52 0 0 1.52 1.53 0 0 -1.52 1.52 0 0 -1.53 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52 -1.52 0 0 -1.52 -1.52 0 0 -1.53 -1.53 0 0 -4.57 -1.52 0 0 3.05z" fill="#000000" stroke-width="1"></path><path d="M25.9 10.67h1.53v6.09H25.9Z" fill="#000000" stroke-width="1"></path><path d="M24.38 7.62h1.52v3.05h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M22.85 4.57h1.53v3.05h-1.53Z" fill="#000000" stroke-width="1"></path><path d="M21.33 12.19h1.52v3.05h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M19.81 9.14h1.52v3.05h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M19.81 3.05h3.04v1.52h-3.04Z" fill="#000000" stroke-width="1"></path><path d="M16.76 7.62h3.05v1.52h-3.05Z" fill="#000000" stroke-width="1"></path><path d="M16.76 1.52h3.05v1.53h-3.05Z" fill="#000000" stroke-width="1"></path><path d="M13.71 6.1h3.05v1.52h-3.05Z" fill="#000000" stroke-width="1"></path><path d="M10.66 25.9h6.1v1.53h-6.1Z" fill="#000000" stroke-width="1"></path><path d="M10.66 0h6.1v1.52h-6.1Z" fill="#000000" stroke-width="1"></path><path d="M7.62 24.38h3.04v1.52H7.62Z" fill="#000000" stroke-width="1"></path><path d="M7.62 1.52h3.04v1.53H7.62Z" fill="#000000" stroke-width="1"></path><path d="M4.57 22.86h3.05v1.52H4.57Z" fill="#000000" stroke-width="1"></path><path d="M4.57 3.05h3.05v1.52H4.57Z" fill="#000000" stroke-width="1"></path><path d="M3.05 19.81h1.52v3.05H3.05Z" fill="#000000" stroke-width="1"></path><path d="M3.05 4.57h1.52v3.05H3.05Z" fill="#000000" stroke-width="1"></path><path d="M1.52 16.76h1.53v3.05H1.52Z" fill="#000000" stroke-width="1"></path><path d="M1.52 7.62h1.53v3.05H1.52Z" fill="#000000" stroke-width="1"></path><path d="M0 10.67h1.52v6.09H0Z" fill="#000000" stroke-width="1"></path></g>
+			</svg>
+			<div class="form-floating d-flex flex-row overflow-auto">
+				<input type="search" id="search-user" class="form-control w-100 mw-100 border-0 bg-transparent overflow-auto" placeholder="Search User" aria-label="Search">
+				<label for="search-user"><p class="col p-0 m-0 font--argent text-uppercase h4">search user</p></label>
+			</div>
+		</div>
+	</div>
+	<div class="d-flex flex-grow-1 h-100 w-100 mh-100 mw-100 overflow-auto border border-1 border-dark ">
+		<div class="d-flex flex-column gap-4 p-4 h-100 w-100 mh-100 mw-100 overflow-auto" id="player-card-div">
+			<!-- content here -->
+		</div>
+	</div>
 </div>
