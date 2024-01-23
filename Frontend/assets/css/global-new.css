@@ -34,6 +34,10 @@
 	font-weight: 400;
 }
 
+.text--shadow {
+	text-shadow: 0 0 1px black;
+}
+
 .bg--main {
 	background-image: url(../public/background--main.png);
 	background-size: cover;
