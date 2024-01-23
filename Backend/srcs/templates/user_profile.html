@@ -58,6 +58,7 @@
 								{{ 'Disable 2FA' }}
 							{% endif %}
 						</button>
+						<button id="logout" class="btn btn-primary" onClick="handleLogout()">Logout</button>
 						{% if messages %}
 							{% for message in messages %}
 							<div class="alert alert-{{ message.tags }}">{{ message }}</div>
