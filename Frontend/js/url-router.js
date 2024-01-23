@@ -814,26 +814,32 @@ async function insertAllUsers(users) {
 		console.log(user.username);
 		isFriend = elementExistsInArray(friends, user.intra)
 		const playerCard = `
-			<div class="row p-0 g-0">
-				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<div class="ratio ratio-1x1" style="background-color: rebeccapurple;">
-						<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
-					</div>
-				</div>
-				<div class="col-6 border border-1 border-dark overflow-auto mh-100 mw-50">
-					<ul class="list-group">
-						<li class="list-group-item justify-content-left text-uppercase"><h4>${user.intra}</h4></li>
-						<li class="list-group-item justify-content-left text-uppercase"><a>${user.is_online ? "online 🟢" : "offline ⚪"}</a></li>
-						<li class="list-group-item justify-content-left text-uppercase"><h5>ranking</h5></li>
-					</ul>
-				</div>
-				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<button class="h-100 w-100 btn btn-primary text-capitalize add-friend-btn" type="button">${isFriend ? "Remove Friend" : "Add Friend"}</button>
-				</div>
-				<div class="col border border-1 border-dark ratio ratio-1x1">
-					<button class="h-100 w-100 btn btn-info text-capitalize view-profile-btn" type="button">View Profile</button>
-				</div>
-			</div>`;
+								<div class="d-flex flex-row p-0 g-0">
+								<div class="col-2 p-0 border border-1 border-dark">
+									<div class="ratio ratio-4x3 bg-black mh-100 mw-100">
+										<div class="d-flex py-1 border border-1 border-light justify-content-center">
+											<div class="ratio ratio-1x1">
+												<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col d-flex flex-column p-0 justify-content-center text-truncate text-break border border-1 border-dark">
+									<p class="font--argent p-0 m-0" style="font-size: 1.5vw;">${user.intra}</p>
+									<p class="font--argent p-0 m-0" style="font-size: 0.5vw;">${user.is_online ? "online 🟢" : "offline ⚪"}</p>
+									<p class="font--argent p-0 m-0" style="font-size: 1vw;">ranking</p>
+								</div>
+								<div class="col-2 p-0 text-truncate border border-1 border-dark">
+									<div class="ratio ratio-4x3">
+										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize" type="button" style="font-size: 1vw;">View Profile</button>
+									</div>
+								</div>
+								<div class="col-2 p-0 text-truncate border border-1 border-dark">
+									<div class="ratio ratio-4x3">
+										<button class="btn bg-body-secondary rounded-0 font--argent text-capitalize add-friend-btn" type="button" style="font-size: 1vw;">${isFriend ? "Remove Friend" : "Add Friend"}</button>
+									</div>
+								</div>
+								</div>`;
 
 		document.getElementById('player-card-div').innerHTML += playerCard;
 
