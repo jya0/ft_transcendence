@@ -54,10 +54,12 @@ def login(request):
     return redirect('/')
 
 
-@never_cache
+@api_view(['get'])
 def auth(request):
     code = request.GET.get("code")
+    print('got code ---------> ', code)
     if code:
+        print("code", code)
         data = {
             "grant_type": "authorization_code",
             "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),
@@ -81,10 +83,11 @@ def auth(request):
             picture = user_response.json()["image"]
         except:
             response = JsonResponse(
-                {'message': 'Failed to fetch user data'}, status=400)
+                {'message': 'Failed to fetch user data in main'}, status=400)
             return response
             return HttpResponseRedirect("https://localhost:8090/")
         if username:
+            request.session['username'] = username
             if not UserProfile.objects.filter(username=username).exists():
                 try:
                     user_profile = UserProfile.objects.create(
@@ -100,15 +103,22 @@ def auth(request):
                     user_profile.set_password(username)
                     user_profile.save()
                 except IntegrityError:
-                    return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=400)
+                    return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=200)
             else:
                 user_profile = UserProfile.objects.get(username=username)
 
+            user_data = {
+                'username': user_profile.username,
+                'email': user_profile.email,
+                'display_name': user_profile.display_name,
+                'nickname': user_profile.nickname,
+            }
             if user_profile.is_2fa_enabled:
-                request.session['username'] = username
-                send_otp(request)
+                print('2fa enabled------------------->')
+                send_otp(request, username)
                 print("sent otp.....")
                 access_token = get_user_token(request, username, username)
+                return JsonResponse({'otp': 'validate_otp', 'user': user_data, 'token': access_token}, status=200)
                 response = HttpResponseRedirect(
                     f"https://localhost:8090/desktop?otp=validate_otp&token={access_token}&username={username}")
                 return response
@@ -118,6 +128,8 @@ def auth(request):
             print("---------> token", access_token)
             print(
                 f"https://localhost:8090/desktop?token={access_token}&user={username}")
+            session_id = request.session.session_key
+            return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
             response = HttpResponseRedirect(
                 f"https://localhost:8090/desktop?token={access_token}&user={username}")
             return response
