@@ -12,7 +12,7 @@ if (sessionStorage.getItem('user')) {
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://10.12.3.3:8000/api/users/${username}?username=${user.username}}`;
+	const url = `/api/users/${username}?username=${user.username}}`;
 
 	fetch(url, {
 		method: 'GET',
@@ -37,7 +37,7 @@ const viewUserProfile = (username) => {
 const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
-		const response = await fetch(`http://10.12.3.3:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
+		const response = await fetch(`/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -160,7 +160,7 @@ function setMainWindowframe() {
 								<div class="d-flex p-0 border border-1 border-light bg-black">
 									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
 										data-bs-dismiss="modal" aria-label="Close">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+										<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 											viewBox="0 0 20 20" fill="none">
 											<path
 												d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
@@ -371,7 +371,7 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://10.12.3.3:8000/api/users/${user.username}?username=${user.username}`, {
+		await fetch(`/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -415,7 +415,7 @@ const urlLocationHandler = async () => {
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', user.username);
-					await fetch('http://10.12.3.3:8000/api/update_user_profile/', {
+					await fetch('/api/update_user_profile/', {
 						method: 'POST',
 						body: formData,
 						headers: {
@@ -449,7 +449,7 @@ const urlLocationHandler = async () => {
 
 				if (newDisplayName !== null) {
 					try {
-						const response = await fetch('http://10.12.3.3:8000/api/update_display_name/', {
+						const response = await fetch('/api/update_display_name/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json',
@@ -479,7 +479,7 @@ const urlLocationHandler = async () => {
 		document.getElementById('2fa-button').addEventListener('click', async () => {
 
 			try {
-				const response = await fetch(`http://10.12.3.3:8000/enable_or_disable_2fa/?username=${user.username}`, {
+				const response = await fetch(`/enable_or_disable_2fa/?username=${user.username}`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -578,7 +578,7 @@ async function handleUserData() {
 			document.getElementById("navbar").style.display = 'none';
 		}
 		console.log("starting fetching....");
-		await fetch(`http://10.12.3.3:8000/auth/?code=${code}`, {
+		await fetch(`api/auth/?code=${code}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -628,7 +628,7 @@ async function handleUserData() {
 										<div class="d-flex p-0 border border-1 border-light bg-black">
 											<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
 												data-bs-dismiss="modal" aria-label="Close">
-												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+												<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 													viewBox="0 0 20 20" fill="none">
 													<path
 														d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
@@ -663,7 +663,7 @@ async function handleUserData() {
 						requestBody.append('username', data.user.username);
 						requestBody.append('otp', otp);
 
-						await fetch('http://10.12.3.3:8000/validate_otp/', {
+						await fetch('/validate_otp/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
@@ -758,7 +758,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	await fetch('http://10.12.3.3:8000/api/get_all_users/', {
+	await fetch('/api/get_all_users/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -804,7 +804,7 @@ async function getAllFriends(override) {
 	if (location !== '/users')
 		return;
 	let users = [];
-	await fetch(`http://10.12.3.3:8000/api/friends/${user.username}`, {
+	await fetch(`/api/friends/${user.username}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
