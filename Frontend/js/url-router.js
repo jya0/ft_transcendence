@@ -131,8 +131,8 @@ const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
 	let href = event.target.parentElement.parentElement.parentElement.href;
-	console.log('href', href);
-	console.log('event.target.tagName', event.target.tagName);
+	console.log('urlroute href', href);
+	console.log('urlroute event.target.tagName', event.target.tagName);
 	if (event.target.tagName !== 'A')
 		href = event.target.parentElement.href;
 	window.history.pushState({}, "", href);
@@ -152,7 +152,7 @@ const insertCSS = (filePath) => {
 function setMainWindowframe() {
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = `					
-					<div class="container p-0 m-0 border border-1 border-light">
+					<div class="container p-0 m-0 border border-0 border-light">
 						<div class="ratio ratio-4x3">
 							<div
 								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-1 border-light">
@@ -192,6 +192,7 @@ const urlLocationHandler = async () => {
 
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
+	document.getElementById("username-welcome").innerHTML = `${user.username}`;
 	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
@@ -217,7 +218,7 @@ const urlLocationHandler = async () => {
 			document.getElementById("navbar").remove();
 		}
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
-			document.getElementById("content").innerHTML = data;
+			document.getElementById("main-content").innerHTML = data;
 		});
 		return;
 	}
@@ -345,7 +346,6 @@ const urlLocationHandler = async () => {
 			windowFrame.appendChild(windowContent);
 
 			document.getElementById('content').appendChild(windowFrame);
-			// document.body.appendChild(windowFrame);
 
 
 			windowFrame.style.display = 'block';
@@ -358,13 +358,13 @@ const urlLocationHandler = async () => {
 		}
 
 
-		// const windowInterval = setInterval(openSmallWindow, 150);
+		const windowInterval = setInterval(openSmallWindow, 50);
 
 		const location = window.location.pathname;
 
-		// setTimeout(() => {
-		// 	clearInterval(windowInterval);
-		// }, 1000);
+		setTimeout(() => {
+			clearInterval(windowInterval);
+		}, 1000);
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
@@ -377,7 +377,7 @@ const urlLocationHandler = async () => {
 		}).then(response => {
 			if (!response.ok) {
 				fetch('/components/login.html').then(response => response.text()).then(data => {
-					document.getElementById("content").innerHTML = data;
+					document.getElementById("main-content").innerHTML = data;
 				});
 				localStorage.clear();
 				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
@@ -475,7 +475,6 @@ const urlLocationHandler = async () => {
 		});
 
 		document.getElementById('2fa-button').addEventListener('click', async () => {
-			console.log(userId);
 
 			try {
 				const response = await fetch(`http://localhost:8000/enable_or_disable_2fa/?username=${user.username}`, {
@@ -865,7 +864,7 @@ async function insertAllUsers(users) {
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
 									<div class="ratio ratio-4x3">
-										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize" type="button" style="font-size: 1vw;">View Profile</button>
+										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize view-profile-btn" type="button" style="font-size: 1vw;">View Profile</button>
 									</div>
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
