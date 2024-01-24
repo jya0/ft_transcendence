@@ -68,13 +68,17 @@ const addFriend = async (button, username, newFriend) => {
 	}
 }
 
+var navbarLinks = document.querySelectorAll('#navbar a');
 
-// create document click that watches the nav links only
-document.querySelector('#navbar').addEventListener("click", (e) => {
-	const { target } = e;
-	e.preventDefault();
-	urlRoute();
+navbarLinks.forEach(function (link) {
+	link.addEventListener('click', function (event) {
+		event.preventDefault();
+		window.history.pushState({}, "", link);
+		urlLocationHandler();
+	});
 });
+
+
 
 function getCookie(name) {
 	let cookieValue = null;
@@ -126,7 +130,9 @@ const urlRoutes = {
 const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
-	let href = event.target.href;
+	let href = event.target.parentElement.parentElement.parentElement.href;
+	console.log('href', href);
+	console.log('event.target.tagName', event.target.tagName);
 	if (event.target.tagName !== 'A')
 		href = event.target.parentElement.href;
 	window.history.pushState({}, "", href);
@@ -352,13 +358,13 @@ const urlLocationHandler = async () => {
 		}
 
 
-		const windowInterval = setInterval(openSmallWindow, 150);
+		// const windowInterval = setInterval(openSmallWindow, 150);
 
 		const location = window.location.pathname;
 
-		setTimeout(() => {
-			clearInterval(windowInterval);
-		}, 1000);
+		// setTimeout(() => {
+		// 	clearInterval(windowInterval);
+		// }, 1000);
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
