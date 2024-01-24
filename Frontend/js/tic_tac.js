@@ -1,6 +1,16 @@
 // import {io} from "socket.io-client";
 export const loadTicTac = () => {
 
+
+    let btnCounter = 0;
+    let localPlayerMode = false;
+    let isGameOver = false;
+    let socketStatus = false;
+    let keyPressed;
+    let leftPlayer = true;
+    let rightPlayer = false;
+
+
     const tictacButtonOnline = document.createElement('button');
     const tictacButtonLocal = document.createElement('button');
 
@@ -22,8 +32,7 @@ export const loadTicTac = () => {
         moves;
     let gameOver = true;
 
-    function init() {
-
+    function local_init() {
 
         var container = document.createElement('div');
         container.id = 'game-container';
@@ -67,8 +76,8 @@ export const loadTicTac = () => {
         document.getElementById('tictactoe').appendChild(board);
 
         // document.getElementById("container").appendChild(board);
-        startNewGame();
     }
+
 
     function startNewGame() {
         score = {
@@ -116,62 +125,15 @@ export const loadTicTac = () => {
         if (win(this)) {
             alert('Winner: Player ' + turn);
             document.getElementById('game-container').remove();
-            return ;
+            return;
             // startNewGame();
         } else if (moves === N_SIZE * N_SIZE) {
             alert("Draw");
             // startNewGame();
-            return ;
+            return;
         } else {
             turn = turn === "X" ? "O" : "X";
             document.getElementById('turn').textContent = 'Player ' + turn;
-        }
-    }
-
-
-    let btnCounter = 0;
-
-    let localPlayerMode = false;
-
-
-
-    let isGameOver = false;
-
-    let socketStatus = false;
-
-    let keyPressed;
-    let leftPlayer = true;
-    let rightPlayer = false;
-
-
-    function handleLocalWinner() {
-        let buttonText;
-
-        //@todo
-
-        document.getElementById("startLocalButton").innerHTML = buttonText;
-        isGameOver = true;
-        socketStatus = false;
-        leftPlayer = true;
-        rightPlayer = false;
-    }
-
-    function checkForWinner() {
-
-        if (score.left >= 3 || score.right >= 3) {
-            isGameOver = true;
-            btnCounter = 0;
-            ctx.fillStyle = 'red';
-
-            if (localPlayerMode)
-                handleLocalWinner();
-            else
-                handleOnlineWinner();
-            startOnlineButton.disabled = false;
-            startLocalButton.disabled = false;
-            startLocalButton.style.visibility = 'visible';
-            startOnlineButton.style.visibility = 'visible';
-            resetGame();
         }
     }
 
@@ -179,17 +141,245 @@ export const loadTicTac = () => {
     let url = `ws://localhost:8000/ws/socket-server/`
     let gameSocket;
 
- 
-
-
     startLocalButton.addEventListener('click', () => {
         gameOver = true;
         console.log('hi');
-        startLocalButton.style.visibility= 'hidden';
-        startOnlineButton.style.visibility= 'hidden';
+        startLocalButton.style.visibility = 'hidden';
+        startOnlineButton.style.visibility = 'hidden';
 
-        init();
+        local_init();
+        startNewGame();
+    });
 
+
+    // function updateBackend() {
+    //     if (rightPlayer) {
+    //         if (keys['w'] && players.right > 0) {
+    //             players.right -= paddle.speed;
+    //             keyPressed = 'w';
+    //             gameSocket.send(JSON.stringify({
+    //                 'type': 'update',
+    //                 'mode': 'single',
+    //                 'username': localStorage.getItem('username'),
+    //                 'key': keyPressed,
+    //             }))
+    //         }
+    //         if (keys['s'] && players.right < canvas.height - paddle.height) {
+    //             players.right += paddle.speed;
+    //             keyPressed = 's';
+    //             gameSocket.send(JSON.stringify({
+    //                 'type': 'update',
+    //                 'mode': 'single',
+    //                 'username': localStorage.getItem('username'),
+    //                 'key': keyPressed
+    //             }))
+    //         }
+    //     }
+    //     else {
+    //         if (keys['w'] && players.left > 0) {
+    //             players.left -= paddle.speed;
+    //             keyPressed = 'w';
+    //             gameSocket.send(JSON.stringify({
+    //                 'type': 'update',
+    //                 'mode': 'single',
+    //                 'username': localStorage.getItem('username'),
+    //                 'key': keyPressed
+    //             }))
+    //         }
+    //         if (keys['s'] && players.left < canvas.height - paddle.height) {
+    //             players.left += paddle.speed;
+    //             keyPressed = 's';
+    //             gameSocket.send(JSON.stringify({
+    //                 'type': 'update',
+    //                 'mode': 'single',
+    //                 'username': localStorage.getItem('username'),
+    //                 'key': keyPressed
+    //             }))
+    //         }
+    //     }
+    // }
+
+    function handleOnlineWinner() {
+        let buttonText;
+        if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
+            buttonText = "You lose! Press to play a new online game";
+        else {
+            buttonText = "You win! Press to play a new online game";
+            gameSocket.send(JSON.stringify({
+                'type': 'end',
+                'mode': 'single',
+                'username': localStorage.getItem('username'),
+                'score1': score.left,
+                'score2': score.right,
+            }))
+        }
+        document.getElementById("startOnlineButton").innerHTML = buttonText;
+        gameSocket.close();
+        isGameOver = true;
+        socketStatus = false;
+    }
+
+    function initiateSocket() {
+        gameSocket = new WebSocket(url);
+
+        gameSocket.onmessage = function (e) {
+            let data = JSON.parse(e.data)
+            // console.log('Data: ', data)
+
+            if (btnCounter == 0)
+                return;
+            if (data.type === 'start' && data["status"] == "start") {
+                player_count = 2;
+                document.getElementById("startOnlineButton").innerHTML = "In-game";
+                if (data.sender == localStorage.getItem('username')) {
+                    leftPlayer = false;
+                    rightPlayer = true;
+                }
+                console.log(leftPlayer);
+                console.log(rightPlayer);
+                startOnlineButton.disabled = false;
+                startOnlineButton.click();
+            }
+
+            if (data.sender == localStorage.getItem('username'))
+                return;
+
+            if (data.type == 'update') {
+                if (isGameOver) return;
+                handleMove();
+            }
+            else if (data.type == 'close') {
+                gameOver = true;
+                player_count = 1;
+                endGame();
+                gameSocket.close();
+            }
+            else {
+                // console.log("woops not yet...")
+            }
+        }
+
+        gameSocket.addEventListener("open", (event) => {
+            if (socketStatus == true)
+                return
+            socketStatus = true;
+
+            gameSocket.send(JSON.stringify({
+                'type': 'start',
+                'mode': 'single',
+                'username': localStorage.getItem('username')
+            }))
+
+            player_count = 1;
+
+            console.log("waiting for a second player...")
+        });
+        player_count = 1;
+    }
+
+
+
+    function online_init() {
+
+        var container = document.createElement('div');
+        container.id = 'game-container';
+        container.className = 'tictactoe';
+        container.innerHTML = `<div id="tictactoe"></div>
+		<div align="center">
+			<span id='turn'>Player X</span>
+		</div>
+        `
+
+        document.getElementsByClassName('container')[0].appendChild(container);
+
+        var board = document.createElement('table');
+        board.setAttribute("border", 1);
+        board.setAttribute("cellspacing", 10);
+
+        var identifier = 1;
+        for (var i = 0; i < N_SIZE; i++) {
+            var row = document.createElement('tr');
+            board.appendChild(row);
+            for (var j = 0; j < N_SIZE; j++) {
+                var cell = document.createElement('td');
+                cell.addEventListener("click", function () {
+                    // Send the clicked cell information to the server
+                    if (!isGameOver && this.innerHTML === EMPTY) {
+                        const cellIndex = boxes.indexOf(this);
+                        gameSocket.send(JSON.stringify({
+                            'type': 'move',
+                            'mode': 'ticTacToe',
+                            'username': localStorage.getItem('username'),
+                            'cellIndex': cellIndex
+                        }));
+                    }
+                });
+                cell.setAttribute('height', 120);
+                cell.setAttribute('width', 120);
+                cell.setAttribute('align', 'center');
+                cell.setAttribute('valign', 'center');
+                cell.classList.add('col' + j, 'row' + i);
+                if (i == j) {
+                    cell.classList.add('diagonal0');
+                }
+                if (j == N_SIZE - i - 1) {
+                    cell.classList.add('diagonal1');
+                }
+                cell.identifier = identifier;
+                cell.addEventListener("click", set);
+                row.appendChild(cell);
+                boxes.push(cell);
+                identifier += identifier;
+            }
+        }
+        document.getElementById('tictactoe').appendChild(board);
+
+        // document.getElementById("container").appendChild(board);
+    }
+
+    function handleMove(data) {
+        if (!isGameOver && data['cellIndex'] >= 0 && data['cellIndex'] < boxes.length &&
+            boxes[data['cellIndex']].innerHTML === EMPTY) {
+            boxes[data['cellIndex']].innerHTML = turn;
+            moves += 1;
+
+            if (win(boxes[data['cellIndex']])) {
+                alert('Winner: Player ' + turn);
+                endGame();
+            } else if (moves === N_SIZE * N_SIZE) {
+                alert("Draw");
+                endGame();
+            } else {
+                turn = turn === "X" ? "O" : "X";
+                document.getElementById('turn').textContent = 'Player ' + turn;
+            }
+        }
+    }
+
+    function endGame() {
+        isGameOver = true;
+        tictacButtonOnline.style.visibility = 'visible';
+        tictacButtonLocal.style.visibility = 'visible';
+    }
+
+
+
+    startOnlineButton.addEventListener('click', () => {
+        localPlayerMode = false;
+        startLocalButton.disabled = true;
+        startOnlineButton.disabled = true;
+        startLocalButton.style.visibility = 'hidden';
+
+        console.log("YUUUUUU");
+        if (btnCounter == 0) {
+            initiateSocket();
+            document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
+            console.log("first press - ready to play!");
+            btnCounter = btnCounter + 1;
+            return;
+        }
+        online_init();
+        startNewGame();
     });
 }
 
