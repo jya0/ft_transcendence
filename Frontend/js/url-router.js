@@ -870,7 +870,7 @@ async function insertAllUsers(users) {
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
 									<div class="ratio ratio-4x3">
-										<button class="btn bg-body-secondary rounded-0 font--argent text-capitalize add-friend-btn" type="button" style="font-size: 1vw;">${isFriend ? "Remove Friend" : "Add Friend"}</button>
+										<button class="btn bg-dark-subtle rounded-0 font--argent text-capitalize add-friend-btn" type="button" style="font-size: 1vw;">${isFriend ? "Remove Friend" : "Add Friend"}</button>
 									</div>
 								</div>
 								</div>`;
