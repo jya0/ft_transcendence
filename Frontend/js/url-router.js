@@ -12,7 +12,7 @@ if (sessionStorage.getItem('user')) {
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://localhost:8000/api/users/${username}?username=${user.username}}`;
+	const url = `http://10.12.3.3:8000/api/users/${username}?username=${user.username}}`;
 
 	fetch(url, {
 		method: 'GET',
@@ -37,7 +37,7 @@ const viewUserProfile = (username) => {
 const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
-		const response = await fetch(`http://localhost:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
+		const response = await fetch(`http://10.12.3.3:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -187,12 +187,13 @@ let loadFile = function (event) {
 const urlLocationHandler = async () => {
 
 	if (!isAuthDone) {
+		console.log('not auth done');
 		localStorage.clear();
 	}
 
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
-	document.getElementById("username-welcome").innerHTML = `${user.username}`;
+	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
 	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
@@ -217,6 +218,7 @@ const urlLocationHandler = async () => {
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").remove();
 		}
+		console.log('login route')
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
 			document.getElementById("main-content").innerHTML = data;
 		});
@@ -369,7 +371,7 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://localhost:8000/api/users/${user.username}?username=${user.username}`, {
+		await fetch(`http://10.12.3.3:8000/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -413,7 +415,7 @@ const urlLocationHandler = async () => {
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', user.username);
-					await fetch('http://localhost:8000/api/update_user_profile/', {
+					await fetch('http://10.12.3.3:8000/api/update_user_profile/', {
 						method: 'POST',
 						body: formData,
 						headers: {
@@ -447,7 +449,7 @@ const urlLocationHandler = async () => {
 
 				if (newDisplayName !== null) {
 					try {
-						const response = await fetch('http://localhost:8000/api/update_display_name/', {
+						const response = await fetch('http://10.12.3.3:8000/api/update_display_name/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json',
@@ -477,7 +479,7 @@ const urlLocationHandler = async () => {
 		document.getElementById('2fa-button').addEventListener('click', async () => {
 
 			try {
-				const response = await fetch(`http://localhost:8000/enable_or_disable_2fa/?username=${user.username}`, {
+				const response = await fetch(`http://10.12.3.3:8000/enable_or_disable_2fa/?username=${user.username}`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -576,7 +578,7 @@ async function handleUserData() {
 			document.getElementById("navbar").style.display = 'none';
 		}
 		console.log("starting fetching....");
-		await fetch(`http://localhost:8000/auth/?code=${code}`, {
+		await fetch(`http://10.12.3.3:8000/auth/?code=${code}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -661,7 +663,7 @@ async function handleUserData() {
 						requestBody.append('username', data.user.username);
 						requestBody.append('otp', otp);
 
-						await fetch('http://localhost:8000/validate_otp/', {
+						await fetch('http://10.12.3.3:8000/validate_otp/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
@@ -756,7 +758,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	await fetch('http://localhost:8000/api/get_all_users/', {
+	await fetch('http://10.12.3.3:8000/api/get_all_users/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -802,7 +804,7 @@ async function getAllFriends(override) {
 	if (location !== '/users')
 		return;
 	let users = [];
-	await fetch(`http://localhost:8000/api/friends/${user.username}`, {
+	await fetch(`http://10.12.3.3:8000/api/friends/${user.username}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
