@@ -375,6 +375,7 @@ def auth(request):
                 return response
 
             auth_login(request, user_profile)
+            print('got before login ---------> ', code)
             access_token = get_user_token(request, username, username)
             print("---------> token", access_token)
             print(
