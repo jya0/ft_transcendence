@@ -130,6 +130,7 @@ const urlRoutes = {
 };
 
 const urlRoute = (event) => {
+	console.log('urlroute event', event);
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
 	let href = event.target.parentElement.parentElement.parentElement.href;
@@ -300,9 +301,9 @@ const urlLocationHandler = async () => {
 		return;
 	}
 
-    else if(location === '/tictac') {
-        loadTicTac();
-    }
+	else if (location === '/tictac') {
+		loadTicTac();
+	}
 	else if (location === '/desktop') {
 
 		function openSmallWindow() {
