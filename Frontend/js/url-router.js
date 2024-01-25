@@ -157,10 +157,10 @@ function setMainWindowframe() {
 					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
-								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-1 border-light">
+								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 								<!-- WINDOW-BAR -->
-								<div class="d-flex p-0 border border-1 border-light bg-black">
-									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent" id="close-me"
+								<div class="d-flex p-0 border border-0 border-light bg-black">
+									<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me"
 										data-bs-dismiss="modal" aria-label="Close">
 										<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 											viewBox="0 0 20 20" fill="none">
@@ -169,12 +169,12 @@ function setMainWindowframe() {
 												fill="#E1E0DF" />
 										</svg>
 									</button>
-									<div class="container-fluid my-1 me-1 border border-1 border-light bg--polka">
+									<div class="container-fluid my-1 me-1 border border-0 border-light bg--polka">
 									</div>
 								</div>
 								<!-- WINDOW-SCREEN -->
 								<div
-									class="d-flex h-100 w-100 flex-grow-1 border border-1 border-light bg-light window">
+									class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window">
 								</div>
 							</div>
 						</div>
