@@ -152,13 +152,13 @@ const insertCSS = (filePath) => {
 function setMainWindowframe() {
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = `					
-					<div class="container p-0 m-0 border border-0 border-light">
+					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
 								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-1 border-light">
 								<!-- WINDOW-BAR -->
 								<div class="d-flex p-0 border border-1 border-light bg-black">
-									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
+									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent" id="close-me"
 										data-bs-dismiss="modal" aria-label="Close">
 										<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 											viewBox="0 0 20 20" fill="none">
@@ -177,6 +177,9 @@ function setMainWindowframe() {
 							</div>
 						</div>
 					</div>`;
+	document.getElementById('close-me').addEventListener('click', () => {
+		document.getElementById('close-me-containter').innerHTML = '';
+	});
 }
 
 let loadFile = function (event) {
