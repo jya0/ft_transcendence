@@ -47,3 +47,29 @@
 .small-welcome-text {
   font-size: 16px;
 }
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+}
+
+
+table {
+    border-collapse: collapse;
+    margin-top: 450px; /* Adjust the margin as needed */
+    margin-left: 450px; /* Adjust the margin as needed */
+
+}
+
+td {
+    background-color: black;
+    border: 3px solid white;
+    font-size: 80px;
+    color: #ffffff;
+    border-radius: 10px;
+    width: 120px; /* Set the width of each cell */
+    height: 120px; /* Set the height of each cell */
+}

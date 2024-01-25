@@ -1,6 +1,8 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
 import { loadTournament } from './tournament.js';
+import { loadTicTac } from './tic_tac.js'
+
 let userToken;
 let user;
 let isAuthDone = false;
@@ -12,7 +14,7 @@ if (sessionStorage.getItem('user')) {
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://localhost:8000/api/users/${username}?username=${user.username}}`;
+	const url = `/api/users/${username}?username=${user.username}}`;
 
 	fetch(url, {
 		method: 'GET',
@@ -37,7 +39,7 @@ const viewUserProfile = (username) => {
 const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
-		const response = await fetch(`http://localhost:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
+		const response = await fetch(`/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -131,8 +133,8 @@ const urlRoute = (event) => {
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
 	let href = event.target.parentElement.parentElement.parentElement.href;
-	console.log('href', href);
-	console.log('event.target.tagName', event.target.tagName);
+	console.log('urlroute href', href);
+	console.log('urlroute event.target.tagName', event.target.tagName);
 	if (event.target.tagName !== 'A')
 		href = event.target.parentElement.href;
 	window.history.pushState({}, "", href);
@@ -152,15 +154,15 @@ const insertCSS = (filePath) => {
 function setMainWindowframe() {
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = `					
-					<div class="container p-0 m-0 border border-1 border-light">
+					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
 								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-1 border-light">
 								<!-- WINDOW-BAR -->
 								<div class="d-flex p-0 border border-1 border-light bg-black">
-									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
+									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent" id="close-me"
 										data-bs-dismiss="modal" aria-label="Close">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+										<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 											viewBox="0 0 20 20" fill="none">
 											<path
 												d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
@@ -177,6 +179,9 @@ function setMainWindowframe() {
 							</div>
 						</div>
 					</div>`;
+	document.getElementById('close-me').addEventListener('click', () => {
+		document.getElementById('close-me-containter').innerHTML = '';
+	});
 }
 
 let loadFile = function (event) {
@@ -187,11 +192,13 @@ let loadFile = function (event) {
 const urlLocationHandler = async () => {
 
 	if (!isAuthDone) {
+		console.log('not auth done');
 		localStorage.clear();
 	}
 
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
+	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
 	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
@@ -216,8 +223,9 @@ const urlLocationHandler = async () => {
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").remove();
 		}
+		console.log('login route')
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
-			document.getElementById("content").innerHTML = data;
+			document.getElementById("main-content").innerHTML = data;
 		});
 		return;
 	}
@@ -291,6 +299,10 @@ const urlLocationHandler = async () => {
 		document.title = route.title;
 		return;
 	}
+
+    else if(location === '/tictac') {
+        loadTicTac();
+    }
 	else if (location === '/desktop') {
 
 		function openSmallWindow() {
@@ -345,7 +357,6 @@ const urlLocationHandler = async () => {
 			windowFrame.appendChild(windowContent);
 
 			document.getElementById('content').appendChild(windowFrame);
-			// document.body.appendChild(windowFrame);
 
 
 			windowFrame.style.display = 'block';
@@ -358,18 +369,18 @@ const urlLocationHandler = async () => {
 		}
 
 
-		// const windowInterval = setInterval(openSmallWindow, 150);
+		const windowInterval = setInterval(openSmallWindow, 50);
 
 		const location = window.location.pathname;
 
-		// setTimeout(() => {
-		// 	clearInterval(windowInterval);
-		// }, 1000);
+		setTimeout(() => {
+			clearInterval(windowInterval);
+		}, 1000);
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://localhost:8000/api/users/${user.username}?username=${user.username}`, {
+		await fetch(`/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -377,7 +388,7 @@ const urlLocationHandler = async () => {
 		}).then(response => {
 			if (!response.ok) {
 				fetch('/components/login.html').then(response => response.text()).then(data => {
-					document.getElementById("content").innerHTML = data;
+					document.getElementById("main-content").innerHTML = data;
 				});
 				localStorage.clear();
 				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
@@ -413,7 +424,7 @@ const urlLocationHandler = async () => {
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', user.username);
-					await fetch('http://localhost:8000/api/update_user_profile/', {
+					await fetch('/api/update_user_profile/', {
 						method: 'POST',
 						body: formData,
 						headers: {
@@ -447,7 +458,7 @@ const urlLocationHandler = async () => {
 
 				if (newDisplayName !== null) {
 					try {
-						const response = await fetch('http://localhost:8000/api/update_display_name/', {
+						const response = await fetch('/api/update_display_name/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json',
@@ -475,10 +486,9 @@ const urlLocationHandler = async () => {
 		});
 
 		document.getElementById('2fa-button').addEventListener('click', async () => {
-			console.log(userId);
 
 			try {
-				const response = await fetch(`http://localhost:8000/enable_or_disable_2fa/?username=${user.username}`, {
+				const response = await fetch(`/enable_or_disable_2fa/?username=${user.username}`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -577,7 +587,7 @@ async function handleUserData() {
 			document.getElementById("navbar").style.display = 'none';
 		}
 		console.log("starting fetching....");
-		await fetch(`http://localhost:8000/auth/?code=${code}`, {
+		await fetch(`api/auth/?code=${code}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -627,7 +637,7 @@ async function handleUserData() {
 										<div class="d-flex p-0 border border-1 border-light bg-black">
 											<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
 												data-bs-dismiss="modal" aria-label="Close">
-												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+												<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 													viewBox="0 0 20 20" fill="none">
 													<path
 														d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
@@ -662,7 +672,7 @@ async function handleUserData() {
 						requestBody.append('username', data.user.username);
 						requestBody.append('otp', otp);
 
-						await fetch('http://localhost:8000/validate_otp/', {
+						await fetch('/validate_otp/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
@@ -757,7 +767,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	await fetch('http://localhost:8000/api/get_all_users/', {
+	await fetch('/api/get_all_users/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -803,7 +813,7 @@ async function getAllFriends(override) {
 	if (location !== '/users')
 		return;
 	let users = [];
-	await fetch(`http://localhost:8000/api/friends/${user.username}`, {
+	await fetch(`/api/friends/${user.username}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -865,7 +875,7 @@ async function insertAllUsers(users) {
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
 									<div class="ratio ratio-4x3">
-										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize" type="button" style="font-size: 1vw;">View Profile</button>
+										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize view-profile-btn" type="button" style="font-size: 1vw;">View Profile</button>
 									</div>
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
