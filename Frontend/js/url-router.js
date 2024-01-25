@@ -198,11 +198,7 @@ const urlLocationHandler = async () => {
 
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
-<<<<<<< HEAD
 	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
-=======
-	document.getElementById("username-welcome").innerHTML = user ? `${user.useername}` : "";
->>>>>>> 2f9893cce54913c604984e0cb59013144927df28
 	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
