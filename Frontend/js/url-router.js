@@ -487,9 +487,9 @@ const urlLocationHandler = async () => {
 		});
 
 		document.getElementById('2fa-button').addEventListener('click', async () => {
-
+			console.log('2fa-button clicked');
 			try {
-				const response = await fetch(`/enable_or_disable_2fa/?username=${user.username}`, {
+				const response = await fetch(`api/enable_or_disable_2fa/?username=${user.username}`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -673,11 +673,12 @@ async function handleUserData() {
 						requestBody.append('username', data.user.username);
 						requestBody.append('otp', otp);
 
-						await fetch('/validate_otp/', {
+						await fetch('api/validate_otp/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
 								'Authorization': `Bearer ${userToken}`,
+								'x-csrftoken': getCookie('csrftoken'),
 							},
 							body: requestBody.toString(),
 						})
