@@ -157,10 +157,10 @@ function setMainWindowframe() {
 					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
-								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-1 border-light">
+								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 								<!-- WINDOW-BAR -->
-								<div class="d-flex p-0 border border-1 border-light bg-black">
-									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent" id="close-me"
+								<div class="d-flex p-0 border border-0 border-light bg-black">
+									<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me"
 										data-bs-dismiss="modal" aria-label="Close">
 										<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 											viewBox="0 0 20 20" fill="none">
@@ -169,12 +169,12 @@ function setMainWindowframe() {
 												fill="#E1E0DF" />
 										</svg>
 									</button>
-									<div class="container-fluid my-1 me-1 border border-1 border-light bg--polka">
+									<div class="container-fluid my-1 me-1 border border-0 border-light bg--polka">
 									</div>
 								</div>
 								<!-- WINDOW-SCREEN -->
 								<div
-									class="d-flex h-100 w-100 flex-grow-1 border border-1 border-light bg-light window">
+									class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window">
 								</div>
 							</div>
 						</div>
@@ -860,27 +860,25 @@ async function insertAllUsers(users) {
 		const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
-									<div class="ratio ratio-4x3 bg-black mh-100 mw-100">
-										<div class="d-flex py-1 border border-1 border-light justify-content-center">
-											<div class="ratio ratio-1x1">
-												<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
-											</div>
-										</div>
+									<div class="ratio ratio-1x1 bg-black mh-100 mw-100">
+										<img src="${user.image ? user.image : user.picture.link}" class="object-fit-cover rounded-circle img-fluid p-1" alt="...">
 									</div>
 								</div>
-								<div class="col d-flex flex-column p-0 justify-content-center text-truncate text-break border border-1 border-dark">
+								<div class="col d-flex flex-column ps-2 justify-content-center text-truncate text-break border border-1 border-dark">
 									<p class="font--argent p-0 m-0" style="font-size: 1.5vw;">${user.intra}</p>
-									<p class="font--argent p-0 m-0" style="font-size: 0.5vw;">${user.is_online ? "online 🟢" : "offline ⚪"}</p>
-									<p class="font--argent p-0 m-0" style="font-size: 1vw;">ranking</p>
+									<p class="font--argent p-0 m-0" style="font-size: 0.75vw;">${user.is_online ? "online 🟢" : "offline ⚪"}</p>
+									<p class="font--argent text-capitalize p-0 m-0" style="font-size: 0.9vw;">ranking</p>
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
-									<div class="ratio ratio-4x3">
-										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize view-profile-btn" type="button" style="font-size: 1vw;">View Profile</button>
+									<div class="ratio ratio-1x1">
+										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize view-profile-btn text-wrap" type="button" style="font-size: 1vw;">view profile</button>
 									</div>
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
-									<div class="ratio ratio-4x3">
-										<button class="btn bg-dark-subtle rounded-0 font--argent text-capitalize add-friend-btn" type="button" style="font-size: 1vw;">${isFriend ? "Remove Friend" : "Add Friend"}</button>
+									<div class="ratio ratio-1x1">
+										<button class="btn bg-dark-subtle rounded-0 font--argent text-capitalize add-friend-btn text-wrap" type="button" style="font-size: 1vw;">
+											${isFriend ? "remove friend" : "add friend"}
+										</button>
 									</div>
 								</div>
 								</div>`;
