@@ -1,6 +1,6 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
-import { loadGameMenu } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 
@@ -282,7 +282,20 @@ const urlLocationHandler = async () => {
 	}
 	document.getElementById("navbar").style.display = 'flex';
 
-	if (location === '/play') {
+	if (location === '/games_pong_local' || 
+		location === '/games_pong_online' ||
+		location === '/games_pong_local_tournament' ||
+		location === '/games_pong_online_tournament' ||
+		location === '/games_tictactoe_local' ||
+		location === '/games_tictactoe_online')
+	{
+		setMainWindowframe();
+		loadGameCanvas();
+
+		document.title = route.title;
+		return;
+	}
+	else if (location === '/play') {
 		setMainWindowframe();
 		loadGameMenu();
 		let gameMenu = document.querySelectorAll('#gameMenu a');

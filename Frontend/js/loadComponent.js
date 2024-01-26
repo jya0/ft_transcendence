@@ -27,22 +27,22 @@ export const loadGameMenu = () => {
 							pong
 						</div>
 						<div class="w-75 d-flex flex-column gap-4 border border-0 border-danger">
-							<a href="/games/pong/local" class="focus-ring p-1 focus--light btn btn-light rounded-1">
+							<a href="/games_pong_local" class="focus-ring p-1 focus--light btn btn-light rounded-1">
 								<div class="text-capitalize font--argent h1">
 									local
 								</div>
 							</a>
-							<a href="/games/pong/online" class="focus-ring p-1 focus--light btn btn-light rounded-1">
+							<a href="/games_pong_online" class="focus-ring p-1 focus--light btn btn-light rounded-1">
 								<div class="text-capitalize font--argent h1">
 									online
 								</div>
 							</a>
-							<a href="/games/pong/local/tournament" class="focus-ring p-1 focus--light btn btn-light rounded-1">
+							<a href="/games_pong_local_tournament" class="focus-ring p-1 focus--light btn btn-light rounded-1">
 								<div class="text-capitalize font--argent h1">
 									local tournament
 								</div>
 							</a>
-							<a href="/games/pong/online/tournament" class="focus-ring p-1 focus--light btn btn-light rounded-1">
+							<a href="/games_pong_online_tournament" class="focus-ring p-1 focus--light btn btn-light rounded-1">
 								<div class="text-capitalize font--argent h1">
 									online tournament
 								</div>
@@ -57,12 +57,12 @@ export const loadGameMenu = () => {
 							tic-tac-toe
 						</div>
 						<div class="w-75 d-flex flex-column gap-4 border border-0 border-danger">
-							<a href="games/tictactoe/local" class="focus-ring p-1 focus--light btn btn-light rounded-1">
+							<a href="/games_tictactoe_local" class="focus-ring p-1 focus--light btn btn-light rounded-1">
 								<div class="text-capitalize font--argent h1">
 									local
 								</div>
 							</a>
-							<a href="games/tictactoe/online" class="focus-ring p-1 focus--light btn btn-light rounded-1">
+							<a href="/games_tictactoe_online" class="focus-ring p-1 focus--light btn btn-light rounded-1">
 								<div class="text-capitalize font--argent h1">
 									online
 								</div>
@@ -72,4 +72,22 @@ export const loadGameMenu = () => {
 				</div>
 			</div>
 		`
+}
+
+export const loadGameCanvas = () => {
+	console.log("LOADCANVAS");
+	console.log(document.getElementById('windowScreen').getBoundingClientRect().width);
+	if (!document.getElementById("gameCanvas")) {
+
+		let canvasElement = document.createElement('canvas');
+		canvasElement.id = 'gameCanvas';
+		canvasElement.width = document.getElementById('windowScreen').getBoundingClientRect().width * 0.9;
+		canvasElement.height = document.getElementById('windowScreen').getBoundingClientRect().height * 0.9;
+
+		const ctx = canvasElement.getContext('2d');
+		ctx.fillStyle = '#000';
+		ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+
+		document.getElementById('windowScreen').appendChild(canvasElement);
+	}
 }
