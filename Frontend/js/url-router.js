@@ -14,7 +14,7 @@ if (sessionStorage.getItem('user')) {
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
-	const url = `http://localhost:8000/api/users/${username}?username=${user.username}}`;
+	const url = `/api/users/${username}?username=${user.username}}`;
 
 	fetch(url, {
 		method: 'GET',
@@ -39,7 +39,7 @@ const viewUserProfile = (username) => {
 const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
-		const response = await fetch(`http://localhost:8000/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
+		const response = await fetch(`/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -130,6 +130,7 @@ const urlRoutes = {
 };
 
 const urlRoute = (event) => {
+	console.log('urlroute event', event);
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
 	let href = event.target.parentElement.parentElement.parentElement.href;
@@ -154,47 +155,84 @@ const insertCSS = (filePath) => {
 function setMainWindowframe() {
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = `					
-					<div class="container p-0 m-0 border border-0 border-light">
+					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
-								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-1 border-light">
+								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 								<!-- WINDOW-BAR -->
-								<div class="d-flex p-0 border border-1 border-light bg-black">
-									<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
+								<div class="d-flex p-0 border border-0 border-light bg-black">
+									<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me"
 										data-bs-dismiss="modal" aria-label="Close">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+										<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 											viewBox="0 0 20 20" fill="none">
 											<path
 												d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
 												fill="#E1E0DF" />
 										</svg>
 									</button>
-									<div class="container-fluid my-1 me-1 border border-1 border-light bg--polka">
+									<div class="container-fluid my-1 me-1 border border-0 border-light bg--polka">
 									</div>
 								</div>
 								<!-- WINDOW-SCREEN -->
 								<div
-									class="d-flex h-100 w-100 flex-grow-1 border border-1 border-light bg-light window">
+									class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window" id="windowScreen">
 								</div>
 							</div>
 						</div>
 					</div>`;
+	document.getElementById('close-me').addEventListener('click', () => {
+		document.getElementById('close-me-containter').innerHTML = '';
+	});
 }
 
-let loadFile = function (event) {
+let loadFile = async function (event) {
 	let image = document.getElementById('output');
 	image.src = URL.createObjectURL(event.target.files[0]);
+
+
+	let fileInput = document.getElementById('file');
+	let file = fileInput.files[0];
+
+	if (file) {
+		const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
+
+		if (file.size > maxSizeInBytes) {
+			alert('File size is too large, Please choose a smaller file.');
+			return;
+		}
+		let formData = new FormData();
+		formData.append('image', file);
+		formData.append('username', user.username);
+		await fetch('/api/update_user_profile/', {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+			credentials: 'include',
+		})
+			.then(response => response.json())
+			.then(data => {
+				// inser success message
+				console.log(data);
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+	}
 };
 
 const urlLocationHandler = async () => {
 
 	if (!isAuthDone) {
+		console.log('not auth done');
 		localStorage.clear();
 	}
 
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
-	document.getElementById("username-welcome").innerHTML = user ? `${user.useername}` : "";
+	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
 	let location = window.location.pathname;
 	if (location[location.length - 1] === '/') {
 		location = location.slice(0, location.length - 1);
@@ -219,6 +257,7 @@ const urlLocationHandler = async () => {
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").remove();
 		}
+		console.log('login route')
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
 			document.getElementById("main-content").innerHTML = data;
 		});
@@ -295,9 +334,9 @@ const urlLocationHandler = async () => {
 		return;
 	}
 
-    else if(location === '/tictac') {
-        loadTicTac();
-    }
+	else if (location === '/tictac') {
+		loadTicTac();
+	}
 	else if (location === '/desktop') {
 
 		function openSmallWindow() {
@@ -375,7 +414,7 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 
-		await fetch(`http://localhost:8000/api/users/${user.username}?username=${user.username}`, {
+		await fetch(`/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -392,7 +431,6 @@ const urlLocationHandler = async () => {
 		}).then(data => {
 			// console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
-			const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
 			const imageContainer = document.getElementById('imageContainer');
 			const uploadButton = document.getElementById('uploadButton');
 			const hoverText = document.getElementById('hoverText');
@@ -419,7 +457,7 @@ const urlLocationHandler = async () => {
 					let formData = new FormData();
 					formData.append('image', file);
 					formData.append('username', user.username);
-					await fetch('http://localhost:8000/api/update_user_profile/', {
+					await fetch('/api/update_user_profile/', {
 						method: 'POST',
 						body: formData,
 						headers: {
@@ -453,7 +491,7 @@ const urlLocationHandler = async () => {
 
 				if (newDisplayName !== null) {
 					try {
-						const response = await fetch('http://localhost:8000/api/update_display_name/', {
+						const response = await fetch('/api/update_display_name/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/json',
@@ -481,9 +519,9 @@ const urlLocationHandler = async () => {
 		});
 
 		document.getElementById('2fa-button').addEventListener('click', async () => {
-
+			console.log('2fa-button clicked');
 			try {
-				const response = await fetch(`http://localhost:8000/enable_or_disable_2fa/?username=${user.username}`, {
+				const response = await fetch(`api/enable_or_disable_2fa/?username=${user.username}`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -570,19 +608,19 @@ async function handleUserData() {
 	console.log('code', code)
 	if (code) {
 		document.getElementById("content").innerHTML = `
-		<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
-		<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
-		<span class="visually-hidden">Loading...</span>
-		</div>
-		<h1>login you in...</h1>
-		</div>
+			<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
+				<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
+				<span class="visually-hidden">Loading...</span>
+				</div>
+				<h1>Hang on, cooking...</h1>
+			</div>
 		`;
 		// document.getElementById("nav-container").classList.add("hidden");
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").style.display = 'none';
 		}
 		console.log("starting fetching....");
-		await fetch(`http://localhost:8000/auth/?code=${code}`, {
+		await fetch(`/api/auth/?code=${code}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -632,7 +670,7 @@ async function handleUserData() {
 										<div class="d-flex p-0 border border-1 border-light bg-black">
 											<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
 												data-bs-dismiss="modal" aria-label="Close">
-												<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+												<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 													viewBox="0 0 20 20" fill="none">
 													<path
 														d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
@@ -667,11 +705,12 @@ async function handleUserData() {
 						requestBody.append('username', data.user.username);
 						requestBody.append('otp', otp);
 
-						await fetch('http://localhost:8000/validate_otp/', {
+						await fetch('api/validate_otp/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
 								'Authorization': `Bearer ${userToken}`,
+								'x-csrftoken': getCookie('csrftoken'),
 							},
 							body: requestBody.toString(),
 						})
@@ -753,6 +792,24 @@ function insertOrCreateContent() {
 	}
 }
 
+async function generateTestUser() {
+	await fetch("/api/generate_test_user/").then(response => {
+		if (!response.ok) {
+			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+		}
+		return response.json();
+	}).then(data => {
+		localStorage.setItem('access_token', data.token);
+		localStorage.setItem('user', data.user);
+		// window.location.reload();
+		console.log('Data fetched:', data);
+	}).catch((error) => {
+		console.error('Error:', error);
+	});
+	urlLocationHandler();
+
+}
+
 
 async function getAllUsers(override) {
 	let location = window.location.pathname;
@@ -762,7 +819,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	await fetch('http://localhost:8000/api/get_all_users/', {
+	await fetch('/api/get_all_users/', {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -808,7 +865,7 @@ async function getAllFriends(override) {
 	if (location !== '/users')
 		return;
 	let users = [];
-	await fetch(`http://localhost:8000/api/friends/${user.username}`, {
+	await fetch(`/api/friends/${user.username}`, {
 		method: 'GET',
 		headers: {
 			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -855,27 +912,25 @@ async function insertAllUsers(users) {
 		const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
-									<div class="ratio ratio-4x3 bg-black mh-100 mw-100">
-										<div class="d-flex py-1 border border-1 border-light justify-content-center">
-											<div class="ratio ratio-1x1">
-												<img src="${user.image ? user.image : user.picture.link}" class="img-fluid rounded-circle" alt="...">
-											</div>
-										</div>
+									<div class="ratio ratio-1x1 bg-black mh-100 mw-100">
+										<img src="${user.image ? user.image : user.picture.link}" class="object-fit-cover rounded-circle img-fluid p-1" alt="...">
 									</div>
 								</div>
-								<div class="col d-flex flex-column p-0 justify-content-center text-truncate text-break border border-1 border-dark">
+								<div class="col d-flex flex-column ps-2 justify-content-center text-truncate text-break border border-1 border-dark">
 									<p class="font--argent p-0 m-0" style="font-size: 1.5vw;">${user.intra}</p>
-									<p class="font--argent p-0 m-0" style="font-size: 0.5vw;">${user.is_online ? "online 🟢" : "offline ⚪"}</p>
-									<p class="font--argent p-0 m-0" style="font-size: 1vw;">ranking</p>
+									<p class="font--argent p-0 m-0" style="font-size: 0.75vw;">${user.is_online ? "online 🟢" : "offline ⚪"}</p>
+									<p class="font--argent text-capitalize p-0 m-0" style="font-size: 0.9vw;">ranking</p>
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
-									<div class="ratio ratio-4x3">
-										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize view-profile-btn" type="button" style="font-size: 1vw;">View Profile</button>
+									<div class="ratio ratio-1x1">
+										<button class="btn bg-primary-subtle rounded-0 font--argent text-capitalize view-profile-btn text-wrap" type="button" style="font-size: 1vw;">view profile</button>
 									</div>
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
-									<div class="ratio ratio-4x3">
-										<button class="btn bg-dark-subtle rounded-0 font--argent text-capitalize add-friend-btn" type="button" style="font-size: 1vw;">${isFriend ? "Remove Friend" : "Add Friend"}</button>
+									<div class="ratio ratio-1x1">
+										<button class="btn bg-dark-subtle rounded-0 font--argent text-capitalize add-friend-btn text-wrap" type="button" style="font-size: 1vw;">
+											${isFriend ? "remove friend" : "add friend"}
+										</button>
 									</div>
 								</div>
 								</div>`;
@@ -915,5 +970,3 @@ async function insertAllUsers(users) {
 // 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
 // 	return confirmationMessage; // For some older browsers
 // });
-
-

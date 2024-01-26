@@ -1,29 +1,35 @@
-
-
 <div class="container-fluid min-vh-100 d-flex flex-row border border-0 border-light justify-content-center">
-	<div
-		class="flex-column d-flex border border-0 border-dark flex-grow-1 align-items-start justify-content-end">
-		<div class="container-fluid d-flex border border-0 border-dark justify-content-end">
-			<img class="py-5 mx-5" src="../assets/public/el--ball.png">
+	<div class="flex-column d-flex border border-0 border-dark flex-grow-1 align-items-start justify-content-end">
+		<div class="position-relative start-50 d-flex mb-5 border border-0 border-dark">
+			<!-- <img class="py-5 mx-5" src="../assets/public/el--ball.png"> -->
+			<h1 class="display-1 font--argent text-white p-0 m-0" style="font-size: calc(700% + 5vw); line-height: 0;">•
+			</h1>
 		</div>
-		<div class="d-flex border border-0 border-dark">
-			<img class="py-5 mx-5" src="../assets/public/el--paddle.png">
+		<div class="d-flex border border-0 border-dark m-5 p-5">
+			<!-- <img class="py-5 mx-5" src="../assets/public/el--paddle.png"> -->
+			<h1 class="display-1 font--neue text-white p-0 m-0" style="font-size: calc(1000% + 15vw); line-height: 0;">—
+			</h1>
 		</div>
 	</div>
-	<div
-		class="d-flex flex-column border border-0 border-dark flex-grow-1 justify-content-center align-items-center">
-		<h1 class="display-1 font--neue text-white" style="font-size: 160px;">☺</h1>
-		<h1 class="display-4 font--argent text-white">PongOs</h1>
-		<button type="button" class="btn btn-light btn-lg px-3 py-1 rounded-1" onClick="handle42Auth()">
-			<a style="text-decoration: none;" href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-69155ca3ecf1f57fa6e8660a9988bbdd7f03a45128ea80a454d6f13939c4bca5&redirect_uri=https%3A%2F%2Flocalhost%3A8090%2F&response_type=code">
-				<p class="font--argent p-0 m-0 g-0">Unlock</p>
+	<div class="d-flex flex-column border border-0 border-dark flex-grow-1 justify-content-center align-items-center">
+		<h1 class="display-1 font--neue text-white p-0 m-0" style="font-size: calc(400% + 5vw);">☺</h1>
+		<h1 class="display-2 font--argent text-white">PongOs</h1>
+		<button type="button" class="btn btn-light btn-lg px-3 py-1 rounded-1">
+			<a class="nav-link"
+				href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-69155ca3ecf1f57fa6e8660a9988bbdd7f03a45128ea80a454d6f13939c4bca5&redirect_uri=https%3A%2F%2Flocalhost%3A8090%2F&response_type=code">
+				<p class="font--argent display-5 text-black p-0 m-0 g-0" style="font-size: calc(100% + 1vw);">Unlock</p>
 			</a>
 		</button>
+		<button type="button" class="btn btn-light btn-lg px-3 py-1 rounded-1" id="test_user" style="margin-top: 10px;"
+			onClick="generateTestUser()">
+			test user
+		</button>
 	</div>
-	<div
-		class="flex-column d-flex border border-0 border-dark flex-grow-1 align-items-end justify-content-start">
-		<div class="d-flex border border-0 border-dark">
-			<img class="py-5 mx-5" src="../assets/public/el--paddle.png">
+	<div class="flex-column d-flex border border-0 border-dark flex-grow-1 align-items-end justify-content-start">
+		<div class="d-flex border border-0 border-dark m-5 p-5">
+			<!-- <img class="py-5 mx-5" src="../assets/public/el--paddle.png"> -->
+			<h1 class="display-1 font--neue text-white p-0 m-0" style="font-size: calc(1000% + 15vw); line-height: 0;">—
+			</h1>
 		</div>
 	</div>
 </div>
