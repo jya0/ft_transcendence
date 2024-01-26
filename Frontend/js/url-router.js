@@ -207,43 +207,106 @@ function setMainWindowframe() {
 	});
 }
 
+async function updateProfile(file) {
+
+	const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
+
+	if (file.size > maxSizeInBytes) {
+		alert('File size is too large, Please choose a smaller file.');
+		return;
+	}
+
+	let formData = new FormData();
+	formData.append('image', file);
+	formData.append('username', user.username);
+	await fetch('/api/update_user_profile/', {
+		method: 'POST',
+		body: formData,
+		headers: {
+			'X-CSRFToken': getCookie('csrftoken'),
+			'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+		},
+		credentials: 'include',
+	})
+		.then(response => response.json())
+		.then(data => {
+			// inser success message
+			console.log(data);
+		})
+		.catch(error => {
+			console.error('Error:', error);
+		});
+}
+
 let loadFile = async function (event) {
+
 	let image = document.getElementById('output');
-	image.src = URL.createObjectURL(event.target.files[0]);
 
 
+	let file = null;
 	let fileInput = document.getElementById('file');
-	let file = fileInput.files[0];
+	if (fileInput) {
+		file = fileInput.files[0];
+	}
 
 	if (file) {
-		const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
-
-		if (file.size > maxSizeInBytes) {
-			alert('File size is too large, Please choose a smaller file.');
-			return;
-		}
-		let formData = new FormData();
-		formData.append('image', file);
-		formData.append('username', user.username);
-		await fetch('/api/update_user_profile/', {
-			method: 'POST',
-			body: formData,
-			headers: {
-				'X-CSRFToken': getCookie('csrftoken'),
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-			},
-			credentials: 'include',
-		})
-			.then(response => response.json())
-			.then(data => {
-				// inser success message
-				console.log(data);
-			})
-			.catch(error => {
-				console.error('Error:', error);
-			});
+		updateProfile(file);
+		image.src = URL.createObjectURL(event.target.files[0]);
 	}
 };
+
+let loadModalFile = async function (event) {
+	let image = document.getElementById('output');
+
+	document.getElementById('inputFile-btn').addEventListener('click', async () => {
+		let modalInput = document.getElementById('modal-inputFile');
+		if (modalInput) {
+			let modalFile = modalInput.files[0];
+
+			if (modalFile) {
+				console.log('modalFile', modalFile);
+				updateProfile(modalFile, image);
+				if (image) {
+					image.src = URL.createObjectURL(event.target.files[0]);
+				}
+			}
+		}
+	});
+
+};
+
+document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
+
+document.getElementById('nickname-btn').addEventListener('click', async () => {
+
+	const newDisplayName = document.getElementById('floatingInputGroup1');
+	const nicknameValue = newDisplayName.value;
+	const displayNameElement = document.getElementById('displayName');
+
+	if (nicknameValue !== null && nicknameValue.length < 50) {
+		try {
+			const response = await fetch('/api/update_display_name/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': getCookie('csrftoken'),
+					'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+				},
+				credentials: 'include',
+				body: JSON.stringify({ display_name: nicknameValue }),
+			});
+
+			if (response.ok) {
+				displayNameElement.textContent = nicknameValue;
+				console.log('Display name updated successfully');
+			} else {
+				console.error('Failed to update display name:', response.status, response.statusText);
+			}
+		} catch (error) {
+			console.error('Error updating display name:', error);
+		}
+	}
+});
 
 const urlLocationHandler = async () => {
 
@@ -352,77 +415,77 @@ const urlLocationHandler = async () => {
 	}
 	else if (location === '/desktop') {
 
-		function openSmallWindow() {
-			const width = 200;
-			const height = 150;
+		// function openSmallWindow() {
+		// 	const width = 200;
+		// 	const height = 150;
 
 
-			const left = Math.abs(Math.floor((Math.random() * window.innerWidth - width)) - 1000);
-			const top = Math.abs(Math.floor((Math.random() * window.innerHeight - height / 2)) - 500);
-			console.log(left, top);
+		// 	const left = Math.abs(Math.floor((Math.random() * window.innerWidth - width)) - 1000);
+		// 	const top = Math.abs(Math.floor((Math.random() * window.innerHeight - height / 2)) - 500);
+		// 	console.log(left, top);
 
-			const windowFrame = document.createElement('div');
-			windowFrame.className = 'small-window-frame';
-			windowFrame.style.left = left + 'px';
-			windowFrame.style.top = top + 'px';
-
-
-			const topBar = document.createElement('div');
-			topBar.className = 'small-top-bar';
-			windowFrame.appendChild(topBar);
+		// 	const windowFrame = document.createElement('div');
+		// 	windowFrame.className = 'small-window-frame';
+		// 	windowFrame.style.left = left + 'px';
+		// 	windowFrame.style.top = top + 'px';
 
 
-			const rectangleIcon = document.createElement('img');
-			rectangleIcon.className = 'small-top-bar-child';
-			rectangleIcon.src = './assets/public/rectangle-4.svg';
-			topBar.appendChild(rectangleIcon);
-
-			const options = document.createElement('div');
-			options.className = 'small-options';
-			topBar.appendChild(options);
-
-			const vectorIcon = document.createElement('img');
-			vectorIcon.className = 'small-vector-icon';
-			vectorIcon.src = './assets/public/vector.svg';
-			options.appendChild(vectorIcon);
-
-			const dotGridIcon = document.createElement('img');
-			dotGridIcon.className = 'small-dot-grid-icon';
-			dotGridIcon.src = './assets/public/dot-grid.svg';
-			options.appendChild(dotGridIcon);
+		// 	const topBar = document.createElement('div');
+		// 	topBar.className = 'small-top-bar';
+		// 	windowFrame.appendChild(topBar);
 
 
-			const windowContent = document.createElement('div');
-			windowContent.className = 'small-window';
+		// 	const rectangleIcon = document.createElement('img');
+		// 	rectangleIcon.className = 'small-top-bar-child';
+		// 	rectangleIcon.src = './assets/public/rectangle-4.svg';
+		// 	topBar.appendChild(rectangleIcon);
+
+		// 	const options = document.createElement('div');
+		// 	options.className = 'small-options';
+		// 	topBar.appendChild(options);
+
+		// 	const vectorIcon = document.createElement('img');
+		// 	vectorIcon.className = 'small-vector-icon';
+		// 	vectorIcon.src = './assets/public/vector.svg';
+		// 	options.appendChild(vectorIcon);
+
+		// 	const dotGridIcon = document.createElement('img');
+		// 	dotGridIcon.className = 'small-dot-grid-icon';
+		// 	dotGridIcon.src = './assets/public/dot-grid.svg';
+		// 	options.appendChild(dotGridIcon);
 
 
-			const welcomeText = document.createElement('div');
-			welcomeText.className = 'small-welcome-text';
-			welcomeText.textContent = `Welcome ${user ? user.username : ''}!`;
-			windowContent.appendChild(welcomeText);
-
-			windowFrame.appendChild(windowContent);
-
-			document.getElementById('content').appendChild(windowFrame);
+		// 	const windowContent = document.createElement('div');
+		// 	windowContent.className = 'small-window';
 
 
-			windowFrame.style.display = 'block';
+		// 	const welcomeText = document.createElement('div');
+		// 	welcomeText.className = 'small-welcome-text';
+		// 	welcomeText.textContent = `Welcome ${user ? user.username : ''}!`;
+		// 	windowContent.appendChild(welcomeText);
+
+		// 	windowFrame.appendChild(windowContent);
+
+		// 	document.getElementById('content').appendChild(windowFrame);
+
+
+		// 	windowFrame.style.display = 'block';
 
 
 
-			setTimeout(() => {
-				document.getElementById('content').removeChild(windowFrame);
-			}, 500);
-		}
+		// 	setTimeout(() => {
+		// 		document.getElementById('content').removeChild(windowFrame);
+		// 	}, 500);
+		// }
 
 
-		const windowInterval = setInterval(openSmallWindow, 50);
+		// const windowInterval = setInterval(openSmallWindow, 50);
 
-		const location = window.location.pathname;
+		// const location = window.location.pathname;
 
-		setTimeout(() => {
-			clearInterval(windowInterval);
-		}, 1000);
+		// setTimeout(() => {
+		// 	clearInterval(windowInterval);
+		// }, 1000);
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
@@ -445,87 +508,18 @@ const urlLocationHandler = async () => {
 			// console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
 			const imageContainer = document.getElementById('imageContainer');
-			const uploadButton = document.getElementById('uploadButton');
 			const hoverText = document.getElementById('hoverText');
 
 			imageContainer.addEventListener('mouseover', function () {
-				uploadButton.style.display = 'block';
 				hoverText.style.display = 'block';
 			});
 
 			imageContainer.addEventListener('mouseout', function () {
-				uploadButton.style.display = 'none';
 				hoverText.style.display = 'none';
 			});
+
 			document.getElementById('file').addEventListener('change', loadFile, false);
-			document.getElementById('uploadButton').addEventListener('click', async () => {
-				let fileInput = document.getElementById('file');
-				let file = fileInput.files[0];
 
-				if (file) {
-					if (file.size > maxSizeInBytes) {
-						alert('File size is too large, Please choose a smaller file.');
-						return;
-					}
-					let formData = new FormData();
-					formData.append('image', file);
-					formData.append('username', user.username);
-					await fetch('/api/update_user_profile/', {
-						method: 'POST',
-						body: formData,
-						headers: {
-							'X-CSRFToken': getCookie('csrftoken'),
-							'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-						},
-						credentials: 'include',
-					})
-						.then(response => response.json())
-						.then(data => {
-							// inser success message
-							console.log(data);
-						})
-						.catch(error => {
-							console.error('Error:', error);
-						});
-				}
-			});
-			// updating display name
-			const displayNameElement = document.getElementById('displayName');
-			const hoverTextNick = document.getElementById('hoverText-nickname');
-			displayNameElement.addEventListener('mouseover', function () {
-				hoverTextNick.style.display = 'block';
-			});
-
-			displayNameElement.addEventListener('mouseout', function () {
-				hoverTextNick.style.display = 'none';
-			});
-			displayNameElement.addEventListener('click', async () => {
-				const newDisplayName = prompt('Enter new display name:');
-
-				if (newDisplayName !== null) {
-					try {
-						const response = await fetch('/api/update_display_name/', {
-							method: 'POST',
-							headers: {
-								'Content-Type': 'application/json',
-								'X-CSRFToken': getCookie('csrftoken'),
-								'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-							},
-							credentials: 'include',
-							body: JSON.stringify({ display_name: newDisplayName }),
-						});
-
-						if (response.ok) {
-							displayNameElement.textContent = newDisplayName;
-							console.log('Display name updated successfully');
-						} else {
-							console.error('Failed to update display name:', response.status, response.statusText);
-						}
-					} catch (error) {
-						console.error('Error updating display name:', error);
-					}
-				}
-			});
 
 		}).catch((error) => {
 			console.error('Error:', error);
