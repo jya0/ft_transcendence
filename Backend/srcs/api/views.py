@@ -30,6 +30,7 @@ from django.contrib import messages
 import json
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from datetime import datetime, timezone
+from django.contrib.sessions.models import Session
 from faker import Faker
 
 
@@ -64,16 +65,6 @@ def get_all_tournaments(request):
     tourns = Tournament.objects.filter(Q(status=True))
     serializer = TournamentSerializer(tourns, many=True)
     return JsonResponse(serializer.data, safe=False)
-
-
-@api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-def get_user_data(request):
-    print('-----------  >', request['username'])
-    user_data = UserProfile.objects.get(
-        username=request['username'])
-    print(user_data)
-    return JsonResponse('user', user_data.username)
 
 
 @api_view(['GET'])
@@ -456,3 +447,22 @@ def generate_test_user(request):
         'nickname': profile.nickname,
     }
     return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_data(request):
+    session_id = request.COOKIES.get('sessionid')
+    if session_id:
+        # Use the session ID to retrieve user data
+        username = request.session['username']
+        user = get_object_or_404(UserProfile, username=username)
+        user_data = {
+            'username': user.username,
+            'email': user.email,
+            'display_name': user.display_name,
+            'nickname': user.nickname,
+        }
+        return JsonResponse({'user_data': user_data})
+    else:
+        return JsonResponse({'error': 'Session ID not found'}, status=204)
