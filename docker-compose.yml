@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nginx:
-    container_name: Frontend
+    container_name: nginx_frontend
     build:
       context: Frontend/Nginx/
       dockerfile: Dockerfile
@@ -16,13 +16,12 @@ services:
       - 8090:8090
     volumes:
       - ./Frontend:/usr/share/nginx/html
-      # - ./Frontend/nginx.conf:/etc/nginx/conf.d/nginx.conf
     depends_on:
-      - app
+      - django
     networks:
       - backend
 
-  app:
+  django:
     build:
       context: ./Backend
     command: python manage.py runserver 0.0.0.0:8000

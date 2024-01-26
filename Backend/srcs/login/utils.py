@@ -95,14 +95,16 @@ def verify_jwt(token):
 
 
 def get_user_token(request, username, password):
-    base_url = request.build_absolute_uri('/')[:-1]
+    # base_url = request.build_absolute_uri('/')[:-1]
+    base_url = "http://localhost:8000"
     data = {
         'username': username,
         'password': password,
     }
     json_data = json.dumps(data)
     response = requests.post(f"{base_url}/api/token/", data=json_data, headers={
-        'Content-Type': 'application/json'})
+        'Content-Type': 'application/json',
+    })
     if response.status_code == 200:
         token_pair = response.json()
         access_token = token_pair['access']
@@ -111,5 +113,6 @@ def get_user_token(request, username, password):
         print(f'Refresh Token: {refresh_token}')
         return access_token
     else:
+        print(response.json())
         print('Token generation failed.')
         return None

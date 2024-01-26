@@ -47,3 +47,8 @@
 	background-image: radial-gradient(#F9FBFF 20%, transparent 20%); 
 	background-size: 10px 10px;
 }
+
+.focus--light {
+	--bs-focus-ring-color: rgba(var(--bs-light-rgb), .75);
+}
+
