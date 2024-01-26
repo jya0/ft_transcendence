@@ -25,7 +25,6 @@
 									<div>
 										<label for="file" style="cursor: pointer;"></label>
 									</div>
-									<button class="btn btn-light" id="uploadButton" style="display: none; margin-top: -20px;">Upload</button>
 								</div>
 							{% else %}
 								<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-start" style="width: 100px; height: 100px; border-radius: 10%; cursor: pointer;">
