@@ -130,6 +130,7 @@ const urlRoutes = {
 };
 
 const urlRoute = (event) => {
+	console.log('urlroute event', event);
 	event = event || window.event; // get window.event if event argument not provided
 	event.preventDefault();
 	let href = event.target.parentElement.parentElement.parentElement.href;
@@ -184,9 +185,42 @@ function setMainWindowframe() {
 	});
 }
 
-let loadFile = function (event) {
+let loadFile = async function (event) {
 	let image = document.getElementById('output');
 	image.src = URL.createObjectURL(event.target.files[0]);
+
+
+	let fileInput = document.getElementById('file');
+	let file = fileInput.files[0];
+
+	if (file) {
+		const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
+
+		if (file.size > maxSizeInBytes) {
+			alert('File size is too large, Please choose a smaller file.');
+			return;
+		}
+		let formData = new FormData();
+		formData.append('image', file);
+		formData.append('username', user.username);
+		await fetch('/api/update_user_profile/', {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+			credentials: 'include',
+		})
+			.then(response => response.json())
+			.then(data => {
+				// inser success message
+				console.log(data);
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+	}
 };
 
 const urlLocationHandler = async () => {
@@ -300,9 +334,9 @@ const urlLocationHandler = async () => {
 		return;
 	}
 
-    else if(location === '/tictac') {
-        loadTicTac();
-    }
+	else if (location === '/tictac') {
+		loadTicTac();
+	}
 	else if (location === '/desktop') {
 
 		function openSmallWindow() {
@@ -397,7 +431,6 @@ const urlLocationHandler = async () => {
 		}).then(data => {
 			// console.log(data);
 			document.getElementsByClassName("window")[0].innerHTML = data;
-			const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
 			const imageContainer = document.getElementById('imageContainer');
 			const uploadButton = document.getElementById('uploadButton');
 			const hoverText = document.getElementById('hoverText');
@@ -486,9 +519,9 @@ const urlLocationHandler = async () => {
 		});
 
 		document.getElementById('2fa-button').addEventListener('click', async () => {
-
+			console.log('2fa-button clicked');
 			try {
-				const response = await fetch(`/enable_or_disable_2fa/?username=${user.username}`, {
+				const response = await fetch(`api/enable_or_disable_2fa/?username=${user.username}`, {
 					method: 'POST',
 					headers: {
 						'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -575,19 +608,19 @@ async function handleUserData() {
 	console.log('code', code)
 	if (code) {
 		document.getElementById("content").innerHTML = `
-		<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
-		<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
-		<span class="visually-hidden">Loading...</span>
-		</div>
-		<h1>login you in...</h1>
-		</div>
+			<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
+				<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
+				<span class="visually-hidden">Loading...</span>
+				</div>
+				<h1>Hang on, cooking...</h1>
+			</div>
 		`;
 		// document.getElementById("nav-container").classList.add("hidden");
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").style.display = 'none';
 		}
 		console.log("starting fetching....");
-		await fetch(`api/auth/?code=${code}`, {
+		await fetch(`/api/auth/?code=${code}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -672,11 +705,12 @@ async function handleUserData() {
 						requestBody.append('username', data.user.username);
 						requestBody.append('otp', otp);
 
-						await fetch('/validate_otp/', {
+						await fetch('api/validate_otp/', {
 							method: 'POST',
 							headers: {
 								'Content-Type': 'application/x-www-form-urlencoded',
 								'Authorization': `Bearer ${userToken}`,
+								'x-csrftoken': getCookie('csrftoken'),
 							},
 							body: requestBody.toString(),
 						})
@@ -742,6 +776,7 @@ async function handleUserData() {
 			})
 		return;
 	}
+	// generateTestUser();
 	window.onpopstate = urlLocationHandler;
 	// call the urlLocationHandler function to handle the initial url
 	window.route = urlRoute;
@@ -756,6 +791,22 @@ function insertOrCreateContent() {
 		content.id = 'content';
 		document.body.appendChild(content);
 	}
+}
+
+async function generateTestUser() {
+	await fetch("/api/generate_test_user/").then(response => {
+		if (!response.ok) {
+			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+		}
+		return response.json();
+	}).then(data => {
+		localStorage.setItem('access_token', data.token);
+		localStorage.setItem('user', data.user);
+		// window.location.reload();
+		console.log('Data fetched:', data);
+	}).catch((error) => {
+		console.error('Error:', error);
+	});
 }
 
 
@@ -918,5 +969,3 @@ async function insertAllUsers(users) {
 // 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
 // 	return confirmationMessage; // For some older browsers
 // });
-
-

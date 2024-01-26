@@ -113,5 +113,6 @@ def get_user_token(request, username, password):
         print(f'Refresh Token: {refresh_token}')
         return access_token
     else:
+        print(response.json())
         print('Token generation failed.')
         return None
