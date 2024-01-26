@@ -238,7 +238,7 @@ export const loadTournament = () => {
     });
 
     let player_count = 0;
-    let url = `ws://localhost:8000/ws/socket-server/`
+    let url = `wss://localhost:8090/ws/socket-server/`
     let gameSocket;
 
     function initiateSocket() {
@@ -563,7 +563,7 @@ export const loadTournament = () => {
 
         // Perform logic to create a new tournament
         // You can make a POST request to the backend and handle the response
-        await fetch(`http://localhost:8000/api/create_tournament/?name=${tournamentName}`, {
+        await fetch(`http://localhost:8090/api/create_tournament/?name=${tournamentName}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
@@ -610,7 +610,7 @@ export const loadTournament = () => {
         // You can make an API call or update the game state accordingly
         console.log(`Joining tournament with name ${tournamentName}`);
         tournament_name = tournamentName;
-        await fetch(`http://localhost:8000/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
+        await fetch(`http://localhost:8090/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,

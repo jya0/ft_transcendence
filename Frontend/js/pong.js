@@ -212,7 +212,7 @@ export const loadGame = () => {
 	});
 
 	let player_count = 0;
-	let url = `ws://localhost:8000/ws/socket-server/`
+	let url = `wss://localhost:8090/ws/socket-server/`
 	let gameSocket;
 
 	function initiateSocket() {
