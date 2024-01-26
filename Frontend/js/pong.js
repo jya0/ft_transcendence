@@ -332,6 +332,7 @@ export const loadGame = () => {
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 	});
+
 	function gameLoop(timestamp) {
 		const elapsed = timestamp - lastTimestamp;
 
@@ -344,6 +345,7 @@ export const loadGame = () => {
 		requestAnimationFrame(gameLoop);
 
 	}
+
 	// Add this function to print player locations
 	function printPlayerLocations() {
 		console.log('Player Locations - Left:', players.left, 'Right:', players.right);
