@@ -563,7 +563,7 @@ export const loadTournament = () => {
 
         // Perform logic to create a new tournament
         // You can make a POST request to the backend and handle the response
-        await fetch(`http://localhost:8090/api/create_tournament/?name=${tournamentName}`, {
+        await fetch(`/api/create_tournament/?name=${tournamentName}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,

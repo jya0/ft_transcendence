@@ -6,12 +6,35 @@ import { loadTicTac } from './tic_tac.js'
 
 let userToken;
 let user;
-let isAuthDone = false;
-if (sessionStorage.getItem('user')) {
-	user = sessionStorage.getItem('user');
-	user = JSON.parse(user)
-	isAuthDone = true;
-}
+
+
+
+await fetch('/api/get_user_data/', {
+	method: 'GET',
+	headers: {
+		'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+	},
+}).then(response => {
+	if (response.status === 401 || response.status === 204) {
+		console.log('user is not authenticated');
+		localStorage.clear();
+		return null;
+	}
+	return response.json();
+}).then(data => {
+	if (!data) {
+		return;
+	}
+	console.log('Data fetched:', data);
+	user = data.user_data;
+	if (user) {
+		console.log('user is authenticated');
+		sessionStorage.setItem('user', JSON.stringify(user));
+	}
+})
+
+
+
 
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
@@ -234,11 +257,6 @@ let loadFile = async function (event) {
 
 const urlLocationHandler = async () => {
 
-	if (!isAuthDone) {
-		console.log('not auth done');
-		localStorage.clear();
-	}
-
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
@@ -369,7 +387,7 @@ const urlLocationHandler = async () => {
 
 			const welcomeText = document.createElement('div');
 			welcomeText.className = 'small-welcome-text';
-			welcomeText.textContent = `Welcome ${user.username}!`;
+			welcomeText.textContent = `Welcome ${user ? user.username : ''}!`;
 			windowContent.appendChild(welcomeText);
 
 			windowFrame.appendChild(windowContent);
@@ -634,13 +652,16 @@ async function handleUserData() {
 					return;
 				}
 				if (data.message) {
-					console.log('message', message)
+					if (data.message === 'hacker') {
+						window.location.href = `https://www.google.com/search?q=hello%20mr%20${data.name}%20how%20are%20you%20today`;
+					}
+					console.log('message', data.message)
 					return;
 				}
 				userToken = data.token;
 				user = data.user;
 				sessionStorage.setItem('user', JSON.stringify(user));
-				isAuthDone = true;
+				// isAuthDone = true;
 				const otp = data.otp
 				if (otp === 'validate_otp') {
 					console.log('validate otp');
@@ -764,7 +785,6 @@ async function handleUserData() {
 	// call the urlLocationHandler function to handle the initial url
 	window.route = urlRoute;
 	urlLocationHandler();
-
 }
 
 

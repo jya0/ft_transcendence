@@ -14,6 +14,8 @@ import os
 import requests
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.sessions.models import Session
+
 
 
 FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
@@ -22,6 +24,19 @@ FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
 # Create your views here.
 def home_view(request):
     return render(request, "home.html", {'FORTY_TWO_URL': FORTY_TWO_URL})
+
+
+# @api_view(['GET'])
+# def logout(request):
+#     username = request.session.get('username')
+#     print('------------------->', username)
+#     if username is not None:
+#         user_profile = get_object_or_404(UserProfile, username=username)
+#         print('------------------->', user_profile)
+#         auth_logout(request)
+#         Session.objects.filter(session_key=request.session.session_key).delete()
+#         return JsonResponse({'message': 'Logged out successfully'}, status=200)
+#     return JsonResponse({'message': 'User is logged out'}, status=200)
 
 
 def logout(request):
