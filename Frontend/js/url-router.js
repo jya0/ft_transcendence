@@ -608,19 +608,19 @@ async function handleUserData() {
 	console.log('code', code)
 	if (code) {
 		document.getElementById("content").innerHTML = `
-		<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
-		<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
-		<span class="visually-hidden">Loading...</span>
-		</div>
-		<h1>Hang on, cooking...</h1>
-		</div>
+			<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
+				<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
+				<span class="visually-hidden">Loading...</span>
+				</div>
+				<h1>Hang on, cooking...</h1>
+			</div>
 		`;
 		// document.getElementById("nav-container").classList.add("hidden");
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").style.display = 'none';
 		}
 		console.log("starting fetching....");
-		await fetch(`http://localhost:8000/api/auth/?code=${code}`, {
+		await fetch(`/api/auth/?code=${code}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
@@ -776,6 +776,7 @@ async function handleUserData() {
 			})
 		return;
 	}
+	// generateTestUser();
 	window.onpopstate = urlLocationHandler;
 	// call the urlLocationHandler function to handle the initial url
 	window.route = urlRoute;
@@ -790,6 +791,22 @@ function insertOrCreateContent() {
 		content.id = 'content';
 		document.body.appendChild(content);
 	}
+}
+
+async function generateTestUser() {
+	await fetch("/api/generate_test_user/").then(response => {
+		if (!response.ok) {
+			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+		}
+		return response.json();
+	}).then(data => {
+		localStorage.setItem('access_token', data.token);
+		localStorage.setItem('user', data.user);
+		// window.location.reload();
+		console.log('Data fetched:', data);
+	}).catch((error) => {
+		console.error('Error:', error);
+	});
 }
 
 
@@ -952,5 +969,3 @@ async function insertAllUsers(users) {
 // 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
 // 	return confirmationMessage; // For some older browsers
 // });
-
-

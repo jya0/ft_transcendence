@@ -176,7 +176,7 @@ export const loadTicTac = () => {
     }
 
     let player_count = 0;
-    let url = `ws://localhost:8000/ws/socket-server/`
+    let url = `wss://localhost:8000/ws/socket-server/`
     let gameSocket;
 
  

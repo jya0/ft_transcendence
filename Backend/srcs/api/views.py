@@ -30,6 +30,8 @@ from django.contrib import messages
 import json
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from datetime import datetime, timezone
+from faker import Faker
+
 
 BASE_DIR = settings.BASE_DIR
 
@@ -431,3 +433,26 @@ def validate_otp(request):
             return JsonResponse({'message': 'OTP is valid'})
 
     return JsonResponse({'message': 'Invalid OTP'}, status=200)
+
+
+@api_view(['GET'])
+def generate_test_user(request):
+    fake = Faker()
+    username = fake.user_name()
+    email = fake.email()
+    display_name = fake.name()
+    if not UserProfile.objects.filter(username=username).exists():
+        profile = UserProfile.objects.create(
+            username=username, intra=username, email=email, display_name=display_name, picture='https://picsum.photos/200/300')
+    profile.set_password(username)
+    profile.save()
+    auth_login(request, profile)
+    access_token = get_user_token(request, username, username)
+    session_id = request.session.session_key
+    user_data = {
+        'username': profile.username,
+        'email': profile.email,
+        'display_name': profile.display_name,
+        'nickname': profile.nickname,
+    }
+    return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
