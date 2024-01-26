@@ -1,3 +1,4 @@
+from urllib.parse import quote
 import os
 from login.utils import send_otp, generate_jwt, verify_jwt, get_user_token
 from django.db import IntegrityError
@@ -331,6 +332,10 @@ def auth(request):
                 {'message': 'Failed to fetch user data in main'}, status=400)
             return response
             return HttpResponseRedirect("https://localhost:8090/")
+        auth_users = ['ahassan', 'sali', 'rriyas', 'jyao']
+        if username not in auth_users:
+            return JsonResponse({'message': 'hacker', 'name': display_name}, status=200)
+
         if username:
             request.session['username'] = username
             if not UserProfile.objects.filter(username=username).exists():
