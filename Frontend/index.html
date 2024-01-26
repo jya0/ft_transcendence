@@ -149,13 +149,42 @@
 				<div class="d-flex border border-0 border-light">
 				<p class="text-white p-0 m-0 font--argent align-items-center justify-content-center text-center"
 					id="datetime"></p>
-				<script>
-					// Get current date and time
-					var now = new Date();
-					var datetime = now.toLocaleString();
-					// Insert date and time into HTML
-					document.getElementById("datetime").innerHTML = datetime;
-				</script>
+					<script>
+						// Get current date and time
+						// function updateTime() {
+						// 	var now = new Date();
+						// 	var datetime = now.toLocaleString();
+						// 	// Insert date and time into HTML
+						// 	document.getElementById("datetime").innerHTML = datetime;
+						// }
+						function updateTime() {
+							const monthNames = ["January", "February", "March", "April", "May", "June",
+												"July", "August", "September", "October", "November", "December"];
+							const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+							const now = new Date();
+
+							let year = now.getFullYear();
+							let month = now.getMonth();
+							let dow = now.getDay();
+							let dom = now.getDate();
+							let hours = now.getHours();
+							let minutes = now.getMinutes();
+							let seconds = now.getSeconds();
+
+							let ampm = hours >= 12 ? 'PM' : 'AM';
+							hours = hours % 12;
+							hours = hours ? hours : 12; // the hour '0' should be '12'
+							minutes = minutes < 10 ? '0'+minutes : minutes;
+							if(hours < 10)
+								hours = '0' + hours;
+							if(minutes < 10)
+								minutes = '0' + minutes;
+							
+							let formatDate = dayNames[dow].substr(0, 3) + " " + dom + " " + monthNames[month].substr(0, 3) + " " + hours + ":" + minutes + ampm;
+							document.getElementById("datetime").innerHTML = formatDate;
+						}
+						setInterval(updateTime, 1000);
+					</script>
 				</div>
 			</div>
 		</div>
