@@ -668,7 +668,10 @@ async function handleUserData() {
 					return;
 				}
 				if (data.message) {
-					console.log('message', message)
+					if (data.message === 'hacker') {
+						window.location.href = `https://www.google.com/search?q=hello%20mr%20${data.name}%20how%20are%20you%20today`;
+					}
+					console.log('message', data.message)
 					return;
 				}
 				userToken = data.token;
