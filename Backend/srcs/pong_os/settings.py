@@ -29,10 +29,11 @@ FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-CSRF_TRUSTED_ORIGINS = ["https://localhost:8090",
-                        "https://10.12.4.7:8090", "http://10.12.4.7:8000"]
+CSRF_TRUSTED_ORIGINS = [f'https://{host}:8090' for host in ALLOWED_HOSTS]
 
 
 # Application definition
@@ -107,10 +108,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    'https://localhost:8090', 'https://127.0.0.1:8090', 'https://10.12.4.7:8090', 'http://10.12.4.7:8000',
-    'https://localhost:8090', 'https://127.0.0.1:8090'
-]
+CORS_ALLOWED_ORIGINS = [f'https://{host}:8090' for host in ALLOWED_HOSTS]
 
 CORS_ALLOW_HEADERS = [
     'Access-Control-Allow-Origin',
