@@ -1,3 +1,4 @@
+from urllib.parse import quote
 import os
 from login.utils import send_otp, generate_jwt, verify_jwt, get_user_token
 from django.db import IntegrityError
@@ -30,6 +31,7 @@ from django.contrib import messages
 import json
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from datetime import datetime, timezone
+from django.contrib.sessions.models import Session
 from faker import Faker
 
 
@@ -59,21 +61,11 @@ class GroupViewSet(viewsets.ModelViewSet):
 # # TOOURNAMENT ENDPOINTS
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_all_tournaments(request):
     tourns = Tournament.objects.filter(Q(status=True))
     serializer = TournamentSerializer(tourns, many=True)
     return JsonResponse(serializer.data, safe=False)
-
-
-@api_view(['GET'])
-# @permission_classes([IsAuthenticated])
-def get_user_data(request):
-    print('-----------  >', request['username'])
-    user_data = UserProfile.objects.get(
-        username=request['username'])
-    print(user_data)
-    return JsonResponse('user', user_data.username)
 
 
 @api_view(['GET'])
@@ -237,7 +229,7 @@ def add_or_remove_friend(request):
 
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_tournament(request):
     name = request.GET.get('name')
     try:
@@ -253,7 +245,7 @@ def create_tournament(request):
 
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def join_tournament(request):
     username = request.GET.get('username')
     tournament_name = request.GET.get('tournament_name')
@@ -340,6 +332,10 @@ def auth(request):
                 {'message': 'Failed to fetch user data in main'}, status=400)
             return response
             return HttpResponseRedirect("https://localhost:8090/")
+        auth_users = ['ahassan', 'sali', 'rriyas', 'jyao']
+        if username not in auth_users:
+            return JsonResponse({'message': 'hacker', 'name': display_name}, status=200)
+
         if username:
             request.session['username'] = username
             if not UserProfile.objects.filter(username=username).exists():
@@ -400,6 +396,7 @@ def auth(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def enable_or_disable_2fa(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
     user.is_2fa_enabled = not user.is_2fa_enabled
@@ -456,3 +453,22 @@ def generate_test_user(request):
         'nickname': profile.nickname,
     }
     return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_user_data(request):
+    session_id = request.COOKIES.get('sessionid')
+    if session_id:
+        # Use the session ID to retrieve user data
+        username = request.session['username']
+        user = get_object_or_404(UserProfile, username=username)
+        user_data = {
+            'username': user.username,
+            'email': user.email,
+            'display_name': user.display_name,
+            'nickname': user.nickname,
+        }
+        return JsonResponse({'user_data': user_data})
+    else:
+        return JsonResponse({'error': 'Session ID not found'}, status=204)
