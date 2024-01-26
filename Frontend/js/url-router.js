@@ -185,9 +185,40 @@ function setMainWindowframe() {
 	});
 }
 
-let loadFile = function (event) {
+let loadFile = async function (event) {
 	let image = document.getElementById('output');
 	image.src = URL.createObjectURL(event.target.files[0]);
+
+
+	let fileInput = document.getElementById('file');
+	let file = fileInput.files[0];
+
+	if (file) {
+		// if (file.size > maxSizeInBytes) {
+		// 	alert('File size is too large, Please choose a smaller file.');
+		// 	return;
+		// }
+		let formData = new FormData();
+		formData.append('image', file);
+		formData.append('username', user.username);
+		await fetch('/api/update_user_profile/', {
+			method: 'POST',
+			body: formData,
+			headers: {
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+			credentials: 'include',
+		})
+			.then(response => response.json())
+			.then(data => {
+				// inser success message
+				console.log(data);
+			})
+			.catch(error => {
+				console.error('Error:', error);
+			});
+	}
 };
 
 const urlLocationHandler = async () => {
@@ -580,7 +611,7 @@ async function handleUserData() {
 		<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
 		<span class="visually-hidden">Loading...</span>
 		</div>
-		<h1>login you in...</h1>
+		<h1>Hang on, cooking...</h1>
 		</div>
 		`;
 		// document.getElementById("nav-container").classList.add("hidden");
@@ -588,7 +619,7 @@ async function handleUserData() {
 			document.getElementById("navbar").style.display = 'none';
 		}
 		console.log("starting fetching....");
-		await fetch(`api/auth/?code=${code}`, {
+		await fetch(`http://localhost:8000/api/auth/?code=${code}`, {
 			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json',
