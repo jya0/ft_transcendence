@@ -104,16 +104,6 @@ navbarLinks.forEach(function (link) {
 	});
 });
 
-let gameMenu = document.querySelectorAll('#gameMenu a');
-
-gameMenu.forEach(function (link) {
-	link.addEventListener('click', function (event) {
-		event.preventDefault();
-		window.history.pushState({}, "", link);
-		urlLocationHandler();
-	});
-});
-
 function getCookie(name) {
 	let cookieValue = null;
 	if (document.cookie && document.cookie !== '') {
@@ -295,7 +285,15 @@ const urlLocationHandler = async () => {
 	if (location === '/play') {
 		setMainWindowframe();
 		loadGameMenu();
-		loadGameButton
+		let gameMenu = document.querySelectorAll('#gameMenu a');
+
+		gameMenu.forEach(function (link) {
+			link.addEventListener('click', function (event) {
+				event.preventDefault();
+				window.history.pushState({}, "", link);
+				urlLocationHandler();
+			});
+		});
 		// const startLocalButton = document.getElementById('startLocalButton');
 		loadGame();
 		// startLocalButton.addEventListener('click', () => {
