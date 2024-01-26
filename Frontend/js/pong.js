@@ -10,25 +10,34 @@ export const loadGame = () => {
 	const startLocalButton = document.getElementById('startLocalButton');
 
 	let localPlayerMode = false;
+	// canvas.width = document.getElementById("windowScreen").style.width;
+	// canvas.height = document.getElementById("windowScreen").style.height;
+	// console.log(canvas.width);
+	// console.log(canvas.height);
+	// canvas.width = 1200;
+	// canvas.height = 900;
 	canvas.width = 800;
-	canvas.height = 400;
+	canvas.height = 600;
+	// canvas.width = 400;
+	// canvas.height = 300;
 
-	const paddle = { width: 10, height: 100, speed: 8 };
-	const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
+	const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
+	// const paddle = { width: 10, height: 100, speed: 8 };
+	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 200, speedY: canvas.width / 200 };
+	// const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
 	const score = { left: 0, right: 0 };
 	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
 	const keys = {};
 
-
 	function resetGame(params) {
-		paddle.width = 10;
-		paddle.height = 100;
-		paddle.speed = 8;
+		// paddle.width = 10;
+		// paddle.height = 100;
+		// paddle.speed = 8;
 
-		ball.x = canvas.width /2;
-		ball.y = canvas.height /2;
-		ball.speedX = 6;
-		ball.speedY = 6;ws
+		ball.x = canvas.width / 2;
+		ball.y = canvas.height / 2;
+		// ball.speedX = 6;
+		// ball.speedY = 6;
 		score.left = 0;
 		score.right = 0;
 		players.left = (canvas.height - paddle.height) / 2;
@@ -55,7 +64,9 @@ export const loadGame = () => {
 		ctx.beginPath();
 		ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
 		ctx.fill();
-		ctx.font = '30px Arial';
+		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+		ctx.textAlign = "center";
+		ctx.textBaseline = "top";
 		ctx.fillText(score.left, canvas.width / 4, 50);
 		ctx.fillText(score.right, 3 * canvas.width / 4, 50);
 	}
@@ -321,6 +332,7 @@ export const loadGame = () => {
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
 	});
+
 	function gameLoop(timestamp) {
 		const elapsed = timestamp - lastTimestamp;
 
@@ -333,6 +345,7 @@ export const loadGame = () => {
 		requestAnimationFrame(gameLoop);
 
 	}
+
 	// Add this function to print player locations
 	function printPlayerLocations() {
 		console.log('Player Locations - Left:', players.left, 'Right:', players.right);
