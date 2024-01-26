@@ -1,4 +1,9 @@
 // import {io} from "socket.io-client";
+
+let localPlayerMode = false;
+
+let isGameOver = false;
+
 export const loadGame = () => {
 	let lastTimestamp = 0;
 	const maxFrameRate = 60;
@@ -6,10 +11,8 @@ export const loadGame = () => {
 	let btnCounter = 0;
 	const canvas = document.getElementById('pongCanvas');
 	const ctx = canvas.getContext('2d');
-	const startOnlineButton = document.getElementById('startOnlineButton');
 	const startLocalButton = document.getElementById('startLocalButton');
-
-	let localPlayerMode = false;
+	// const startOnlineButton = document.getElementById('startOnlineButton');
 	// canvas.width = document.getElementById("windowScreen").style.width;
 	// canvas.height = document.getElementById("windowScreen").style.height;
 	// console.log(canvas.width);
@@ -23,7 +26,7 @@ export const loadGame = () => {
 
 	const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
 	// const paddle = { width: 10, height: 100, speed: 8 };
-	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 200, speedY: canvas.width / 200 };
+	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
 	// const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
 	const score = { left: 0, right: 0 };
 	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
@@ -43,10 +46,6 @@ export const loadGame = () => {
 		players.left = (canvas.height - paddle.height) / 2;
 		players.right = (canvas.height - paddle.height) / 2;
 	}
-
-
-	let isGameOver = false;
-	let animationFrameId;
 
 	let socketStatus = false;
 
@@ -148,7 +147,7 @@ export const loadGame = () => {
 			ball.x > canvas.width ? score.left++ : score.right++;
 			resetBall();
 			checkForWinner();
-			return;
+			return ;
 		}
 	}
 
@@ -159,15 +158,18 @@ export const loadGame = () => {
 	}
 
 	function handleLocalWinner() {
-		let buttonText;
+		let winnerMsg;
 
 		if (score.left > score.right) {
-			buttonText = "Left Player WINS! Press to play a new local game";
+			winnerMsg = "Left Player WINS! Press to play a new local game";
 		} else {
-			buttonText = "Right Player WINS! Press to play a new local game";
+			winnerMsg = "Right Player WINS! Press to play a new local game";
 		}
 
-		document.getElementById("startLocalButton").innerHTML = buttonText;
+		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+		ctx.textAlign = "center";
+		ctx.textBaseline = "center";
+		ctx.fillText(winnerMsg, canvas.width / 2, canvas.height / 2, canvas.width);
 		isGameOver = true;
 		socketStatus = false;
 		leftPlayer = true;
@@ -189,7 +191,7 @@ export const loadGame = () => {
 				'score2': score.right,
 			}))
 		}
-		document.getElementById("startOnlineButton").innerHTML = buttonText;
+		// document.getElementById("startOnlineButton").innerHTML = buttonText;
 		gameSocket.close();
 		isGameOver = true;
 		socketStatus = false;
@@ -206,10 +208,8 @@ export const loadGame = () => {
 				handleLocalWinner();
 			else
 				handleOnlineWinner();
-			startOnlineButton.disabled = false;
-			startLocalButton.disabled = false;
-			startLocalButton.style.visibility = 'visible';
-			startOnlineButton.style.visibility = 'visible';
+			// startOnlineButton.disabled = false;
+			// startOnlineButton.style.visibility = 'visible';
 			resetGame();
 		}
 	}
@@ -223,6 +223,7 @@ export const loadGame = () => {
 	});
 
 	let player_count = 0;
+	let animationFrameId;
 	let url = `wss://localhost:8090/ws/socket-server/`
 	let gameSocket;
 
@@ -237,15 +238,15 @@ export const loadGame = () => {
 				return;
 			if (data.type === 'start' && data["status"] == "start") {
 				player_count = 2;
-				document.getElementById("startOnlineButton").innerHTML = "In-game";
+				// document.getElementById("startOnlineButton").innerHTML = "In-game";
 				if (data.sender == localStorage.getItem('username')) {
 					leftPlayer = false;
 					rightPlayer = true;
 				}
 				console.log(leftPlayer);
 				console.log(rightPlayer);
-				startOnlineButton.disabled = false;
-				startOnlineButton.click();
+				// startOnlineButton.disabled = false;
+				// startOnlineButton.click();
 			}
 
 			if (data.sender == localStorage.getItem('username'))
@@ -264,7 +265,7 @@ export const loadGame = () => {
 				}
 			}
 			else if (data.type == 'close') {
-				gameOver = true;
+				isGameOver = true;
 				player_count = 1;
 				gameSocket.close();
 			}
@@ -291,6 +292,53 @@ export const loadGame = () => {
 		player_count = 1;
 	}
 
+/* 	startOnlineButton.addEventListener('click', () => {
+		localPlayerMode = false;
+		startLocalButton.disabled = true;
+		// startOnlineButton.disabled = true;
+		startLocalButton.style.visibility = 'hidden';
+
+		console.log("YUUUUUU");
+		if (btnCounter == 0) {
+			initiateSocket();
+			// document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
+			console.log("first press - ready to play!");
+			btnCounter = btnCounter + 1;
+			return ;
+		}
+
+		if (isGameOver || !animationFrameId) {
+			// startOnlineButton.disabled = true;
+			isGameOver = false;
+			score.left = 0;
+			score.right = 0;
+			resetBall();
+			animationFrameId = requestAnimationFrame(gameLoop);
+		}
+	}); */
+
+	function gameLoop(timestamp) {
+		const elapsed = timestamp - lastTimestamp;
+		console.log(timestamp);
+
+		if (elapsed >= (frameInterval / 2)) {
+			draw();
+			update();
+			lastTimestamp = timestamp;
+			if (isGameOver)
+				return ;
+			requestAnimationFrame(gameLoop);
+		}
+	}
+
+	// Add this function to print player locations
+	function printPlayerLocations() {
+		console.log('Player Locations - Left:', players.left, 'Right:', players.right);
+	}
+
+	// Call this function at regular intervals (e.g., every second)
+	setInterval(printPlayerLocations, 1000); // Adjust the interval as needed
+
 
 	startLocalButton.addEventListener('click', () => {
 		localPlayerMode = true;
@@ -306,57 +354,9 @@ export const loadGame = () => {
 			resetBall();
 			animationFrameId = requestAnimationFrame(gameLoop);
 		}
-	});
 
-	startOnlineButton.addEventListener('click', () => {
-		localPlayerMode = false;
-		startLocalButton.disabled = true;
-		startOnlineButton.disabled = true;
-		startLocalButton.style.visibility = 'hidden';
-
-		console.log("YUUUUUU");
-		if (btnCounter == 0) {
-			initiateSocket();
-			document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
-			console.log("first press - ready to play!");
-			btnCounter = btnCounter + 1;
-			return;
-		}
-
-		if (isGameOver || !animationFrameId) {
-			startOnlineButton.disabled = true;
-			isGameOver = false;
-			score.left = 0;
-			score.right = 0;
-			resetBall();
-			animationFrameId = requestAnimationFrame(gameLoop);
-		}
-	});
-
-	function gameLoop(timestamp) {
-		const elapsed = timestamp - lastTimestamp;
-
-		if (elapsed > frameInterval) {
-			update(elapsed);
-			draw();
-			lastTimestamp = timestamp - (elapsed % frameInterval);
-		}
-
-		requestAnimationFrame(gameLoop);
-
-	}
-
-	// Add this function to print player locations
-	function printPlayerLocations() {
-		console.log('Player Locations - Left:', players.left, 'Right:', players.right);
-	}
-
-	// Call this function at regular intervals (e.g., every second)
-	setInterval(printPlayerLocations, 1000); // Adjust the interval as needed
-
+})
 
 }
-
-
 
 
