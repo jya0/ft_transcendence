@@ -1,5 +1,6 @@
 const urlPageTitle = "Pong Os";
 import { loadGame } from './pong.js';
+import { loadGameMenu } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 
@@ -70,7 +71,7 @@ const addFriend = async (button, username, newFriend) => {
 	}
 }
 
-var navbarLinks = document.querySelectorAll('#navbar a');
+let navbarLinks = document.querySelectorAll('#navbar a');
 
 navbarLinks.forEach(function (link) {
 	link.addEventListener('click', function (event) {
@@ -80,7 +81,15 @@ navbarLinks.forEach(function (link) {
 	});
 });
 
+let gameMenu = document.querySelectorAll('#gameMenu a');
 
+gameMenu.forEach(function (link) {
+	link.addEventListener('click', function (event) {
+		event.preventDefault();
+		window.history.pushState({}, "", link);
+		urlLocationHandler();
+	});
+});
 
 function getCookie(name) {
 	let cookieValue = null;
@@ -267,38 +276,13 @@ const urlLocationHandler = async () => {
 
 	if (location === '/play') {
 		setMainWindowframe();
-		if (!document.getElementById("pongCanvas")) {
-			const canvasElement = document.createElement('canvas');
-
-			const canvasButtonOnline = document.createElement('button');
-			const canvasButtonLocalGame = document.createElement('button');
-			// const canvasButtonLocalTourn = document.createElement('button');
-
-
-			document.getElementsByClassName('window')[0].appendChild(canvasElement);
-			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnline);
-			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalGame);
-			// document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
-
-
-			console.log('canvasButtonOnline:', canvasButtonOnline);
-			console.log('canvasButtonLocalGame:', canvasButtonLocalGame);
-			// console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
-
-
-			canvasButtonOnline.id = 'startOnlineButton';
-			canvasButtonOnline.innerHTML = 'Start Online Game';
-
-			canvasButtonLocalGame.id = 'startLocalButton';
-			canvasButtonLocalGame.innerHTML = 'Start Local Game';
-
-			// canvasButtonLocalTourn.id = 'startLocalTournButton';
-			// canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
-
-
-			canvasElement.id = 'pongCanvas';
-			loadGame();
-		}
+		loadGameMenu();
+		loadGameButton
+		// const startLocalButton = document.getElementById('startLocalButton');
+		loadGame();
+		// startLocalButton.addEventListener('click', () => {
+		// 	loadPongLocal();
+		// });
 		document.title = route.title;
 		return;
 	}
