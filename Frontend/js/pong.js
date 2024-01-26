@@ -10,15 +10,18 @@ export const loadGame = () => {
 	const startLocalButton = document.getElementById('startLocalButton');
 
 	let localPlayerMode = false;
+	// canvas.width = document.getElementById("windowScreen").style.width;
+	// canvas.height = document.getElementById("windowScreen").style.height;
 	canvas.width = 800;
 	canvas.height = 400;
 
-	const paddle = { width: 10, height: 100, speed: 8 };
-	const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
+	const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
+	// const paddle = { width: 10, height: 100, speed: 8 };
+	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 100, speedY: canvas.width / 100 };
+	// const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
 	const score = { left: 0, right: 0 };
 	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
 	const keys = {};
-
 
 	function resetGame(params) {
 		paddle.width = 10;
@@ -28,7 +31,7 @@ export const loadGame = () => {
 		ball.x = canvas.width /2;
 		ball.y = canvas.height /2;
 		ball.speedX = 6;
-		ball.speedY = 6;ws
+		ball.speedY = 6;
 		score.left = 0;
 		score.right = 0;
 		players.left = (canvas.height - paddle.height) / 2;

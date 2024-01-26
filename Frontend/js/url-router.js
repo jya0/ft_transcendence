@@ -175,7 +175,7 @@ function setMainWindowframe() {
 								</div>
 								<!-- WINDOW-SCREEN -->
 								<div
-									class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window">
+									class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window" id="windowScreen">
 								</div>
 							</div>
 						</div>
