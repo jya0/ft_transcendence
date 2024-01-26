@@ -60,7 +60,7 @@ class GroupViewSet(viewsets.ModelViewSet):
 # # TOOURNAMENT ENDPOINTS
 
 @api_view(['GET'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def get_all_tournaments(request):
     tourns = Tournament.objects.filter(Q(status=True))
     serializer = TournamentSerializer(tourns, many=True)
@@ -228,7 +228,7 @@ def add_or_remove_friend(request):
 
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def create_tournament(request):
     name = request.GET.get('name')
     try:
@@ -244,7 +244,7 @@ def create_tournament(request):
 
 
 @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])
 def join_tournament(request):
     username = request.GET.get('username')
     tournament_name = request.GET.get('tournament_name')
@@ -391,6 +391,7 @@ def auth(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def enable_or_disable_2fa(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
     user.is_2fa_enabled = not user.is_2fa_enabled
