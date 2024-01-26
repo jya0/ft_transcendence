@@ -776,7 +776,6 @@ async function handleUserData() {
 			})
 		return;
 	}
-	// generateTestUser();
 	window.onpopstate = urlLocationHandler;
 	// call the urlLocationHandler function to handle the initial url
 	window.route = urlRoute;
@@ -807,6 +806,8 @@ async function generateTestUser() {
 	}).catch((error) => {
 		console.error('Error:', error);
 	});
+	urlLocationHandler();
+
 }
 
 
