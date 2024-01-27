@@ -8,8 +8,6 @@ let userToken;
 let user;
 
 
-
-
 await fetch('/api/get_user_data/', {
 	method: 'GET',
 	headers: {
@@ -184,7 +182,8 @@ const insertCSS = (filePath) => {
 
 function setMainWindowframe() {
 	insertOrCreateContent();
-	document.getElementById("content").innerHTML = `					
+	document.getElementById("content").innerHTML = 
+				`					
 					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
@@ -209,7 +208,8 @@ function setMainWindowframe() {
 								</div>
 							</div>
 						</div>
-					</div>`;
+					</div>
+				`;
 	document.getElementById('close-me').addEventListener('click', () => {
 		document.getElementById('close-me-containter').innerHTML = '';
 	});
@@ -320,7 +320,14 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 const urlLocationHandler = async () => {
 
+	if (!user)	{
+		fetch('/components/login.html').then(response => response.text()).then(data => {
 
+			document.getElementById("main-content").innerHTML = data;
+			showToast('Please login to continue');
+		});
+		return;
+	}
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
@@ -357,13 +364,12 @@ const urlLocationHandler = async () => {
 	}
 	document.getElementById("navbar").style.display = 'flex';
 
-	if (location === '/games_pong_local' || 
+	if (location === '/games_pong_local' ||
 		location === '/games_pong_online' ||
 		location === '/games_pong_local_tournament' ||
 		location === '/games_pong_online_tournament' ||
 		location === '/games_tictactoe_local' ||
-		location === '/games_tictactoe_online')
-	{
+		location === '/games_tictactoe_online') {
 		setMainWindowframe();
 		// loadGameCanvas(function(canvas) {
 		// 	loadGame(canvas);
@@ -511,7 +517,12 @@ const urlLocationHandler = async () => {
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
-
+		if (!user) {
+			fetch('/components/login.html').then(response => response.text()).then(data => {
+				document.getElementById("main-content").innerHTML = data;
+			});
+			localStorage.clear();
+		}
 		await fetch(`/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
 			headers: {
@@ -525,10 +536,14 @@ const urlLocationHandler = async () => {
 				localStorage.clear();
 				console.log(response.statusText);
 				showToast('Please login to continue');
+				return null;
 			}
 			return response.text();
 		}).then(data => {
 			// console.log(data);
+			if (!data) {
+				return;
+			}
 			document.getElementsByClassName("window")[0].innerHTML = data;
 			const imageContainer = document.getElementById('imageContainer');
 			const hoverText = document.getElementById('hoverText');
@@ -607,6 +622,12 @@ const urlLocationHandler = async () => {
 				return;
 			}
 			insertAllUsers(users.filter((user) => user.username.startsWith(inputValue)));
+		});
+	}
+	else {
+		document.body.innerHTML = '';
+		await fetch('/components/404-component.html').then(response => response.text()).then(data => {
+			document.body.innerHTML = data;
 		});
 	}
 	if (document.getElementById("pongCanvas")) {
@@ -693,40 +714,18 @@ async function handleUserData() {
 				const otp = data.otp
 				if (otp === 'validate_otp') {
 					console.log('validate otp');
-					// setMainWindowframe();
-					document.getElementById("content").innerHTML = `
-							<div class="container p-0 m-0 border border-1 border-light"> <!-- WINDOW done-->
-								<div class="ratio ratio-4x3">
-									<div
-										class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-1 border-light">
-										<!-- WINDOW-BAR -->
-										<div class="d-flex p-0 border border-1 border-light bg-black">
-											<button type="button" class="d-flex m-2 border border-1 border-light bg-transparent"
-												data-bs-dismiss="modal" aria-label="Close">
-												<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
-													viewBox="0 0 20 20" fill="none">
-													<path
-														d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
-														fill="#E1E0DF" />
-												</svg>
-											</button>
-											<div class="container-fluid my-1 me-1 border border-1 border-light bg--polka">
-											</div>
-										</div>
-										<!-- WINDOW-SCREEN -->
-										<div
-											class="d-flex h-100 w-100 flex-grow-1 border border-1 border-light bg-light window">
-										</div>
-									</div>
-								</div>
-							</div>`;
-					document.getElementsByClassName('window')[0].innerHTML = `
-						<div class="mb-3 p-20px">
-						<label for="otp-input" class="form-label">OTP Code</label>
-						<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
+					setMainWindowframe();
+
+					document.getElementById('windowScreen').innerHTML =
+						`
+						<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 gap-5 justify-content-center align-items-center font--argent" id="otp-container">
+							<div class="p-5">
+								<label for="otp-input" class="form-label">Your OTP Code is valid for 60 seconds</label>
+								<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
+							</div>
+							<button type="submit-otp" id="submit-otp" class="btn btn-primary">Validate OTP</button>
 						</div>
-						<button type="submit-otp" id="submit-otp" class="btn btn-primary">Validate OTP</button>
-						`;
+					`;
 
 					document.getElementById('submit-otp').addEventListener('click', async () => {
 						let otp = document.getElementById('otp-input').value;
@@ -771,10 +770,16 @@ async function handleUserData() {
 									// call the urlLocationHandler function to handle the initial url
 									window.route = urlRoute;
 									urlLocationHandler();
-									// return false;
 								}
 								else {
 									showToast('Invalid OTP code');
+									document.getElementById('otp-container').innerHTML += '<button type="" id="try-again-btn" class="btn btn-primary">Try Again</button>';
+									document.getElementById('try-again-btn').addEventListener('click', () => {
+										fetch('/components/login.html').then(response => response.text()).then(data => {
+											document.getElementById("content").innerHTML = data;
+										});
+										localStorage.clear();
+									});
 								}
 
 							})
