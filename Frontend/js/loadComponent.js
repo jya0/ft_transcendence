@@ -102,3 +102,11 @@ export const loadToast = (message) => {
 	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastAlert);
 	toastBootstrap.show();
 };
+
+// export const loadModal = (innerContent) => {
+// 	document.getElementById('modalMainBody').innerHTML = innerContent;
+// };
+
+export const loadModal = (innerHTML) => {
+	document.getElementById('modalMainBody').innerHTML = innerHTML;
+};

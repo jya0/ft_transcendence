@@ -1,5 +1,5 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas, loadToast } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas, loadToast, loadModal } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame } from './pong.js';
@@ -276,44 +276,67 @@ let loadModalFile = async function (event) {
 
 };
 
-document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
 
-document.getElementById('nickname-btn').addEventListener('click', async () => {
+document.getElementById('modalSetting').addEventListener('click', async () => {
+	loadModal(
+		`
+			<div class="input-group">
+				<input type="file" class="form-control" accept="image/*" id="modal-inputFile"
+					aria-describedby="inputFile" aria-label="Upload">
+				<button class="btn btn-dark" type="button" id="inputFile-btn">Upload Profile
+					Pic</button>
+			</div>
 
-	const newDisplayName = document.getElementById('floatingInputGroup1');
-	const nicknameValue = newDisplayName.value;
-	const displayNameElement = document.getElementById('displayName');
-
-	if (!nicknameValue)
-	{
-		loadToast('Display name should not be empty');
-		return ;
-	}
-	else if (nicknameValue.length >= 50) {
-		loadToast('Size of display name should be less than 50 characters');
-		return ;
-	}
-	try {
-		const response = await fetch('/api/update_display_name/', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'X-CSRFToken': getCookie('csrftoken'),
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-			},
-			credentials: 'include',
-			body: JSON.stringify({ display_name: nicknameValue }),
-		});
-		if (response.ok) {
-			displayNameElement.textContent = nicknameValue;
-			loadToast('Display name updated successfully');
-		} else {
-			loadToast('failed to update display name');
-			console.error('Failed to update display name:', response.status, response.statusText);
+			<div class="input-group mb-3 mt-5">
+				<span class="input-group-text">@</span>
+				<div class="form-floating">
+					<input type="text" class="form-control" id="floatingInputGroup1"
+						placeholder="Username">
+					<label for="floatingInputGroup1">Username</label>
+				</div>
+				<button id="nickname-btn" type="button" class="btn btn-primary">Save
+					Username</button>
+			</div>
+		`);
+	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
+	
+	document.getElementById('nickname-btn').addEventListener('click', async () => {
+	
+		const newDisplayName = document.getElementById('floatingInputGroup1');
+		const nicknameValue = newDisplayName.value;
+		const displayNameElement = document.getElementById('displayName');
+	
+		if (!nicknameValue)
+		{
+			loadToast('Display name should not be empty');
+			return ;
 		}
-	} catch (error) {
-		console.error('Error updating display name:', error);
-	}
+		else if (nicknameValue.length >= 50) {
+			loadToast('Size of display name should be less than 50 characters');
+			return ;
+		}
+		try {
+			const response = await fetch('/api/update_display_name/', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-CSRFToken': getCookie('csrftoken'),
+					'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+				},
+				credentials: 'include',
+				body: JSON.stringify({ display_name: nicknameValue }),
+			});
+			if (response.ok) {
+				displayNameElement.textContent = nicknameValue;
+				loadToast('Display name updated successfully');
+			} else {
+				loadToast('failed to update display name');
+				console.error('Failed to update display name:', response.status, response.statusText);
+			}
+		} catch (error) {
+			console.error('Error updating display name:', error);
+		}
+	});
 });
 
 const urlLocationHandler = async () => {
