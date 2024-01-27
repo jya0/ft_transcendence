@@ -296,6 +296,10 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 				</div>
 				<button id="nickname-btn" type="button" class="btn btn-primary">Save
 					Username</button>
+                <div class="input-group mb-3 mt-5">
+                <div class="form-floating">
+                    <button id="logout" class="btn btn-primary" onClick="handleLogout()">Logout</button>
+                </div>
 			</div>
 		`);
 	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
