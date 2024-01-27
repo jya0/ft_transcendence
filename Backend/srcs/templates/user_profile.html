@@ -16,18 +16,18 @@
 							<div class="col-4">
 								<div class="ratio ratio-1x1 bg-black p-1 border border-0">
 									{% if image != 'other' %}
-										<div id="imageContainer">
-											<label for="file">
-												<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-start" style="border-radius: 10%; cursor: pointer;" id="output">
-												<span id="hoverText" style="color: purple; font-size: 16px; display: none;">Change Image</span>
-											</label>
-											<input type="file" accept="image/*" name="image" id="file" style="display: none;">
+										<!-- <div id="imageContainer"> -->
+											<!-- <label for="file"> -->
+												<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-circle p-1 object-fit-cover" style="cursor: pointer;" id="output">
+												<!-- <span id="hoverText" style="color: purple; font-size: 16px; display: none;">Change Image</span>
+											</label> -->
+											<!-- <input type="file" accept="image/*" name="image" id="file" style="display: none;">
 											<div>
 												<label for="file" style="cursor: pointer;"></label>
-											</div>
-										</div>
+											</div> -->
+										<!-- </div> -->
 									{% else %}
-										<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-start" style="border-radius: 10%; cursor: pointer;">
+										<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-circle" style="cursor: pointer;">
 									{% endif %}
 								</div>
 							</div>
@@ -70,9 +70,9 @@
 							{% for user in users_list %}
 								<div class="w-100 d-flex flex-row border border-1 border-dark">
 									<div class="col-3">
-										<div class="ratio ratio-1x1 bg-black p-1 border border-0">
+										<div class="ratio ratio-1x1 bg-black border border-0">
 											<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" 
-											alt="Avatar" class="img-fluid rounded-start" style="width: 100px; height:100px; border-radius: 10%;">
+											alt="Avatar" class="img-fluid rounded-circle p-1">
 										</div>
 									</div>
 									<div class="d-flex flex-column ps-2">
