@@ -61,6 +61,13 @@ const viewUserProfile = (username) => {
 		});
 }
 
+const showToast = (message) => {
+	const toastLiveExample = document.getElementById('mainToast')
+	toastLiveExample.querySelector('.toast-body').innerHTML = message;
+	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+	toastBootstrap.show()
+};
+
 const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
@@ -85,10 +92,10 @@ const addFriend = async (button, username, newFriend) => {
 		console.log(data);
 		if (data === 'Added') {
 			button.innerHTML = 'Remove Friend';
-			alert('Friend Added successfully :(');
+			showToast('Friend Added successfully :(');
 		} else {
 			button.innerHTML = 'Add Friend';
-			alert('Friend Removed succesfully :)');
+			showToast('Friend Removed succesfully :)');
 		}
 	} catch (error) {
 		console.error('Error:', error);
@@ -213,7 +220,7 @@ async function updateProfile(file) {
 	const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
 
 	if (file.size > maxSizeInBytes) {
-		alert('File size is too large, Please choose a smaller file.');
+		showToast('File size is too large, Please choose a smaller file.');
 		return;
 	}
 
@@ -299,14 +306,16 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 			if (response.ok) {
 				displayNameElement.textContent = nicknameValue;
-				console.log('Display name updated successfully');
+				showToast('Display name updated successfully');
 			} else {
+				showToast('failed to update display name');
 				console.error('Failed to update display name:', response.status, response.statusText);
 			}
 		} catch (error) {
 			console.error('Error updating display name:', error);
 		}
 	}
+	showToast('Size of display name should be less than 50 characters');
 });
 
 const urlLocationHandler = async () => {
@@ -342,6 +351,7 @@ const urlLocationHandler = async () => {
 		console.log('login route')
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
 			document.getElementById("main-content").innerHTML = data;
+			showToast('Please login to continue');
 		});
 		return;
 	}
@@ -510,7 +520,8 @@ const urlLocationHandler = async () => {
 					document.getElementById("main-content").innerHTML = data;
 				});
 				localStorage.clear();
-				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+				console.log(response.statusText);
+				showToast('Please login to continue');
 			}
 			return response.text();
 		}).then(data => {
@@ -557,14 +568,14 @@ const urlLocationHandler = async () => {
 
 				if (data === '2FA disabled successfully') {
 					document.getElementById('2fa-button').innerHTML = 'Enable 2FA';
-					alert('2FA disabled successfully');
+					showToast('2FA disabled successfully');
 				} else {
 					await fetch('/components/login.html').then(response => response.text()).then(data => {
 						document.getElementById("navbar").remove();
 						document.getElementById("content").innerHTML = data;
 						localStorage.clear();
 					});
-					alert('2FA enabled successfully, please login again')
+					showToast('2FA enabled successfully, please login again');
 				}
 			} catch (error) {
 				console.error('Error:', error);
@@ -646,14 +657,14 @@ async function handleUserData() {
 				console.log('response', response)
 				if (!response.ok) {
 					if (response.status === 400) {
-						alert('Invalid code');
+						showToast('Invalid code');
 						fetch('/components/login.html').then(response => response.text()).then(data => {
 							document.getElementById("content").innerHTML = data;
 						});
 						localStorage.clear();
 						return;
 					}
-					response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+					showToast('Please login to continue');
 					fetch('/components/login.html').then(response => response.text()).then(data => {
 						document.getElementById("content").innerHTML = data;
 					});
@@ -717,7 +728,7 @@ async function handleUserData() {
 					document.getElementById('submit-otp').addEventListener('click', async () => {
 						let otp = document.getElementById('otp-input').value;
 						if (!otp) {
-							alert('Please enter OTP code');
+							showToast('Please enter OTP code');
 							return;
 						}
 						const requestBody = new URLSearchParams();
@@ -749,7 +760,7 @@ async function handleUserData() {
 									console.log(data);
 									localStorage.setItem('access_token', userToken);
 									document.getElementsByClassName("window")[0].innerHTML = '';
-									alert('OTP is valid, enjoy pongos');
+									showToast('OTP is valid, enjoy pongos');
 									// document.getElementById("navbar").style.display = 'none';
 									window.history.pushState({}, "", '/desktop');
 
@@ -760,7 +771,7 @@ async function handleUserData() {
 									// return false;
 								}
 								else {
-									alert('Invalid OTP code');
+									showToast('Invalid OTP code');
 								}
 
 							})
@@ -813,7 +824,7 @@ function insertOrCreateContent() {
 async function generateTestUser() {
 	await fetch("/api/generate_test_user/").then(response => {
 		if (!response.ok) {
-			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			showToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
@@ -852,7 +863,8 @@ async function getAllUsers(override) {
 				window.location.href = '/';
 				return;
 			}
-			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			// response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			showToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
@@ -898,7 +910,8 @@ async function getAllFriends(override) {
 				window.location.href = '/';
 				return;
 			}
-			response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			// response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
+			showToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
