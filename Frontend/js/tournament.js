@@ -518,7 +518,7 @@ export function loadTournament() {
 
 
 			tournReady = true;
-			playerNameContainer.remove();
+			// playerNameContainer.remove();
 			startLocalTournament();
 
 
@@ -532,77 +532,77 @@ export function loadTournament() {
 
 
 
-		// Now, create input fields for player names dynamically within the same form
-		const playerNameContainer = document.createElement('div');
-		playerNameContainer.innerHTML = `<p>Enter the names for 4 players:</p>`;
+		// // Now, create input fields for player names dynamically within the same form
+		// const playerNameContainer = document.createElement('div');
+		// playerNameContainer.innerHTML = `<p>Enter the names for 4 players:</p>`;
 
-		const form = document.createElement('form');
-		form.id = 'playerNamesForm';
+		// const form = document.createElement('form');
+		// form.id = 'playerNamesForm';
 
-		for (let i = 1; i <= 4; i++) {
-			const label = document.createElement('label');
-			label.textContent = `Player ${i}:`;
+		// for (let i = 1; i <= 4; i++) {
+		// 	const label = document.createElement('label');
+		// 	label.textContent = `Player ${i}:`;
 
-			const input = document.createElement('input');
-			input.type = 'text';
-			input.name = `player${i}`;
-			input.required = true;
+		// 	const input = document.createElement('input');
+		// 	input.type = 'text';
+		// 	input.name = `player${i}`;
+		// 	input.required = true;
 
-			playerNameContainer.appendChild(label);
-			playerNameContainer.appendChild(input);
-		}
+		// 	playerNameContainer.appendChild(label);
+		// 	playerNameContainer.appendChild(input);
+		// }
 
-		const beginTournButton = document.createElement('button');
-		beginTournButton.type = 'submit';
-		beginTournButton.innerHTML = 'Start Tournament';
+		// const beginTournButton = document.createElement('button');
+		// beginTournButton.type = 'submit';
+		// beginTournButton.innerHTML = 'Start Tournament';
 
-		form.appendChild(playerNameContainer);
-		form.appendChild(beginTournButton);
-		document.getElementById('windowScreen').appendChild(form);
+		// form.appendChild(playerNameContainer);
+		// form.appendChild(beginTournButton);
+		// document.getElementById('windowScreen').appendChild(form);
 
-		form.addEventListener('submit', (event) => {
-			event.preventDefault();
+		// form.addEventListener('submit', (event) => {
+		// 	event.preventDefault();
 
-			const playerInputs = form.querySelectorAll(`input[name^="player"]`);
-			const playerNames = Array.from(playerInputs).map(input => input.value);
+		// 	const playerInputs = form.querySelectorAll(`input[name^="player"]`);
+		// 	const playerNames = Array.from(playerInputs).map(input => input.value);
 
-			// Check if all player names are unique
-			if (hasDuplicates(playerNames)) {
-				alert("Player names must be unique. Please enter distinct names for each player.");
-				return;
-			}
-			// Perform matchmaking logic (for demonstration, this is a simple random pairing)
-			pairings = randomPairing(playerNames);
+		// 	// Check if all player names are unique
+		// 	if (hasDuplicates(playerNames)) {
+		// 		alert("Player names must be unique. Please enter distinct names for each player.");
+		// 		return;
+		// 	}
+		// 	// Perform matchmaking logic (for demonstration, this is a simple random pairing)
+		// 	pairings = randomPairing(playerNames);
 
-			// Create a list element to display pairings
-			const resultsList = document.createElement('ul');
-			resultsList.innerHTML = "<p>Matchmaking Results:</p>";
+		// 	// Create a list element to display pairings
+		// 	const resultsList = document.createElement('ul');
+		// 	resultsList.innerHTML = "<p>Matchmaking Results:</p>";
 
-			pairings.forEach((pairing, index) => {
-				const listItem = document.createElement('li');
-				listItem.textContent = `Match ${index + 1}: ${pairing[0]} vs ${pairing[1]}`;
-				resultsList.appendChild(listItem);
-				// Perform additional actions with the pairings
-			});
-			beginTournButton.disabled = false;
+		// 	pairings.forEach((pairing, index) => {
+		// 		const listItem = document.createElement('li');
+		// 		listItem.textContent = `Match ${index + 1}: ${pairing[0]} vs ${pairing[1]}`;
+		// 		resultsList.appendChild(listItem);
+		// 		// Perform additional actions with the pairings
+		// 	});
+		// 	beginTournButton.disabled = false;
 
-			// Append the list to the bottom of the page
-			document.getElementById('windowScreen').appendChild(resultsList);
-			tournReady = true;
-			// document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
+		// 	// Append the list to the bottom of the page
+		// 	document.getElementById('windowScreen').appendChild(resultsList);
+		// 	tournReady = true;
+		// 	// document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
 
-			// startLocalButton.disabled = false;
-			// startOnlineButton.disabled = false;
-			// startLocalButton.style.visibility = 'visible';
-			// startOnlineButton.style.visibility = 'visible';
+		// 	// startLocalButton.disabled = false;
+		// 	// startOnlineButton.disabled = false;
+		// 	// startLocalButton.style.visibility = 'visible';
+		// 	// startOnlineButton.style.visibility = 'visible';
 
-			// Clean up after starting the tournament
-			form.remove();
-			// animationFrameId = requestAnimationFrame(gameLoop);
-			playerNameContainer.remove();
-			startLocalTournament();
+		// 	// Clean up after starting the tournament
+		// 	form.remove();
+		// 	// animationFrameId = requestAnimationFrame(gameLoop);
+		// 	playerNameContainer.remove();
+		// 	startLocalTournament();
 
-		});
+		// });
 
 	};
 
