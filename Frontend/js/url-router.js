@@ -430,41 +430,6 @@ const urlLocationHandler = async () => {
 		document.title = route.title;
 		return;
 	}
-
-	else if (location === '/tournament') {
-		setMainWindowframe();
-
-		if (!document.getElementById("pongCanvas")) {
-
-			const canvasElement = document.createElement('canvas');
-			const canvasButtonLocalTourn = document.createElement('button');
-			const canvasButtonOnlineTourn = document.createElement('button');
-
-
-			document.getElementsByClassName('window')[0].appendChild(canvasElement);
-			document.getElementsByClassName('window')[0].appendChild(canvasButtonLocalTourn);
-			document.getElementsByClassName('window')[0].appendChild(canvasButtonOnlineTourn);
-
-
-			console.log('canvasButtonLocalTourn:', canvasButtonLocalTourn);
-			console.log('canvasButtonOnlineTourn:', canvasButtonOnlineTourn);
-
-			canvasButtonLocalTourn.id = 'startLocalTournButton';
-			canvasButtonLocalTourn.innerHTML = 'Start Local Tournament';
-
-			canvasButtonOnlineTourn.id = 'startOnlineTournButton';
-			canvasButtonOnlineTourn.innerHTML = 'Start Online Tournament';
-
-			canvasElement.id = 'pongCanvas';
-			loadTournament(); // You may need to modify loadGame() to handle tournament-specific logic
-		}
-		document.title = route.title;
-		return;
-	}
-
-	else if (location === '/tictac') {
-		loadTicTac();
-	}
 	else if (location === '/desktop') {
 
 		// function openSmallWindow() {
