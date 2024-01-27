@@ -2,6 +2,7 @@
 export function loadTournament() {
 	let tournament_name;
 	const canvas = document.getElementById('gameCanvas');
+	const docModalMain = document.getElementById('modalMain');
 	const ctx = canvas.getContext('2d');
 
 	let localPlayerMode = true;
@@ -179,11 +180,21 @@ export function loadTournament() {
 		if (g_count == 0) {
 			// alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
 			//@todo - show bracket
+			docModalMain.querySelector('#winner-p1').innerHTML = winners[0];
+			toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
+			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
+			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+			tmpModalMain.show();
 			resetGame();
 		}
 		if (g_count == 1) {
 			// alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
 			//@todo - show bracket
+			docModalMain.querySelector('#winner-p2').innerHTML = winners[1];
+			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
+			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
+			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+			tmpModalMain.show();
 
 			resetGame();
 		}
@@ -206,6 +217,11 @@ export function loadTournament() {
 			tournReady = false;
 			isGameOver = true;
 			alert(buttonText);
+			docModalMain.querySelector('#winner-final').innerHTML = winners[0];
+			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
+			toggleHighlight("tWinnerHighlight", "");
+			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+			tmpModalMain.show();
 			//@todo - show bracket
 		}
 		else
@@ -363,10 +379,131 @@ export function loadTournament() {
 		// startOnlineButton.disabled = true;
 		// startLocalButton.style.visibility = 'hidden';
 		// startOnlineButton.style.visibility = 'hidden';
+		docModalMain.querySelector('#modalMainBody').innerHTML = 
+			`
+				<div class="container p-5 h-100 w-100 mh-100 mw-100 overflow-auto bg-black border border-1 border-white">
+					<div class="row border border-0 border-white">
+						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
+							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
+								${pairings[0][0]}
+							</p>
+							<p class="p-0 m-0 placeholder-glow" id="tPlayer1Highlight" style="display: none;">
+								<span class="placeholder col-12"></span>
+						  	</p>
+						</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="row m-0 p-0 border border-0 border-white">
+							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+						</div>
+						<div class="row m-0 p-0 border border-0 border-white">
+							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+							<div class="col-4 border-top border-end border-3 border-white">&nbsp;</div>
+						</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
+							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
+								${pairings[0][1]}
+							</p>
+							<p class="p-0 m-0 placeholder-glow" id="tPlayer2Highlight" style="display: none;">
+								<span class="placeholder col-12"></span>
+							</p>
+						</div>
+						<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="col-6 border-end border-3 border-white"> <h1 class="h-1">&nbsp;</h1></div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="col-4">&nbsp;</div>
+						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
+							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white" id="winner-p1">
+								-
+							</p>
+							<p class="p-0 m-0 placeholder-glow" id="tWinnerP1Highlight" style="display: none;">
+								<span class="placeholder col-12"></span>
+							</p>
+						</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="row m-0 p-0 border border-0 border-white">
+							<div class="col-4">&nbsp;</div>
+							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+						</div>
+						<div class="row m-0 p-0 border border-0 border-white">
+							<!-- <div class="col-2 border-end border-3 border-white">&nbsp;</div> -->
+							<div class="col-3">&nbsp;</div>
+							<div class="col-6 py-2 px-5 rounded bg-white border border-0 border-white">
+								<p class="p-0 m-0 display-3 text-center font--argent text-truncate border border-0 border-white text-uppercase" id="winner-final">
+									-
+								</p>
+								<p class="p-0 m-0 placeholder-glow" id="tWinnerHighlight" style="display: none;">
+									<span class="placeholder col-12"></span>
+								</p>
+							</div>
+						</div>
+						<div class="row m-0 p-0 border border-0 border-white">
+							<div class="col-4">&nbsp;</div>
+							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+							<!-- <div class="col-4">&nbsp;</div> -->
+						</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="col-4">&nbsp;</div>
+						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
+							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white" id="winner-p2">
+								-
+							</p>
+							<p class="p-0 m-0 placeholder-glow" id="tWinnerP2Highlight" style="display: none;">
+								<span class="placeholder col-12"></span>
+							</p>
+						</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="col-6 border-end border-3 border-white"> <h1 class="h-1">&nbsp;</h1></div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white" id="tPlayer3">
+							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
+								${pairings[1][0]}
+							</p>
+							<p class="p-0 m-0 placeholder-glow" id="tPlayer3Highlight" style="display: none;">
+								<span class="placeholder col-12"></span>
+							</p>
+						</div>
+						<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="row m-0 p-0">
+							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+							<div class="col-4 border-bottom border-end border-3 border-white">&nbsp;</div>
+						</div>
+						<div class="row m-0 p-0">
+							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
+						</div>
+					</div>
+					<div class="row border border-0 border-white">
+						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
+							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
+								${pairings[1][1]}
+							</p>
+							<p class="p-0 m-0 placeholder-glow" id="tPlayer4Highlight" style="display: none;">
+								<span class="placeholder col-12"></span>
+							</p>
+						</div>
+					</div>
+				</div>
+			`;
 		if (g_count == 0) {
 			isGameOver = false;
 			score.left = 0;
 			score.right = 0;
+
+			toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
+			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+			tmpModalMain.show();
+
 			resetBall();
 			// alert(`Match 1: ${player1} vs ${player2}\n Press to start`);
 			playGame();
@@ -377,59 +514,6 @@ export function loadTournament() {
 
 	function setupTournament() {
 
-		// // Check if a form already exists and remove it
-		// const checker = document.getElementById('tourn-player-count');
-		// if (checker) {
-		//     checker.remove();
-		// }
-
-		// if (tournReady) {
-		//     // document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
-		//     startLocalTournament();
-		// }
-
-		// localPlayerMode = true;
-		// // startLocalButton.disabled = true;
-		// // startOnlineButton.disabled = true;
-		// // startLocalButton.style.visibility = 'hidden';
-		// // startOnlineButton.style.visibility = 'hidden';
-
-
-		// Display a form to get the number of players and their names
-		// const formContainer = document.createElement('div');
-		// formContainer.innerHTML = `
-		//      <form id="tournamentSetupForm">
-		//      </form>
-		//  `;
-		// formContainer.innerHTML = `
-		//      <form id="tournamentSetupForm">
-		//          <label for="playerCount">Enter the number of players:</label>
-		//          <input type="number" id="playerCount" name="playerCount" min="2" required>
-		//          <button id="formButton" type="submit">Start Tournament</button>
-		//      </form>
-		//  `;
-		// formContainer.id = 'tourn-player-count';
-
-
-		// document.getElementById('windowScreen').appendChild(formContainer);
-
-		// const tournamentSetupForm = document.getElementById('tournamentSetupForm');
-		// tournamentSetupForm.addEventListener('submit', (event) => {
-
-		// event.preventDefault();
-
-		// const playerCountInput = document.getElementById('playerCount');
-		// const playerCount = parseInt(playerCountInput.value, 10);
-
-		// if (isNaN(playerCount) || playerCount < 4 || playerCount % 2 !== 0 || playerCount > 100) {
-		// alert("Invalid input. Please enter a valid even number of players (minimum 4 & max 100).");
-		// return;
-		// }
-
-		// formContainer.remove(); // Remove the form once the input is collected
-		// document.getElementById('tourn-player-count').remove();
-
-		const docModalMain = document.getElementById('modalMain');
 		docModalMain.querySelector('#modalMainBody').innerHTML =
 			`
 					<form id="formPlayerNames">
@@ -516,96 +600,30 @@ export function loadTournament() {
 
 			//@todo: show pairings via modal:
 
-
 			tournReady = true;
 			// playerNameContainer.remove();
 			startLocalTournament();
-
-
-
 		});
-
-
-
-
-
-
-
-
-		// // Now, create input fields for player names dynamically within the same form
-		// const playerNameContainer = document.createElement('div');
-		// playerNameContainer.innerHTML = `<p>Enter the names for 4 players:</p>`;
-
-		// const form = document.createElement('form');
-		// form.id = 'playerNamesForm';
-
-		// for (let i = 1; i <= 4; i++) {
-		// 	const label = document.createElement('label');
-		// 	label.textContent = `Player ${i}:`;
-
-		// 	const input = document.createElement('input');
-		// 	input.type = 'text';
-		// 	input.name = `player${i}`;
-		// 	input.required = true;
-
-		// 	playerNameContainer.appendChild(label);
-		// 	playerNameContainer.appendChild(input);
-		// }
-
-		// const beginTournButton = document.createElement('button');
-		// beginTournButton.type = 'submit';
-		// beginTournButton.innerHTML = 'Start Tournament';
-
-		// form.appendChild(playerNameContainer);
-		// form.appendChild(beginTournButton);
-		// document.getElementById('windowScreen').appendChild(form);
-
-		// form.addEventListener('submit', (event) => {
-		// 	event.preventDefault();
-
-		// 	const playerInputs = form.querySelectorAll(`input[name^="player"]`);
-		// 	const playerNames = Array.from(playerInputs).map(input => input.value);
-
-		// 	// Check if all player names are unique
-		// 	if (hasDuplicates(playerNames)) {
-		// 		alert("Player names must be unique. Please enter distinct names for each player.");
-		// 		return;
-		// 	}
-		// 	// Perform matchmaking logic (for demonstration, this is a simple random pairing)
-		// 	pairings = randomPairing(playerNames);
-
-		// 	// Create a list element to display pairings
-		// 	const resultsList = document.createElement('ul');
-		// 	resultsList.innerHTML = "<p>Matchmaking Results:</p>";
-
-		// 	pairings.forEach((pairing, index) => {
-		// 		const listItem = document.createElement('li');
-		// 		listItem.textContent = `Match ${index + 1}: ${pairing[0]} vs ${pairing[1]}`;
-		// 		resultsList.appendChild(listItem);
-		// 		// Perform additional actions with the pairings
-		// 	});
-		// 	beginTournButton.disabled = false;
-
-		// 	// Append the list to the bottom of the page
-		// 	document.getElementById('windowScreen').appendChild(resultsList);
-		// 	tournReady = true;
-		// 	// document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
-
-		// 	// startLocalButton.disabled = false;
-		// 	// startOnlineButton.disabled = false;
-		// 	// startLocalButton.style.visibility = 'visible';
-		// 	// startOnlineButton.style.visibility = 'visible';
-
-		// 	// Clean up after starting the tournament
-		// 	form.remove();
-		// 	// animationFrameId = requestAnimationFrame(gameLoop);
-		// 	playerNameContainer.remove();
-		// 	startLocalTournament();
-
-		// });
 
 	};
 
+
+	function toggleHighlight(highlightId1, highlightId2) {
+		if (highlightId1 !== "")
+		{
+			if (window.getComputedStyle(docModalMain.querySelector('#' + highlightId1)).display == "none")
+				docModalMain.querySelector('#' + highlightId1).style.display = "block";
+			else
+				docModalMain.querySelector('#' + highlightId1).style.display = "none";
+		}
+		if (highlightId2 !== "")
+		{
+			if (window.getComputedStyle(docModalMain.querySelector('#' + highlightId2)).display == "none")
+				docModalMain.querySelector('#' + highlightId2).style.display = "block";
+			else
+				docModalMain.querySelector('#' + highlightId2).style.display = "none";
+		}
+	};
 
 	setupTournament();
 
