@@ -305,14 +305,16 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 			if (response.ok) {
 				displayNameElement.textContent = nicknameValue;
-				console.log('Display name updated successfully');
+				showToast('Display name updated successfully');
 			} else {
+				showToast('failed to update display name');
 				console.error('Failed to update display name:', response.status, response.statusText);
 			}
 		} catch (error) {
 			console.error('Error updating display name:', error);
 		}
 	}
+	showToast('Size of display name should be less than 50 characters');
 });
 
 const urlLocationHandler = async () => {
