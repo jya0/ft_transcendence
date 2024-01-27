@@ -1,5 +1,5 @@
 // import {io} from "socket.io-client";
-export const loadTicTac = () => {
+export function  loadTicTac(){
 
 
     let btnCounter = 0;
@@ -11,26 +11,13 @@ export const loadTicTac = () => {
     let rightPlayer = false;
 
 
-    const tictacButtonOnline = document.createElement('button');
-    const tictacButtonLocal = document.createElement('button');
-
-    document.getElementById('container').appendChild(tictacButtonOnline);
-    document.getElementById('container').appendChild(tictacButtonLocal);
-
-
-    tictacButtonOnline.id = 'startOnlineButton';
-    tictacButtonOnline.innerHTML = 'Start Online Game';
-
-    tictacButtonLocal.id = 'startLocalButton';
-    tictacButtonLocal.innerHTML = 'Start Local Game';
-
     var N_SIZE = 3,
         EMPTY = "&nbsp;",
         boxes = [],
         turn = "X",
         score,
         moves;
-    let gameOver = true;
+    let gameOver = false;
 
     function local_init() {
 
@@ -42,9 +29,9 @@ export const loadTicTac = () => {
 			<span id='turn'>Player X</span>
 		</div>
         `
-
-        document.getElementsByClassName('container')[0].appendChild(container);
-
+        gameOver = false;
+        document.getElementById('windowScreen').innerHTML = "";
+        document.getElementById('windowScreen').appendChild(container);
         var board = document.createElement('table');
         board.setAttribute("border", 1);
         board.setAttribute("cellspacing", 10);
@@ -74,8 +61,8 @@ export const loadTicTac = () => {
             }
         }
         document.getElementById('tictactoe').appendChild(board);
+        console.log("heheeee");
 
-        // document.getElementById("container").appendChild(board);
     }
 
 
@@ -100,8 +87,8 @@ export const loadTicTac = () => {
             var items = contains('#tictactoe ' + testClass, turn);
             // winning condition: turn == N_SIZE
             if (items.length == N_SIZE) {
-                tictacButtonOnline.style.visibility = 'visible';
-                tictacButtonLocal.style.visibility = 'visible';
+                gameOver = true;
+
                 return true;
             }
         }
@@ -114,8 +101,9 @@ export const loadTicTac = () => {
             return RegExp(text).test(element.textContent);
         });
     }
-
     function set() {
+        if (gameOver)
+            return ;
         if (this.innerHTML !== EMPTY) {
             return;
         }
@@ -123,18 +111,22 @@ export const loadTicTac = () => {
         moves += 1;
         score[turn] += this.identifier;
         if (win(this)) {
-            alert('Winner: Player ' + turn);
-            document.getElementById('game-container').remove();
-            return;
+            // document.getElementById('game-container').remove();
             // startNewGame();
+            // alert('Winner: Player ' + turn);
+            document.getElementById('turn').textContent =`PLAYER ${turn} WINS!`;
+            return ;
         } else if (moves === N_SIZE * N_SIZE) {
-            alert("Draw");
+            // alert("Draw");
+            document.getElementById('turn').textContent =`DRAW!`;
+
             // startNewGame();
             return;
         } else {
             turn = turn === "X" ? "O" : "X";
             document.getElementById('turn').textContent = 'Player ' + turn;
         }
+
     }
 
     let player_count = 0;
@@ -143,17 +135,25 @@ export const loadTicTac = () => {
 
     let gameSocket;
 
-    startLocalButton.addEventListener('click', () => {
+    // startLocalButton.addEventListener('click', () => {
+    //     gameOver = true;
+    //     console.log('hi');
+    //     startLocalButton.style.visibility = 'hidden';
+    //     startOnlineButton.style.visibility = 'hidden';
+
+    //     local_init();
+    //     startNewGame();
+    // });
+
+    function playGame() {
+        console.log("HEYYY");
         gameOver = true;
         console.log('hi');
-        startLocalButton.style.visibility = 'hidden';
-        startOnlineButton.style.visibility = 'hidden';
 
         local_init();
         startNewGame();
-    });
-
-
+    }
+    playGame();
     // function updateBackend() {
     //     if (rightPlayer) {
     //         if (keys['w'] && players.right > 0) {
@@ -366,23 +366,23 @@ export const loadTicTac = () => {
 
 
 
-    startOnlineButton.addEventListener('click', () => {
-        localPlayerMode = false;
-        startLocalButton.disabled = true;
-        startOnlineButton.disabled = true;
-        startLocalButton.style.visibility = 'hidden';
+    // startOnlineButton.addEventListener('click', () => {
+    //     localPlayerMode = false;
+    //     startLocalButton.disabled = true;
+    //     startOnlineButton.disabled = true;
+    //     startLocalButton.style.visibility = 'hidden';
 
-        console.log("YUUUUUU");
-        if (btnCounter == 0) {
-            initiateSocket();
-            document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
-            console.log("first press - ready to play!");
-            btnCounter = btnCounter + 1;
-            return;
-        }
-        online_init();
-        startNewGame();
-    });
+    //     console.log("YUUUUUU");
+    //     if (btnCounter == 0) {
+    //         initiateSocket();
+    //         document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
+    //         console.log("first press - ready to play!");
+    //         btnCounter = btnCounter + 1;
+    //         return;
+    //     }
+    //     online_init();
+    //     startNewGame();
+    // });
 }
 
 

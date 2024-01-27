@@ -59,9 +59,8 @@ body {
 
 table {
     border-collapse: collapse;
-    margin-top: 450px; /* Adjust the margin as needed */
+    margin-top: 300px; /* Adjust the margin as needed */
     margin-left: 450px; /* Adjust the margin as needed */
-
 }
 
 td {
@@ -72,4 +71,5 @@ td {
     border-radius: 10px;
     width: 120px; /* Set the width of each cell */
     height: 120px; /* Set the height of each cell */
+
 }
