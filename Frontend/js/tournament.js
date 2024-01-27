@@ -610,7 +610,7 @@ export const loadTournament = () => {
         // You can make an API call or update the game state accordingly
         console.log(`Joining tournament with name ${tournamentName}`);
         tournament_name = tournamentName;
-        await fetch(`http://localhost:8090/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
+        await fetch(`http://10.12.1.10:8090/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
