@@ -184,7 +184,8 @@ const insertCSS = (filePath) => {
 
 function setMainWindowframe() {
 	insertOrCreateContent();
-	document.getElementById("content").innerHTML = `					
+	document.getElementById("content").innerHTML = 
+				`					
 					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
@@ -209,7 +210,8 @@ function setMainWindowframe() {
 								</div>
 							</div>
 						</div>
-					</div>`;
+					</div>
+				`;
 	document.getElementById('close-me').addEventListener('click', () => {
 		document.getElementById('close-me-containter').innerHTML = '';
 	});
