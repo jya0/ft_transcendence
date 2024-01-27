@@ -43,6 +43,11 @@
 	background-size: cover;
 }
 
+.bg--404 {
+	background-image: url(../public/background--404.png);
+	background-size: cover;
+}
+
 .bg--polka {
 	background-image: radial-gradient(#F9FBFF 20%, transparent 20%); 
 	background-size: 10px 10px;
