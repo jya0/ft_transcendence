@@ -177,27 +177,36 @@ export function loadTournament() {
 
         //prompt new match
         if (g_count == 0) {
-            alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
+            // alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
+            //@todo - show bracket
             resetGame();
         }
         if (g_count == 1) {
-            alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
-            resetGame();
+            // alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
+            //@todo - show bracket
 
+            resetGame();
         }
         // end tournament
         if (g_count == 2) {
             tournReady = false;
+            let winner;
             if (score.left > score.right) {
                 buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
+                winner = winners[0];
+                
             } else {
                 buttonText = `Right Player - ${winners[1]} WINS! Press to play a new local game`;
+                winner = winners[1];
+                
             }
+            winners = [];
+            winners.push(winner);
             g_count = 0;
             tournReady = false;
             isGameOver = true;
             alert(buttonText);
-            resetGame();
+            //@todo - show bracket
         }
         else
             g_count++;
