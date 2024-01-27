@@ -291,31 +291,36 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 	const nicknameValue = newDisplayName.value;
 	const displayNameElement = document.getElementById('displayName');
 
-	if (nicknameValue !== null && nicknameValue.length < 50) {
-		try {
-			const response = await fetch('/api/update_display_name/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': getCookie('csrftoken'),
-					'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-				},
-				credentials: 'include',
-				body: JSON.stringify({ display_name: nicknameValue }),
-			});
-
-			if (response.ok) {
-				displayNameElement.textContent = nicknameValue;
-				showToast('Display name updated successfully');
-			} else {
-				showToast('failed to update display name');
-				console.error('Failed to update display name:', response.status, response.statusText);
-			}
-		} catch (error) {
-			console.error('Error updating display name:', error);
-		}
+	if (!nicknameValue)
+	{
+		showToast('Display name should not be empty');
+		return ;
 	}
-	showToast('Size of display name should be less than 50 characters');
+	else if (nicknameValue.length >= 50) {
+		showToast('Size of display name should be less than 50 characters');
+		return ;
+	}
+	try {
+		const response = await fetch('/api/update_display_name/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+			credentials: 'include',
+			body: JSON.stringify({ display_name: nicknameValue }),
+		});
+		if (response.ok) {
+			displayNameElement.textContent = nicknameValue;
+			showToast('Display name updated successfully');
+		} else {
+			showToast('failed to update display name');
+			console.error('Failed to update display name:', response.status, response.statusText);
+		}
+	} catch (error) {
+		console.error('Error updating display name:', error);
+	}
 });
 
 const urlLocationHandler = async () => {
@@ -548,16 +553,16 @@ const urlLocationHandler = async () => {
 				return;
 			}
 			document.getElementsByClassName("window")[0].innerHTML = data;
-			const imageContainer = document.getElementById('imageContainer');
-			const hoverText = document.getElementById('hoverText');
+			// const imageContainer = document.getElementById('imageContainer');
+			// const hoverText = document.getElementById('hoverText');
 
-			imageContainer.addEventListener('mouseover', function () {
-				hoverText.style.display = 'block';
-			});
+			// imageContainer.addEventListener('mouseover', function () {
+			// 	hoverText.style.display = 'block';
+			// });
 
-			imageContainer.addEventListener('mouseout', function () {
-				hoverText.style.display = 'none';
-			});
+			// imageContainer.addEventListener('mouseout', function () {
+			// 	hoverText.style.display = 'none';
+			// });
 
 			document.getElementById('file').addEventListener('change', loadFile, false);
 
