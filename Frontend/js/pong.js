@@ -1,46 +1,25 @@
-// import {io} from "socket.io-client";
+export function loadGame(localPlayerMode) {
 
-let localPlayerMode = false;
+	let isGameOver = false;
 
-let isGameOver = false;
-
-export const loadGame = () => {
 	let lastTimestamp = 0;
 	const maxFrameRate = 60;
 	const frameInterval = 1000 / maxFrameRate;
 	let btnCounter = 0;
-	const canvas = document.getElementById('pongCanvas');
+	const canvas = document.getElementById('gameCanvas');
+	console.log("ayyy");
 	const ctx = canvas.getContext('2d');
-	const startLocalButton = document.getElementById('startLocalButton');
-	// const startOnlineButton = document.getElementById('startOnlineButton');
-	// canvas.width = document.getElementById("windowScreen").style.width;
-	// canvas.height = document.getElementById("windowScreen").style.height;
-	// console.log(canvas.width);
-	// console.log(canvas.height);
-	// canvas.width = 1200;
-	// canvas.height = 900;
-	canvas.width = 800;
-	canvas.height = 600;
-	// canvas.width = 400;
-	// canvas.height = 300;
 
 	const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
-	// const paddle = { width: 10, height: 100, speed: 8 };
 	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
-	// const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
 	const score = { left: 0, right: 0 };
 	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
 	const keys = {};
 
 	function resetGame(params) {
-		// paddle.width = 10;
-		// paddle.height = 100;
-		// paddle.speed = 8;
 
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
-		// ball.speedX = 6;
-		// ball.speedY = 6;
 		score.left = 0;
 		score.right = 0;
 		players.left = (canvas.height - paddle.height) / 2;
@@ -117,7 +96,6 @@ export const loadGame = () => {
 		}
 	}
 
-
 	function update() {
 		if (isGameOver) return;
 
@@ -128,8 +106,23 @@ export const loadGame = () => {
 			ball.speedY *= -1;
 		}
 
-		if (ball.x < paddle.width && ball.y > players.left && ball.y < players.left + paddle.height ||
-			ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
+		// Collision detection with paddles
+		let paddleLeftEdgeX = 0;
+		let paddleRightEdgeX = canvas.width - paddle.width;
+		// Check collision with left paddle
+		if (ball.x - ball.size < paddleLeftEdgeX + paddle.width &&
+			ball.y + ball.size > players.left &&
+			ball.y - ball.size < players.left + paddle.height) {
+			// Adjust the ball's X position to prevent it from going inside the paddle
+			ball.x = paddleLeftEdgeX + paddle.width + ball.size;
+			ball.speedX *= -1;
+		}
+		// Check collision with right paddle
+		if (ball.x + ball.size > paddleRightEdgeX &&
+			ball.y + ball.size > players.right &&
+			ball.y - ball.size < players.right + paddle.height) {
+			// Adjust the ball's X position to prevent it from going inside the paddle
+			ball.x = paddleRightEdgeX - ball.size;
 			ball.speedX *= -1;
 		}
 
@@ -145,9 +138,10 @@ export const loadGame = () => {
 
 		if (ball.x < 0 || ball.x > canvas.width) {
 			ball.x > canvas.width ? score.left++ : score.right++;
+			draw();
 			resetBall();
 			checkForWinner();
-			return ;
+			return;
 		}
 	}
 
@@ -178,11 +172,11 @@ export const loadGame = () => {
 
 
 	function handleOnlineWinner() {
-		let buttonText;
+		let winnerMsg;
 		if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-			buttonText = "You lose! Press to play a new online game";
+			winnerMsg = "You lose! Press to play a new online game";
 		else {
-			buttonText = "You win! Press to play a new online game";
+			winnerMsg = "You win! Press to play a new online game";
 			gameSocket.send(JSON.stringify({
 				'type': 'end',
 				'mode': 'single',
@@ -191,7 +185,11 @@ export const loadGame = () => {
 				'score2': score.right,
 			}))
 		}
-		// document.getElementById("startOnlineButton").innerHTML = buttonText;
+		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+		ctx.textAlign = "center";
+		ctx.textBaseline = "center";
+		ctx.fillText(winnerMsg, canvas.width / 2, canvas.height / 2, canvas.width);
+
 		gameSocket.close();
 		isGameOver = true;
 		socketStatus = false;
@@ -208,8 +206,6 @@ export const loadGame = () => {
 				handleLocalWinner();
 			else
 				handleOnlineWinner();
-			// startOnlineButton.disabled = false;
-			// startOnlineButton.style.visibility = 'visible';
 			resetGame();
 		}
 	}
@@ -224,7 +220,9 @@ export const loadGame = () => {
 
 	let player_count = 0;
 	let animationFrameId;
-	let url = `wss://localhost:8090/ws/socket-server/`
+	// let url = `wss://10.12.1.10:8090/ws/socket-server/`;
+	let url = `wss://localhost:8090/ws/socket-server/`;
+
 	let gameSocket;
 
 	function initiateSocket() {
@@ -232,28 +230,25 @@ export const loadGame = () => {
 
 		gameSocket.onmessage = function (e) {
 			let data = JSON.parse(e.data)
-			// console.log('Data: ', data)
+			console.log('Data: ', data)
 
 			if (btnCounter == 0)
 				return;
 			if (data.type === 'start' && data["status"] == "start") {
 				player_count = 2;
-				// document.getElementById("startOnlineButton").innerHTML = "In-game";
+				startGame();
+
 				if (data.sender == localStorage.getItem('username')) {
 					leftPlayer = false;
 					rightPlayer = true;
 				}
-				console.log(leftPlayer);
-				console.log(rightPlayer);
-				// startOnlineButton.disabled = false;
-				// startOnlineButton.click();
 			}
 
 			if (data.sender == localStorage.getItem('username'))
 				return;
 
 			if (data.type == 'update') {
-			if (isGameOver) return;
+				if (isGameOver) return;
 
 				if (leftPlayer) {
 					if (data['key'] == 'w' && players.right > 0) players.right -= paddle.speed;
@@ -292,71 +287,54 @@ export const loadGame = () => {
 		player_count = 1;
 	}
 
-/* 	startOnlineButton.addEventListener('click', () => {
-		localPlayerMode = false;
-		startLocalButton.disabled = true;
-		// startOnlineButton.disabled = true;
-		startLocalButton.style.visibility = 'hidden';
-
-		console.log("YUUUUUU");
-		if (btnCounter == 0) {
-			initiateSocket();
-			// document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
-			console.log("first press - ready to play!");
-			btnCounter = btnCounter + 1;
-			return ;
-		}
-
-		if (isGameOver || !animationFrameId) {
-			// startOnlineButton.disabled = true;
-			isGameOver = false;
-			score.left = 0;
-			score.right = 0;
-			resetBall();
-			animationFrameId = requestAnimationFrame(gameLoop);
-		}
-	}); */
-
 	function gameLoop(timestamp) {
 		const elapsed = timestamp - lastTimestamp;
-		console.log(timestamp);
+		// console.log(timestamp);
 
 		if (elapsed >= (frameInterval / 2)) {
 			draw();
 			update();
 			lastTimestamp = timestamp;
 			if (isGameOver)
-				return ;
+				return;
 			requestAnimationFrame(gameLoop);
 		}
 	}
 
-	// Add this function to print player locations
-	function printPlayerLocations() {
-		console.log('Player Locations - Left:', players.left, 'Right:', players.right);
+	function startGame() {
+		if (localPlayerMode) {
+			if (isGameOver || !animationFrameId) {
+				isGameOver = false;
+				score.left = 0;
+				score.right = 0;
+				resetBall();
+				animationFrameId = requestAnimationFrame(gameLoop);
+			}
+		}
+		else {
+			if (btnCounter == 0) {
+				initiateSocket();
+				console.log("first press - ready to play!");
+				btnCounter = btnCounter + 1;
+				return;
+			}
+
+			if (isGameOver || !animationFrameId) {
+				isGameOver = false;
+				score.left = 0;
+				score.right = 0;
+				resetBall();
+				animationFrameId = requestAnimationFrame(gameLoop);
+			}
+		}
 	}
 
-	// Call this function at regular intervals (e.g., every second)
-	setInterval(printPlayerLocations, 1000); // Adjust the interval as needed
-
-
-	startLocalButton.addEventListener('click', () => {
-		localPlayerMode = true;
-		startLocalButton.disabled = true;
-		startOnlineButton.disabled = true;
-		startLocalButton.style.visibility = 'hidden';
-		startOnlineButton.style.visibility = 'hidden';
-
-		if (isGameOver || !animationFrameId) {
-			isGameOver = false;
-			score.left = 0;
-			score.right = 0;
-			resetBall();
-			animationFrameId = requestAnimationFrame(gameLoop);
-		}
-
-})
-
+	startGame();
 }
 
 
+
+
+export default {
+	loadGame: loadGame
+};

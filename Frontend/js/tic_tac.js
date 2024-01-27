@@ -138,7 +138,9 @@ export const loadTicTac = () => {
     }
 
     let player_count = 0;
-    let url = `wss://localhost:8000/ws/socket-server/`
+    // let url = `wss://10.12.1.10:8000/ws/socket-server/`;
+	let url = `wss://localhost:8090/ws/socket-server/`;
+
     let gameSocket;
 
     startLocalButton.addEventListener('click', () => {
