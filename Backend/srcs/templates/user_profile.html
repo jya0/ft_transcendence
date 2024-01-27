@@ -18,7 +18,7 @@
 									{% if image != 'other' %}
 										<!-- <div id="imageContainer"> -->
 											<!-- <label for="file"> -->
-												<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-circle p-1 object-fit-cover" style="cursor: pointer;" id="output">
+												<img src="{% if user.image %}https://localhost:8090/api/get_image/{{user.username}}/{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-circle p-1 object-fit-cover" style="cursor: pointer;" id="output">
 												<!-- <span id="hoverText" style="color: purple; font-size: 16px; display: none;">Change Image</span>
 											</label> -->
 											<!-- <input type="file" accept="image/*" name="image" id="file" style="display: none;">
@@ -27,7 +27,7 @@
 											</div> -->
 										<!-- </div> -->
 									{% else %}
-										<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-circle" style="cursor: pointer;">
+										<img src="{% if user.image %}https://localhost:8090/api/get_image/{{user.username}}/{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-circle" style="cursor: pointer;">
 									{% endif %}
 								</div>
 							</div>
