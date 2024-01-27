@@ -1,5 +1,5 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas, loadToast } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame } from './pong.js';
@@ -59,13 +59,6 @@ const viewUserProfile = (username) => {
 		});
 }
 
-const showToast = (message) => {
-	const toastAlert = document.getElementById('mainToast');
-	toastAlert.querySelector('.toast-body').innerHTML = message;
-	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastAlert);
-	toastBootstrap.show();
-};
-
 const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
@@ -90,10 +83,10 @@ const addFriend = async (button, username, newFriend) => {
 		console.log(data);
 		if (data === 'Added') {
 			button.innerHTML = 'Remove Friend';
-			showToast('Friend Added successfully :(');
+			loadToast('Friend Added successfully :(');
 		} else {
 			button.innerHTML = 'Add Friend';
-			showToast('Friend Removed succesfully :)');
+			loadToast('Friend Removed succesfully :)');
 		}
 	} catch (error) {
 		console.error('Error:', error);
@@ -220,7 +213,7 @@ async function updateProfile(file) {
 	const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
 
 	if (file.size > maxSizeInBytes) {
-		showToast('File size is too large, Please choose a smaller file.');
+		loadToast('File size is too large, Please choose a smaller file.');
 		return;
 	}
 
@@ -293,11 +286,11 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 	if (!nicknameValue)
 	{
-		showToast('Display name should not be empty');
+		loadToast('Display name should not be empty');
 		return ;
 	}
 	else if (nicknameValue.length >= 50) {
-		showToast('Size of display name should be less than 50 characters');
+		loadToast('Size of display name should be less than 50 characters');
 		return ;
 	}
 	try {
@@ -313,9 +306,9 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 		});
 		if (response.ok) {
 			displayNameElement.textContent = nicknameValue;
-			showToast('Display name updated successfully');
+			loadToast('Display name updated successfully');
 		} else {
-			showToast('failed to update display name');
+			loadToast('failed to update display name');
 			console.error('Failed to update display name:', response.status, response.statusText);
 		}
 	} catch (error) {
@@ -329,7 +322,7 @@ const urlLocationHandler = async () => {
 		fetch('/components/login.html').then(response => response.text()).then(data => {
 
 			document.getElementById("main-content").innerHTML = data;
-			showToast('Please login to continue');
+			loadToast('Please login to continue');
 		});
 		return;
 	}
@@ -363,7 +356,7 @@ const urlLocationHandler = async () => {
 		console.log('login route')
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
 			document.getElementById("main-content").innerHTML = data;
-			showToast('Please login to continue');
+			loadToast('Please login to continue');
 		});
 		return;
 	}
@@ -543,7 +536,7 @@ const urlLocationHandler = async () => {
 				});
 				localStorage.clear();
 				console.log(response.statusText);
-				showToast('Please login to continue');
+				loadToast('Please login to continue');
 				return null;
 			}
 			return response.text();
@@ -594,14 +587,14 @@ const urlLocationHandler = async () => {
 
 				if (data === '2FA disabled successfully') {
 					document.getElementById('2fa-button').innerHTML = 'Enable 2FA';
-					showToast('2FA disabled successfully');
+					loadToast('2FA disabled successfully');
 				} else {
 					await fetch('/components/login.html').then(response => response.text()).then(data => {
 						document.getElementById("navbar").remove();
 						document.getElementById("content").innerHTML = data;
 						localStorage.clear();
 					});
-					showToast('2FA enabled successfully, please login again');
+					loadToast('2FA enabled successfully, please login again');
 				}
 			} catch (error) {
 				console.error('Error:', error);
@@ -689,14 +682,14 @@ async function handleUserData() {
 				console.log('response', response)
 				if (!response.ok) {
 					if (response.status === 400) {
-						showToast('Invalid code');
+						loadToast('Invalid code');
 						fetch('/components/login.html').then(response => response.text()).then(data => {
 							document.getElementById("content").innerHTML = data;
 						});
 						localStorage.clear();
 						return;
 					}
-					showToast('Please login to continue');
+					loadToast('Please login to continue');
 					fetch('/components/login.html').then(response => response.text()).then(data => {
 						document.getElementById("content").innerHTML = data;
 					});
@@ -738,7 +731,7 @@ async function handleUserData() {
 					document.getElementById('submit-otp').addEventListener('click', async () => {
 						let otp = document.getElementById('otp-input').value;
 						if (!otp) {
-							showToast('Please enter OTP code');
+							loadToast('Please enter OTP code');
 							return;
 						}
 						const requestBody = new URLSearchParams();
@@ -770,7 +763,7 @@ async function handleUserData() {
 									console.log(data);
 									localStorage.setItem('access_token', userToken);
 									document.getElementsByClassName("window")[0].innerHTML = '';
-									showToast('OTP is valid, enjoy pongos');
+									loadToast('OTP is valid, enjoy pongos');
 									// document.getElementById("navbar").style.display = 'none';
 									window.history.pushState({}, "", '/desktop');
 
@@ -780,7 +773,7 @@ async function handleUserData() {
 									urlLocationHandler();
 								}
 								else {
-									showToast('Invalid OTP code');
+									loadToast('Invalid OTP code');
 									document.getElementById('otp-container').innerHTML += '<button type="" id="try-again-btn" class="btn btn-primary">Try Again</button>';
 									document.getElementById('try-again-btn').addEventListener('click', () => {
 										fetch('/components/login.html').then(response => response.text()).then(data => {
@@ -840,7 +833,7 @@ function insertOrCreateContent() {
 async function generateTestUser() {
 	await fetch("/api/generate_test_user/").then(response => {
 		if (!response.ok) {
-			showToast('Please login to continue');
+			loadToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
@@ -880,7 +873,7 @@ async function getAllUsers(override) {
 				return;
 			}
 			// response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			showToast('Please login to continue');
+			loadToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
@@ -927,7 +920,7 @@ async function getAllFriends(override) {
 				return;
 			}
 			// response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			showToast('Please login to continue');
+			loadToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
