@@ -24,8 +24,15 @@ function handle42Auth() {
 
 }
 
+const showToast = (message) => {
+	const toastLiveExample = document.getElementById('mainToast')
+	toastLiveExample.querySelector('.toast-body').innerHTML = message;
+	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+	toastBootstrap.show()
+};
+
 function handleLogout() {
-	// localStorage.clear();
+	localStorage.clear();
 	console.log('logout');
 	fetch('/api/logout', {
 		credentials: 'include',
@@ -36,10 +43,13 @@ function handleLogout() {
 			}
 			return response.json();
 		})
-		.then(data => {
+		.then(async data => {
 			console.log('Data fetched:', data);
 			if (data.message === 'Logged out successfully') {
-				document.getElementById('content').innerHTML = 'You have been logged out successfully';
+				await fetch('/components/login.html').then(response => response.text()).then(data => {
+					document.getElementById("main-content").innerHTML = data;
+					showToast('You have been logged out successfully');
+				});
 			}
 			else {
 				document.getElementById('logout').remove();

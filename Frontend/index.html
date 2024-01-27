@@ -2,418 +2,616 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title></title>
-  <link rel="stylesheet" type="text/css" href="/assets/css/index.css">
-  <meta name="description" content="">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-  <link href="../assets/css/global-new.css" rel="stylesheet">
-  <style>
-    canvas {
-      background: #000;
-      display: block;
-      margin: auto;
-    }
-  </style>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="/assets/css/index.css">
+	<meta name="description" content="">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<link href="../assets/css/global-new.css" rel="stylesheet">
+	<style>
+		canvas {
+			background: #000;
+			display: block;
+			margin: auto;
+		}
+	</style>
 </head>
 
 <body>
+
 	<div class="vh-100 vw-100 mh-100 overflow-auto bg--main" id="main-content">
-	<!-- DECORATIVE COMPONENTS -->
-	<div class="z-2 position-absolute h-100 w-100 mh-100 mw-100 overflow-hidden border border-0 border-light">
-		<div class="mt-5 ms-4 d-flex flex-column border border-0 border-primary">
-			<div class="d-flex border border-0 border-dark">
-				<h1 class="h-1 display-1 font--argent text-capitalize text-white border border-0">welcome
-					<span class="font--mondwest">☀</span>
-				</h1>
-			</div>
-			<div class="d-flex border border-0 border-dark">
-				<h1 class="h-1 display-1 font--argent text-white text-uppercase border border-0">
-					<span id="username-welcome">username</span>
-					<span class="font--neue" style="font-size: calc(200% + 0.5vw); line-height: 0;"> ✨</span>
-				</h1>
-			</div>
-		</div>
-		<div class="d-flex position-absolute bottom-0 mb-5 ms-4 border border-0 border-dark">
-		<svg xmlns="http://www.w3.org/2000/svg" height="50%" width="50%" viewBox="0 0 32 32">
-			<title>entertainment-events-hobbies-horror-ghost</title>
-			<g>
-			<path d="M29.71 19.81h1.53v4.57h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-			<path
-				d="m29.71 0 -1.52 0 0 1.52 -1.53 0 0 1.53 1.53 0 0 1.52 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52z"
-				fill="#ffffff" stroke-width="1"></path>
-			<path d="M28.19 10.67h1.52v9.14h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M26.66 24.38h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M26.66 7.62h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M25.14 25.9h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M25.14 21.33h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M25.14 6.1h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M23.62 27.43h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-			<path
-				d="m25.14 10.67 -1.52 0 0 1.52 -1.53 0 0 1.52 1.53 0 0 1.53 1.52 0 0 -1.53 1.52 0 0 -1.52 -1.52 0 0 -1.52z"
-				fill="#ffffff" stroke-width="1"></path>
-			<path d="M22.09 4.57h3.05V6.1h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M20.57 28.95h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M17.52 15.24v4.57h4.57v-4.57Zm3.05 3.05h-1.53v-1.53h1.53Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M9.9 30.48h10.67V32H9.9Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M16 21.33h1.52v3.05H16Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M14.47 3.05h7.62v1.52h-7.62Z" fill="#ffffff" stroke-width="1"></path>
-			<path
-				d="m14.47 15.24 1.53 0 0 -1.53 1.52 0 0 -1.52 -1.52 0 0 -1.52 -1.53 0 0 1.52 -1.52 0 0 1.52 1.52 0 0 1.53z"
-				fill="#ffffff" stroke-width="1"></path>
-			<path d="M12.95 24.38H16v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M11.43 4.57h3.04V6.1h-3.04Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M11.43 21.33h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M9.9 6.1h1.53v1.52H9.9Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M9.9 0h1.53v1.52H9.9Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M6.85 28.95H9.9v1.53H6.85Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M8.38 7.62H9.9v3.05H8.38Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M6.85 10.67h1.53v9.14H6.85Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M5.33 27.43h1.52v1.52H5.33Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M5.33 4.57h1.52v4.57H5.33Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M3.81 25.9h1.52v1.53H3.81Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M3.81 19.81h3.04v1.52H3.81Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M2.28 3.05h3.05v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M2.28 24.38h1.53v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M2.28 18.29h1.53v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M0.76 9.14h4.57v1.53H0.76Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M2.28 6.1h1.53v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M0.76 19.81h1.52v4.57H0.76Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M0.76 13.71h1.52v1.53H0.76Z" fill="#ffffff" stroke-width="1"></path>
-			<path d="M0.76 4.57h1.52V6.1H0.76Z" fill="#ffffff" stroke-width="1"></path>
-			</g>
-		</svg>
-		</div>
-		<div class="d-flex position-absolute bottom-0 end-0 border border-0 border-dark">
-		<h1 class="font--mondwest text-white p-0 m-0" style="font-size: 200px;">☁</h1>
-		</div>
-	</div>
-	<div class="z-2 position-absolute d-flex flex-column w-100 h-100 mh-100 mw-100 border border-0 border-light overflow-auto">
-		<!-- STATUS BAR -->
-		<div class="z-2 d-flex flex-row gap-3 p-3 mb-5 border border-0 border-light justify-content-end align-items-center">
-			<div class="d-flex flex-row gap-3 p-1 rounded bg-black bg-opacity-75 border border-0 border-light">
-				<div class="d-flex border border-0 border-light">
-					<div data-bs-toggle="modal" data-bs-target="#modalSetting" style="cursor: pointer;">
-						<svg xmlns="http://www.w3.org/2000/svg" height="30px" width="30px" viewBox="0 0 32 32"><title>interface-essential-cog-double</title><g><path d="m28.95 7.62 0 1.52 1.53 0 0 1.53 -1.53 0 0 1.52 3.05 0 0 -4.57 -3.05 0z" fill="#ffffff" stroke-width="1"></path><path d="M28.95 13.71h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M28.95 4.57h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M27.43 15.24h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M27.43 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M27.43 6.09h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M27.43 3.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M25.91 16.76h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M25.91 1.52h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M24.38 15.24h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M24.38 3.05h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="m19.81 0 0 3.05 1.53 0 0 -1.53 1.52 0 0 1.53 1.52 0 0 -3.05 -4.57 0z" fill="#ffffff" stroke-width="1"></path><path d="M21.34 25.9h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="m19.81 16.76 0 1.52 3.05 0 0 3.05 -3.05 0 0 1.53 4.57 0 0 -6.1 -4.57 0z" fill="#ffffff" stroke-width="1"></path><path d="M19.81 27.43h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M19.81 24.38h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M19.81 13.71h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="m19.81 12.19 1.53 0 0 1.52 3.04 0 0 -1.52 1.53 0 0 -4.57 -1.53 0 0 1.52 -1.52 0 0 -1.52 1.52 0 0 -1.53 -4.57 0 0 1.53 -1.52 0 0 3.05 1.52 0 0 1.52z" fill="#ffffff" stroke-width="1"></path><path d="M18.29 28.95h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M18.29 22.86h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M18.29 15.24h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M18.29 3.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M16.76 27.43h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M16.76 10.67h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M16.76 1.52h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M15.24 25.9h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M15.24 18.28h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M15.24 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M15.24 3.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="m13.72 30.48 -3.05 0 0 -3.05 -1.52 0 0 4.57 6.09 0 0 -4.57 -1.52 0 0 3.05z" fill="#ffffff" stroke-width="1"></path><path d="M13.72 21.33h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M13.72 16.76h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M13.72 4.57h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M10.67 15.24h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M10.67 22.86h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M9.15 21.33h1.52v1.53H9.15Z" fill="#ffffff" stroke-width="1"></path><path d="M9.15 16.76h1.52v1.52H9.15Z" fill="#ffffff" stroke-width="1"></path><path d="m10.67 9.14 3.05 0 0 3.05 1.52 0 0 -4.57 -6.09 0 0 4.57 1.52 0 0 -3.05z" fill="#ffffff" stroke-width="1"></path><path d="M7.62 25.9h1.53v1.53H7.62Z" fill="#ffffff" stroke-width="1"></path><path d="M7.62 18.28h1.53v3.05H7.62Z" fill="#ffffff" stroke-width="1"></path><path d="M7.62 12.19h1.53v1.52H7.62Z" fill="#ffffff" stroke-width="1"></path><path d="M6.1 27.43h1.52v1.52H6.1Z" fill="#ffffff" stroke-width="1"></path><path d="M6.1 10.67h1.52v1.52H6.1Z" fill="#ffffff" stroke-width="1"></path><path d="M4.57 28.95H6.1v1.53H4.57Z" fill="#ffffff" stroke-width="1"></path><path d="M4.57 22.86H6.1v1.52H4.57Z" fill="#ffffff" stroke-width="1"></path><path d="M4.57 15.24H6.1v1.52H4.57Z" fill="#ffffff" stroke-width="1"></path><path d="M4.57 9.14H6.1v1.53H4.57Z" fill="#ffffff" stroke-width="1"></path><path d="M3.05 27.43h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M3.05 24.38h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path><path d="m1.53 21.33 0 -3.05 3.04 0 0 -1.52 -4.57 0 0 6.1 4.57 0 0 -1.53 -3.04 0z" fill="#ffffff" stroke-width="1"></path><path d="M3.05 13.71h1.52v1.53H3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M3.05 10.67h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M1.53 25.9h1.52v1.53H1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M1.53 12.19h1.52v1.52H1.53Z" fill="#ffffff" stroke-width="1"></path></g></svg>
-					</div>
 
-					<div class="modal fade" id="modalSetting" data-bs-backdrop="false" tabindex="-1" aria-labelledby="modalPromptLabel" aria-hidden="true">
-						<div class="modal-dialog modal-dialog-scrollable">
-							<div class="z-3 modal-content rounded-1 shadow-lg">
-								<div class="modal-header bg-black p-2 rounded-0">
-									<button type="button" class="d-flex border border-1 border-light bg-transparent" data-bs-dismiss="modal" aria-label="Close">
-										<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-											<path d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z" fill="#E1E0DF"/>
-										</svg>
-									</button>
-								</div>
-								<div class="modal-body">
-									<div class="input-group">
-										<input type="file" class="form-control" id="modal-inputFile" aria-describedby="inputFile" aria-label="Upload">
-										<button class="btn btn-dark" type="button" id="inputFile-btn">Upload Profile Pic</button>
+		<div class="toast-container rounded-1 position-fixed top-50 end-0 me-5 translate-middle-y border border-0 border-white">
+			<div id="mainToast" class="toast rounded-1" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="toast-header bg-black p-2 rounded-0">
+					<button type="button" class="d-flex border border-0 border-light bg-transparent"
+						data-bs-dismiss="toast" aria-label="Close">
+						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+							<path
+								d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
+								fill="#E1E0DF" />
+						</svg>
+					</button>
+				</div>
+				<div class="toast-body my-5 font--argent text-center border border-0 border-dark" id="toast-text"
+					style="font-size: calc(75% + 0.2vw);">
+					Hello, world! This is a toast message.
+				</div>
+			</div>
+		</div>
+		<!-- DECORATIVE COMPONENTS -->
+		<div class="z-2 position-absolute h-100 w-100 mh-100 mw-100 overflow-hidden border border-0 border-light">
+			<div class="mt-5 ms-4 d-flex flex-column border border-0 border-primary">
+				<div class="d-flex border border-0 border-dark">
+					<h1 class="h-1 display-1 font--argent text-capitalize text-white border border-0">welcome
+						<span class="font--mondwest">☀</span>
+					</h1>
+				</div>
+				<div class="d-flex border border-0 border-dark">
+					<h1 class="h-1 display-1 font--argent text-white text-uppercase border border-0">
+						<span id="username-welcome">username</span>
+						<span class="font--neue" style="font-size: calc(200% + 0.5vw); line-height: 0;"> ✨</span>
+					</h1>
+				</div>
+			</div>
+			<div class="d-flex position-absolute bottom-0 mb-5 ms-4 border border-0 border-dark">
+				<svg xmlns="http://www.w3.org/2000/svg" height="50%" width="50%" viewBox="0 0 32 32">
+					<title>entertainment-events-hobbies-horror-ghost</title>
+					<g>
+						<path d="M29.71 19.81h1.53v4.57h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+						<path
+							d="m29.71 0 -1.52 0 0 1.52 -1.53 0 0 1.53 1.53 0 0 1.52 1.52 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52z"
+							fill="#ffffff" stroke-width="1"></path>
+						<path d="M28.19 10.67h1.52v9.14h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M26.66 24.38h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M26.66 7.62h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M25.14 25.9h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M25.14 21.33h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M25.14 6.1h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M23.62 27.43h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+						<path
+							d="m25.14 10.67 -1.52 0 0 1.52 -1.53 0 0 1.52 1.53 0 0 1.53 1.52 0 0 -1.53 1.52 0 0 -1.52 -1.52 0 0 -1.52z"
+							fill="#ffffff" stroke-width="1"></path>
+						<path d="M22.09 4.57h3.05V6.1h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M20.57 28.95h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M17.52 15.24v4.57h4.57v-4.57Zm3.05 3.05h-1.53v-1.53h1.53Z" fill="#ffffff"
+							stroke-width="1"></path>
+						<path d="M9.9 30.48h10.67V32H9.9Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M16 21.33h1.52v3.05H16Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M14.47 3.05h7.62v1.52h-7.62Z" fill="#ffffff" stroke-width="1"></path>
+						<path
+							d="m14.47 15.24 1.53 0 0 -1.53 1.52 0 0 -1.52 -1.52 0 0 -1.52 -1.53 0 0 1.52 -1.52 0 0 1.52 1.52 0 0 1.53z"
+							fill="#ffffff" stroke-width="1"></path>
+						<path d="M12.95 24.38H16v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M11.43 4.57h3.04V6.1h-3.04Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M11.43 21.33h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M9.9 6.1h1.53v1.52H9.9Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M9.9 0h1.53v1.52H9.9Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M6.85 28.95H9.9v1.53H6.85Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M8.38 7.62H9.9v3.05H8.38Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M6.85 10.67h1.53v9.14H6.85Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M5.33 27.43h1.52v1.52H5.33Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M5.33 4.57h1.52v4.57H5.33Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M3.81 25.9h1.52v1.53H3.81Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M3.81 19.81h3.04v1.52H3.81Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M2.28 3.05h3.05v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M2.28 24.38h1.53v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M2.28 18.29h1.53v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M0.76 9.14h4.57v1.53H0.76Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M2.28 6.1h1.53v1.52H2.28Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M0.76 19.81h1.52v4.57H0.76Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M0.76 13.71h1.52v1.53H0.76Z" fill="#ffffff" stroke-width="1"></path>
+						<path d="M0.76 4.57h1.52V6.1H0.76Z" fill="#ffffff" stroke-width="1"></path>
+					</g>
+				</svg>
+			</div>
+			<div class="d-flex position-absolute bottom-0 end-0 border border-0 border-dark">
+				<h1 class="font--mondwest text-white p-0 m-0" style="font-size: 200px;">☁</h1>
+			</div>
+		</div>
+		<div
+			class="z-2 position-absolute d-flex flex-column w-100 h-100 mh-100 mw-100 border border-0 border-light overflow-auto">
+			<!-- STATUS BAR -->
+			<div
+				class="z-2 d-flex flex-row gap-3 p-3 mb-5 border border-0 border-light justify-content-end align-items-center">
+				<div class="d-flex flex-row gap-3 p-1 rounded bg-black bg-opacity-75 border border-0 border-light">
+					<div class="d-flex border border-0 border-light">
+						<div data-bs-toggle="modal" data-bs-target="#modalSetting" style="cursor: pointer;">
+							<svg xmlns="http://www.w3.org/2000/svg" height="30px" width="30px" viewBox="0 0 32 32">
+								<title>interface-essential-cog-double</title>
+								<g>
+									<path d="m28.95 7.62 0 1.52 1.53 0 0 1.53 -1.53 0 0 1.52 3.05 0 0 -4.57 -3.05 0z"
+										fill="#ffffff" stroke-width="1"></path>
+									<path d="M28.95 13.71h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M28.95 4.57h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M27.43 15.24h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M27.43 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M27.43 6.09h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M27.43 3.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M25.91 16.76h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M25.91 1.52h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M24.38 15.24h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M24.38 3.05h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="m19.81 0 0 3.05 1.53 0 0 -1.53 1.52 0 0 1.53 1.52 0 0 -3.05 -4.57 0z"
+										fill="#ffffff" stroke-width="1"></path>
+									<path d="M21.34 25.9h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="m19.81 16.76 0 1.52 3.05 0 0 3.05 -3.05 0 0 1.53 4.57 0 0 -6.1 -4.57 0z"
+										fill="#ffffff" stroke-width="1"></path>
+									<path d="M19.81 27.43h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M19.81 24.38h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M19.81 13.71h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path
+										d="m19.81 12.19 1.53 0 0 1.52 3.04 0 0 -1.52 1.53 0 0 -4.57 -1.53 0 0 1.52 -1.52 0 0 -1.52 1.52 0 0 -1.53 -4.57 0 0 1.53 -1.52 0 0 3.05 1.52 0 0 1.52z"
+										fill="#ffffff" stroke-width="1"></path>
+									<path d="M18.29 28.95h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M18.29 22.86h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M18.29 15.24h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M18.29 3.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M16.76 27.43h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M16.76 10.67h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M16.76 1.52h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M15.24 25.9h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M15.24 18.28h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M15.24 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M15.24 3.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="m13.72 30.48 -3.05 0 0 -3.05 -1.52 0 0 4.57 6.09 0 0 -4.57 -1.52 0 0 3.05z"
+										fill="#ffffff" stroke-width="1"></path>
+									<path d="M13.72 21.33h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M13.72 16.76h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M13.72 4.57h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M10.67 15.24h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M10.67 22.86h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M9.15 21.33h1.52v1.53H9.15Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M9.15 16.76h1.52v1.52H9.15Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="m10.67 9.14 3.05 0 0 3.05 1.52 0 0 -4.57 -6.09 0 0 4.57 1.52 0 0 -3.05z"
+										fill="#ffffff" stroke-width="1"></path>
+									<path d="M7.62 25.9h1.53v1.53H7.62Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M7.62 18.28h1.53v3.05H7.62Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M7.62 12.19h1.53v1.52H7.62Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M6.1 27.43h1.52v1.52H6.1Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M6.1 10.67h1.52v1.52H6.1Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M4.57 28.95H6.1v1.53H4.57Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M4.57 22.86H6.1v1.52H4.57Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M4.57 15.24H6.1v1.52H4.57Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M4.57 9.14H6.1v1.53H4.57Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M3.05 27.43h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M3.05 24.38h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="m1.53 21.33 0 -3.05 3.04 0 0 -1.52 -4.57 0 0 6.1 4.57 0 0 -1.53 -3.04 0z"
+										fill="#ffffff" stroke-width="1"></path>
+									<path d="M3.05 13.71h1.52v1.53H3.05Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M3.05 10.67h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M1.53 25.9h1.52v1.53H1.53Z" fill="#ffffff" stroke-width="1"></path>
+									<path d="M1.53 12.19h1.52v1.52H1.53Z" fill="#ffffff" stroke-width="1"></path>
+								</g>
+							</svg>
+						</div>
+
+						<div class="modal fade" id="modalSetting" data-bs-backdrop="false" tabindex="-1"
+							aria-labelledby="modalPromptLabel" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-scrollable">
+								<div class="z-3 modal-content rounded-1 shadow-lg">
+									<div class="modal-header bg-black p-2 rounded-0">
+										<button type="button" class="d-flex border border-1 border-light bg-transparent"
+											data-bs-dismiss="modal" aria-label="Close">
+											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+												viewBox="0 0 20 20" fill="none">
+												<path
+													d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
+													fill="#E1E0DF" />
+											</svg>
+										</button>
 									</div>
-
-									<div class="input-group mb-3 mt-5">
-										<span class="input-group-text">@</span>
-										<div class="form-floating">
-											<input type="text" class="form-control" id="floatingInputGroup1" placeholder="Username">
-											<label for="floatingInputGroup1">Username</label>
+									<div class="modal-body">
+										<div class="input-group">
+											<input type="file" class="form-control" id="modal-inputFile"
+												aria-describedby="inputFile" aria-label="Upload">
+											<button class="btn btn-dark" type="button" id="inputFile-btn">Upload Profile
+												Pic</button>
 										</div>
-										<button id="nickname-btn" type="button" class="btn btn-primary">Save Username</button	>
+
+										<div class="input-group mb-3 mt-5">
+											<span class="input-group-text">@</span>
+											<div class="form-floating">
+												<input type="text" class="form-control" id="floatingInputGroup1"
+													placeholder="Username">
+												<label for="floatingInputGroup1">Username</label>
+											</div>
+											<button id="nickname-btn" type="button" class="btn btn-primary">Save
+												Username</button>
+										</div>
 									</div>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary"
+											data-bs-dismiss="modal">Close</button>
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="d-flex flex-row gap-3 p-1 rounded bg-black bg-opacity-75 border border-0 border-light">
-				<div class="d-flex border border-0 border-light">
-					<svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 32 32">
-						<title>computers-devices-electronics-battery-charge</title>
-						<g>
-						<path
-							d="m28.96 9.91 0 -1.53 -1.53 0 0 3.05 3.05 0 0 4.57 -3.05 0 0 3.05 1.53 0 0 -1.52 3.04 0 0 -7.62 -3.04 0z"
-							fill="#ffffff" stroke-width="1"></path>
-						<path d="M25.91 19.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M25.91 6.86h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M22.86 5.34h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M16.77 20.57h9.14v1.53h-9.14Z" fill="#ffffff" stroke-width="1"></path>
-						<path
-							d="M15.24 26.67v-7.62h3.05v-1.52h1.52V16h1.53V8.38h-1.53V2.29h-1.52v6.09h-1.52V2.29h-1.53v6.09h-1.52V2.29H12.2v6.09h-1.53V2.29H9.15v6.09H7.62V16h1.53v1.53h1.52v1.52h3.05v7.62Zm1.53 -15.24h1.52v1.52h-1.52Zm-6.1 0h1.53v1.52h-1.53Zm1.53 6.1V16h-1.53v-1.52h1.53V16h4.57v-1.52h1.52V16h-1.52v1.53Z"
-							fill="#ffffff" stroke-width="1"></path>
-						<path d="M16.77 0.76h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M10.67 26.67h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M10.67 0.76h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M9.15 28.19h1.52v1.53H9.15Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M7.62 29.72h1.53v1.52H7.62Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M1.53 20.57h9.14v1.53H1.53Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M1.53 5.34H6.1v1.52H1.53Z" fill="#ffffff" stroke-width="1"></path>
-						<path d="M0 6.86h1.53v13.71H0Z" fill="#ffffff" stroke-width="1"></path>
-						</g>
-					</svg>
-				</div>
-				<div class="flex-shrink-1 border border-0 border-light">
-					<svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 32 32">
-						<title>interface-essential-wifi-feed</title>
-						<g>
-						<path
-							d="m28.955 15.235 -1.52 0 0 -3.05 -1.53 0 0 -1.52 -1.52 0 0 -1.52 -1.53 0 0 -1.53 -1.52 0 0 -1.52 -1.52 0 0 -1.52 -3.05 0 0 -1.53 -4.57 0 0 -1.52 -9.14 0 0 3.05 9.14 0 0 1.52 4.57 0 0 1.52 3.05 0 0 1.53 1.52 0 0 1.52 1.52 0 0 1.52 1.53 0 0 3.05 1.52 0 0 4.57 1.53 0 0 9.15 3.04 0 0 -9.15 -1.52 0 0 -4.57z"
-							fill="#ffffff" stroke-width="1"></path>
-						<path
-							d="m3.055 7.615 0 3.05 7.61 0 0 1.52 3.05 0 0 1.53 3.05 0 0 1.52 1.52 0 0 3.05 1.53 0 0 3.05 1.52 0 0 7.62 3.05 0 0 -7.62 -1.53 0 0 -3.05 -1.52 0 0 -3.05 -1.52 0 0 -1.52 -1.53 0 0 -1.53 -1.52 0 0 -1.52 -3.05 0 0 -1.52 -3.05 0 0 -1.53 -7.61 0z"
-							fill="#ffffff" stroke-width="1"></path>
-						<path
-							d="m3.055 16.765 6.09 0 0 1.52 3.05 0 0 1.52 1.52 0 0 3.05 1.53 0 0 6.1 3.04 0 0 -6.1 -1.52 0 0 -3.05 -1.52 0 0 -1.52 -1.53 0 0 -1.52 -1.52 0 0 -1.53 -3.05 0 0 -1.52 -6.09 0 0 3.05z"
-							fill="#ffffff" stroke-width="1"></path>
-						<path
-							d="m3.055 24.375 -1.53 0 0 4.58 1.53 0 0 1.52 4.57 0 0 -1.52 1.52 0 0 -4.58 -1.52 0 0 -1.52 -4.57 0 0 1.52z"
-							fill="#ffffff" stroke-width="1"></path>
-						</g>
-					</svg>
-				</div>
-				<div class="d-flex border border-0 border-light">
-					<p class="text-white p-0 m-0 font--argent align-items-center justify-content-center text-center"
-						id="datetime"></p>
-				</div>
-			</div>
-		</div>
-		<div class="z-1 d-flex flew-row flex-grow-1 border border-0 border-light">
-		<!-- WINDOW -->
-		<div class="col-8 container-fluid d-flex justify-content-center border border-0 border-light" id="content">
-		</div>
-		<!-- NAVBAR -->
-		<nav id="navbar">
-			<div class="z-1 d-flex pe-3 justify-content-end align-items-start border border-0 border-light">
-			<div class="d-flex flex-column p-3 w-75 mh-75 overflow-auto rounded bg-black bg-opacity-75 border border-0 border-light justify-content-center">
-				<div class="d-flex flex-column border border-0 border-light my-3 gap-3">
-					<div class="d-flex flex-column border border-0 border-dark mb-4">
-						<a href="/desktop" class="nav-link focus-ring p-1 focus--light rounded-1">
-							<div class="ratio ratio-1x1 border border-0 border-dark">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-								<title>photography-photo-image</title>
-								<g>
-									<path d="m30.48 16.76 -1.53 0 0 1.52 1.53 0 0 7.62 1.52 0 0 -19.81 -1.52 0 0 10.67z"
+				<div class="d-flex flex-row gap-3 p-1 rounded bg-black bg-opacity-75 border border-0 border-light">
+					<div class="d-flex border border-0 border-light">
+						<svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 32 32">
+							<title>computers-devices-electronics-battery-charge</title>
+							<g>
+								<path
+									d="m28.96 9.91 0 -1.53 -1.53 0 0 3.05 3.05 0 0 4.57 -3.05 0 0 3.05 1.53 0 0 -1.52 3.04 0 0 -7.62 -3.04 0z"
 									fill="#ffffff" stroke-width="1"></path>
-									<path d="M28.95 25.9h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M28.95 4.57h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M27.43 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="m13.72 27.43 0 -1.53 -3.05 0 0 1.53 -7.62 0 0 1.52 25.9 0 0 -1.52 -15.23 0z"
+								<path d="M25.91 19.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M25.91 6.86h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M22.86 5.34h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M16.77 20.57h9.14v1.53h-9.14Z" fill="#ffffff" stroke-width="1"></path>
+								<path
+									d="M15.24 26.67v-7.62h3.05v-1.52h1.52V16h1.53V8.38h-1.53V2.29h-1.52v6.09h-1.52V2.29h-1.53v6.09h-1.52V2.29H12.2v6.09h-1.53V2.29H9.15v6.09H7.62V16h1.53v1.53h1.52v1.52h3.05v7.62Zm1.53 -15.24h1.52v1.52h-1.52Zm-6.1 0h1.53v1.52h-1.53Zm1.53 6.1V16h-1.53v-1.52h1.53V16h4.57v-1.52h1.52V16h-1.52v1.53Z"
 									fill="#ffffff" stroke-width="1"></path>
-									<path
-									d="m25.91 16.76 -1.53 0 0 -1.52 -4.57 0 0 1.52 -1.52 0 0 1.52 -3.05 0 0 1.53 3.05 0 0 1.52 1.52 0 0 1.52 3.05 0 0 -1.52 3.05 0 0 -1.52 3.04 0 0 -1.53 -3.04 0 0 -1.52z"
-									fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.91 13.71h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M21.34 10.66h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M16.76 22.85h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M16.76 13.71h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M15.24 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M13.72 24.38h3.04v1.52h-3.04Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M12.19 16.76h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M7.62 15.24h4.57v1.52H7.62Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M4.57 16.76h3.05v1.52H4.57Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M3.05 3.05h25.9v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M3.05 18.28h1.52v1.53H3.05Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M1.53 25.9h1.52v1.53H1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M1.53 4.57h1.52v1.52H1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="m1.53 21.33 1.52 0 0 -1.52 -1.52 0 0 -13.72 -1.53 0L0 25.9l1.53 0 0 -4.57z"
-									fill="#ffffff" stroke-width="1"></path>
-								</g>
-								</svg>
-							</div>
-							<p class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
-								desktop</p>
-						</a>
+								<path d="M16.77 0.76h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M10.67 26.67h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M10.67 0.76h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M9.15 28.19h1.52v1.53H9.15Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M7.62 29.72h1.53v1.52H7.62Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M1.53 20.57h9.14v1.53H1.53Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M1.53 5.34H6.1v1.52H1.53Z" fill="#ffffff" stroke-width="1"></path>
+								<path d="M0 6.86h1.53v13.71H0Z" fill="#ffffff" stroke-width="1"></path>
+							</g>
+						</svg>
 					</div>
-					<div class="d-flex flex-column border border-0 border-dark">
-						<a href="/profile" class="nav-link focus-ring p-1 focus--light rounded-1">
-							<div class="ratio ratio-1x1 border border-0 border-dark">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-								<title>music-headphones-human</title>
-								<g>
-									<path d="M29.715 12.955h1.52v6.09h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path
-									d="m9.905 12.955 1.52 0 0 -1.53 1.53 0 0 -1.52 6.09 0 0 1.52 1.53 0 0 -1.52 4.57 0 0 1.52 1.52 0 0 12.19 1.53 0 0 -3.04 1.52 0 0 -1.53 -1.52 0 0 -6.09 1.52 0 0 -1.53 -1.52 0 0 -6.09 -1.53 0 0 1.52 -1.52 0 0 -1.52 -3.05 0 0 -1.53 -10.67 0 0 1.53 -1.52 0 0 1.52 -1.52 0 0 3.05 -1.53 0 0 -4.57 -1.52 0 0 4.57 -1.52 0 0 1.52 6.09 0 0 1.53z"
+					<div class="flex-shrink-1 border border-0 border-light">
+						<svg xmlns="http://www.w3.org/2000/svg" height="30" width="30" viewBox="0 0 32 32">
+							<title>interface-essential-wifi-feed</title>
+							<g>
+								<path
+									d="m28.955 15.235 -1.52 0 0 -3.05 -1.53 0 0 -1.52 -1.52 0 0 -1.52 -1.53 0 0 -1.53 -1.52 0 0 -1.52 -1.52 0 0 -1.52 -3.05 0 0 -1.53 -4.57 0 0 -1.52 -9.14 0 0 3.05 9.14 0 0 1.52 4.57 0 0 1.52 3.05 0 0 1.53 1.52 0 0 1.52 1.52 0 0 1.52 1.53 0 0 3.05 1.52 0 0 4.57 1.53 0 0 9.15 3.04 0 0 -9.15 -1.52 0 0 -4.57z"
 									fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.145 23.615h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.145 3.805h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M23.615 20.575h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M23.615 15.995h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M23.615 2.285h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path
-									d="M11.425 25.145V28.2h-3.04v1.52h-3.05v1.52h24.38v-1.52h-3.05V28.2h-3.05v-1.53h1.53v-1.52Zm10.67 4.57h-6.09V28.2h-3.05v-1.53H22.1Z"
+								<path
+									d="m3.055 7.615 0 3.05 7.61 0 0 1.52 3.05 0 0 1.53 3.05 0 0 1.52 1.52 0 0 3.05 1.53 0 0 3.05 1.52 0 0 7.62 3.05 0 0 -7.62 -1.53 0 0 -3.05 -1.52 0 0 -3.05 -1.52 0 0 -1.52 -1.53 0 0 -1.53 -1.52 0 0 -1.52 -3.05 0 0 -1.52 -3.05 0 0 -1.53 -7.61 0z"
 									fill="#ffffff" stroke-width="1"></path>
-									<path d="M19.045 22.095h4.57v1.52h-4.57Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M17.525 20.575h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M16.005 15.995h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M16.005 11.425h3.04v1.53h-3.04Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M11.425 12.955h1.53v6.09h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M9.905 0.765h13.71v1.52H9.905Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M9.905 23.615h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M9.905 19.045h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="m3.815 20.575 0 1.52 4.57 0 0 1.52 1.52 0 0 -3.04 -6.09 0z" fill="#ffffff"
-									stroke-width="1"></path>
-									<path d="M8.385 2.285h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M6.855 3.805h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M5.335 12.955h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M3.815 14.475h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M2.285 19.045h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M2.285 11.425h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M0.765 12.955h1.52v6.09H0.765Z" fill="#ffffff" stroke-width="1"></path>
-								</g>
-								</svg>
-							</div>
-							<p class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
-								profile</p>
-						</a>
+								<path
+									d="m3.055 16.765 6.09 0 0 1.52 3.05 0 0 1.52 1.52 0 0 3.05 1.53 0 0 6.1 3.04 0 0 -6.1 -1.52 0 0 -3.05 -1.52 0 0 -1.52 -1.53 0 0 -1.52 -1.52 0 0 -1.53 -3.05 0 0 -1.52 -6.09 0 0 3.05z"
+									fill="#ffffff" stroke-width="1"></path>
+								<path
+									d="m3.055 24.375 -1.53 0 0 4.58 1.53 0 0 1.52 4.57 0 0 -1.52 1.52 0 0 -4.58 -1.52 0 0 -1.52 -4.57 0 0 1.52z"
+									fill="#ffffff" stroke-width="1"></path>
+							</g>
+						</svg>
 					</div>
-					<div class="d-flex flex-column border border-0 border-dark">
-						<a href="/otherprofile" class="nav-link focus-ring p-1 focus--light rounded-1">
-							<div class="ratio ratio-1x1 border border-0 border-dark">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-								<title>music-headphones-human</title>
-								<g>
-									<path d="M29.715 12.955h1.52v6.09h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path
-									d="m9.905 12.955 1.52 0 0 -1.53 1.53 0 0 -1.52 6.09 0 0 1.52 1.53 0 0 -1.52 4.57 0 0 1.52 1.52 0 0 12.19 1.53 0 0 -3.04 1.52 0 0 -1.53 -1.52 0 0 -6.09 1.52 0 0 -1.53 -1.52 0 0 -6.09 -1.53 0 0 1.52 -1.52 0 0 -1.52 -3.05 0 0 -1.53 -10.67 0 0 1.53 -1.52 0 0 1.52 -1.52 0 0 3.05 -1.53 0 0 -4.57 -1.52 0 0 4.57 -1.52 0 0 1.52 6.09 0 0 1.53z"
-									fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.145 23.615h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.145 3.805h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M23.615 20.575h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M23.615 15.995h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M23.615 2.285h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path
-									d="M11.425 25.145V28.2h-3.04v1.52h-3.05v1.52h24.38v-1.52h-3.05V28.2h-3.05v-1.53h1.53v-1.52Zm10.67 4.57h-6.09V28.2h-3.05v-1.53H22.1Z"
-									fill="#ffffff" stroke-width="1"></path>
-									<path d="M19.045 22.095h4.57v1.52h-4.57Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M17.525 20.575h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M16.005 15.995h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M16.005 11.425h3.04v1.53h-3.04Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M11.425 12.955h1.53v6.09h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M9.905 0.765h13.71v1.52H9.905Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M9.905 23.615h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M9.905 19.045h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="m3.815 20.575 0 1.52 4.57 0 0 1.52 1.52 0 0 -3.04 -6.09 0z" fill="#ffffff"
-									stroke-width="1"></path>
-									<path d="M8.385 2.285h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M6.855 3.805h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M5.335 12.955h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M3.815 14.475h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M2.285 19.045h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M2.285 11.425h1.53v1.53h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M0.765 12.955h1.52v6.09H0.765Z" fill="#ffffff" stroke-width="1"></path>
-								</g>
-								</svg>
-							</div>
-							<p class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
-								other profile</p>
-						</a>
-					</div>
-					<div class="d-flex flex-column border border-0 border-dark">
-						<a href="/users" class="nav-link focus-ring p-1 focus--light rounded-1">
-							<div class="ratio ratio-1x1 border border-0 border-dark">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-								<title>content-files-archive-books-1</title>
-								<g>
-									<path
-									d="M28.96 6.1V0H13.72v1.52h-6.1v1.53H3.05v10.67H1.53v3.04H0V32h32V6.1ZM7.62 30.48H1.53v-9.15h6.09Zm0 -10.67H4.58V4.57h3.04ZM9.15 3.05h4.57v1.52h-3.05v15.24H9.15Zm4.57 3.05v13.71H12.2V6.1Zm1.52 24.38H9.15v-9.15h6.09Zm15.24 0H16.77V19.81h-1.53V1.52h12.19V6.1h-4.57v1.52h7.62Z"
-									fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.91 21.33h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.91 18.29h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M22.86 22.86h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M21.34 21.33h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M21.34 18.29h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M21.34 7.62h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M19.81 10.67h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M18.29 13.72h1.52v3.04h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M18.29 3.05h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M16.77 16.76h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M10.67 24.38h3.05v3.05h-3.05Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M3.05 24.38H6.1v3.05H3.05Z" fill="#ffffff" stroke-width="1"></path>
-								</g>
-								</svg>
-							</div>
-							<p class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
-								users list</p>
-						</a>
-					</div>
-					<div class="d-flex flex-column border border-0 border-dark">
-						<a href="/play" class="nav-link focus-ring p-1 focus--light rounded-1">
-							<div class="ratio ratio-1x1 border border-0 border-dark">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-								<title>entertainment-events-hobbies-game-machines-arcade-1</title>
-								<g>
-									<path d="M30.47 6.1H32V32h-1.53Z" fill="#ffffff" stroke-width="1">
-									</path>
-									<path d="M28.95 4.57h1.52V6.1h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M27.42 3.05h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.9 1.52h1.52v1.53H25.9Z" fill="#ffffff" stroke-width="1"></path>
-									<path
-									d="M3.04 0v6.1h1.53v1.52h1.52v13.71H4.57v1.53H3.04v1.52H1.52v1.52h19.81V32h1.52v-7.62h1.53v-1.52h1.52v-1.53h1.52V7.62H25.9V6.1h-1.52V1.52h1.52V0Zm7.62 1.52h12.19v3.05H10.66Zm-3.05 0h1.53v3.05H7.61ZM4.57 4.57V1.52h1.52v3.05Zm4.57 18.29H7.61v1.52H6.09v-1.52h1.52v-1.53h1.53Zm4.57 0h-1.52v1.52h-1.53v-1.52h1.53v-1.53h1.52Zm7.62 1.52h-4.57v-1.52h4.57Zm1.52 -4.57H10.66v-9.14h12.19Zm1.53 -10.67H7.61V7.62h16.77Z"
-									fill="#ffffff" stroke-width="1"></path>
-									<path d="M19.8 15.24h1.53v1.52H19.8Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M18.28 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="m19.8 32 0 -3.05 -4.57 0 0 3.05 1.53 0 0 -1.52 1.52 0 0 1.52 1.52 0z" fill="#ffffff"
-									stroke-width="1"></path>
-									<path d="M13.71 16.76h6.09v1.53h-6.09Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M13.71 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M12.19 15.24h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M0 25.9h1.52V32H0Z" fill="#ffffff" stroke-width="1"></path>
-								</g>
-								</svg>
-							</div>
-							<p class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
-								play pong</p>
-						</a>
-					</div>
-					<div class="d-flex flex-column border border-0 border-dark">
-						<a href="/tournament" class="nav-link focus-ring p-1 focus--light rounded-1">
-							<div class="ratio ratio-1x1 border border-0 border-dark">
-								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-								<title>entertainment-events-hobbies-game-machines-arcade-1</title>
-								<g>
-									<path d="M30.47 6.1H32V32h-1.53Z" fill="#ffffff" stroke-width="1">
-									</path>
-									<path d="M28.95 4.57h1.52V6.1h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M27.42 3.05h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M25.9 1.52h1.52v1.53H25.9Z" fill="#ffffff" stroke-width="1"></path>
-									<path
-									d="M3.04 0v6.1h1.53v1.52h1.52v13.71H4.57v1.53H3.04v1.52H1.52v1.52h19.81V32h1.52v-7.62h1.53v-1.52h1.52v-1.53h1.52V7.62H25.9V6.1h-1.52V1.52h1.52V0Zm7.62 1.52h12.19v3.05H10.66Zm-3.05 0h1.53v3.05H7.61ZM4.57 4.57V1.52h1.52v3.05Zm4.57 18.29H7.61v1.52H6.09v-1.52h1.52v-1.53h1.53Zm4.57 0h-1.52v1.52h-1.53v-1.52h1.53v-1.53h1.52Zm7.62 1.52h-4.57v-1.52h4.57Zm1.52 -4.57H10.66v-9.14h12.19Zm1.53 -10.67H7.61V7.62h16.77Z"
-									fill="#ffffff" stroke-width="1"></path>
-									<path d="M19.8 15.24h1.53v1.52H19.8Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M18.28 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="m19.8 32 0 -3.05 -4.57 0 0 3.05 1.53 0 0 -1.52 1.52 0 0 1.52 1.52 0z" fill="#ffffff"
-									stroke-width="1"></path>
-									<path d="M13.71 16.76h6.09v1.53h-6.09Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M13.71 12.19h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M12.19 15.24h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path>
-									<path d="M0 25.9h1.52V32H0Z" fill="#ffffff" stroke-width="1"></path>
-								</g>
-								</svg>
-							</div>
-							<p
-								class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
-								play tournament</p>
-						</a>
+					<div class="d-flex border border-0 border-light">
+						<p class="text-white p-0 m-0 font--argent align-items-center justify-content-center text-center"
+							id="datetime"></p>
 					</div>
 				</div>
 			</div>
+			<div class="z-1 d-flex flew-row flex-grow-1 border border-0 border-light">
+				<!-- WINDOW -->
+				<div class="col-8 container-fluid d-flex justify-content-center border border-0 border-light"
+					id="content">
+				</div>
+				<!-- NAVBAR -->
+				<nav id="navbar">
+					<div class="z-1 d-flex pe-3 justify-content-end align-items-start border border-0 border-light">
+						<div
+							class="d-flex flex-column p-3 w-75 mh-75 overflow-auto rounded bg-black bg-opacity-75 border border-0 border-light justify-content-center">
+							<div class="d-flex flex-column border border-0 border-light my-3 gap-3">
+								<div class="d-flex flex-column border border-0 border-dark mb-4">
+									<a href="/desktop" class="nav-link focus-ring p-1 focus--light rounded-1">
+										<div class="ratio ratio-1x1 border border-0 border-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+												<title>photography-photo-image</title>
+												<g>
+													<path
+														d="m30.48 16.76 -1.53 0 0 1.52 1.53 0 0 7.62 1.52 0 0 -19.81 -1.52 0 0 10.67z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M28.95 25.9h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M28.95 4.57h1.53v1.52h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M27.43 12.19h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="m13.72 27.43 0 -1.53 -3.05 0 0 1.53 -7.62 0 0 1.52 25.9 0 0 -1.52 -15.23 0z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path
+														d="m25.91 16.76 -1.53 0 0 -1.52 -4.57 0 0 1.52 -1.52 0 0 1.52 -3.05 0 0 1.53 3.05 0 0 1.52 1.52 0 0 1.52 3.05 0 0 -1.52 3.05 0 0 -1.52 3.04 0 0 -1.53 -3.04 0 0 -1.52z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M25.91 13.71h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M21.34 10.66h1.52v3.05h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M16.76 22.85h3.05v1.53h-3.05Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M16.76 13.71h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M15.24 12.19h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M13.72 24.38h3.04v1.52h-3.04Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M12.19 16.76h3.05v1.52h-3.05Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M7.62 15.24h4.57v1.52H7.62Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M4.57 16.76h3.05v1.52H4.57Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M3.05 3.05h25.9v1.52H3.05Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M3.05 18.28h1.52v1.53H3.05Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M1.53 25.9h1.52v1.53H1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M1.53 4.57h1.52v1.52H1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="m1.53 21.33 1.52 0 0 -1.52 -1.52 0 0 -13.72 -1.53 0L0 25.9l1.53 0 0 -4.57z"
+														fill="#ffffff" stroke-width="1"></path>
+												</g>
+											</svg>
+										</div>
+										<p
+											class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
+											desktop</p>
+									</a>
+								</div>
+								<div class="d-flex flex-column border border-0 border-dark">
+									<a href="/profile" class="nav-link focus-ring p-1 focus--light rounded-1">
+										<div class="ratio ratio-1x1 border border-0 border-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+												<title>music-headphones-human</title>
+												<g>
+													<path d="M29.715 12.955h1.52v6.09h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="m9.905 12.955 1.52 0 0 -1.53 1.53 0 0 -1.52 6.09 0 0 1.52 1.53 0 0 -1.52 4.57 0 0 1.52 1.52 0 0 12.19 1.53 0 0 -3.04 1.52 0 0 -1.53 -1.52 0 0 -6.09 1.52 0 0 -1.53 -1.52 0 0 -6.09 -1.53 0 0 1.52 -1.52 0 0 -1.52 -3.05 0 0 -1.53 -10.67 0 0 1.53 -1.52 0 0 1.52 -1.52 0 0 3.05 -1.53 0 0 -4.57 -1.52 0 0 4.57 -1.52 0 0 1.52 6.09 0 0 1.53z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M25.145 23.615h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M25.145 3.805h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M23.615 20.575h1.53v1.52h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M23.615 15.995h1.53v3.05h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M23.615 2.285h1.53v1.52h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="M11.425 25.145V28.2h-3.04v1.52h-3.05v1.52h24.38v-1.52h-3.05V28.2h-3.05v-1.53h1.53v-1.52Zm10.67 4.57h-6.09V28.2h-3.05v-1.53H22.1Z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M19.045 22.095h4.57v1.52h-4.57Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M17.525 20.575h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M16.005 15.995h1.52v3.05h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M16.005 11.425h3.04v1.53h-3.04Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M11.425 12.955h1.53v6.09h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M9.905 0.765h13.71v1.52H9.905Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M9.905 23.615h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M9.905 19.045h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="m3.815 20.575 0 1.52 4.57 0 0 1.52 1.52 0 0 -3.04 -6.09 0z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M8.385 2.285h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M6.855 3.805h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M5.335 12.955h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M3.815 14.475h1.52v3.05h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M2.285 19.045h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M2.285 11.425h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M0.765 12.955h1.52v6.09H0.765Z" fill="#ffffff"
+														stroke-width="1"></path>
+												</g>
+											</svg>
+										</div>
+										<p
+											class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
+											profile</p>
+									</a>
+								</div>
+								<div class="d-flex flex-column border border-0 border-dark">
+									<a href="/otherprofile" class="nav-link focus-ring p-1 focus--light rounded-1">
+										<div class="ratio ratio-1x1 border border-0 border-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+												<title>music-headphones-human</title>
+												<g>
+													<path d="M29.715 12.955h1.52v6.09h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="m9.905 12.955 1.52 0 0 -1.53 1.53 0 0 -1.52 6.09 0 0 1.52 1.53 0 0 -1.52 4.57 0 0 1.52 1.52 0 0 12.19 1.53 0 0 -3.04 1.52 0 0 -1.53 -1.52 0 0 -6.09 1.52 0 0 -1.53 -1.52 0 0 -6.09 -1.53 0 0 1.52 -1.52 0 0 -1.52 -3.05 0 0 -1.53 -10.67 0 0 1.53 -1.52 0 0 1.52 -1.52 0 0 3.05 -1.53 0 0 -4.57 -1.52 0 0 4.57 -1.52 0 0 1.52 6.09 0 0 1.53z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M25.145 23.615h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M25.145 3.805h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M23.615 20.575h1.53v1.52h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M23.615 15.995h1.53v3.05h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M23.615 2.285h1.53v1.52h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="M11.425 25.145V28.2h-3.04v1.52h-3.05v1.52h24.38v-1.52h-3.05V28.2h-3.05v-1.53h1.53v-1.52Zm10.67 4.57h-6.09V28.2h-3.05v-1.53H22.1Z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M19.045 22.095h4.57v1.52h-4.57Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M17.525 20.575h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M16.005 15.995h1.52v3.05h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M16.005 11.425h3.04v1.53h-3.04Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M11.425 12.955h1.53v6.09h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M9.905 0.765h13.71v1.52H9.905Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M9.905 23.615h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M9.905 19.045h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="m3.815 20.575 0 1.52 4.57 0 0 1.52 1.52 0 0 -3.04 -6.09 0z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M8.385 2.285h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M6.855 3.805h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M5.335 12.955h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M3.815 14.475h1.52v3.05h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M2.285 19.045h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M2.285 11.425h1.53v1.53h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M0.765 12.955h1.52v6.09H0.765Z" fill="#ffffff"
+														stroke-width="1"></path>
+												</g>
+											</svg>
+										</div>
+										<p
+											class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
+											other profile</p>
+									</a>
+								</div>
+								<div class="d-flex flex-column border border-0 border-dark">
+									<a href="/users" class="nav-link focus-ring p-1 focus--light rounded-1">
+										<div class="ratio ratio-1x1 border border-0 border-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+												<title>content-files-archive-books-1</title>
+												<g>
+													<path
+														d="M28.96 6.1V0H13.72v1.52h-6.1v1.53H3.05v10.67H1.53v3.04H0V32h32V6.1ZM7.62 30.48H1.53v-9.15h6.09Zm0 -10.67H4.58V4.57h3.04ZM9.15 3.05h4.57v1.52h-3.05v15.24H9.15Zm4.57 3.05v13.71H12.2V6.1Zm1.52 24.38H9.15v-9.15h6.09Zm15.24 0H16.77V19.81h-1.53V1.52h12.19V6.1h-4.57v1.52h7.62Z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M25.91 21.33h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M25.91 18.29h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M22.86 22.86h3.05v1.52h-3.05Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M21.34 21.33h1.52v1.53h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M21.34 18.29h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M21.34 7.62h1.52v3.05h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M19.81 10.67h1.53v3.05h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M18.29 13.72h1.52v3.04h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M18.29 3.05h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M16.77 16.76h1.52v3.05h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M10.67 24.38h3.05v3.05h-3.05Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M3.05 24.38H6.1v3.05H3.05Z" fill="#ffffff"
+														stroke-width="1"></path>
+												</g>
+											</svg>
+										</div>
+										<p
+											class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
+											users list</p>
+									</a>
+								</div>
+								<div class="d-flex flex-column border border-0 border-dark">
+									<a href="/play" class="nav-link focus-ring p-1 focus--light rounded-1">
+										<div class="ratio ratio-1x1 border border-0 border-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+												<title>entertainment-events-hobbies-game-machines-arcade-1</title>
+												<g>
+													<path d="M30.47 6.1H32V32h-1.53Z" fill="#ffffff" stroke-width="1">
+													</path>
+													<path d="M28.95 4.57h1.52V6.1h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M27.42 3.05h1.53v1.52h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M25.9 1.52h1.52v1.53H25.9Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="M3.04 0v6.1h1.53v1.52h1.52v13.71H4.57v1.53H3.04v1.52H1.52v1.52h19.81V32h1.52v-7.62h1.53v-1.52h1.52v-1.53h1.52V7.62H25.9V6.1h-1.52V1.52h1.52V0Zm7.62 1.52h12.19v3.05H10.66Zm-3.05 0h1.53v3.05H7.61ZM4.57 4.57V1.52h1.52v3.05Zm4.57 18.29H7.61v1.52H6.09v-1.52h1.52v-1.53h1.53Zm4.57 0h-1.52v1.52h-1.53v-1.52h1.53v-1.53h1.52Zm7.62 1.52h-4.57v-1.52h4.57Zm1.52 -4.57H10.66v-9.14h12.19Zm1.53 -10.67H7.61V7.62h16.77Z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M19.8 15.24h1.53v1.52H19.8Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M18.28 12.19h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="m19.8 32 0 -3.05 -4.57 0 0 3.05 1.53 0 0 -1.52 1.52 0 0 1.52 1.52 0z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M13.71 16.76h6.09v1.53h-6.09Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M13.71 12.19h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M12.19 15.24h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M0 25.9h1.52V32H0Z" fill="#ffffff" stroke-width="1"></path>
+												</g>
+											</svg>
+										</div>
+										<p
+											class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
+											play pong</p>
+									</a>
+								</div>
+								<div class="d-flex flex-column border border-0 border-dark">
+									<a href="/tournament" class="nav-link focus-ring p-1 focus--light rounded-1">
+										<div class="ratio ratio-1x1 border border-0 border-dark">
+											<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+												<title>entertainment-events-hobbies-game-machines-arcade-1</title>
+												<g>
+													<path d="M30.47 6.1H32V32h-1.53Z" fill="#ffffff" stroke-width="1">
+													</path>
+													<path d="M28.95 4.57h1.52V6.1h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M27.42 3.05h1.53v1.52h-1.53Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M25.9 1.52h1.52v1.53H25.9Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="M3.04 0v6.1h1.53v1.52h1.52v13.71H4.57v1.53H3.04v1.52H1.52v1.52h19.81V32h1.52v-7.62h1.53v-1.52h1.52v-1.53h1.52V7.62H25.9V6.1h-1.52V1.52h1.52V0Zm7.62 1.52h12.19v3.05H10.66Zm-3.05 0h1.53v3.05H7.61ZM4.57 4.57V1.52h1.52v3.05Zm4.57 18.29H7.61v1.52H6.09v-1.52h1.52v-1.53h1.53Zm4.57 0h-1.52v1.52h-1.53v-1.52h1.53v-1.53h1.52Zm7.62 1.52h-4.57v-1.52h4.57Zm1.52 -4.57H10.66v-9.14h12.19Zm1.53 -10.67H7.61V7.62h16.77Z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M19.8 15.24h1.53v1.52H19.8Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M18.28 12.19h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path
+														d="m19.8 32 0 -3.05 -4.57 0 0 3.05 1.53 0 0 -1.52 1.52 0 0 1.52 1.52 0z"
+														fill="#ffffff" stroke-width="1"></path>
+													<path d="M13.71 16.76h6.09v1.53h-6.09Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M13.71 12.19h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M12.19 15.24h1.52v1.52h-1.52Z" fill="#ffffff"
+														stroke-width="1"></path>
+													<path d="M0 25.9h1.52V32H0Z" fill="#ffffff" stroke-width="1"></path>
+												</g>
+											</svg>
+										</div>
+										<p
+											class="p-0 m-0 text-white text-capitalize text-center font--neue text-truncate">
+											play tournament</p>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</nav>
 			</div>
-		</nav>
 		</div>
 	</div>
-	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
 	<script src="https://cdn.socket.io/4.7.3/socket.io.min.js"></script>
 	<script src="/js/url-router.js" type="module"></script>
 	<script src="/js/user-data.js" type="text/javascript"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
-	</script>
 </body>
 
 </html>
