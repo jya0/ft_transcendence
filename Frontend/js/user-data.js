@@ -25,7 +25,7 @@ function handle42Auth() {
 }
 
 function handleLogout() {
-	// localStorage.clear();
+	localStorage.clear();
 	console.log('logout');
 	fetch('/api/logout', {
 		credentials: 'include',
