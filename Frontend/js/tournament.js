@@ -1,10 +1,8 @@
 // import {io} from "socket.io-client";
-export const loadTournament = () => {
+export function loadTournament() {
     let tournament_name;
-    const canvas = document.getElementById('pongCanvas');
+    const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
-    const startOnlineButton = document.getElementById('startOnlineTournButton');
-    const startLocalButton = document.getElementById('startLocalTournButton');
 
     let localPlayerMode = true;
     let pairings = [];
@@ -50,8 +48,8 @@ export const loadTournament = () => {
                 keyPressed = 'w';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
-				    'mode':'tournament',
-                    'tournament_name':tournament_name,
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -61,8 +59,8 @@ export const loadTournament = () => {
                 keyPressed = 's';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
-				    'mode':'tournament',
-                    'tournament_name':tournament_name,
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -74,8 +72,8 @@ export const loadTournament = () => {
                 keyPressed = 'w';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
-				    'mode':'tournament',
-                    'tournament_name':tournament_name,
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
@@ -85,14 +83,25 @@ export const loadTournament = () => {
                 keyPressed = 's';
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
-				    'mode':'tournament',
-                    'tournament_name':tournament_name,
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
                 }))
             }
         }
     }
+
+
+    function resetGame() {
+
+		ball.x = canvas.width / 2;
+		ball.y = canvas.height / 2;
+		score.left = 0;
+		score.right = 0;
+		players.left = (canvas.height - paddle.height) / 2;
+		players.right = (canvas.height - paddle.height) / 2;
+	}
 
 
     function update() {
@@ -169,17 +178,16 @@ export const loadTournament = () => {
         //prompt new match
         if (g_count == 0) {
             alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
+            resetGame();
         }
         if (g_count == 1) {
             alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
+            resetGame();
+
         }
         // end tournament
         if (g_count == 2) {
             tournReady = false;
-            startLocalButton.disabled = false;
-            startOnlineButton.disabled = false;
-            startLocalButton.style.visibility = 'visible';
-            startOnlineButton.style.visibility = 'visible';
             if (score.left > score.right) {
                 buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
             } else {
@@ -188,7 +196,8 @@ export const loadTournament = () => {
             g_count = 0;
             tournReady = false;
             isGameOver = true;
-            document.getElementById("startLocalTournButton").innerHTML = buttonText;
+            alert(buttonText);
+            resetGame();
         }
         else
             g_count++;
@@ -203,8 +212,8 @@ export const loadTournament = () => {
             buttonText = "You win! Press to play a new online game";
             gameSocket.send(JSON.stringify({
                 'type': 'end',
-                'mode':'tournament',
-                'tournament_name':tournament_name,
+                'mode': 'tournament',
+                'tournament_name': tournament_name,
                 'username': localStorage.getItem('username'),
                 'score1': score.left,
                 'score2': score.right,
@@ -249,17 +258,17 @@ export const loadTournament = () => {
             console.log('Data: ', data)
 
             if (data.mode === 'single')
-                return ;
+                return;
 
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
-                document.getElementById("startOnlineTournButton").innerHTML = "In-game";
+                // document.getElementById("startOnlineTournButton").innerHTML = "In-game";
                 if (data.sender == localStorage.getItem('username')) {
                     leftPlayer = false;
                     rightPlayer = true;
                 }
-                console.log(leftPlayer);
-                console.log(rightPlayer);
+                // console.log(leftPlayer);
+                // console.log(rightPlayer);
                 playOnlineTournamentMatch();
             }
 
@@ -293,8 +302,8 @@ export const loadTournament = () => {
 
             gameSocket.send(JSON.stringify({
                 'type': 'start',
-                'mode':'tournament',
-                'tournament_name':tournament_name,
+                'mode': 'tournament',
+                'tournament_name': tournament_name,
                 'username': localStorage.getItem('username')
             }))
 
@@ -320,8 +329,8 @@ export const loadTournament = () => {
 
     function playGame() {
         localPlayerMode = true;
-        startLocalButton.disabled = true;
-        startOnlineButton.disabled = true;
+        // startLocalButton.disabled = true;
+        // startOnlineButton.disabled = true;
         if (isGameOver || !animationFrameId) {
             isGameOver = false;
             score.left = 0;
@@ -334,16 +343,17 @@ export const loadTournament = () => {
 
 
     function startLocalTournament() {
-        if (tournReady == false)
-            return;
+        console.log("sup mfs");
+        // if (tournReady == false)
+        //     return;
         let winners = [];
         localPlayerMode = true;
         let player1 = pairings[0][0];
         let player2 = pairings[0][1];
-        startLocalButton.disabled = true;
-        startOnlineButton.disabled = true;
-        startLocalButton.style.visibility = 'hidden';
-        startOnlineButton.style.visibility = 'hidden';
+        // startLocalButton.disabled = true;
+        // startOnlineButton.disabled = true;
+        // startLocalButton.style.visibility = 'hidden';
+        // startOnlineButton.style.visibility = 'hidden';
         if (g_count == 0) {
             isGameOver = false;
             score.left = 0;
@@ -356,7 +366,7 @@ export const loadTournament = () => {
         }
     }
 
-    startLocalButton.addEventListener('click', () => {
+    function setupTournament() {
 
         // Check if a form already exists and remove it
         const checker = document.getElementById('tourn-player-count');
@@ -365,30 +375,30 @@ export const loadTournament = () => {
         }
 
         if (tournReady) {
-            document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
+            // document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
             startLocalTournament();
         }
 
         localPlayerMode = true;
-        startLocalButton.disabled = true;
-        startOnlineButton.disabled = true;
-        startLocalButton.style.visibility = 'hidden';
-        startOnlineButton.style.visibility = 'hidden';
+        // startLocalButton.disabled = true;
+        // startOnlineButton.disabled = true;
+        // startLocalButton.style.visibility = 'hidden';
+        // startOnlineButton.style.visibility = 'hidden';
 
 
         // Display a form to get the number of players and their names
         const formContainer = document.createElement('div');
         formContainer.innerHTML = `
-			<form id="tournamentSetupForm">
-				<label for="playerCount">Enter the number of players:</label>
-				<input type="number" id="playerCount" name="playerCount" min="2" required>
-				<button id="formButton" type="submit">Start Tournament</button>
-			</form>
-		`;
+             <form id="tournamentSetupForm">
+                 <label for="playerCount">Enter the number of players:</label>
+                 <input type="number" id="playerCount" name="playerCount" min="2" required>
+                 <button id="formButton" type="submit">Start Tournament</button>
+             </form>
+         `;
         formContainer.id = 'tourn-player-count';
 
 
-        document.getElementsByClassName('window-frame')[0].appendChild(formContainer);
+        document.getElementById('windowScreen').appendChild(formContainer);
 
         const tournamentSetupForm = document.getElementById('tournamentSetupForm');
 
@@ -432,7 +442,7 @@ export const loadTournament = () => {
 
             form.appendChild(playerNameContainer);
             form.appendChild(beginTournButton);
-            document.getElementsByClassName('window-frame')[0].appendChild(form);
+            document.getElementById('windowScreen').appendChild(form);
 
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
@@ -461,26 +471,28 @@ export const loadTournament = () => {
                 beginTournButton.disabled = false;
 
                 // Append the list to the bottom of the page
-                document.getElementsByClassName('window-frame')[0].appendChild(resultsList);
+                document.getElementById('windowScreen').appendChild(resultsList);
                 tournReady = true;
-                document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
+                // document.getElementById("startLocalTournButton").textContent = "Matchmaking complete. Press to start local tournament!";
 
-                startLocalButton.disabled = false;
-                startOnlineButton.disabled = false;
-                startLocalButton.style.visibility = 'visible';
-                startOnlineButton.style.visibility = 'visible';
+                // startLocalButton.disabled = false;
+                // startOnlineButton.disabled = false;
+                // startLocalButton.style.visibility = 'visible';
+                // startOnlineButton.style.visibility = 'visible';
 
                 // Clean up after starting the tournament
                 form.remove();
                 // animationFrameId = requestAnimationFrame(gameLoop);
                 playerNameContainer.remove();
+                startLocalTournament();
 
             });
         });
-    });
+
+    };
 
 
-
+    setupTournament();
 
     // Function to check for duplicate values in an array
     function hasDuplicates(array) {
@@ -595,14 +607,14 @@ export const loadTournament = () => {
 
         const tournamentList = document.getElementById('tourn-list');
         const listItem = document.createElement('li');
-                    listItem.textContent = tournamentName;
+        listItem.textContent = tournamentName;
 
-                    const joinButton = document.createElement('button');
-                    joinButton.textContent = 'Join';
-                    joinButton.addEventListener('click', () => joinTournament(tournamentName));
+        const joinButton = document.createElement('button');
+        joinButton.textContent = 'Join';
+        joinButton.addEventListener('click', () => joinTournament(tournamentName));
 
-                    listItem.appendChild(joinButton);
-                    tournamentList.appendChild(listItem);
+        listItem.appendChild(joinButton);
+        tournamentList.appendChild(listItem);
     }
 
     async function joinTournament(tournamentName) {
@@ -626,7 +638,7 @@ export const loadTournament = () => {
                 // Handle the response from the backend
                 if (data.message === 'Tournament joined successfully') {
                     alert('Tournament joined successfully');
-                    
+
                     //@TODO : Clear screen !
                     const menuContainer = document.getElementById('menu-container');
                     menuContainer.remove();
@@ -634,16 +646,16 @@ export const loadTournament = () => {
 
                     //@TODO : Display WAIT message
                     document.getElementById("startOnlineTournButton").textContent = "Waiting for lobby to fill & tournament to start ..."
-                    
+
                     //@TODO : Open socket
                     initiateSocket();
 
 
                 } else if (data.message === "Sorry ur late. tournament is full :/") {
                     alert("Sorry ur late. tournament is full :/");
-                } else if(data.message ===  "You are already in the tournament") {
+                } else if (data.message === "You are already in the tournament") {
                     alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
-                    
+
                     //@TODO : Clear screen !
                     const menuContainer = document.getElementById('menu-container');
                     menuContainer.remove();
@@ -673,14 +685,14 @@ export const loadTournament = () => {
         }
     }
 
-    startOnlineButton.addEventListener('click', () => {
-        localPlayerMode = false;
-        startLocalButton.disabled = true;
-        startOnlineButton.disabled = true;
-        console.log("YUUUUUU");
+    // startOnlineButton.addEventListener('click', () => {
+    //     localPlayerMode = false;
+    //     startLocalButton.disabled = true;
+    //     startOnlineButton.disabled = true;
+    //     console.log("YUUUUUU");
 
-        displayMenu();
-    });
+    //     displayMenu();
+    // });
 
     function gameLoop() {
         update();

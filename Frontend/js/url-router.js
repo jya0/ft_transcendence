@@ -385,6 +385,9 @@ const urlLocationHandler = async () => {
 			case '/games_tictactoe_local':
 				loadTicTac();
 				break;
+			case '/games_pong_local_tournament':
+				loadTournament();
+				break;
 			default:
 				break;
 		}
