@@ -1,0 +1,150 @@
+
+  <div class="container">
+
+	<div class="row" id="profile-container">
+		<div class="card">
+			<div class="row g-0">
+
+				<div class="col-4 border border-1 border-dark">
+					<div class="row row-cols-2">
+						<div class="col">
+							{% if image != 'other' %}
+								<div id="imageContainer">
+									<label for="file">
+										<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-start" style="width: 100px; height: 100px; border-radius: 10%; cursor: pointer;" id="output">
+										<span id="hoverText" style="color: purple; font-size: 16px; display: none;">Change Image</span>
+									</label>
+									<input type="file" accept="image/*" name="image" id="file" style="display: none;">
+									<div>
+										<label for="file" style="cursor: pointer;"></label>
+									</div>
+								</div>
+							{% else %}
+								<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" alt="Avatar" class="img-fluid rounded-start" style="width: 100px; height: 100px; border-radius: 10%; cursor: pointer;">
+							{% endif %}
+						</div>
+						<div class="col card-body">
+							<h5 class="card-title">{{ user.username }}</h5>
+							<h5 id="displayName" class="card-title text-capitalize">{{ user.nickname }}</h5>
+							<p class="card-text text-lowercase">{% if user.is_online %}online 🟢{% else %} offline ⚪ {% endif %}</p>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-4 border border-1 border-dark">
+					<div class="card-body">
+						<h5 class="card-title text-capitalize">00 tounaments wins</h5>
+						<h5 class="card-title text-capitalize">00 games won</p>
+					</div>
+				</div>
+
+				<div class="col-4 border border-1 border-dark" id="2fa-toggle">
+					{% if user_tag == 'other' %}
+						<button id="add-friend" type="submit" class="btn btn-primary">{% if is_friend %} Remove Friend {% else %} Add Friend {% endif %}</button>
+					{% else %}
+						<button id="2fa-button" type="submit" class="btn btn-primary">
+						{% if user.is_2fa_enabled == False %}
+							{{ 'Enable 2FA' }}
+						{% else %}
+							{{ 'Disable 2FA' }}
+						{% endif %}
+						</button>
+						<button id="logout" class="btn btn-primary" onClick="handleLogout()">Logout</button>
+						{% if messages %}
+							{% for message in messages %}
+							<div class="alert alert-{{ message.tags }}">{{ message }}</div>
+							{% endfor %}
+						{% endif %}
+					{% endif %}	
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<div class="row m-10 g-10" id="profile-lower" style="margin-top: 20px;">
+		<div class="col-5 vh-5 overflow-auto" style="max-height: 600px;">
+			<div class="card vh-5 overflow-auto">
+				<div class="card-body">
+					<ul class="list-group">
+						{% for user in users_list %}
+						<li class="list-group-item">
+							<div class="card">
+								<div class="row g-0">
+									<div class="col border border-1 border-dark">
+										<div class="row row-cols-2">
+											<div class="col">
+												<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}" 
+												alt="Avatar" class="img-fluid rounded-start" style="width: 100px; height:100px; border-radius: 10%;">
+											</div>
+											<div class="col card-body">
+												<h5 class="card-title">{{ user.username }}</h5>
+												<p class="card-text text-lowercase">{% if user.is_online %}online 🟢{% else %} offline ⚪ {% endif %}</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-7 overflow-auto" style="max-height: 300px;">
+
+			<div class="row g-0">
+				<ul class="list-group list-group-horizontal">
+					<li class="list-group-item">
+						<div class="col card-body">
+						<h5 class="card-title text-uppercase">win or lose</h5>
+						<p class="card-text text-lowercase">date</p>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="col">
+							<img src="./assets/public/users/ghost.svg" alt="Avatar"
+							class="img-fluid rounded-start"></img>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="row row-cols-3">
+							<div class="col">
+								<p class="card-text text-lowercase">player1</p>
+							</div>
+							<div class="col">
+								<p class="card-text text-uppercase">vs</p>
+							</div>
+							<div class="col">
+								<p class="card-text text-lowercase">player2</p>
+							</div>
+						</div>
+						<div class="row row-cols-3">
+							<div class="col">
+								<p class="card-text text-lowercase">player1 score</p>
+							</div>
+							<div class="col">
+								<p class="card-text text-uppercase">-</p>
+							</div>
+							<div class="col">
+								<p class="card-text text-lowercase">player2 score</p>
+							</div>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="col">
+							<img src="./assets/public/users/ghost.svg" alt="Avatar"
+							class="img-fluid rounded-start"></img>
+						</div>
+					</li>
+					<li class="list-group-item">
+						<div class="col card-body">
+							<h5 class="card-title text-uppercase">match type</h5>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
