@@ -60,6 +60,13 @@ const viewUserProfile = (username) => {
 		});
 }
 
+const showToast = (message) => {
+	const toastLiveExample = document.getElementById('mainToast')
+	toastLiveExample.querySelector('.toast-body').innerHTML = message;
+	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+	toastBootstrap.show()
+};
+
 const addFriend = async (button, username, newFriend) => {
 	console.log(`Forming friendship for ${username} with ${newFriend}`);
 	try {
@@ -84,10 +91,10 @@ const addFriend = async (button, username, newFriend) => {
 		console.log(data);
 		if (data === 'Added') {
 			button.innerHTML = 'Remove Friend';
-			alert('Friend Added successfully :(');
+			showToast('Friend Added successfully :(');
 		} else {
 			button.innerHTML = 'Add Friend';
-			alert('Friend Removed succesfully :)');
+			showToast('Friend Removed succesfully :)');
 		}
 	} catch (error) {
 		console.error('Error:', error);
@@ -340,6 +347,7 @@ const urlLocationHandler = async () => {
 		console.log('login route')
 		await fetch('/components/login.html').then(response => response.text()).then(data => {
 			document.getElementById("main-content").innerHTML = data;
+			showToast('Please login to continue');
 		});
 		return;
 	}
