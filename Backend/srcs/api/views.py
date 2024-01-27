@@ -332,7 +332,7 @@ def auth(request):
                 {'message': 'Failed to fetch user data in main'}, status=400)
             return response
             return HttpResponseRedirect("https://localhost:8090/")
-        auth_users = ['ahassan', 'sali', 'rriyas', 'jyao']
+        auth_users = ['ahassan', 'sali', 'rriyas', 'jyao', 'zabdirak']
         if username not in auth_users:
             return JsonResponse({'message': 'hacker', 'name': display_name}, status=200)
 
