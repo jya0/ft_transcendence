@@ -95,3 +95,10 @@ export const loadGameCanvas = () => {
         document.getElementById('windowScreen').appendChild(canvasElement);
     }
 }
+
+export const loadToast = (message) => {
+	const toastAlert = document.getElementById('mainToast');
+	toastAlert.querySelector('.toast-body').innerHTML = message;
+	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastAlert);
+	toastBootstrap.show();
+};
