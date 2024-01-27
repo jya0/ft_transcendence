@@ -1,11 +1,12 @@
 const urlPageTitle = "Pong Os";
-import { loadGame } from './pong.js';
 import { loadGameMenu, loadGameCanvas } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
+import { loadGame } from './pong.js';
 
 let userToken;
 let user;
+
 
 
 
@@ -310,6 +311,7 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 const urlLocationHandler = async () => {
 
+
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
@@ -353,8 +355,20 @@ const urlLocationHandler = async () => {
 		location === '/games_tictactoe_online')
 	{
 		setMainWindowframe();
+		// loadGameCanvas(function(canvas) {
+		// 	loadGame(canvas);
+		// });
 		loadGameCanvas();
-
+		switch (location) {
+			case '/games_pong_local':
+				loadGame(true);
+				break;
+			case '/games_pong_online':
+				loadGame(false);
+				break;
+			default:
+				break;
+		}
 		document.title = route.title;
 		return;
 	}
@@ -370,11 +384,6 @@ const urlLocationHandler = async () => {
 				urlLocationHandler();
 			});
 		});
-		// const startLocalButton = document.getElementById('startLocalButton');
-		loadGame();
-		// startLocalButton.addEventListener('click', () => {
-		// 	loadPongLocal();
-		// });
 		document.title = route.title;
 		return;
 	}
@@ -963,7 +972,7 @@ async function insertAllUsers(users) {
 	}
 }
 
-// window.addEventListener('beforeunload', function (event) {
+// window.addEventListener('onbeforeunload', function (event) {
 // 	// Perform actions before the page is unloaded (e.g., show a confirmation dialog)
 // 	// You can return a string to display a custom confirmation message
 // 	const confirmationMessage = 'Are you sure you want to leave?';
@@ -972,10 +981,21 @@ async function insertAllUsers(users) {
 // });
 
 
-// window.addEventListener('beforeunload', function (event) {
+// window.addEventListener('onbeforeunload', function (event) {
 // 	// Perform actions before the page is unloaded (e.g., show a confirmation dialog)
 // 	// You can return a string to display a custom confirmation message
-// 	const confirmationMessage = 'Are you sure you want to leave?';
+// 	// const confirmationMessage = 'Are you sure you want to leave?';
+// 	// window.location.pathname = "/desktop";
+// 	console.log("im TRYIN!");
+// 	window.history.pushState({}, "", "/desktop");
+// 	urlLocationHandler();
 // 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
 // 	return confirmationMessage; // For some older browsers
 // });
+
+
+// window.onbeforeunload	= () => {
+// 	// window.location.pathname = "/desktop";
+// 	console.log("im TRYIN!");
+// 	window.history.pushState({}, "", "/desktop");
+// }

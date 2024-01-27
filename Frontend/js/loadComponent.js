@@ -71,23 +71,27 @@ export const loadGameMenu = () => {
 					</div>
 				</div>
 			</div>
+			<script src="/js/pong.js" type="module"></script>
+
+
 		`
 }
 
 export const loadGameCanvas = () => {
-	console.log("LOADCANVAS");
-	console.log(document.getElementById('windowScreen').getBoundingClientRect().width);
-	if (!document.getElementById("gameCanvas")) {
-
-		let canvasElement = document.createElement('canvas');
-		canvasElement.id = 'gameCanvas';
-		canvasElement.width = document.getElementById('windowScreen').getBoundingClientRect().width * 0.9;
-		canvasElement.height = document.getElementById('windowScreen').getBoundingClientRect().height * 0.9;
-
-		const ctx = canvasElement.getContext('2d');
-		ctx.fillStyle = '#000';
-		ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
-
-		document.getElementById('windowScreen').appendChild(canvasElement);
-	}
+    console.log("LOADCANVAS");
+    console.log(document.getElementById('windowScreen').getBoundingClientRect().width);
+    if (!document.getElementById("gameCanvas")) {
+        let canvasElement = document.createElement('canvas');
+        canvasElement.id = 'gameCanvas';
+        canvasElement.width = 1200;
+        canvasElement.height = 900;
+		canvasElement.style.margin = '0 auto';
+        let scale =	(document.getElementById('windowScreen').getBoundingClientRect().width * document.getElementById('windowScreen').getBoundingClientRect().height) / 
+						(canvasElement.width * canvasElement.height);
+        canvasElement.style.scale = scale;
+        const ctx = canvasElement.getContext('2d');
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+        document.getElementById('windowScreen').appendChild(canvasElement);
+    }
 }
