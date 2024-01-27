@@ -60,10 +60,10 @@ const viewUserProfile = (username) => {
 }
 
 const showToast = (message) => {
-	const toastLiveExample = document.getElementById('mainToast')
-	toastLiveExample.querySelector('.toast-body').innerHTML = message;
-	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-	toastBootstrap.show()
+	const toastAlert = document.getElementById('mainToast');
+	toastAlert.querySelector('.toast-body').innerHTML = message;
+	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastAlert);
+	toastBootstrap.show();
 };
 
 const addFriend = async (button, username, newFriend) => {
@@ -552,7 +552,7 @@ const urlLocationHandler = async () => {
 			if (!data) {
 				return;
 			}
-			document.getElementsByClassName("window")[0].innerHTML = data;
+			document.getElementById("windowScreen").innerHTML = data;
 			// const imageContainer = document.getElementById('imageContainer');
 			// const hoverText = document.getElementById('hoverText');
 
@@ -564,7 +564,7 @@ const urlLocationHandler = async () => {
 			// 	hoverText.style.display = 'none';
 			// });
 
-			document.getElementById('file').addEventListener('change', loadFile, false);
+			// document.getElementById('file').addEventListener('change', loadFile, false);
 
 
 		}).catch((error) => {
