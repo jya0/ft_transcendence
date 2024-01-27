@@ -8,8 +8,6 @@ let userToken;
 let user;
 
 
-
-
 await fetch('/api/get_user_data/', {
 	method: 'GET',
 	headers: {
@@ -322,7 +320,14 @@ document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 const urlLocationHandler = async () => {
 
+	if (!user)	{
+		fetch('/components/login.html').then(response => response.text()).then(data => {
 
+			document.getElementById("main-content").innerHTML = data;
+			showToast('Please login to continue');
+		});
+		return;
+	}
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
@@ -509,7 +514,12 @@ const urlLocationHandler = async () => {
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
-
+		if (!user) {
+			fetch('/components/login.html').then(response => response.text()).then(data => {
+				document.getElementById("main-content").innerHTML = data;
+			});
+			localStorage.clear();
+		}
 		await fetch(`/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
 			headers: {
@@ -523,10 +533,14 @@ const urlLocationHandler = async () => {
 				localStorage.clear();
 				console.log(response.statusText);
 				showToast('Please login to continue');
+				return null;
 			}
 			return response.text();
 		}).then(data => {
 			// console.log(data);
+			if (!data) {
+				return;
+			}
 			document.getElementsByClassName("window")[0].innerHTML = data;
 			const imageContainer = document.getElementById('imageContainer');
 			const hoverText = document.getElementById('hoverText');
@@ -605,6 +619,12 @@ const urlLocationHandler = async () => {
 				return;
 			}
 			insertAllUsers(users.filter((user) => user.username.startsWith(inputValue)));
+		});
+	}
+	else {
+		document.body.innerHTML = '';
+		await fetch('/components/404-component.html').then(response => response.text()).then(data => {
+			document.body.innerHTML = data;
 		});
 	}
 	if (document.getElementById("pongCanvas")) {
