@@ -28,7 +28,7 @@ urlpatterns = [
     path("tournaments/", get_all_tournaments, name="get_all_tournaments"),
     path("join/", join_tournament, name="join_tournament"),
     path("create_tournament/", create_tournament, name="create_tournament"),
-
+    path("get_image/<str:username>/", get_image, name="get_image"),
 
 
     path("friends/<str:intra>", get_user_friends, name="get_user_friends"),

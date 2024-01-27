@@ -472,3 +472,12 @@ def get_user_data(request):
         return JsonResponse({'user_data': user_data})
     else:
         return JsonResponse({'error': 'Session ID not found'}, status=204)
+
+
+@api_view(['GET'])
+def get_image(request, username):
+    user = get_object_or_404(UserProfile, username=username)
+    if user.image:
+        response = HttpResponse(user.image, content_type='image/png')
+        return response
+    return JsonResponse({'error': 'Image not found'}, status=204)
