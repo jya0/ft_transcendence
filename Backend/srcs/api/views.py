@@ -1,3 +1,4 @@
+import random
 from urllib.parse import quote
 import os
 from login.utils import send_otp, generate_jwt, verify_jwt, get_user_token
@@ -33,9 +34,10 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from datetime import datetime, timezone
 from django.contrib.sessions.models import Session
 from faker import Faker
-
+import secrets
 
 BASE_DIR = settings.BASE_DIR
+secret_key = settings.SECRET_KEY
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -355,7 +357,7 @@ def auth(request):
                         intra=email.split('@')[0],
                         picture=picture,
                         date_joined=datetime.now())
-                    user_profile.set_password(username)
+                    user_profile.set_password(secret_key)
                     user_profile.save()
                 except IntegrityError:
                     return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=200)
@@ -372,7 +374,7 @@ def auth(request):
                 print('2fa enabled------------------->')
                 send_otp(request, username)
                 print("sent otp.....")
-                access_token = get_user_token(request, username, username)
+                access_token = get_user_token(request, username, secret_key)
                 return JsonResponse({'otp': 'validate_otp', 'user': user_data, 'token': access_token}, status=200)
                 response = HttpResponseRedirect(
                     f"https://localhost:8090/desktop?otp=validate_otp&token={access_token}&username={username}")
@@ -380,7 +382,7 @@ def auth(request):
 
             auth_login(request, user_profile)
             print('got before login ---------> ', code)
-            access_token = get_user_token(request, username, username)
+            access_token = get_user_token(request, username, secret_key)
             print("---------> token", access_token)
             print(
                 f"https://localhost:8090/desktop?token={access_token}&user={username}")
