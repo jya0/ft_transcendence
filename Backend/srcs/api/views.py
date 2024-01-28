@@ -318,7 +318,6 @@ def enable_or_disable_2fa(request):
 
 
 @api_view(['POST'])
-@csrf_exempt
 def validate_otp(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
     otp = request.POST.get('otp')

@@ -762,7 +762,6 @@ async function handleUserData() {
 									localStorage.setItem('access_token', userToken);
 									document.getElementsByClassName("window")[0].innerHTML = '';
 									loadToast('OTP is valid, enjoy pongos');
-									// document.getElementById("navbar").style.display = 'none';
 									window.history.pushState({}, "", '/desktop');
 
 									window.onpopstate = urlLocationHandler;
@@ -797,8 +796,6 @@ async function handleUserData() {
 					console.log(user);
 					console.log(csrfToken);
 					console.log(data.sessionId);
-					// document.cookie = "sessionId=" + data.sessionId;
-					// console.log('authDone', authDone)
 
 				}
 
