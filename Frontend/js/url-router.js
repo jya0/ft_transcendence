@@ -469,79 +469,77 @@ const urlLocationHandler = async () => {
 		return;
 	}
 	else if (location === '/desktop') {
-		// loadSpinner("content");
 
-		// function openSmallWindow() {
-		// 	const width = 200;
-		// 	const height = 150;
-
-
-		// 	const left = Math.abs(Math.floor((Math.random() * window.innerWidth - width)) - 1000);
-		// 	const top = Math.abs(Math.floor((Math.random() * window.innerHeight - height / 2)) - 500);
-		// 	console.log(left, top);
-
-		// 	const windowFrame = document.createElement('div');
-		// 	windowFrame.className = 'small-window-frame';
-		// 	windowFrame.style.left = left + 'px';
-		// 	windowFrame.style.top = top + 'px';
+		function openSmallWindow() {
+			const width = 200;
+			const height = 150;
 
 
-		// 	const topBar = document.createElement('div');
-		// 	topBar.className = 'small-top-bar';
-		// 	windowFrame.appendChild(topBar);
+			const left = Math.abs(Math.floor((Math.random() * window.innerWidth - width)) - 1000);
+			const top = Math.abs(Math.floor((Math.random() * window.innerHeight - height / 2)) - 500);
+			console.log(left, top);
+
+			const windowFrame = document.createElement('div');
+			windowFrame.className = 'small-window-frame';
+			windowFrame.style.left = left + 'px';
+			windowFrame.style.top = top + 'px';
 
 
-		// 	const rectangleIcon = document.createElement('img');
-		// 	rectangleIcon.className = 'small-top-bar-child';
-		// 	rectangleIcon.src = './assets/public/rectangle-4.svg';
-		// 	topBar.appendChild(rectangleIcon);
-
-		// 	const options = document.createElement('div');
-		// 	options.className = 'small-options';
-		// 	topBar.appendChild(options);
-
-		// 	const vectorIcon = document.createElement('img');
-		// 	vectorIcon.className = 'small-vector-icon';
-		// 	vectorIcon.src = './assets/public/vector.svg';
-		// 	options.appendChild(vectorIcon);
-
-		// 	const dotGridIcon = document.createElement('img');
-		// 	dotGridIcon.className = 'small-dot-grid-icon';
-		// 	dotGridIcon.src = './assets/public/dot-grid.svg';
-		// 	options.appendChild(dotGridIcon);
+			const topBar = document.createElement('div');
+			topBar.className = 'small-top-bar';
+			windowFrame.appendChild(topBar);
 
 
-		// 	const windowContent = document.createElement('div');
-		// 	windowContent.className = 'small-window';
+			const rectangleIcon = document.createElement('img');
+			rectangleIcon.className = 'small-top-bar-child';
+			rectangleIcon.src = './assets/public/rectangle-4.svg';
+			topBar.appendChild(rectangleIcon);
+
+			const options = document.createElement('div');
+			options.className = 'small-options';
+			topBar.appendChild(options);
+
+			const vectorIcon = document.createElement('img');
+			vectorIcon.className = 'small-vector-icon';
+			vectorIcon.src = './assets/public/vector.svg';
+			options.appendChild(vectorIcon);
+
+			const dotGridIcon = document.createElement('img');
+			dotGridIcon.className = 'small-dot-grid-icon';
+			dotGridIcon.src = './assets/public/dot-grid.svg';
+			options.appendChild(dotGridIcon);
 
 
-		// 	const welcomeText = document.createElement('div');
-		// 	welcomeText.className = 'small-welcome-text';
-		// 	welcomeText.textContent = `Welcome ${user ? user.username : ''}!`;
-		// 	windowContent.appendChild(welcomeText);
-
-		// 	windowFrame.appendChild(windowContent);
-
-		// 	document.getElementById('content').appendChild(windowFrame);
+			const windowContent = document.createElement('div');
+			windowContent.className = 'small-window';
 
 
-		// 	windowFrame.style.display = 'block';
+			const welcomeText = document.createElement('div');
+			welcomeText.className = 'small-welcome-text';
+			welcomeText.textContent = `Welcome ${user ? user.username : ''}!`;
+			windowContent.appendChild(welcomeText);
+
+			windowFrame.appendChild(windowContent);
+
+			document.body.appendChild(windowFrame);
+
+			windowFrame.style.display = 'block';
 
 
 
-		// 	setTimeout(() => {
-		// 		document.getElementById('content').removeChild(windowFrame);
-		// 	}, 500);
-		// }
+			setTimeout(() => {
+				document.body.removeChild(windowFrame);
+			}, 500);
+		}
 
 
-		// const windowInterval = setInterval(openSmallWindow, 50);
+		const windowInterval = setInterval(openSmallWindow, 50);
 
-		// const location = window.location.pathname;
+		const location = window.location.pathname;
 
-		// setTimeout(() => {
-		// 	clearInterval(windowInterval);
-		// }, 1000);
+		setTimeout(() => {
+			clearInterval(windowInterval);
+		}, 500);
 	}
 	else if (location === '/profile') {
 		setMainWindowframe();
