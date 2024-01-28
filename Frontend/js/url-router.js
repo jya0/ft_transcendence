@@ -964,8 +964,6 @@ async function getAllFriends(override) {
 	return users;
 }
 
-
-
 async function insertAllUsers(users) {
 	document.getElementById('player-card-div').innerHTML = '';
 	if (!users) {
