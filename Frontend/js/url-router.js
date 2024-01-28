@@ -323,9 +323,9 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 			.catch(error => {
 				console.error('Error fetching data:', error);
 			});
-			const docModalMain = document.getElementById('modalMain');
-			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-			tmpModalMain.hide();
+		const docModalMain = document.getElementById('modalMain');
+		const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+		tmpModalMain.hide();
 
 	});
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
@@ -941,7 +941,9 @@ async function getAllFriends(override) {
 }
 
 async function insertAllUsers(users) {
-	document.getElementById('player-card-div').innerHTML = '';
+	if (document.getElementById('player-card-div')) {
+		document.getElementById('player-card-div').innerHTML = '';
+	}
 	if (!users) {
 		return;
 	}
