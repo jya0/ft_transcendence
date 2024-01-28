@@ -437,7 +437,10 @@ const urlLocationHandler = async () => {
 				loadTicTac();
 				break;
 			case '/games_pong_local_tournament':
-				loadTournament();
+				loadTournament(true);
+				break;
+			case '/games_pong_online_tournament':
+				loadTournament(false);
 				break;
 			default:
 				break;
