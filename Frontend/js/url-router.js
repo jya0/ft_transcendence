@@ -1,5 +1,5 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas, loadToast, loadModal } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame } from './pong.js';
@@ -176,34 +176,31 @@ function setMainWindowframe() {
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML =
 		`					
-					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
-						<div class="ratio ratio-4x3">
-							<div
-								class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
-								<!-- WINDOW-BAR -->
-								<div class="d-flex p-0 border border-0 border-light bg-black">
-									<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me"
-										data-bs-dismiss="modal" aria-label="Close">
-										<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
-											viewBox="0 0 20 20" fill="none">
-											<path
-												d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
-												fill="#E1E0DF" />
-										</svg>
-									</button>
-									<div class="container-fluid my-1 me-1 border border-0 border-light bg--polka">
-									</div>
-								</div>
-								<!-- WINDOW-SCREEN -->
-								<div
-									class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window" id="windowScreen">
-								</div>
-							</div>
+			<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
+				<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
+					<!-- WINDOW-BAR -->
+					<div class="d-flex p-0 border border-0 border-light bg-black">
+						<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me" aria-label="Close">
+							<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
+								viewBox="0 0 20 20" fill="none">
+								<path
+									d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
+									fill="#E1E0DF" />
+							</svg>
+						</button>
+						<div class="container-fluid my-1 me-1 border border-0 border-light bg--polka">
 						</div>
 					</div>
-				`;
+					<!-- WINDOW-SCREEN -->
+					<div class="ratio ratio-4x3">
+						<div class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window" id="windowScreen">
+						</div>
+					</div>
+				</div>
+			</div>
+		`;
 	document.getElementById('close-me').addEventListener('click', () => {
-		document.getElementById('close-me-containter').innerHTML = '';
+		document.getElementById('closeWindow').innerHTML = '';
 	});
 }
 
@@ -326,6 +323,9 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 			.catch(error => {
 				console.error('Error fetching data:', error);
 			});
+			const docModalMain = document.getElementById('modalMain');
+			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+			tmpModalMain.hide();
 
 	});
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
@@ -441,7 +441,10 @@ const urlLocationHandler = async () => {
 				loadTicTac();
 				break;
 			case '/games_pong_local_tournament':
-				loadTournament();
+				loadTournament(true);
+				break;
+			case '/games_pong_online_tournament':
+				loadTournament(false);
 				break;
 			default:
 				break;
@@ -465,6 +468,7 @@ const urlLocationHandler = async () => {
 		return;
 	}
 	else if (location === '/desktop') {
+		// loadSpinner("content");
 
 		// function openSmallWindow() {
 		// 	const width = 200;
@@ -674,14 +678,7 @@ async function handleUserData() {
 	history.replaceState({}, '', mainUrl);
 	console.log('code', code)
 	if (code) {
-		document.getElementById("content").innerHTML = `
-			<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
-				<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
-				<span class="visually-hidden">Loading...</span>
-				</div>
-				<h1>Hang on, cooking...</h1>
-			</div>
-		`;
+		loadSpinner("content");
 		// document.getElementById("nav-container").classList.add("hidden");
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").style.display = 'none';
