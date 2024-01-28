@@ -71,6 +71,9 @@
 	</div>
 	<div class="d-flex flex-grow-1 pb-4 gap-3 flex-row h-50 w-100 mh-50 mw-100 border border-0 border-danger">
 		<div class="d-flex col flex-column h-100 mh-100 overflow-auto border border-2 border-dark">
+			{% if not users_list %}
+				<p class="p-0 m-0" style="font-size: calc(50% + 0.4vw)">U have no friends lol. get a life</p>
+			{% endif %}
 			{% for user in users_list %}
 			<div class="w-100 d-flex flex-row border border-1 border-dark">
 				<div class="col-3">
@@ -88,6 +91,9 @@
 			{% endfor %}
 		</div>
 		<div class="d-flex col-7 mh-100 overflow-auto h-100 flex-column border border-2 border-black">
+			{% if not games_list %}
+				<p class="p-0 m-0" style="font-size: calc(50% + 0.4vw)">guys ive never played a game in my life.</p>
+			{% endif %}
 			{% for game in games_list %}
 			<div class="d-flex w-100 flex-row border border-1 border-black">
 				<div class="col-2 d-flex flex-column text-truncate border border-0">
