@@ -16,9 +16,13 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 await fetch('/api/get_user_data/', {
 	method: 'GET',
 }).then(response => {
-	if (response.status === 401 || response.status === 204) {
+	if (response.status === 204) {
 		console.log('User is not authenticated');
 		localStorage.clear();
+		return null;
+	}
+	else if (!response.ok){
+		console.log(`response`, response.status);
 		return null;
 	}
 	return response.json();
@@ -33,7 +37,6 @@ await fetch('/api/get_user_data/', {
 		sessionStorage.setItem('user', JSON.stringify(user));
 	}
 })
-
 
 
 const viewUserProfile = (username) => {
@@ -569,19 +572,6 @@ const urlLocationHandler = async () => {
 				return;
 			}
 			document.getElementById("windowScreen").innerHTML = data;
-			// const imageContainer = document.getElementById('imageContainer');
-			// const hoverText = document.getElementById('hoverText');
-
-			// imageContainer.addEventListener('mouseover', function () {
-			// 	hoverText.style.display = 'block';
-			// });
-
-			// imageContainer.addEventListener('mouseout', function () {
-			// 	hoverText.style.display = 'none';
-			// });
-
-			// document.getElementById('file').addEventListener('change', loadFile, false);
-
 
 		}).catch((error) => {
 			console.error('Error:', error);
@@ -871,20 +861,19 @@ async function getAllUsers(override) {
 		},
 	}).then(response => {
 		if (!response.ok) {
-			if (response.status === 401 || response.status === 403) {
+			if (!response.ok) {
 				localStorage.clear();
-				document.cookie = 'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-				document.cookie = 'sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-				window.location.href = '/';
-				return;
+				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+				loadToast('Please login to continue');
+				return null;
 			}
-			// response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			loadToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
+		if (!data) {
+			return;
+		}
 		console.log(data);
-
 		let sameUser = user['username'];
 		users = data.filter(item => (item.username !== "admin" && item.username !== sameUser));
 		console.log('filtered users -> ', users);
@@ -918,18 +907,18 @@ async function getAllFriends(override) {
 		},
 	}).then(response => {
 		if (!response.ok) {
-			if (response.status === 401 || response.status === 403) {
+			if (!response.ok) {
 				localStorage.clear();
-				document.cookie = 'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-				document.cookie = 'sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-				window.location.href = '/';
-				return;
+				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+				loadToast('Please login to continue');
+				return null;
 			}
-			// response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			loadToast('Please login to continue');
 		}
 		return response.json();
 	}).then(data => {
+		if (!data) {
+			return;
+		}
 		// console.log(data);
 		users = data;
 		console.log(users);
@@ -941,11 +930,11 @@ async function getAllFriends(override) {
 }
 
 async function insertAllUsers(users) {
-	if (document.getElementById('player-card-div')) {
-		document.getElementById('player-card-div').innerHTML = '';
-	}
 	if (!users) {
 		return;
+	}
+	if (document.getElementById('player-card-div')) {
+		document.getElementById('player-card-div').innerHTML = '';
 	}
 	let friends = await getAllFriends();
 	//call getAllFriends here:
@@ -999,31 +988,3 @@ async function insertAllUsers(users) {
 		});
 	}
 }
-
-// window.addEventListener('onbeforeunload', function (event) {
-// 	// Perform actions before the page is unloaded (e.g., show a confirmation dialog)
-// 	// You can return a string to display a custom confirmation message
-// 	const confirmationMessage = 'Are you sure you want to leave?';
-// 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
-// 	return confirmationMessage; // For some older browsers
-// });
-
-
-// window.addEventListener('onbeforeunload', function (event) {
-// 	// Perform actions before the page is unloaded (e.g., show a confirmation dialog)
-// 	// You can return a string to display a custom confirmation message
-// 	// const confirmationMessage = 'Are you sure you want to leave?';
-// 	// window.location.pathname = "/desktop";
-// 	console.log("im TRYIN!");
-// 	window.history.pushState({}, "", "/desktop");
-// 	urlLocationHandler();
-// 	(event || window.event).returnValue = confirmationMessage; // Standard for most browsers
-// 	return confirmationMessage; // For some older browsers
-// });
-
-
-// window.onbeforeunload	= () => {
-// 	// window.location.pathname = "/desktop";
-// 	console.log("im TRYIN!");
-// 	window.history.pushState({}, "", "/desktop");
-// }
