@@ -679,14 +679,15 @@ async function handleUserData() {
 			.then(response => {
 				console.log('response', response)
 				if (!response.ok) {
+					console.log('response is NOT OKKKKK', response);
 					if (response.status === 400) {
+						document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 						loadToast('Invalid code');
-						document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 						localStorage.clear();
 						return;
 					}
-					loadToast('Please login to continue');
 					document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+					loadToast('Please login to continue');
 					localStorage.clear();
 					return;
 				}
