@@ -74,9 +74,7 @@ const addFriend = async (button, username, newFriend) => {
 		});
 
 		if (!response.ok) {
-			fetch('/components/login.html').then(response => response.text()).then(data => {
-				document.getElementById("content").innerHTML = data;
-			});
+			document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 			localStorage.clear();
 			throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
 		}
@@ -300,37 +298,35 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 			</div>
 		`);
 
-    
-	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
-    document.getElementById('logout').addEventListener('click', () => {
-        localStorage.clear();
-        console.log('logout');
-        fetch('/api/logout', {
-            credentials: 'include',
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(async data => {
-                console.log('Data fetched:', data);
-                if (data.message === 'Logged out successfully') {
-                    await fetch('/components/login.html').then(response => response.text()).then(data => {
-                        document.getElementById("main-content").innerHTML = data;
-                        loadToast('You have been logged out successfully');
-                    });
-                }
-                else {
-                    document.getElementById('logout').remove();
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
 
-    });
+	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
+	document.getElementById('logout').addEventListener('click', () => {
+		localStorage.clear();
+		console.log('logout');
+		fetch('/api/logout', {
+			credentials: 'include',
+		})
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json();
+			})
+			.then(async data => {
+				console.log('Data fetched:', data);
+				if (data.message === 'Logged out successfully') {
+					document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+					loadToast('You have been logged out successfully');
+				}
+				else {
+					document.getElementById('logout').remove();
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+			});
+
+	});
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 		const newDisplayName = document.getElementById('floatingInputGroup1');
@@ -381,11 +377,8 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 const urlLocationHandler = async () => {
 
 	if (!user) {
-		fetch('/components/login.html').then(response => response.text()).then(data => {
-
-			document.getElementById("main-content").innerHTML = data;
-			loadToast('Please login to continue');
-		});
+		document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+		loadToast('Please login to continue');
 		return;
 	}
 	insertOrCreateContent();
@@ -416,10 +409,8 @@ const urlLocationHandler = async () => {
 			document.getElementById("navbar").remove();
 		}
 		console.log('login route')
-		await fetch('/components/login.html').then(response => response.text()).then(data => {
-			document.getElementById("main-content").innerHTML = data;
-			loadToast('Please login to continue');
-		});
+		document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+		loadToast('Please login to continue');
 		return;
 	}
 	document.getElementById("navbar").style.display = 'flex';
@@ -546,10 +537,9 @@ const urlLocationHandler = async () => {
 	else if (location === '/profile') {
 		setMainWindowframe();
 		if (!user) {
-			fetch('/components/login.html').then(response => response.text()).then(data => {
-				document.getElementById("main-content").innerHTML = data;
-			});
+			document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 			localStorage.clear();
+			return;
 		}
 		await fetch(`/api/users/${user.username}?username=${user.username}`, {
 			method: 'GET',
@@ -558,9 +548,7 @@ const urlLocationHandler = async () => {
 			},
 		}).then(response => {
 			if (!response.ok) {
-				fetch('/components/login.html').then(response => response.text()).then(data => {
-					document.getElementById("main-content").innerHTML = data;
-				});
+				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 				localStorage.clear();
 				console.log(response.statusText);
 				loadToast('Please login to continue');
@@ -603,9 +591,7 @@ const urlLocationHandler = async () => {
 				});
 
 				if (!response.ok) {
-					fetch('/components/login.html').then(response => response.text()).then(data => {
-						document.getElementById("content").innerHTML = data;
-					});
+					document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 					localStorage.clear();
 					throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
 				}
@@ -616,11 +602,9 @@ const urlLocationHandler = async () => {
 					document.getElementById('2fa-button').innerHTML = 'Enable 2FA';
 					loadToast('2FA disabled successfully');
 				} else {
-					await fetch('/components/login.html').then(response => response.text()).then(data => {
-						document.getElementById("navbar").remove();
-						document.getElementById("content").innerHTML = data;
-						localStorage.clear();
-					});
+					document.getElementById("navbar").style.display = 'none';
+					document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+					localStorage.clear();
 					loadToast('2FA enabled successfully, please login again');
 				}
 			} catch (error) {
@@ -653,9 +637,8 @@ const urlLocationHandler = async () => {
 		});
 	}
 	else {
-		document.body.innerHTML = '';
 		await fetch('/components/404-component.html').then(response => response.text()).then(data => {
-			document.body.innerHTML = data;
+			document.getElementById("main-content").innerHTML = data;
 		});
 	}
 	if (document.getElementById("pongCanvas")) {
@@ -710,16 +693,12 @@ async function handleUserData() {
 				if (!response.ok) {
 					if (response.status === 400) {
 						loadToast('Invalid code');
-						fetch('/components/login.html').then(response => response.text()).then(data => {
-							document.getElementById("content").innerHTML = data;
-						});
+						document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 						localStorage.clear();
 						return;
 					}
 					loadToast('Please login to continue');
-					fetch('/components/login.html').then(response => response.text()).then(data => {
-						document.getElementById("content").innerHTML = data;
-					});
+					document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 					localStorage.clear();
 					return;
 				}
@@ -776,9 +755,7 @@ async function handleUserData() {
 						})
 							.then(response => {
 								if (!response.ok) {
-									fetch('/components/login.html').then(response => response.text()).then(data => {
-										document.getElementById("content").innerHTML = data;
-									});
+									document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 									localStorage.clear();
 									throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
 								}
@@ -803,9 +780,7 @@ async function handleUserData() {
 									loadToast('Invalid OTP code');
 									document.getElementById('otp-container').innerHTML += '<button type="" id="try-again-btn" class="btn btn-primary">Try Again</button>';
 									document.getElementById('try-again-btn').addEventListener('click', () => {
-										fetch('/components/login.html').then(response => response.text()).then(data => {
-											document.getElementById("content").innerHTML = data;
-										});
+										document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 										localStorage.clear();
 									});
 								}
@@ -884,7 +859,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
-	console.log*'access_token', localStorage.getItem('access_token');
+	console.log * 'access_token', localStorage.getItem('access_token');
 	await fetch('/api/get_all_users/', {
 		method: 'GET',
 		headers: {
