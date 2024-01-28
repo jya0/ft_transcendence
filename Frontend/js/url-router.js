@@ -6,6 +6,11 @@ import { loadGame } from './pong.js';
 
 let userToken;
 let user;
+let LOGIN_PAGE_HTML = '';
+
+await fetch('/components/login.html').then(response => response.text()).then(data => {
+	LOGIN_PAGE_HTML = data;
+});
 
 
 await fetch('/api/get_user_data/', {
@@ -38,7 +43,7 @@ await fetch('/api/get_user_data/', {
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
 	const url = `/api/users/${username}?username=${user.username}}`;
-
+	console.log('------> ', localStorage.getItem('access_token'));
 	fetch(url, {
 		method: 'GET',
 		headers: {
@@ -175,8 +180,8 @@ const insertCSS = (filePath) => {
 
 function setMainWindowframe() {
 	insertOrCreateContent();
-	document.getElementById("content").innerHTML = 
-				`					
+	document.getElementById("content").innerHTML =
+		`					
 					<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
 						<div class="ratio ratio-4x3">
 							<div
@@ -229,32 +234,27 @@ async function updateProfile(file) {
 		},
 		credentials: 'include',
 	})
-		.then(response => response.json())
-		.then(data => {
-			// inser success message
-			console.log(data);
+		.then(response => {
+			if (!response.ok) {
+				console.log('response', response);
+				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+				loadToast('Failed to update Image, You have to login again for security reasons!');
+				localStorage.clear();
+				return null;
+			}
+			return response.json()
+
+		}).then(data => {
+			if (!data) {
+				return;
+			}
+			loadToast('Image updated successfully');
 		})
 		.catch(error => {
 			console.error('Error:', error);
 		});
 }
 
-let loadFile = async function (event) {
-
-	let image = document.getElementById('output');
-
-
-	let file = null;
-	let fileInput = document.getElementById('file');
-	if (fileInput) {
-		file = fileInput.files[0];
-	}
-
-	if (file) {
-		updateProfile(file);
-		image.src = URL.createObjectURL(event.target.files[0]);
-	}
-};
 
 let loadModalFile = async function (event) {
 	let image = document.getElementById('output');
@@ -265,7 +265,6 @@ let loadModalFile = async function (event) {
 			let modalFile = modalInput.files[0];
 
 			if (modalFile) {
-				console.log('modalFile', modalFile);
 				updateProfile(modalFile, image);
 				if (image) {
 					image.src = URL.createObjectURL(event.target.files[0]);
@@ -303,49 +302,57 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 			</div>
 		`);
 	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
-	
+
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
-	
+
 		const newDisplayName = document.getElementById('floatingInputGroup1');
 		const nicknameValue = newDisplayName.value;
 		const displayNameElement = document.getElementById('displayName');
-	
-		if (!nicknameValue)
-		{
+
+		if (!nicknameValue) {
 			loadToast('Display name should not be empty');
-			return ;
+			return;
 		}
 		else if (nicknameValue.length >= 50) {
 			loadToast('Size of display name should be less than 50 characters');
-			return ;
+			return;
 		}
-		try {
-			const response = await fetch('/api/update_display_name/', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'X-CSRFToken': getCookie('csrftoken'),
-					'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-				},
-				credentials: 'include',
-				body: JSON.stringify({ display_name: nicknameValue }),
-			});
-			if (response.ok) {
-				displayNameElement.textContent = nicknameValue;
-				loadToast('Display name updated successfully');
-			} else {
-				loadToast('failed to update display name');
-				console.error('Failed to update display name:', response.status, response.statusText);
+
+		await fetch('/api/update_display_name/', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'X-CSRFToken': getCookie('csrftoken'),
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+			credentials: 'include',
+			body: JSON.stringify({ display_name: nicknameValue }),
+		},
+
+		).then(response => {
+			if (!response.ok) {
+				console.log('response', response);
+				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+				loadToast('Failed to update display name, You have to login again for security reasons!');
+				return null;
 			}
-		} catch (error) {
-			console.error('Error updating display name:', error);
-		}
+			return response.json()
+
+		}).then(data => {
+			if (!data) {
+				return;
+			}
+			if (displayNameElement) {
+				displayNameElement.textContent = nicknameValue;
+			}
+			loadToast('Display name updated successfully');
+		})
 	});
 });
 
 const urlLocationHandler = async () => {
 
-	if (!user)	{
+	if (!user) {
 		fetch('/components/login.html').then(response => response.text()).then(data => {
 
 			document.getElementById("main-content").innerHTML = data;
@@ -849,6 +856,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
+	console.log*'access_token', localStorage.getItem('access_token');
 	await fetch('/api/get_all_users/', {
 		method: 'GET',
 		headers: {

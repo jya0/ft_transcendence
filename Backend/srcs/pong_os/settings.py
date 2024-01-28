@@ -39,6 +39,7 @@ CSRF_TRUSTED_ORIGINS = [f'https://{host}:8090' for host in ALLOWED_HOSTS]
 # Application definition
 
 INSTALLED_APPS = [
+    "rest_framework",
     'channels',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "rest_framework",
     'game',
     'users',
     'login',
@@ -101,13 +101,14 @@ AUTH_USER_MODEL = "login.UserProfile"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',  # needed for browser api
+        # needed for browser api REMOVE IT IN PRODUCTION
+        'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [f'https://{host}:8090' for host in ALLOWED_HOSTS]
 
 CORS_ALLOW_HEADERS = [

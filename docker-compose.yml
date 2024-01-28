@@ -11,7 +11,7 @@ services:
         SSL_CERTIFICATE_KEY: ${SSL_CERTIFICATE_KEY}
     env_file:
       - ./.env
-    restart: always
+    restart: unless-stopped
     ports:
       - 8090:8090
     volumes:
@@ -20,7 +20,6 @@ services:
       - django
     networks:
       - backend
-      
 
   django:
     build:
@@ -32,7 +31,7 @@ services:
       - 8000:8000
     env_file:
       - ./.env
-    restart: always
+    restart: unless-stopped
     depends_on:
       - postgresdb
     networks:
@@ -45,7 +44,7 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
-    restart: always
+    restart: unless-stopped
     ports:
       - 5432:5432
     environment:
