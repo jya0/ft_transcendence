@@ -20,7 +20,7 @@ await fetch('/api/get_user_data/', {
 		localStorage.clear();
 		return null;
 	}
-	else if (!response.ok){
+	else if (!response.ok) {
 		console.log(`response`, response.status);
 		return null;
 	}
@@ -419,7 +419,6 @@ const urlLocationHandler = async () => {
 		}
 		console.log('login route')
 		document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-		loadToast('Please login to continue');
 		return;
 	}
 	document.getElementById("navbar").style.display = 'flex';
@@ -728,6 +727,7 @@ async function handleUserData() {
 					`;
 
 					document.getElementById('submit-otp').addEventListener('click', async () => {
+						console.log('submit otp clicked');
 						let otp = document.getElementById('otp-input').value;
 						if (!otp) {
 							loadToast('Please enter OTP code');
@@ -772,7 +772,10 @@ async function handleUserData() {
 								}
 								else {
 									loadToast('Invalid OTP code');
-									document.getElementById('otp-container').innerHTML += '<button type="" id="try-again-btn" class="btn btn-primary">Try Again</button>';
+									const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-primary">Try Again</button>';
+									if (!document.getElementById('try-again-btn')) {
+										document.getElementById('otp-container').insertAdjacentHTML('beforeend', tryAgainButton);
+									}
 									document.getElementById('try-again-btn').addEventListener('click', () => {
 										document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
 										localStorage.clear();

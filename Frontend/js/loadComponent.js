@@ -118,7 +118,7 @@ export const loadSpinner = (elementId) => {
 				<div class="spinner-grow display-1 text-white" style="width: 5vw; height: 5vw;" role="status">
 					<span class="visually-hidden">Loading...</span>
 				</div>
-				<p class="m-0 p-0 font--neue text-white text-capitalize display-1">Hang on, cooking...</p>
+				<p class="m-0 p-0 font--neue text-white text-capitalize display-1">Hang tight...</p>
 			</div>
 		</div>
 	`;

@@ -4,3 +4,4 @@ __pycache
 /django
 mediafiles
 migrations
+test.py
