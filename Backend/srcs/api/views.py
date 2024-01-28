@@ -37,7 +37,6 @@ from faker import Faker
 import secrets
 
 BASE_DIR = settings.BASE_DIR
-secret_key = settings.SECRET_KEY
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -185,10 +184,8 @@ def user_view(request, intra):
     unique_friends = list(set(friends_list))
     usernames_list = [friend.username for friend in unique_friends]
 
-
     # Get a list of unique friends
     games_list = Match.objects.filter(Q(id1=user) | Q(id2=user)).all()
-
 
     template = get_template('user_profile.html')
     template_content = template.template.source
@@ -196,13 +193,13 @@ def user_view(request, intra):
 
     if request.user.username == intra:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list' : games_list,'user_tag': 'same', 'image': 'same'})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'same', 'image': 'same'})
     elif request.user.username in usernames_list:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list' : games_list,'user_tag': 'other', 'image': 'other', 'is_friend': True})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': True})
     else:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list' : games_list,'user_tag': 'other', 'image': 'other', 'is_friend': False})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': False})
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
@@ -305,101 +302,6 @@ def join_tournament(request):
     if joined:
         msg = 'Tournament joined successfully'
     return JsonResponse({'message': msg}, status=200)
-
-
-@api_view(['get'])
-def auth(request):
-    code = request.GET.get("code")
-    print('got code ---------> ', code)
-    if code:
-        print("code", code)
-        data = {
-            "grant_type": "authorization_code",
-            "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),
-            "client_secret": os.environ.get("FORTY_TWO_CLIENT_SECRET"),
-            "code": code,
-            "redirect_uri": os.environ.get("FORTY_TWO_REDIRECT_URI"),
-        }
-        auth_response = requests.post(
-            "https://api.intra.42.fr/oauth/token", data=data)
-        try:
-            access_token = auth_response.json().get("access_token")
-        except:
-            return JsonResponse({'message': 'Invalid authorization code'}, status=400)
-        user_response = requests.get(
-            "https://api.intra.42.fr/v2/me", headers={"Authorization": f"Bearer {access_token}"})
-        try:
-            username = user_response.json()["login"]
-            email = user_response.json()["email"]
-            display_name = user_response.json()["displayname"]
-            nickname = display_name
-            picture = user_response.json()["image"]
-        except:
-            response = JsonResponse(
-                {'message': 'Failed to fetch user data in main'}, status=400)
-            return response
-            return HttpResponseRedirect("https://localhost:8090/")
-        auth_users = ['ahassan', 'sali', 'rriyas', 'jyao', 'zabdirak']
-        if username not in auth_users:
-            return JsonResponse({'message': 'hacker', 'name': display_name}, status=200)
-
-        if username:
-            request.session['username'] = username
-            if not UserProfile.objects.filter(username=username).exists():
-                try:
-                    user_profile = UserProfile.objects.create(
-                        username=username,
-                        email=email,
-                        first_name=display_name.split()[0],
-                        last_name=display_name.split()[1],
-                        display_name=display_name,
-                        nickname=nickname,
-                        intra=email.split('@')[0],
-                        picture=picture,
-                        date_joined=datetime.now())
-                    user_profile.set_password(secret_key)
-                    user_profile.save()
-                except IntegrityError:
-                    return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=200)
-            else:
-                user_profile = UserProfile.objects.get(username=username)
-
-            user_data = {
-                'username': user_profile.username,
-                'email': user_profile.email,
-                'display_name': user_profile.display_name,
-                'nickname': user_profile.nickname,
-            }
-            if user_profile.is_2fa_enabled:
-                print('2fa enabled------------------->')
-                send_otp(request, username)
-                print("sent otp.....")
-                access_token = get_user_token(request, username, secret_key)
-                return JsonResponse({'otp': 'validate_otp', 'user': user_data, 'token': access_token}, status=200)
-                response = HttpResponseRedirect(
-                    f"https://localhost:8090/desktop?otp=validate_otp&token={access_token}&username={username}")
-                return response
-
-            auth_login(request, user_profile)
-            print('got before login ---------> ', code)
-            access_token = get_user_token(request, username, secret_key)
-            print("---------> token", access_token)
-            print(
-                f"https://localhost:8090/desktop?token={access_token}&user={username}")
-            session_id = request.session.session_key
-            return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
-            response = HttpResponseRedirect(
-                f"https://localhost:8090/desktop?token={access_token}&user={username}")
-            return response
-
-        response = JsonResponse(
-            {'message': 'Failed to fetch user data'}, status=400)
-        return response
-        return HttpResponseRedirect("https://localhost:8090/")
-    else:
-        response = JsonResponse({'message': 'Invalid code'}, status=400)
-        return response
-        return HttpResponseRedirect("https://localhost:8090/")
 
 
 @api_view(['POST'])

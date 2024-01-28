@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'game',
-    'users',
     'login',
     'api',
     'rest_framework_simplejwt',

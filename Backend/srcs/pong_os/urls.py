@@ -29,7 +29,6 @@ router.register(r'groups', views.GroupViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('login.urls')),
-    path('users/', include('users.urls')),
     path('play/', include('game.urls')),
     path('api/', include('api.urls'))
 ]
