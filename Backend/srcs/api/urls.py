@@ -18,7 +18,6 @@ router.register(r'groups', views.GroupViewSet)
 urlpatterns = [
     # path("users/", all_users_view, name="all_users_view"),
     # path("tournaments/<str:intra>", get_user_tournaments, name="get_user_tournaments"),
-    path("auth/", auth, name="auth"),
     path('enable_or_disable_2fa/', views.enable_or_disable_2fa,
          name='enable_or_disable_2fa'),
     path('validate_otp/', views.validate_otp, name='validate_otp'),

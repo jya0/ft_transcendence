@@ -15,28 +15,16 @@ import requests
 from rest_framework.decorators import api_view, permission_classes
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.sessions.models import Session
-
+from django.conf import settings
 
 
 FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
+secret_key = settings.SECRET_KEY
 
 
 # Create your views here.
 def home_view(request):
     return render(request, "home.html", {'FORTY_TWO_URL': FORTY_TWO_URL})
-
-
-# @api_view(['GET'])
-# def logout(request):
-#     username = request.session.get('username')
-#     print('------------------->', username)
-#     if username is not None:
-#         user_profile = get_object_or_404(UserProfile, username=username)
-#         print('------------------->', user_profile)
-#         auth_logout(request)
-#         Session.objects.filter(session_key=request.session.session_key).delete()
-#         return JsonResponse({'message': 'Logged out successfully'}, status=200)
-#     return JsonResponse({'message': 'User is logged out'}, status=200)
 
 
 def logout(request):
@@ -47,56 +35,6 @@ def logout(request):
     return JsonResponse({'message': 'already logged out'}, status=200)
 
 
-def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        print(username, password)
-        user = authenticate(request, username=username, password=password)
-        print(user)
-        if user is not None:
-            request.session['username'] = username
-            user = get_object_or_404(UserProfile, username=username)
-            if user.is_2fa_enabled:
-                send_otp(request)
-                auth_login(request, user)
-                return render(request, '2fa.html', {'user': user})
-            auth_login(request, user)
-            request.session['is_verified'] = True
-            return redirect('/')
-        else:
-            messages.info(request, 'Username or password is incorrect')
-    return redirect('/')
-
-
-def twoFactor(request):
-    if not request.user.is_authenticated:
-        return redirect('/')
-    user = get_object_or_404(
-        UserProfile, username=request.session['username'])
-    if request.method == 'POST':
-        if not user.is_2fa_enabled:
-            return redirect('/enable_or_disable_2fa')
-        otp = request.POST.get('otp')
-        print(otp)
-        if otp:
-            if request.session['otp_secret_key'] == otp:
-                current_datetime = datetime.now()
-                stored_datetime = datetime.fromisoformat(
-                    request.session['otp_valid_date'])
-                if current_datetime < stored_datetime:
-                    print("OTP verified")
-                    auth_login(request, user)
-                    request.session['is_verified'] = True
-                    return redirect('/', {'user': user})
-                else:
-                    messages.info(request, "OTP expired")
-            else:
-                messages.info(request, "Invalid OTP")
-    return render(request, "2fa.html", {'user': user})
-
-
-
 def ssr_render(request, template_name, user, messages):
     template = get_template(template_name)
     template_content = template.template.source
@@ -105,3 +43,82 @@ def ssr_render(request, template_name, user, messages):
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
+
+
+@api_view(['get'])
+def auth(request):
+    code = request.GET.get("code")
+    if code:
+        print("code", code)
+        data = {
+            "grant_type": "authorization_code",
+            "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),
+            "client_secret": os.environ.get("FORTY_TWO_CLIENT_SECRET"),
+            "code": code,
+            "redirect_uri": os.environ.get("FORTY_TWO_REDIRECT_URI"),
+        }
+        auth_response = requests.post(
+            "https://api.intra.42.fr/oauth/token", data=data)
+        try:
+            access_token = auth_response.json().get("access_token")
+        except:
+            return JsonResponse({'message': 'Invalid authorization code'}, status=400)
+        user_response = requests.get(
+            "https://api.intra.42.fr/v2/me", headers={"Authorization": f"Bearer {access_token}"})
+        try:
+            username = user_response.json()["login"]
+            email = user_response.json()["email"]
+            display_name = user_response.json()["displayname"]
+            nickname = display_name
+            picture = user_response.json()["image"]
+        except:
+            response = JsonResponse(
+                {'message': 'Failed to fetch user data in main'}, status=400)
+            return response
+        auth_users = ['ahassan', 'sali', 'rriyas', 'jyao']
+        if username not in auth_users:
+            return JsonResponse({'message': 'hacker', 'name': display_name}, status=200)
+
+        if username:
+            request.session['username'] = username
+            if not UserProfile.objects.filter(username=username).exists():
+                try:
+                    user_profile = UserProfile.objects.create(
+                        username=username,
+                        email=email,
+                        first_name=display_name.split()[0],
+                        last_name=display_name.split()[1],
+                        display_name=display_name,
+                        nickname=nickname,
+                        intra=email.split('@')[0],
+                        picture=picture,
+                        date_joined=datetime.now())
+                    user_profile.set_password(secret_key)
+                    user_profile.save()
+                except IntegrityError:
+                    return JsonResponse({'message': 'This email is already in use. Please choose a different one.'}, status=400)
+            else:
+                user_profile = UserProfile.objects.get(username=username)
+
+            user_data = {
+                'username': user_profile.username,
+                'email': user_profile.email,
+                'display_name': user_profile.display_name,
+                'nickname': user_profile.nickname,
+            }
+            if user_profile.is_2fa_enabled:
+                send_otp(request, username)
+                access_token = get_user_token(request, username, secret_key)
+                return JsonResponse({'otp': 'validate_otp', 'user': user_data, 'token': access_token}, status=200)
+
+            auth_login(request, user_profile)
+            access_token = get_user_token(request, username, secret_key)
+            session_id = request.session.session_key
+            return JsonResponse({'token': access_token, 'user': user_data, 'sessionId': session_id}, status=200)
+
+        response = JsonResponse(
+            {'message': 'Failed to fetch user data'}, status=400)
+        return response
+    else:
+        response = JsonResponse({'message': 'Invalid code'}, status=400)
+        return response
