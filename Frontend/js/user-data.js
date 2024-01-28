@@ -1,31 +1,5 @@
 import { loadToast } from './loadComponent.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-
-	await fetch('/api/42_intra_link', {
-		method: 'GET',
-	})
-		.then(response => {
-			if (!response.ok) {
-				alert(response.status);
-				throw new Error('Network response was not ok');
-			}
-			return response.json();
-		})
-		.then(data => {
-			console.log('Data fetched:', data);
-			const unlockButton = document.getElementsByClassName('nav-link')[0];
-			if (data.forty_two_url && unlockButton) {
-				unlockButton.href = data.forty_two_url;
-			}
-		})
-		.catch(error => {
-			console.error('Error fetching data:', error);
-		});
-
-});
-
-
 function updateTime() {
 	const monthNames = ["January", "February", "March", "April", "May", "June",
 		"July", "August", "September", "October", "November", "December"];
