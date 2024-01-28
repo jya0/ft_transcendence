@@ -7,7 +7,7 @@ import requests
 from login.models import UserProfile
 from login.views import ssr_render
 from django.shortcuts import render
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
@@ -161,7 +161,7 @@ def get_user_friends(request, intra):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes((IsAuthenticated,))
 def user_view(request, intra):
     try:
         user = get_object_or_404(UserProfile, username=intra)
