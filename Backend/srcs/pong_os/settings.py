@@ -140,12 +140,12 @@ SIMPLE_JWT = {
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.postgresql"),
-        "NAME": os.environ.get("SQL_DATABASE", "django_dev"),
-        "USER": os.environ.get("SQL_USER", "django"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD", "django"),
-        "HOST": os.environ.get("SQL_HOST", "postgresdb"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+        "ENGINE": os.environ.get("SQL_ENGINE"),
+        "NAME": os.environ.get("SQL_DATABASE"),
+        "USER": os.environ.get("SQL_USER"),
+        "PASSWORD": os.environ.get("SQL_PASSWORD"),
+        "HOST": os.environ.get("SQL_HOST"),
+        "PORT": os.environ.get("SQL_PORT"),
     }
 }
 
