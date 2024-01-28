@@ -85,10 +85,9 @@ export const loadGameCanvas = () => {
         canvasElement.id = 'gameCanvas';
         canvasElement.width = 1200;
         canvasElement.height = 900;
-		canvasElement.style.margin = '0 auto';
-        let scale =	(document.getElementById('windowScreen').getBoundingClientRect().width * document.getElementById('windowScreen').getBoundingClientRect().height) / 
-						(canvasElement.width * canvasElement.height);
-        canvasElement.style.scale = scale;
+		// canvasElement.style.margin = '0 auto';
+        // let scale =	(document.getElementById('windowScreen').getBoundingClientRect().width) / (canvasElement.width);
+        canvasElement.style.scale = 1;
         const ctx = canvasElement.getContext('2d');
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
