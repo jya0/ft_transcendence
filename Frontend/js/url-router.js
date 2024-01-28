@@ -12,7 +12,6 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 	LOGIN_PAGE_HTML = data;
 });
 
-
 await fetch('/api/get_user_data/', {
 	method: 'GET',
 }).then(response => {
@@ -385,7 +384,6 @@ const urlLocationHandler = async () => {
 
 	if (!user) {
 		document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-		loadToast('Please login to continue');
 		return;
 	}
 	insertOrCreateContent();
