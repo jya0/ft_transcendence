@@ -109,3 +109,17 @@ export const loadToast = (message) => {
 export const loadModal = (innerHTML) => {
 	document.getElementById('modalMainBody').innerHTML = innerHTML;
 };
+
+export const loadSpinner = (elementId) => {
+	document.getElementById(elementId).innerHTML = 
+	`
+		<div class="d-flex h-100 w-100 justify-content-center align-items-center">
+			<div id="spinner" class="d-flex flex-column justify-content-center align-items-center gap-5">
+				<div class="spinner-grow display-1 text-white" style="width: 5vw; height: 5vw;" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+				<p class="m-0 p-0 font--neue text-white text-capitalize display-1">Hang on, cooking...</p>
+			</div>
+		</div>
+	`;
+}
