@@ -1,5 +1,22 @@
 // import {io} from "socket.io-client";
-export function loadTournament() {
+export function loadTournament(localMode) {
+
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			const cookies = document.cookie.split(';');
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				if (cookie.substring(0, name.length + 1) === name + '=') {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+
+	
 	let tournament_name;
 	const canvas = document.getElementById('gameCanvas');
 	const docModalMain = document.getElementById('modalMain');
@@ -8,8 +25,6 @@ export function loadTournament() {
 	let localPlayerMode = true;
 	let pairings = [];
 	let winners = [];
-	// canvas.width = 800;
-	// canvas.height = 400;
 
 	const paddle = { width: 10, height: 100, speed: 8 };
 	const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
@@ -105,7 +120,7 @@ export function loadTournament() {
 	}
 
 
-	function update() {
+	async function update() {
 		if (isGameOver) return;
 
 		ball.x += ball.speedX;
@@ -133,7 +148,7 @@ export function loadTournament() {
 		if (ball.x < 0 || ball.x > canvas.width) {
 			ball.x > canvas.width ? score.left++ : score.right++;
 			resetBall();
-			checkForWinner();
+			await checkForWinner();
 			return;
 		}
 
@@ -145,7 +160,7 @@ export function loadTournament() {
 		ball.speedX *= -1;
 	}
 
-	function handleLocalWinner() {
+	async function handleLocalWinner() {
 		let buttonText;
 
 		if (tournReady == false)
@@ -154,8 +169,8 @@ export function loadTournament() {
 		//show results
 		if (g_count != 2) {
 
-			alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
-			console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
+			// alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
+			// console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
 		}
 
 		//update winners
@@ -185,6 +200,9 @@ export function loadTournament() {
 			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
 			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
 			tmpModalMain.show();
+			isGameOver = true;
+			await delay(4000);
+			isGameOver = false;
 			resetGame();
 		}
 		if (g_count == 1) {
@@ -195,9 +213,13 @@ export function loadTournament() {
 			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
 			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
 			tmpModalMain.show();
-
+			isGameOver = true;
+			await delay(4000);
+			isGameOver = false;
 			resetGame();
 		}
+	
+
 		// end tournament
 		if (g_count == 2) {
 			tournReady = false;
@@ -216,7 +238,7 @@ export function loadTournament() {
 			g_count = 0;
 			tournReady = false;
 			isGameOver = true;
-			alert(buttonText);
+			// alert(buttonText);
 			docModalMain.querySelector('#winner-final').innerHTML = winners[0];
 			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
 			toggleHighlight("tWinnerHighlight", "");
@@ -244,20 +266,20 @@ export function loadTournament() {
 				'score2': score.right,
 			}))
 		}
-		document.getElementById("startOnlineTournButton").innerHTML = buttonText;
+		// document.getElementById("startOnlineTournButton").innerHTML = buttonText;
 		gameSocket.close();
 		isGameOver = true;
 		socketStatus = false;
 	}
 
-	function checkForWinner() {
+	async function checkForWinner() {
 
 		if (score.left >= 3 || score.right >= 3) {
 			isGameOver = true;
 			ctx.fillStyle = 'red';
 
 			if (localPlayerMode)
-				handleLocalWinner();
+				await handleLocalWinner();
 			else
 				handleOnlineWinner();
 		}
@@ -287,13 +309,10 @@ export function loadTournament() {
 
 			if (data.type === 'start' && data["status"] == "start") {
 				player_count = 2;
-				// document.getElementById("startOnlineTournButton").innerHTML = "In-game";
 				if (data.sender == localStorage.getItem('username')) {
 					leftPlayer = false;
 					rightPlayer = true;
 				}
-				// console.log(leftPlayer);
-				// console.log(rightPlayer);
 				playOnlineTournamentMatch();
 			}
 
@@ -352,10 +371,9 @@ export function loadTournament() {
 	}
 
 
-	function playGame() {
+	async function playGame() {
+		await delay(4000);
 		localPlayerMode = true;
-		// startLocalButton.disabled = true;
-		// startOnlineButton.disabled = true;
 		if (isGameOver || !animationFrameId) {
 			isGameOver = false;
 			score.left = 0;
@@ -365,9 +383,9 @@ export function loadTournament() {
 		}
 
 	}
+	const delay = ms => new Promise(res => setTimeout(res, ms));
 
-
-	function startLocalTournament() {
+	async function startLocalTournament() {
 		console.log("sup mfs");
 		// if (tournReady == false)
 		//     return;
@@ -375,10 +393,6 @@ export function loadTournament() {
 		localPlayerMode = true;
 		let player1 = pairings[0][0];
 		let player2 = pairings[0][1];
-		// startLocalButton.disabled = true;
-		// startOnlineButton.disabled = true;
-		// startLocalButton.style.visibility = 'hidden';
-		// startOnlineButton.style.visibility = 'hidden';
 		docModalMain.querySelector('#modalMainBody').innerHTML = 
 			`
 				<div class="container p-5 h-100 w-100 mh-100 mw-100 overflow-auto bg-black border border-1 border-white">
@@ -505,14 +519,11 @@ export function loadTournament() {
 			tmpModalMain.show();
 
 			resetBall();
-			// alert(`Match 1: ${player1} vs ${player2}\n Press to start`);
 			playGame();
-			// startLocalButton.disabled = false;
-			// startLocalButton.click();
 		}
 	}
 
-	function setupTournament() {
+	function setupLocalTournament() {
 
 		docModalMain.querySelector('#modalMainBody').innerHTML =
 			`
@@ -625,7 +636,15 @@ export function loadTournament() {
 		}
 	};
 
-	setupTournament();
+
+	function startTournament() {
+		if (localMode) {
+			setupLocalTournament();
+			return ;
+		}
+		setupOnlineTournament();
+	}
+	startTournament();
 
 	// Function to check for duplicate values in an array
 	function hasDuplicates(array) {
@@ -634,13 +653,21 @@ export function loadTournament() {
 
 
 
-	function displayMenu() {
+	async function displayMenu() {
 		const menuContainer = document.createElement('div');
 		menuContainer.id = 'menu-container';
 
 		// Fetch the list of online tournaments from the backend
-		fetch('http://localhost:8000/api/tournaments')
-			.then(response => response.json())
+		// fetch('http://localhost:8000/api/tournaments');
+
+
+		await fetch('/api/tournaments', {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+				'Content-Type': 'application/json'
+			}
+		}).then(response => response.json())
 			.then(tournaments => {
 				const tournamentList = document.createElement('ul');
 				tournamentList.innerHTML = '<p>Online Tournaments:</p>';
@@ -666,11 +693,13 @@ export function loadTournament() {
 		const createButton = document.createElement('button');
 		createButton.textContent = 'Create New Tournament';
 		createButton.addEventListener('click', createNewTournament);
-
+		
 		menuContainer.appendChild(createButton);
-
+		menuContainer.style.zIndex = 4;
+		menuContainer.style.position = "absolute";
+		menuContainer.style.color = "white";
 		// Append the menu to the document
-		document.getElementsByClassName('window-frame')[0].appendChild(menuContainer);
+		document.getElementById('windowScreen').appendChild(menuContainer);
 	}
 
 	function createNewTournament() {
@@ -712,6 +741,7 @@ export function loadTournament() {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+				'x-csrftoken': getCookie('csrftoken'),
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
@@ -755,10 +785,11 @@ export function loadTournament() {
 		// You can make an API call or update the game state accordingly
 		console.log(`Joining tournament with name ${tournamentName}`);
 		tournament_name = tournamentName;
-		await fetch(`http://10.12.1.10:8090/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
+		await fetch(`/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
 			method: 'POST',
 			headers: {
 				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+				'x-csrftoken': getCookie('csrftoken'),
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify({
@@ -775,10 +806,10 @@ export function loadTournament() {
 					//@TODO : Clear screen !
 					const menuContainer = document.getElementById('menu-container');
 					menuContainer.remove();
-					startLocalButton.style.visibility = 'hidden';
+					// startLocalButton.style.visibility = 'hidden';
 
 					//@TODO : Display WAIT message
-					document.getElementById("startOnlineTournButton").textContent = "Waiting for lobby to fill & tournament to start ..."
+					console.log("Waiting for lobby to fill & tournament to start ...");
 
 					//@TODO : Open socket
 					initiateSocket();
@@ -792,10 +823,10 @@ export function loadTournament() {
 					//@TODO : Clear screen !
 					const menuContainer = document.getElementById('menu-container');
 					menuContainer.remove();
-					startLocalButton.style.visibility = 'hidden';
+					// startLocalButton.style.visibility = 'hidden';
 
 					//@TODO : Display WAIT message
-					document.getElementById("startOnlineTournButton").textContent = "Waiting for lobby to fill & tournament to start ..."
+					console.log("Waiting for lobby to fill & tournament to start ...");
 				}
 				else {
 					console.error('Failed to join tournament', data);
@@ -807,8 +838,8 @@ export function loadTournament() {
 
 	function playOnlineTournamentMatch() {
 		localPlayerMode = false;
-		startLocalButton.disabled = true;
-		startOnlineButton.disabled = true;
+		// startLocalButton.disabled = true;
+		// startOnlineButton.disabled = true;
 		if (isGameOver || !animationFrameId) {
 			isGameOver = false;
 			score.left = 0;
@@ -818,17 +849,13 @@ export function loadTournament() {
 		}
 	}
 
-	// startOnlineButton.addEventListener('click', () => {
-	//     localPlayerMode = false;
-	//     startLocalButton.disabled = true;
-	//     startOnlineButton.disabled = true;
-	//     console.log("YUUUUUU");
+	function setupOnlineTournament() {
+	    localPlayerMode = false;
+	    displayMenu();
+	};
 
-	//     displayMenu();
-	// });
-
-	function gameLoop() {
-		update();
+	async function gameLoop() {
+		await update();
 		draw();
 
 		if (!isGameOver) {
