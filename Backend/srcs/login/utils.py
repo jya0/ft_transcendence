@@ -12,6 +12,8 @@ import hmac
 import os
 import requests
 
+EMAIL_HOST = os.environ.get("EMAIL_HOST")
+
 
 def send_otp(request, username):
     print("send_otp view")
@@ -32,15 +34,15 @@ def send_otp(request, username):
     subject = "Your OTP"
     message = f"Your OTP is: {otp}"
     msg = MIMEMultipart()
-    msg['From'] = "42pongos@gmail.com"
+    msg['From'] = EMAIL_HOST
     msg['To'] = user.email
     msg['Subject'] = subject
     msg.attach(MIMEText(message, 'plain'))
 
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
-        server.login("42pongos@gmail.com", "hazmgnmudgrzrxey")
-        server.sendmail("42pongos@gmail.com", user.email, msg.as_string())
+        server.login(EMAIL_HOST, os.environ.get("EMAIL_PASSWORD"))
+        server.sendmail(EMAIL_HOST, user.email, msg.as_string())
     print("OTP sent successfully ", "send_otp view")
     return otp
 
