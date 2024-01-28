@@ -132,8 +132,6 @@ def get_user_profile(request):
     print(request.GET.get('username'))
     user = UserProfile.objects.get(username=request.GET.get('username'))
     users_list = UserProfile.objects.all().exclude(username='admin')
-    # will be placed after getting friend list
-    # ssr = ssr_render(request, 'user_profile.html', user, 'other')
 
     template = get_template('user_profile.html')
     template_content = template.template.source
@@ -310,13 +308,11 @@ def enable_or_disable_2fa(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
     user.is_2fa_enabled = not user.is_2fa_enabled
     user.save()
-    message = messages.info(
-        request, '2FA enabled successfully' if user.is_2fa_enabled else '2FA disabled successfully')
+
     if user.is_2fa_enabled:
         request.session['username'] = user.username
-        # response = ssr_render(
-        #     request, 'enable_or_disable_2fa.html', user, message)
         return HttpResponse("2FA Enabled successfully")
+    
     return HttpResponse("2FA disabled successfully")
 
 
@@ -324,14 +320,10 @@ def enable_or_disable_2fa(request):
 @csrf_exempt
 def validate_otp(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
-    print('user -   ---- > ', user.otp_secret_key)
     otp = request.POST.get('otp')
-    print('get -   ---- > ', otp)
     if otp and user.otp_secret_key == otp:
         current_datetime = datetime.now(timezone.utc)
         stored_datetime = user.otp_valid_date
-        print('stored_datetime date->', stored_datetime)
-        print('current_datetime date->', current_datetime)
 
         if current_datetime <= stored_datetime:
             request.session['is_verified'] = True

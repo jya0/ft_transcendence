@@ -22,11 +22,7 @@ FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
 secret_key = settings.SECRET_KEY
 
 
-# Create your views here.
-def home_view(request):
-    return render(request, "home.html", {'FORTY_TWO_URL': FORTY_TWO_URL})
-
-
+@api_view(['get'])
 def logout(request):
     if request.user.is_authenticated:
         user = get_object_or_404(UserProfile, username=request.user.username)
