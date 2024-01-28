@@ -105,7 +105,7 @@ export function loadTournament() {
 	}
 
 
-	function update() {
+	async function update() {
 		if (isGameOver) return;
 
 		ball.x += ball.speedX;
@@ -133,7 +133,7 @@ export function loadTournament() {
 		if (ball.x < 0 || ball.x > canvas.width) {
 			ball.x > canvas.width ? score.left++ : score.right++;
 			resetBall();
-			checkForWinner();
+			await checkForWinner();
 			return;
 		}
 
@@ -145,7 +145,7 @@ export function loadTournament() {
 		ball.speedX *= -1;
 	}
 
-	function handleLocalWinner() {
+	async function handleLocalWinner() {
 		let buttonText;
 
 		if (tournReady == false)
@@ -154,8 +154,8 @@ export function loadTournament() {
 		//show results
 		if (g_count != 2) {
 
-			alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
-			console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
+			// alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
+			// console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
 		}
 
 		//update winners
@@ -185,6 +185,9 @@ export function loadTournament() {
 			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
 			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
 			tmpModalMain.show();
+			isGameOver = true;
+			await delay(4000);
+			isGameOver = false;
 			resetGame();
 		}
 		if (g_count == 1) {
@@ -195,9 +198,13 @@ export function loadTournament() {
 			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
 			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
 			tmpModalMain.show();
-
+			isGameOver = true;
+			await delay(4000);
+			isGameOver = false;
 			resetGame();
 		}
+	
+
 		// end tournament
 		if (g_count == 2) {
 			tournReady = false;
@@ -216,7 +223,7 @@ export function loadTournament() {
 			g_count = 0;
 			tournReady = false;
 			isGameOver = true;
-			alert(buttonText);
+			// alert(buttonText);
 			docModalMain.querySelector('#winner-final').innerHTML = winners[0];
 			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
 			toggleHighlight("tWinnerHighlight", "");
@@ -250,14 +257,14 @@ export function loadTournament() {
 		socketStatus = false;
 	}
 
-	function checkForWinner() {
+	async function checkForWinner() {
 
 		if (score.left >= 3 || score.right >= 3) {
 			isGameOver = true;
 			ctx.fillStyle = 'red';
 
 			if (localPlayerMode)
-				handleLocalWinner();
+				await handleLocalWinner();
 			else
 				handleOnlineWinner();
 		}
@@ -352,7 +359,8 @@ export function loadTournament() {
 	}
 
 
-	function playGame() {
+	async function playGame() {
+		await delay(4000);
 		localPlayerMode = true;
 		// startLocalButton.disabled = true;
 		// startOnlineButton.disabled = true;
@@ -365,9 +373,10 @@ export function loadTournament() {
 		}
 
 	}
+	const delay = ms => new Promise(res => setTimeout(res, ms));
 
 
-	function startLocalTournament() {
+	async function startLocalTournament() {
 		console.log("sup mfs");
 		// if (tournReady == false)
 		//     return;
@@ -505,10 +514,7 @@ export function loadTournament() {
 			tmpModalMain.show();
 
 			resetBall();
-			// alert(`Match 1: ${player1} vs ${player2}\n Press to start`);
 			playGame();
-			// startLocalButton.disabled = false;
-			// startLocalButton.click();
 		}
 	}
 
@@ -827,8 +833,8 @@ export function loadTournament() {
 	//     displayMenu();
 	// });
 
-	function gameLoop() {
-		update();
+	async function gameLoop() {
+		await update();
 		draw();
 
 		if (!isGameOver) {
