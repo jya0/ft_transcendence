@@ -1,3 +1,32 @@
+
+document.addEventListener('DOMContentLoaded', async () => {
+
+	await fetch('http://localhost:8000/api/42_intra_link', {
+		method: 'GET',
+		credentials: 'include',
+	})
+		.then(response => {
+			if (!response.ok) {
+				alert(response.status);
+				throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then(data => {
+			console.log('Data fetched:', data);
+			const unlockButton = document.getElementsByClassName('nav-link')[0];
+			if (data.forty_two_url) {
+				unlockButton.href = data.forty_two_url;
+			}
+		})
+		.catch(error => {
+			console.error('Error fetching data:', error);
+		});
+
+});
+
+
+
 function handle42Auth() {
 	const timestamp = new Date().getTime();
 	fetch('http://localhost:8000/api/42_intra_link', {
