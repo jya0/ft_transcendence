@@ -297,12 +297,42 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 					Username</button>
                 <div class="input-group mb-3 mt-5">
                 <div class="form-floating">
-                    <button id="logout" class="btn btn-primary" onClick="handleLogout()">Logout</button>
+                    <button id="logout" class="btn btn-primary">Logout</button>
                 </div>
 			</div>
 		`);
-	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
 
+    
+	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
+    document.getElementById('logout').addEventListener('click', () => {
+        localStorage.clear();
+        console.log('logout');
+        fetch('/api/logout', {
+            credentials: 'include',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(async data => {
+                console.log('Data fetched:', data);
+                if (data.message === 'Logged out successfully') {
+                    await fetch('/components/login.html').then(response => response.text()).then(data => {
+                        document.getElementById("main-content").innerHTML = data;
+                        loadToast('You have been logged out successfully');
+                    });
+                }
+                else {
+                    document.getElementById('logout').remove();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
+
+    });
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
 
 		const newDisplayName = document.getElementById('floatingInputGroup1');
