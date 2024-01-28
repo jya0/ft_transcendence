@@ -43,7 +43,7 @@ await fetch('/api/get_user_data/', {
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
 	const url = `/api/users/${username}?username=${user.username}}`;
-
+	console.log('------> ', localStorage.getItem('access_token'));
 	fetch(url, {
 		method: 'GET',
 		headers: {
@@ -852,6 +852,7 @@ async function getAllUsers(override) {
 	if (location !== '/users')
 		return;
 	let users;
+	console.log*'access_token', localStorage.getItem('access_token');
 	await fetch('/api/get_all_users/', {
 		method: 'GET',
 		headers: {
