@@ -463,11 +463,9 @@ def generate_test_user(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
 def get_user_data(request):
     session_id = request.COOKIES.get('sessionid')
     if session_id:
-        # Use the session ID to retrieve user data
         username = request.session['username']
         user = get_object_or_404(UserProfile, username=username)
         user_data = {
