@@ -39,11 +39,9 @@ await fetch('/api/get_user_data/', {
 
 
 
-
 const viewUserProfile = (username) => {
 	console.log(`Viewing profile for ${username}`);
 	const url = `/api/users/${username}?username=${user.username}}`;
-	console.log('------> ', localStorage.getItem('access_token'));
 	fetch(url, {
 		method: 'GET',
 		headers: {
