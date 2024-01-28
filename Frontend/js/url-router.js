@@ -15,12 +15,9 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 
 await fetch('/api/get_user_data/', {
 	method: 'GET',
-	headers: {
-		'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-	},
 }).then(response => {
 	if (response.status === 401 || response.status === 204) {
-		console.log('user is not authenticated');
+		console.log('User is not authenticated');
 		localStorage.clear();
 		return null;
 	}
@@ -75,8 +72,9 @@ const addFriend = async (button, username, newFriend) => {
 
 		if (!response.ok) {
 			document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+			loadToast('Unauthorized, please login again!')
 			localStorage.clear();
-			throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
+			return;
 		}
 
 		const data = await response.text();
@@ -236,6 +234,9 @@ async function updateProfile(file) {
 				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 				loadToast('Failed to update Image, You have to login again for security reasons!');
 				localStorage.clear();
+				const docModalMain = document.getElementById('modalMain');
+				const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+				tmpModalMain.hide();
 				return null;
 			}
 			return response.json()
@@ -358,6 +359,9 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 				console.log('response', response);
 				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 				loadToast('Failed to update display name, You have to login again for security reasons!');
+				const docModalMain = document.getElementById('modalMain');
+				const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+				tmpModalMain.hide();
 				return null;
 			}
 			return response.json()
@@ -592,6 +596,7 @@ const urlLocationHandler = async () => {
 
 				if (!response.ok) {
 					document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+					loadToast('Please login to to verify your identity');
 					localStorage.clear();
 					throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
 				}
@@ -756,6 +761,7 @@ async function handleUserData() {
 							.then(response => {
 								if (!response.ok) {
 									document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+									loadToast('Please login to continue');
 									localStorage.clear();
 									throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
 								}
