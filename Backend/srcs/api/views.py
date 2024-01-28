@@ -1,7 +1,7 @@
 import random
 from urllib.parse import quote
 import os
-from login.utils import send_otp, generate_jwt, verify_jwt, get_user_token
+from login.utils import get_user_token
 from django.db import IntegrityError
 from datetime import datetime
 import requests
@@ -35,9 +35,10 @@ from datetime import datetime, timezone
 from django.contrib.sessions.models import Session
 from faker import Faker
 import secrets
+import pyotp
 
 BASE_DIR = settings.BASE_DIR
-
+SECRET_KEY = settings.SECRET_KEY
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -321,12 +322,12 @@ def enable_or_disable_2fa(request):
 def validate_otp(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
     otp = request.POST.get('otp')
-    if otp and user.otp_secret_key == otp:
+    totp = pyotp.TOTP(user.otp_secret_key, interval=60)
+    if otp and totp.verify(otp):
         current_datetime = datetime.now(timezone.utc)
         stored_datetime = user.otp_valid_date
 
         if current_datetime <= stored_datetime:
-            request.session['is_verified'] = True
             auth_login(request, user)
             return JsonResponse({'message': 'OTP is valid'})
 
