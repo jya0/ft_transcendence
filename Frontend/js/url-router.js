@@ -178,12 +178,11 @@ function setMainWindowframe() {
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML =
 		`					
-			<div class="container p-0 m-0 border border-0 border-light" id="close-me-containter">
+			<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
 				<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 					<!-- WINDOW-BAR -->
 					<div class="d-flex p-0 border border-0 border-light bg-black">
-						<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me"
-							data-bs-dismiss="modal" aria-label="Close">
+						<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me" aria-label="Close">
 							<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
 								viewBox="0 0 20 20" fill="none">
 								<path
@@ -203,7 +202,7 @@ function setMainWindowframe() {
 			</div>
 		`;
 	document.getElementById('close-me').addEventListener('click', () => {
-		document.getElementById('close-me-containter').innerHTML = '';
+		document.getElementById('closeWindow').innerHTML = '';
 	});
 }
 
