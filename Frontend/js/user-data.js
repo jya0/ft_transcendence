@@ -1,3 +1,4 @@
+import { loadToast } from './loadComponent.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
 
@@ -23,52 +24,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		});
 
 });
-
-
-
-const showToast = (message) => {
-	const toastLiveExample = document.getElementById('mainToast')
-	toastLiveExample.querySelector('.toast-body').innerHTML = message;
-	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
-	toastBootstrap.show()
-};
-
-function handleLogout() {
-	localStorage.clear();
-	console.log('logout');
-	fetch('/api/logout', {
-		credentials: 'include',
-	})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error('Network response was not ok');
-			}
-			return response.json();
-		})
-		.then(async data => {
-			console.log('Data fetched:', data);
-			if (data.message === 'Logged out successfully') {
-				await fetch('/components/login.html').then(response => response.text()).then(data => {
-					document.getElementById("main-content").innerHTML = data;
-					showToast('You have been logged out successfully');
-				});
-			}
-			else {
-				document.getElementById('logout').remove();
-			}
-		})
-		.catch(error => {
-			console.error('Error fetching data:', error);
-		});
-}
-
-function updateDataContainer(data) {
-	// Update the UI with the fetched data
-	const dataContainer = document.getElementById('data-container');
-
-	dataContainer.innerHTML = data;
-
-}
 
 
 function updateTime() {
