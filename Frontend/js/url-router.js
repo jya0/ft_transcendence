@@ -275,26 +275,30 @@ let loadModalFile = async function (event) {
 document.getElementById('modalSetting').addEventListener('click', async () => {
 	loadModal(
 		`
-			<div class="input-group">
-				<input type="file" class="form-control" accept="image/*" id="modal-inputFile"
-					aria-describedby="inputFile" aria-label="Upload">
-				<button class="btn btn-dark" type="button" id="inputFile-btn">Upload Profile
-					Pic</button>
-			</div>
-
-			<div class="input-group mb-3 mt-5">
-				<span class="input-group-text">@</span>
-				<div class="form-floating">
-					<input type="text" class="form-control" id="floatingInputGroup1"
-						placeholder="Username">
-					<label for="floatingInputGroup1">Username</label>
+			<div class="d-flex flex-column align-items-center rounded p-5 border border-1 border-black w-100 h-100 font--argent gap-5">
+				<div class="input-group w-50">
+					<input type="file" class="form-control border border-1 border-black" accept="image/*" id="modal-inputFile"
+						aria-describedby="inputFile" aria-label="Upload">
+					<button class="btn btn-dark text-capitalize w-25" type="button" id="inputFile-btn">upload</button>
 				</div>
-				<button id="nickname-btn" type="button" class="btn btn-primary">Save
-					Username</button>
-                <div class="input-group mb-3 mt-5">
-                <div class="form-floating">
-                    <button id="logout" class="btn btn-primary">Logout</button>
-                </div>
+				<div class="input-group w-50">
+					<span class="input-group-text border border-1 border-dark bg-dark text-white">
+						<svg xmlns="http://www.w3.org/2000/svg" width="30px" viewBox="0 0 32 32"><title>interface-essential-text-input-area-3</title><g><path d="M30.48 15.995H32v4.58h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M30.48 11.425H32v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M28.95 20.575h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M28.95 9.905h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M27.43 22.095h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M27.43 8.385h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M25.91 5.335h3.04v1.52h-3.04Z" fill="#ffffff" stroke-width="1"></path><path d="M25.91 25.145h3.04v1.52h-3.04Z" fill="#ffffff" stroke-width="1"></path><path d="M24.38 6.855h1.53v18.29h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M21.34 5.335h3.04v1.52h-3.04Z" fill="#ffffff" stroke-width="1"></path><path d="M21.34 25.145h3.04v1.52h-3.04Z" fill="#ffffff" stroke-width="1"></path><path d="M18.29 22.095h4.57v1.52h-4.57Z" fill="#ffffff" stroke-width="1"></path><path d="M21.34 19.045h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M21.34 14.475h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M19.81 15.995h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M18.29 8.385h4.57v1.52h-4.57Z" fill="#ffffff" stroke-width="1"></path><path d="M16.76 15.995h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M12.19 22.095h4.57v1.52h-4.57Z" fill="#ffffff" stroke-width="1"></path><path d="m13.72 15.995 3.04 0 0 -1.52 -3.04 0 0 -3.05 -1.53 0 0 9.15 4.57 0 0 -1.53 -3.04 0 0 -3.05z" fill="#ffffff" stroke-width="1"></path><path d="M12.19 8.385h4.57v1.52h-4.57Z" fill="#ffffff" stroke-width="1"></path><path d="m10.67 12.955 -1.52 0 0 3.04 -3.05 0 0 -3.04 -1.53 0 0 7.62 1.53 0 0 -3.05 3.05 0 0 3.05 1.52 0 0 -7.62z" fill="#ffffff" stroke-width="1"></path><path d="M6.1 22.095h4.57v1.52H6.1Z" fill="#ffffff" stroke-width="1"></path><path d="M6.1 11.425h3.05v1.53H6.1Z" fill="#ffffff" stroke-width="1"></path><path d="M6.1 8.385h4.57v1.52H6.1Z" fill="#ffffff" stroke-width="1"></path><path d="M3.05 22.095h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M3.05 8.385h1.52v1.52H3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M1.53 20.575h1.52v1.52H1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M1.53 9.905h1.52v1.52H1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M0 15.995h1.53v4.58H0Z" fill="#ffffff" stroke-width="1"></path><path d="M0 11.425h1.53v3.05H0Z" fill="#ffffff" stroke-width="1"></path></g></svg>
+					</span>
+					<div class="form-floating">
+						<input type="text" class="form-control border border-1 border-dark" id="displayNameInput"
+							placeholder="Username">
+						<label for="displayNameInput" class="text-capitalize">display name</label>
+					</div>
+					<button id="nickname-btn" type="button" class="btn btn-dark w-25">
+						<p class="h5 p-0 m-0 text-capitalize">save</p>
+					</button>
+				</div>
+				<button id="logout" class="btn btn-dark px-5">
+					<p class="display-5 text-capitalize p-0">
+						logout
+					</p>
+				</button>
 			</div>
 		`);
 
@@ -332,7 +336,7 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 	});
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
 
-		const newDisplayName = document.getElementById('floatingInputGroup1');
+		const newDisplayName = document.getElementById('displayNameInput');
 		const nicknameValue = newDisplayName.value;
 		const displayNameElement = document.getElementById('displayName');
 
