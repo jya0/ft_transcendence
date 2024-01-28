@@ -336,7 +336,7 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 	});
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
 
-		const newDisplayName = document.getElementById('floatingInputGroup1');
+		const newDisplayName = document.getElementById('displayNameInput');
 		const nicknameValue = newDisplayName.value;
 		const displayNameElement = document.getElementById('displayName');
 
