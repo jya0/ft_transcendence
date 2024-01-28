@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from datetime import datetime
 from django.template.loader import get_template
 from django.template import Context, Template
-from .utils import send_otp, generate_jwt, verify_jwt, get_user_token
+from .utils import send_otp, get_user_token
 import os
 import requests
 from rest_framework.decorators import api_view, permission_classes

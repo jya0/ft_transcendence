@@ -16,21 +16,15 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST")
 
 
 def send_otp(request, username):
-    print("send_otp view")
     user = get_object_or_404(UserProfile, username=username)
-    print("user:", user)
-    totp = pyotp.TOTP(pyotp.random_base32(), interval=60)
+    secret_key = pyotp.random_base32()
+    totp = pyotp.TOTP(secret_key, interval=60)
     otp = totp.now()
-    request.session['otp_secret_key'] = otp
-    user.otp_secret_key = otp
-    print("OTP:", otp)
     valid_date = datetime.now() + timedelta(minutes=1)
-    request.session['otp_valid_date'] = valid_date.isoformat()
+    user.otp_secret_key = secret_key
     valid_date_utc_aware = valid_date.replace(tzinfo=timezone.utc)
     user.otp_valid_date = valid_date_utc_aware
-    print("OTP valid date:", valid_date.isoformat())
     user.save()
-    print(f"your otp is {otp} and it is valid for 1 minute")
     subject = "Your OTP"
     message = f"Your OTP is: {otp}"
     msg = MIMEMultipart()
@@ -43,57 +37,7 @@ def send_otp(request, username):
         server.starttls()
         server.login(EMAIL_HOST, os.environ.get("EMAIL_PASSWORD"))
         server.sendmail(EMAIL_HOST, user.email, msg.as_string())
-    print("OTP sent successfully ", "send_otp view")
     return otp
-
-
-def generate_jwt(user_id):
-    header = {
-        "alg": "HS256",
-        "typ": "JWT"
-    }
-    payload = {
-        'user_id': user_id,
-        'exp': (datetime.utcnow() + timedelta(minutes=1)).timestamp(),
-    }
-    encoded_header = base64.urlsafe_b64encode(
-        json.dumps(header).encode('utf-8')).decode('utf-8')
-
-    encoded_payload = base64.urlsafe_b64encode(
-        json.dumps(payload).encode('utf-8')).decode('utf-8')
-
-    secret_key = os.environ.get("JWT_SECRET", 'secret')
-    signature = hmac.new(secret_key.encode('utf-8'),
-                         f"{encoded_header}.{encoded_payload}".encode('utf-8'),
-                         hashlib.sha256).digest()
-
-    encoded_signature = base64.urlsafe_b64encode(signature).decode('utf-8')
-
-    jwt_token = f"{encoded_header}.{encoded_payload}.{encoded_signature}"
-
-    return jwt_token
-
-
-def verify_jwt(token):
-
-    parts = token.split('.')
-    if len(parts) != 3:
-        return False
-
-    encoded_signature = parts[2].encode('utf-8')
-    secret_key = os.environ.get("JWT_SECRET", 'secret')
-    computed_signature = hmac.new(secret_key.encode('utf-8'),
-                                  f"{parts[0]}.{parts[1]}".encode('utf-8'),
-                                  hashlib.sha256).digest()
-    computed_encoded_signature = base64.urlsafe_b64encode(computed_signature)
-    if computed_encoded_signature != encoded_signature:
-        return False
-    payload = json.loads(base64.urlsafe_b64decode(
-        parts[1] + '===').decode('utf-8'))
-    expiration = payload.get('exp', 0)
-    if expiration < datetime.utcnow().timestamp():
-        return False
-    return payload
 
 
 def get_user_token(request, username, password):
