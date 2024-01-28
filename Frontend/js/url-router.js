@@ -1,5 +1,5 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas, loadToast, loadModal } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame } from './pong.js';
@@ -322,6 +322,9 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 			.catch(error => {
 				console.error('Error fetching data:', error);
 			});
+			const docModalMain = document.getElementById('modalMain');
+			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+			tmpModalMain.hide();
 
 	});
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
@@ -458,6 +461,7 @@ const urlLocationHandler = async () => {
 		return;
 	}
 	else if (location === '/desktop') {
+		// loadSpinner("content");
 
 		// function openSmallWindow() {
 		// 	const width = 200;
@@ -666,14 +670,7 @@ async function handleUserData() {
 	history.replaceState({}, '', mainUrl);
 	console.log('code', code)
 	if (code) {
-		document.getElementById("content").innerHTML = `
-			<div id="spinner" class="d-flex justify-content-center" style="z-index: 15; top: 50%; color: white; margin-top: 50%;">
-				<div class="spinner-border" role="status" style="width: 250px; height: 250px;">
-				<span class="visually-hidden">Loading...</span>
-				</div>
-				<h1>Hang on, cooking...</h1>
-			</div>
-		`;
+		loadSpinner("content");
 		// document.getElementById("nav-container").classList.add("hidden");
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").style.display = 'none';
