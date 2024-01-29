@@ -116,6 +116,23 @@ export const loadModal = (idModalBody, innerHTML) => {
 	document.getElementById(idModalBody).innerHTML = innerHTML;
 };
 
+export const showGameWinner = (winner) => {
+	loadModal('modalGameBody', 
+		`<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 overflow-hidden font--neue align-items-center justify-content-center gap-2 border border-1 border-white bg-black">
+			<div class="d-flex p-0 m-0 h-25 w-25 animation--updown">
+				<div class="ratio ratio-1x1">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><title>interface-essential-crown</title><g><path d="M29.715 9.145h1.52v3.04h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M26.665 7.615h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="m26.665 18.285 1.53 0 0 -4.57 1.52 0 0 -1.53 -3.05 0 0 -3.04 -1.52 0 0 4.57 1.52 0 0 4.57z" fill="#ffffff" stroke-width="1"></path><path d="m25.145 19.805 -1.53 0 0 1.53 1.53 0 0 1.52 -18.29 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52 -1.52 0 0 7.62 1.52 0 0 1.52 18.29 0 0 -1.52 1.52 0 0 -7.62 -1.52 0 0 1.52z" fill="#ffffff" stroke-width="1"></path><path d="M23.615 13.715h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M22.095 15.235h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M20.575 16.765h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M19.045 19.805h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M19.045 13.715h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M17.525 10.665h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M17.525 6.095h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M14.475 9.145h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M14.475 4.575h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M14.475 18.285h3.05v3.05h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M12.955 10.665h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M12.955 6.095h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M11.425 13.715h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M9.905 19.805h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M9.905 16.765h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M8.385 15.235h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M6.855 13.715h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="m2.285 12.185 0 1.53 1.53 0 0 4.57 1.52 0 0 -4.57 1.52 0 0 -4.57 -1.52 0 0 3.04 -3.05 0z" fill="#ffffff" stroke-width="1"></path><path d="M2.285 7.615h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M0.765 9.145h1.52v3.04H0.765Z" fill="#ffffff" stroke-width="1"></path></g></svg>
+				</div>
+			</div>
+			<p class="display-1 text-uppercase text-white text-center animation--updown">
+				winner: ${winner}
+			</p>
+		</div>`);
+	let docModalGame = document.getElementById("modalGame");
+	const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+	tmpModalGame.show();
+};
+
 export const loadSpinner = (elementId, color) => {
 	document.getElementById(elementId).innerHTML = 
 	`
