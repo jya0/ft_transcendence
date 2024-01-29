@@ -237,61 +237,7 @@ def create_tournament(request):
     return JsonResponse({'message': 'Tournament created successfully'}, status=200)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def join_tournament(request):
-    username = request.GET.get('username')
-    tournament_name = request.GET.get('tournament_name')
 
-    if not username or not tournament_name:
-        return JsonResponse({'message': 'Both username and tournament_name are required.'}, status=200)
-
-    user = get_object_or_404(UserProfile, intra=username)
-    tourn = Tournament.objects.filter(Q(name=tournament_name)).get()
-
-    joined = False
-    games = Match.objects.filter(Q(tournament_id=tourn.tournament_id)).all()
-
-    # Case 1: already in the tournament lobby:
-    if (games[0].id1 == user or games[0].id2 == user):
-        msg = "You are already in the tournament"
-    elif (games[0].id1 == user or games[0].id2 == user):
-        msg = "You are already in the tournament"
-    # Case 2: Game 1 empty lobby
-    elif (games[0].id1.id == 2):
-        print("Found u a spot in game 1 buddy! - slot 1")
-        g = Match.objects.get(match_id=games[0].match_id)
-        g.id1 = user
-        g.save()
-        joined = True
-    # Case 3: Game 1 half full lobby
-    elif (games[0].id2.id == 3):
-        print("Found u a spot in game 1 buddy! - slot 2")
-        g = Match.objects.get(match_id=games[0].match_id)
-        g.id2 = user
-        g.save()
-        joined = True
-    # Case 4: Game 2 empty lobby
-    elif (games[1].id1.id == 2):
-        print("Found u a spot in game 2 buddy! - slot 1")
-        g = Match.objects.get(match_id=games[1].match_id)
-        g.id1 = user
-        g.save()
-        joined = True
-    # Case 3: Game 2 half full lobby
-    elif (games[1].id2.id == 3):
-        print("Found u a spot in game 2 buddy! - slot 2")
-        g = Match.objects.get(match_id=games[1].match_id)
-        g.id2 = user
-        g.save()
-        joined = True
-    else:
-        msg = "Sorry, you're late. The tournament is full :/"
-        return JsonResponse({'message': msg}, status=200)
-    if joined:
-        msg = 'Tournament joined successfully'
-        tourn.count = tourn.count + 1
-    return JsonResponse({'message': msg}, status=200)
 
 
 @api_view(['POST'])
@@ -428,3 +374,67 @@ def create_tournament(request):
     rendered_template = template.render(context)
     print(tourns)
     return HttpResponse(rendered_template, content_type='text/html')
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def join_tournament(request):
+    username = request.GET.get('username')
+    tournament_name = request.GET.get('tournament_name')
+
+    if not username or not tournament_name:
+        return JsonResponse({'message': 'Both username and tournament_name are required.'}, status=200)
+
+    user = get_object_or_404(UserProfile, intra=username)
+    tourn = Tournament.objects.filter(Q(name=tournament_name)).get()
+
+    joined = False
+    games = Match.objects.filter(Q(tournament_id=tourn.tournament_id)).all()
+    if (tourn.name == 'defTourn'):
+        joined = False
+        return JsonResponse({'message': 'This ones not allowed...'}, status=200)
+        
+    # Case 1: already in the tournament lobby:
+    if (games[0].id1 == user or games[0].id2 == user):
+        msg = "You are already in the tournament"
+    elif (games[1].id1 == user or games[1].id2 == user):
+        msg = "You are already in the tournament"
+    # Case 2: Game 1 empty lobby
+    elif (games[0].id1.id == 2):
+        print("Found u a spot in game 1 buddy! - slot 1")
+        g = Match.objects.get(match_id=games[0].match_id)
+        g.id1 = user
+        g.save()
+        joined = True
+    # Case 3: Game 1 half full lobby
+    elif (games[0].id2.id == 3):
+        print("Found u a spot in game 1 buddy! - slot 2")
+        g = Match.objects.get(match_id=games[0].match_id)
+        g.id2 = user
+        g.save()
+        joined = True
+    # Case 4: Game 2 empty lobby
+    elif (games[1].id1.id == 2):
+        print("Found u a spot in game 2 buddy! - slot 1")
+        g = Match.objects.get(match_id=games[1].match_id)
+        g.id1 = user
+        g.save()
+        joined = True
+    # Case 3: Game 2 half full lobby
+    elif (games[1].id2.id == 3):
+        print("Found u a spot in game 2 buddy! - slot 2")
+        g = Match.objects.get(match_id=games[1].match_id)
+        g.id2 = user
+        g.save()
+        joined = True
+    else:
+        msg = "Sorry, you're late. The tournament is full :/"
+        print(msg)
+        return JsonResponse({'message': msg}, status=200)
+    if joined:
+        msg = 'Tournament joined successfully'
+        tourn.count = tourn.count + 1
+    print(msg)
+    
+    return JsonResponse({'message': msg}, status=200)
