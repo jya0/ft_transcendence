@@ -228,22 +228,22 @@ export function loadTournament(localMode) {
                 buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
                 winner = winners[0];
 
-			}
-			winners = [];
-			winners.push(winner);
-			g_count = 0;
-			tournReady = false;
-			isGameOver = true;
-			// alert(buttonText);
-			docModalGame.querySelector('#winner-final').innerHTML = winners[0];
-			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
-			toggleHighlight("tWinnerHighlight", "");
-			showGameWinner(winner);
-			//@todo - show bracket
-		}
-		else
-			g_count++;
-	}
+            }
+            winners = [];
+            winners.push(winner);
+            g_count = 0;
+            tournReady = false;
+            isGameOver = true;
+            // alert(buttonText);
+            docModalGame.querySelector('#winner-final').innerHTML = winners[0];
+            toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
+            toggleHighlight("tWinnerHighlight", "");
+            showGameWinner(winner);
+            //@todo - show bracket
+        }
+        else
+            g_count++;
+    }
 
 
     function handleOnlineWinner() {
@@ -746,7 +746,7 @@ export function loadTournament(localMode) {
                 localStorage.clear();
                 console.log(response.statusText);
                 // loadToast('Please login to continue');
-                return ;x
+                return; x
             }
             return response.text();
         }).then(data => {
@@ -758,19 +758,29 @@ export function loadTournament(localMode) {
                 loadModal('modalGameBody', data);
                 const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
                 tmpModalGame.show();
-                document.getElementById('createTourn').addEventListener('click', async function(event) {
+                document.getElementById('createTourn').addEventListener('click', async function (event) {
                     event.preventDefault();
                     await submitTournament();
                 });
+                const joinButtons = document.querySelectorAll('[id="joinTourn"]');
+                joinButtons.forEach(function (button) {
+                    button.addEventListener('click', function () {
+                        // Extract the tournament name from the closest card
+                        const tournamentName = button.closest('.card').querySelector('#tname').innerText.trim();
+        
+                        // Call joinTournament with the extracted tournament name
+                        joinTournament(tournamentName);
+                    });
+                });
             }
-            
-           
-            
+
+
+
         }).catch((error) => {
             console.error('Error:', error);
         });
 
-       
+
     }
 
     async function joinTournament(tournamentName) {
@@ -790,49 +800,46 @@ export function loadTournament(localMode) {
                 // (e.g., tournament name, settings, etc.)
             }),
         })
-            .then(response => {
-                if (!response.ok) {
-                    loadLoginPage('Please login again');
-                    return null;
-                }
-                response.json()
-            })
-            .then(data => {
-                if (!data) return;
-                // Handle the response from the backend
-                if (data.message === 'Tournament joined successfully') {
-                    alert('Tournament joined successfully');
-
-                    //@TODO : Clear screen !
-                    const menuContainer = document.getElementById('menu-container');
-                    menuContainer.remove();
-                    // startLocalButton.style.visibility = 'hidden';
-
-                    //@TODO : Display WAIT message
-                    console.log("Waiting for lobby to fill & tournament to start ...");
-
-                    //@TODO : Open socket
-                    initiateSocket();
-
-
-                } else if (data.message === "Sorry ur late. tournament is full :/") {
-                    alert("Sorry ur late. tournament is full :/");
-                } else if (data.message === "You are already in the tournament") {
-                    alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
-
-                    //@TODO : Clear screen !
-                    const menuContainer = document.getElementById('menu-container');
-                    menuContainer.remove();
-                    // startLocalButton.style.visibility = 'hidden';
-
-                    //@TODO : Display WAIT message
-                    console.log("Waiting for lobby to fill & tournament to start ...");
-                }
-                else {
-                    console.error('Failed to join tournament', data);
-                }
-            })
-            .catch(error => console.error('Error joining tournament:', error));
+        .then(async response => {
+            if (!response.ok) {
+                return null;
+            }
+            // loadLoginPage('Please login again');
+            return response.json();
+        })
+        
+        .then(async data => {
+            if (!data) return;
+            // Handle the response from the backend
+            if (data.message === 'Tournament joined successfully') {
+                alert('Tournament joined successfully');
+        
+                //@TODO : Clear screen !
+                // const menuContainer = document.getElementById('menu-container');
+                // menuContainer.remove();
+                // startLocalButton.style.visibility = 'hidden';
+        
+                //@TODO : Display WAIT message
+                console.log("Waiting for lobby to fill & tournament to start ...");
+        
+                //@TODO : Open socket
+                initiateSocket();
+            } else if (data.message === "Sorry ur late. tournament is full :/") {
+                alert("Sorry ur late. tournament is full :/");
+            } else if (data.message === "You are already in the tournament") {
+                alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
+        
+                //@TODO : Clear screen !
+                // const menuContainer = document.getElementById('menu-container');
+                // menuContainer.remove();
+                // startLocalButton.style.visibility = 'hidden';
+        
+                //@TODO : Display WAIT message
+                console.log("Waiting for lobby to fill & tournament to start ...");
+            } else {
+                console.error('Failed to join tournament', data);
+            }
+        });        
     }
 
 
@@ -878,9 +885,23 @@ export function loadTournament(localMode) {
             console.error('Error:', error);
         });
 
+        // const joinButtons = document.querySelectorAll('[id="joinTourn"]');
+
+        const joinButtons = document.querySelectorAll('[id="joinTourn"]');
+        joinButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                // Extract the tournament name from the closest card
+                const tournamentName = button.closest('.card').querySelector('#tname').innerText.trim();
+
+                // Call joinTournament with the extracted tournament name
+                joinTournament(tournamentName);
+            });
+        });
+
         document.getElementById('createTourn').addEventListener('click', async () => {
             await submitTournament();
         });
+
 
     };
 
