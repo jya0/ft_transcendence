@@ -199,6 +199,7 @@ export function loadTournament(localMode) {
 			tmpModalGame.show();
 			isGameOver = true;
 			await delay(4000);
+            tmpModalGame.hide();
 			isGameOver = false;
 			resetGame();
 		}
@@ -212,6 +213,8 @@ export function loadTournament(localMode) {
 			tmpModalGame.show();
 			isGameOver = true;
 			await delay(4000);
+            tmpModalGame.hide();
+
 			isGameOver = false;
 			resetGame();
 		}
@@ -247,7 +250,7 @@ export function loadTournament(localMode) {
 						</div>
 					</div>
 					<p class="display-1 text-uppercase text-white text-center animation--updown">
-						winner
+						${winner}
 					</p>
 				</div>`);
 			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
@@ -379,7 +382,7 @@ export function loadTournament(localMode) {
 
 
 	async function playGame() {
-		await delay(4000);
+
 		localPlayerMode = true;
 		if (isGameOver || !animationFrameId) {
 			isGameOver = false;
@@ -524,7 +527,8 @@ export function loadTournament(localMode) {
 			toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
 			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
 			tmpModalGame.show();
-
+            await delay(4000);
+			tmpModalGame.hide();
 			resetBall();
 			playGame();
 		}
