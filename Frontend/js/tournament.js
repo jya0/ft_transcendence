@@ -726,7 +726,7 @@ export function loadTournament(localMode) {
             alert('Please enter a tournament name.');
             return;
         }
-
+        let contentType;
         // Perform logic to create a new tournament
         // You can make a POST request to the backend and handle the response
         await fetch(`/api/create_tournament/?name=${tournamentName}`, {
@@ -746,7 +746,7 @@ export function loadTournament(localMode) {
                 localStorage.clear();
                 console.log(response.statusText);
                 // loadToast('Please login to continue');
-                return null;
+                return ;x
             }
             return response.text();
         }).then(data => {
@@ -754,73 +754,23 @@ export function loadTournament(localMode) {
             if (!data) {
                 return;
             }
-            loadModal('modalGameBody', data);
-            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-            tmpModalGame.show();
+            if (data.length > 55) {
+                loadModal('modalGameBody', data);
+                const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+                tmpModalGame.show();
+                document.getElementById('createTourn').addEventListener('click', async function(event) {
+                    event.preventDefault();
+                    await submitTournament();
+                });
+            }
+            
+           
+            
         }).catch((error) => {
             console.error('Error:', error);
         });
 
-        document.getElementById('createTourn').addEventListener('click', async function(event) {
-            event.preventDefault();
-            await submitTournament();
-        });
-
-
-
-        // .then(response => {
-        // 	if (!response.ok) {
-        // 		loadLoginPage('Please login again');
-        // 		return null;
-        // 	}
-        // 	// response.json()
-        //     response.text();
-        // })
-        // .then(data => {
-        // 	if(!data) return;
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log("********************************************************")
-        //     console.log(data);
-        //     loadModal('modalGameBody', data);
-        //     const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-        //     tmpModalGame.show();
-
-        // 	// Handle the response from the backend
-        // 	if (data.message === 'Please choose another tournament name') {
-        // 		alert('Please choose another tournament name');
-        // 	} else if (data.message === 'Tournament created successfully') {
-        // 		alert('Tournament created successfully');
-        // 	} else {
-        // 		// console.error('Unexpected response:', data);
-        // 	}
-        // })
-        // .catch(error => console.error('Error creating tournament:', error));
-
-        // Remove the input field and submit button after creating the tournament
-        // const tournamentNameInput = document.getElementById('tournamentNameInput');
-        // const submitButton = document.getElementById('submitButton');
-        // tournamentNameInput.parentNode.removeChild(tournamentNameInput);
-        // submitButton.remove();
-
-        // const tournamentList = document.getElementById('tourn-list');
-        // const listItem = document.createElement('li');
-        // listItem.textContent = tournamentName;
-
-        // const joinButton = document.createElement('button');
-        // joinButton.textContent = 'Join';
-        // joinButton.addEventListener('click', () => joinTournament(tournamentName));
-
-        // listItem.appendChild(joinButton);
-        // tournamentList.appendChild(listItem);
+       
     }
 
     async function joinTournament(tournamentName) {
