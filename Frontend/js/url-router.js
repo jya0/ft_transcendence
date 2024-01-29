@@ -715,7 +715,7 @@ async function handleUserData() {
 						`
 						<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 gap-5 justify-content-center align-items-center font--argent" id="otp-container">
 							<div class="p-5">
-								<label for="otp-input" class="form-label">Your OTP Code is valid for 60 seconds</label>
+								<label for="otp-input" class="form-label">Your OTP Code is valid for 2 minutes</label>
 								<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
 							</div>
 							<button type="submit-otp" id="submit-otp" class="btn btn-primary">Validate OTP</button>
