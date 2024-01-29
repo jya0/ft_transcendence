@@ -895,8 +895,7 @@ export function loadTournament(localMode) {
 			if (!data) {
 				return;
 			}
-			document.getElementById('content').innerHTML += data;
-            //@TODO: modal text = data
+			loadModal('modalGameBody', data);
 
 		}).catch((error) => {
 			console.error('Error:', error);
