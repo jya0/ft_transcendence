@@ -199,7 +199,22 @@ function setMainWindowframe() {
 			</div>
 		`;
 	document.getElementById('close-me').addEventListener('click', () => {
-		document.getElementById('closeWindow').innerHTML = '';
+		
+        if (gameMode !== 'none') {
+        
+            console.log("heyyyyyyyyyyyyyyyyyyyyyy");
+            const canvasElement = document.getElementById("gameCanvas");
+            let animationId = canvasElement.dataset.animationFrameId;
+            window.cancelAnimationFrame(animationId);
+            canvasElement.remove();
+            if (gameMode === 'pong single')
+                stopPongExecution();
+            if (gameMode === 'pong tournament')
+                stopTournamentExecution();
+            gameMode = 'none';
+        }
+        document.getElementById('closeWindow').innerHTML = '';
+
 	});
 }
 
