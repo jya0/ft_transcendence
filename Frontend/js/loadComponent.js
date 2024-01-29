@@ -109,11 +109,11 @@ export const loadToast = (message) => {
 };
 
 // export const loadModal = (innerContent) => {
-// 	document.getElementById('modalMainBody').innerHTML = innerContent;
+// 	document.getElementById('modalSettingBody').innerHTML = innerContent;
 // };
 
-export const loadModal = (innerHTML) => {
-	document.getElementById('modalMainBody').innerHTML = innerHTML;
+export const loadModal = (idModalBody, innerHTML) => {
+	document.getElementById(idModalBody).innerHTML = innerHTML;
 };
 
 export const loadSpinner = (elementId) => {
@@ -138,9 +138,9 @@ export function loadLoginPage(message) {
 		loadToast(message);
 	}
 	localStorage.clear();
-	const docModalMain = document.getElementById('modalMain');
-	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-	tmpModalMain.hide();
+	const docModalSetting = document.getElementById('modalSetting');
+	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalSetting);
+	tmpModalSetting.hide();
 }
 
 
