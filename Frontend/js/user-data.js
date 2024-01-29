@@ -26,12 +26,22 @@ function updateTime() {
 		document.getElementById("datetime").innerHTML = formatDate;
 	}
 }
-let windowInterval = setInterval(updateTime, 1000);
+// let windowInterval = setInterval(updateTime, 1000);
 
-setTimeout(() => {
-	clearInterval(windowInterval);
-	windowInterval = setInterval(updateTime, 1000);
-}, 1100);
+// setTimeout(() => {
+// 	clearInterval(windowInterval);
+// 	windowInterval = setInterval(updateTime, 1000);
+// }, 1100);
+let windowInterval;
+
+function updateInterval() {
+    clearInterval(windowInterval);
+    windowInterval = setInterval(updateTime, 1000);
+}
+
+windowInterval = setInterval(updateTime, 1000);
+
+setTimeout(updateInterval, 1100);
 
 
 if (document.getElementById('test_user')) {
