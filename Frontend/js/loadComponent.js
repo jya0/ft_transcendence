@@ -1,4 +1,10 @@
 
+let LOGIN_PAGE_HTML = '';
+
+await fetch('/components/login.html').then(response => response.text()).then(data => {
+	LOGIN_PAGE_HTML = data;
+});
+
 export const loadGameMenu = () => {
 	document.getElementById("windowScreen").innerHTML =
 		`
