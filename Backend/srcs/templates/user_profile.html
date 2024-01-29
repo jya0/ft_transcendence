@@ -10,10 +10,9 @@
 	<body>
         <div class="vh-100 vw-100 bg--main" id="REMOVE________________________________________THIS!!!">
             <section> -->
-<div id="profile-container"
-	class="flex-column gap-4 p-3 pb-5 m-0 d-flex mh-100 mw-100 h-100 w-100 overflow-auto border border-1 border-black">
-	<div class="d-flex  h-25 flex-row w-100 border border-1 border-black">
-		<div class="col w-100 d-flex flex-row border border-1 border-black p-3">
+<div id="profile-container" class="flex-column gap-4 p-3 pb-5 m-0 d-flex mh-100 mw-100 h-100 w-100 overflow-auto border border-1 border-black font--argent">
+	<div class="d-flex h-25 flex-row w-100 border border-1 border-black overflow-hidden">
+		<div class="col d-flex flex-row align-items-center border border-0 border-black p-3 overflow-auto">
 			<div class="col-4">
 				<div class="ratio ratio-1x1 bg-black p-1 border border-0">
 					{% if image != 'other' %}
@@ -42,99 +41,127 @@
 					🟢{% else %} offline ⚪ {% endif %}</p>
 			</div>
 		</div>
-		<div class="col-7 p-0 border border-1 border-dark p-3">
-			<div class="d-flex justify-content-around flex-row w-100">
+		<div class="col-7 p-0 border-start border-1 border-black overflow-auto">
+			<div class="d-flex flex-row w-100 justify-content-between p-4">
 				<div class="d-flex flex-column">
-					<h5>100 Tournament Wins</h>
-						<h5>999 Games Won</h5>
+					<p class="p-0 m-0" style="font-size: calc(50% + 0.9vw)">100 Tournament Wins</p>
+					<p class="p-0 m-0" style="font-size: calc(50% + 0.9vw)">999 Games Won</p>
 				</div>
-				<div id="2fa-toggle" class="d-flex flex-column">
+				<div id="2fa-toggle" class="d-flex flex-column w-25">
 					{% if user_tag == 'other' %}
-					<button id="add-friend" type="submit" class="btn btn-primary">{% if is_friend %} Remove Friend {% else %} Add Friend {% endif %}</button>
+						<button id="add-friend" type="submit" class="btn btn-outline-dark border border-1 border-black rounded">
+							<p class="p-0 m-0" style="font-size: calc(50% + 0.5vw)">
+								{% if is_friend %}
+									Remove Friend
+								{% else %}
+									Add Friend
+								{% endif %}
+							</p>
+						</button>
 					{% else %}
-					<button id="2fa-button" type="submit" class="btn btn-primary">
-						{% if user.is_2fa_enabled == False %}
-						{{ 'Enable 2FA' }}
-						{% else %}
-						{{ 'Disable 2FA' }}
+						<button id="2fa-button" type="submit" class="btn btn-outline-dark border border-2 border-black rounded">
+							<p class="p-0 m-0">
+								{% if user.is_2fa_enabled == False %}
+									{{ 'Enable 2FA' }}
+								{% else %}
+									{{ 'Disable 2FA' }}
+								{% endif %}
+							</p>
+						</button>
+						{% if messages %}
+							{% for message in messages %}
+							<div class="alert alert-{{ message.tags }}">{{ message }}</div>
+							{% endfor %}
 						{% endif %}
-					</button>
-					{% if messages %}
-					{% for message in messages %}
-					<div class="alert alert-{{ message.tags }}">{{ message }}</div>
-					{% endfor %}
-					{% endif %}
 					{% endif %}
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="d-flex flex-grow-1 pb-4 gap-3 flex-row h-50 w-100 mh-50 mw-100 border border-0 border-danger">
-		<div class="d-flex col flex-column h-100 mh-100 overflow-auto border border-2 border-dark">
+		<div class="d-flex col flex-column h-100 mh-100 overflow-auto border border-1 border-dark">
 			{% if not users_list %}
-				<p class="p-0 m-0" style="font-size: calc(50% + 0.4vw)">U have no friends lol. get a life</p>
+				<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 overflow-hidden font--neue align-items-center justify-content-center gap-5">
+					<div class="d-flex p-0 m-0 h-25 w-25">
+						<div class="ratio ratio-1x1">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><title>beauty-mirror-2</title><g><path d="M25.145 4.57h-1.53V3.05H22.1V1.53h-1.53V0h-9.14v1.53H9.9v1.52H8.375v1.52h-1.52V6.1h-1.52v12.19h1.52v1.52h1.52v1.53h3.05v1.52h1.53v7.62h1.52V32h3.05v-1.52h1.52v-7.62h1.52v-1.52h3.05v-1.53h1.53v-1.52h1.52V6.1h-1.52Zm-7.62 24.39H16v-3.05h1.53Zm6.09 -10.67H22.1v1.52h-3.05v1.53h-6.09v-1.53H9.9v-1.52H8.375V6.1H9.9V4.57h1.52V3.05h9.14v1.52h1.54V6.1h1.52Z" fill="#000000" stroke-width="1"></path><path d="M17.525 13.72h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M17.525 10.67h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M14.475 15.24h3.05v1.53h-3.05Z" fill="#000000" stroke-width="1"></path><path d="M12.955 13.72h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M12.955 10.67h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M12.955 4.57h1.52V6.1h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M11.425 6.1h1.53v1.52h-1.53Z" fill="#000000" stroke-width="1"></path><path d="M9.905 7.62h1.52v1.53h-1.52Z" fill="#000000" stroke-width="1"></path></g></svg>
+						</div>
+					</div>
+					<p class="display-5 text-capitalize text-black text-center">
+						wow, such empty.
+					</p>
+				</div>
 			{% endif %}
 			{% for user in users_list %}
-			<div class="w-100 d-flex flex-row border border-1 border-dark">
-				<div class="col-3">
-					<div class="ratio ratio-1x1 bg-black border border-0">
-						<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}"
-							alt="Avatar" class="img-fluid rounded-circle p-1">
+				<div class="w-100 d-flex flex-row border-bottom border-1 border-dark">
+					<div class="col-3">
+						<div class="ratio ratio-1x1 bg-black border border-0">
+							<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}"
+								alt="Avatar" class="img-fluid rounded-circle p-1">
+						</div>
+					</div>
+					<div class="d-flex flex-column ps-2">
+						<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">{{ user.username }}</p>
+						<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">{% if user.is_online %}online 🟢{% else %}
+							offline ⚪ {% endif %}</p>
 					</div>
 				</div>
-				<div class="d-flex flex-column ps-2">
-					<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">{{ user.username }}</p>
-					<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">{% if user.is_online %}online 🟢{% else %}
-						offline ⚪ {% endif %}</p>
-				</div>
-			</div>
 			{% endfor %}
 		</div>
-		<div class="d-flex col-7 mh-100 overflow-auto h-100 flex-column border border-2 border-black">
+		<div class="d-flex col-7 mh-100 overflow-auto h-100 flex-column border border-1 border-black">
 			{% if not games_list %}
-				<p class="p-0 m-0" style="font-size: calc(50% + 0.4vw)">guys ive never played a game in my life.</p>
+				<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 overflow-hidden font--neue align-items-center justify-content-center gap-5">
+					<div class="d-flex p-0 m-0 h-25 w-25">
+						<div class="ratio ratio-1x1">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><title>pet-animals-rabbit-2</title><g><path d="M27.43 19.81h1.52v7.62h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M25.91 27.43h1.52v1.53h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M25.91 16.76h1.52v3.05h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M24.38 3.05h1.53v13.71h-1.53Z" fill="#000000" stroke-width="1"></path><path d="M22.86 28.96h3.05v1.52h-3.05Z" fill="#000000" stroke-width="1"></path><path d="M22.86 1.53h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M19.81 0h3.05v1.53h-3.05Z" fill="#000000" stroke-width="1"></path><path d="M9.15 30.48h13.71V32H9.15Z" fill="#000000" stroke-width="1"></path><path d="M19.81 18.29h1.53v1.52h-1.53Z" fill="#000000" stroke-width="1"></path><path d="M19.81 4.57h3.05v9.15h-3.05Z" fill="#000000" stroke-width="1"></path><path d="M18.29 22.86h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M18.29 1.53h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M16.76 3.05h1.53v12.19h-1.53Z" fill="#000000" stroke-width="1"></path><path d="M15.24 24.38h3.05v1.53h-3.05Z" fill="#000000" stroke-width="1"></path><path d="m15.24 22.86 1.52 0 0 -1.52 1.53 0 0 -1.53 -4.57 0 0 1.53 1.52 0 0 1.52z" fill="#000000" stroke-width="1"></path><path d="M15.24 15.24h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M13.72 3.05h1.52v12.19h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M12.19 1.53h1.53v1.52h-1.53Z" fill="#000000" stroke-width="1"></path><path d="M10.67 18.29h1.52v1.52h-1.52Z" fill="#000000" stroke-width="1"></path><path d="M9.15 0h3.04v1.53H9.15Z" fill="#000000" stroke-width="1"></path><path d="M9.15 4.57h3.04v9.15H9.15Z" fill="#000000" stroke-width="1"></path><path d="M6.1 28.96h3.05v1.52H6.1Z" fill="#000000" stroke-width="1"></path><path d="M7.62 1.53h1.53v1.52H7.62Z" fill="#000000" stroke-width="1"></path><path d="M6.1 3.05h1.52v13.71H6.1Z" fill="#000000" stroke-width="1"></path><path d="M4.57 27.43H6.1v1.53H4.57Z" fill="#000000" stroke-width="1"></path><path d="M4.57 16.76H6.1v3.05H4.57Z" fill="#000000" stroke-width="1"></path><path d="M3.05 19.81h1.52v7.62H3.05Z" fill="#000000" stroke-width="1"></path></g></svg>
+						</div>
+					</div>
+					<p class="display-5 text-capitalize text-black text-center">
+						that's cute.
+					</p>
+				</div>
 			{% endif %}
 			{% for game in games_list %}
-			<div class="d-flex w-100 flex-row border border-1 border-black">
-				<div class="col-2 d-flex flex-column text-truncate border border-0">
-					<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">Pong</p>
-					<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">Winner</p>
-					<p class="p-0 m-0" style="font-size: calc(50% + 0.2vw)">06/01/2024</p>
-				</div>
-				<div class="col">
-					<div class="ratio ratio-1x1 bg-black p-1 border border-0">
-						{% if game.score1 > game.score2 %}
-						<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
-							alt="" class="img-fluid rounded-circle">
-						{% else %}
-						<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
-							alt="" class="img-fluid rounded-circle">
-						{% endif %}
+				<div class="d-flex w-100 flex-row border-bottom border-1 border-black">
+					<div class="col-2 d-flex flex-column text-truncate border border-0">
+						<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">Pong</p>
+						<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">Winner</p>
+						<p class="p-0 m-0" style="font-size: calc(50% + 0.2vw)">06/01/2024</p>
+					</div>
+					<div class="col">
+						<div class="ratio ratio-1x1 bg-black p-1 border border-0">
+							{% if game.score1 > game.score2 %}
+							<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
+								alt="" class="img-fluid rounded-circle">
+							{% else %}
+							<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
+								alt="" class="img-fluid rounded-circle">
+							{% endif %}
+						</div>
+					</div>
+					<div class="border flex-column col-5 text-truncate border-0 border-secondary text-center">
+						<p class="p-0 m-0" style="font-size: calc(50% + 0.5vw)">{% if game.score1 > game.score2 %}
+							{{game.id1.display_name}} vs {{game.id2.display_name}} {% else %}{{game.id2.display_name}} vs
+							{{game.id1.display_name}}{% endif %}</p>
+						<p class="p-0 m-0" style="font-size: calc(50% + 0.5vw)">{% if game.score1 > game.score2 %}
+							{{game.score1}} - {{game.score2}} {% else %} {{game.score2}} - {{game.score1}} {% endif %}</p>
+					</div>
+					<div class="col">
+						<div class="ratio ratio-1x1 bg-black p-1 border border-0">
+							{% if game.score1 > game.score2 %}
+							<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
+								alt="" class="img-fluid rounded-circle">
+							{% else %}
+							<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
+								alt="" class="img-fluid rounded-circle">
+							{% endif %}
+						</div>
+					</div>
+					<div class="col-2 border flex-column text-truncate border border-1 justify-content-around h-100">
+						<p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Online</p>
+						<p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Multiplayer</p>
 					</div>
 				</div>
-				<div class="border flex-column col-5 text-truncate border-0 border-secondary text-center">
-					<p class="p-0 m-0" style="font-size: calc(50% + 0.5vw)">{% if game.score1 > game.score2 %}
-						{{game.id1.display_name}} vs {{game.id2.display_name}} {% else %}{{game.id2.display_name}} vs
-						{{game.id1.display_name}}{% endif %}</p>
-					<p class="p-0 m-0" style="font-size: calc(50% + 0.5vw)">{% if game.score1 > game.score2 %}
-						{{game.score1}} - {{game.score2}} {% else %} {{game.score2}} - {{game.score1}} {% endif %}</p>
-				</div>
-				<div class="col">
-					<div class="ratio ratio-1x1 bg-black p-1 border border-0">
-						{% if game.score1 > game.score2 %}
-						<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
-							alt="" class="img-fluid rounded-circle">
-						{% else %}
-						<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
-							alt="" class="img-fluid rounded-circle">
-						{% endif %}
-					</div>
-				</div>
-				<div class="col-2 border flex-column text-truncate border border-1 justift-content-around h-100">
-					<p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Online</p>
-					<p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Multiplayer</p>
-				</div>
-			</div>
 			{% endfor %}
 		</div>
 	</div>
