@@ -54,8 +54,11 @@ export function loadGame(username, localPlayerMode) {
 		ctx.fillText(score.left, canvas.width / 4, 50);
 		ctx.fillText(score.right, 3 * canvas.width / 4, 50);
 		ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
-		ctx.fillText("left-player-fetch-from-backend",  canvas.width / 4, canvas.height / 5);
-		ctx.fillText("right-player-fetch-from-backend",  3 * canvas.width / 4, canvas.height / 5);
+        if (!localPlayerMode) {
+            ctx.fillText(player1,  canvas.width / 4, canvas.height / 5);
+            ctx.fillText(player2,  3 * canvas.width / 4, canvas.height / 5);
+        }
+		
 	}
 
 	function updateBackend() {
@@ -66,7 +69,7 @@ export function loadGame(username, localPlayerMode) {
 				gameSocket.send(JSON.stringify({
 					'type': 'update',
 					'mode': 'single',
-					'username': localStorage.getItem('username'),
+					'username': username,
 					'key': keyPressed,
 				}))
 			}
@@ -76,7 +79,7 @@ export function loadGame(username, localPlayerMode) {
 				gameSocket.send(JSON.stringify({
 					'type': 'update',
 					'mode': 'single',
-					'username': localStorage.getItem('username'),
+					'username': username,
 					'key': keyPressed
 				}))
 			}
@@ -88,7 +91,7 @@ export function loadGame(username, localPlayerMode) {
 				gameSocket.send(JSON.stringify({
 					'type': 'update',
 					'mode': 'single',
-					'username': localStorage.getItem('username'),
+					'username': username,
 					'key': keyPressed
 				}))
 			}
@@ -98,7 +101,7 @@ export function loadGame(username, localPlayerMode) {
 				gameSocket.send(JSON.stringify({
 					'type': 'update',
 					'mode': 'single',
-					'username': localStorage.getItem('username'),
+					'username': username,
 					'key': keyPressed
 				}))
 			}
@@ -193,7 +196,7 @@ export function loadGame(username, localPlayerMode) {
 			gameSocket.send(JSON.stringify({
 				'type': 'end',
 				'mode': 'single',
-				'username': localStorage.getItem('username'),
+				'username': username,
 				'score1': score.left,
 				'score2': score.right,
 			}))
@@ -255,16 +258,17 @@ export function loadGame(username, localPlayerMode) {
                 // loadSpinner("modalGameBody", "text-black");
 			    const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
 			    tmpModalGame.hide();
-				player2 = data.username;
+                player1 = data["player1"];
+				player2 = data["player2"];
                 startGame();
 
-				if (data.sender == localStorage.getItem('username')) {
+				if (data.sender == username) {
 					leftPlayer = false;
 					rightPlayer = true;
 				}
 			}
 
-			if (data.sender == localStorage.getItem('username'))
+			if (data.sender == username)
 				return;
 
 			if (data.type == 'update') {
@@ -297,7 +301,7 @@ export function loadGame(username, localPlayerMode) {
 			gameSocket.send(JSON.stringify({
 				'type': 'start',
 				'mode': 'single',
-				'username': localStorage.getItem('username')
+				'username': username
 			}))
 
 			player_count = 1;
