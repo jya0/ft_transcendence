@@ -1,4 +1,22 @@
 // import {io} from "socket.io-client";
+
+let LOGIN_PAGE_HTML = '';
+
+await fetch('/components/login.html').then(response => response.text()).then(data => {
+	LOGIN_PAGE_HTML = data;
+});
+
+function loadLoginPage(message) {
+	document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+	if (message) {
+		loadToast(message);
+	}
+	localStorage.clear();
+	const docModalMain = document.getElementById('modalMain');
+	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+	tmpModalMain.hide();
+}
+
 export function loadTournament(localMode) {
 
 	function getCookie(name) {
@@ -749,8 +767,15 @@ export function loadTournament(localMode) {
 				// (e.g., tournament name, settings, etc.)
 			}),
 		})
-			.then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+					loadLoginPage('Please login again');
+					return null;
+				}
+				response.json()
+			})
 			.then(data => {
+				if(!data) return;
 				// Handle the response from the backend
 				if (data.message === 'Please choose another tournament name') {
 					alert('Please choose another tournament name');
@@ -797,8 +822,15 @@ export function loadTournament(localMode) {
 				// (e.g., tournament name, settings, etc.)
 			}),
 		})
-			.then(response => response.json())
+			.then(response => {
+				if (!response.ok) {
+					loadLoginPage('Please login again');
+					return null;
+				}
+				response.json()
+			})
 			.then(data => {
+				if (!data) return;
 				// Handle the response from the backend
 				if (data.message === 'Tournament joined successfully') {
 					alert('Tournament joined successfully');
