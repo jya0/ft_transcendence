@@ -337,6 +337,7 @@ def validate_otp(request):
 def generate_test_user(request):
     fake = Faker()
     username = fake.user_name()
+    request.session['username'] = username
     email = fake.email()
     display_name = fake.name()
     if not UserProfile.objects.filter(username=username).exists():
@@ -360,7 +361,11 @@ def generate_test_user(request):
 def get_user_data(request):
     session_id = request.COOKIES.get('sessionid')
     if session_id:
-        username = request.session['username']
+        username = request.GET.get('username')
+        print('-------------> ', username)
+        if username == 'undefined' or 'null':
+            username = request.session.get('username', None)
+            print('-------------> ', username)
         user = get_object_or_404(UserProfile, username=username)
         user_data = {
             'username': user.username,

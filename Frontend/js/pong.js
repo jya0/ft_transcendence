@@ -1,7 +1,9 @@
+let continueExecution = true;
+
 export function loadGame(localPlayerMode) {
 
-	let isGameOver = false;
-
+	let isGameOver = true;
+    continueExecution = true;
 	let lastTimestamp = 0;
 	const maxFrameRate = 60;
 	const frameInterval = 1000 / maxFrameRate;
@@ -288,10 +290,14 @@ export function loadGame(localPlayerMode) {
 	}
 
 	function gameLoop(timestamp) {
-		const elapsed = timestamp - lastTimestamp;
-		// console.log(timestamp);
 
-		if (elapsed >= (frameInterval / 2)) {
+        if (continueExecution == false)
+            return ;
+
+        const elapsed = timestamp - lastTimestamp;
+		console.log(timestamp);
+
+		if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
 			draw();
 			update();
 			lastTimestamp = timestamp;
@@ -309,6 +315,7 @@ export function loadGame(localPlayerMode) {
 				score.right = 0;
 				resetBall();
 				animationFrameId = requestAnimationFrame(gameLoop);
+                canvas.dataset.animationFrameId = animationFrameId;
 			}
 		}
 		else {
@@ -325,6 +332,9 @@ export function loadGame(localPlayerMode) {
 				score.right = 0;
 				resetBall();
 				animationFrameId = requestAnimationFrame(gameLoop);
+                //TODO
+                canvas.dataset.animationFrameId = animationFrameId;
+
 			}
 		}
 	}
@@ -332,9 +342,13 @@ export function loadGame(localPlayerMode) {
 	startGame();
 }
 
-
+// Function to stop the execution from the outside
+export function stopPongExecution() {
+    continueExecution = false;
+}
 
 
 export default {
-	loadGame: loadGame
+    loadGame: loadGame,
+    stopPongExecution: stopPongExecution
 };
