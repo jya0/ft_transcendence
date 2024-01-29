@@ -2,8 +2,9 @@ import { loadSpinner, showGameWinner } from "./loadComponent.js";
 import {urlLocationHandler} from "./url-router.js"
 let continueExecution = true;
 
-export function loadGame(localPlayerMode) {
-
+export function loadGame(username, localPlayerMode) {
+    let player1 = username;
+    let player2;
 	const docModalGame = document.getElementById('modalGame');
 	let isGameOver = true;
     continueExecution = true;
@@ -186,9 +187,9 @@ export function loadGame(localPlayerMode) {
 	async function handleOnlineWinner() {
 		let winnerMsg;
 		if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-			winnerMsg = "You lose! Press to play a new online game";
+			winnerMsg = ` - ${player1} - Sorry You lose!`;
 		else {
-			winnerMsg = "You win! Press to play a new online game";
+			winnerMsg = `${player1} - Congrats You won!`;
 			gameSocket.send(JSON.stringify({
 				'type': 'end',
 				'mode': 'single',
@@ -251,7 +252,11 @@ export function loadGame(localPlayerMode) {
 				return;
 			if (data.type === 'start' && data["status"] == "start") {
 				player_count = 2;
-				startGame();
+                // loadSpinner("modalGameBody", "text-black");
+			    const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+			    tmpModalGame.hide();
+				player2 = data.username;
+                startGame();
 
 				if (data.sender == localStorage.getItem('username')) {
 					leftPlayer = false;
@@ -324,6 +329,7 @@ export function loadGame(localPlayerMode) {
 	}
 
 	function startGame() {
+
 		if (localPlayerMode) {
 			if (isGameOver || !animationFrameId) {
 				isGameOver = false;

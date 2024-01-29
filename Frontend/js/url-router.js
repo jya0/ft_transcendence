@@ -495,11 +495,11 @@ export const urlLocationHandler = async () => {
         switch (location) {
             case '/games_pong_local':
                 gameMode = 'pong single';
-                loadGame(true);
+                loadGame(localStorage.getItem('username'),true);
                 break;
             case '/games_pong_online':
                 gameMode = 'pong single';
-                loadGame(false);
+                loadGame(localStorage.getItem('username'), false);
                 break;
             case '/games_tictactoe_local':
                 loadTicTac();
