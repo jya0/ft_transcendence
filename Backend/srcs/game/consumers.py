@@ -23,11 +23,23 @@ def prepare_final_round(tourn, user):
     return True
 
 
+def remove_from_lobbies(text_data_json):
+    sender = text_data_json["username"]
+    open_lobbies = Match.objects.filter(Q(open_lobby=True) & (Q(id1__intra=sender) | Q(id2__intra=sender)))
+
+    for game in open_lobbies:
+        if game.id1.intra == sender:
+            game.id1 = UserProfile.objects.get(intra='temp1')
+            print("succesfully removed from a lobby")
+        elif game.id2.intra == sender:
+            game.id2 = UserProfile.objects.get(intra='temp2')
+            print("succesfully removed from a lobby")
+        game.save()
+
+
 class GameConsumer(WebsocketConsumer):
     lobbyCount = 0
-
-
-
+ 
     def connect(self):
         
         #@TODO: if already in game - refuse connection
@@ -47,8 +59,17 @@ class GameConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         print('receieved from client: ', text_data_json)
         type = text_data_json['type']
+        
+        
+        if (type == 'terminate'):
+            remove_from_lobbies(text_data_json)
+            self.disconnect(1000)
+            return
+        
         mode = text_data_json['mode']
         username = text_data_json['username']
+        
+    
         
         #handle in-game player movements
         if (type == 'update'):
@@ -62,7 +83,6 @@ class GameConsumer(WebsocketConsumer):
                     'key' : key,
                 }
             )
-        
         
         if (mode == 'tournament'):
             print(text_data_json)
@@ -211,6 +231,10 @@ class GameConsumer(WebsocketConsumer):
 
     def disconnect(self, code):
 
+        #remmove players from any games with open lobbies
+        # sender = self.scope['user'].username
+        # self.disconnect_from_games(sender)
+        
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name

@@ -1,9 +1,12 @@
 import { loadSpinner, showGameWinner } from "./loadComponent.js";
 import {urlLocationHandler} from "./url-router.js"
 let continueExecution = true;
+let gameSocket = "";
+let user_name = "";
 
 export function loadGame(username, localPlayerMode) {
     let player1 = username;
+    user_name = username;
     let player2;
 	const docModalGame = document.getElementById('modalGame');
 	let isGameOver = true;
@@ -242,7 +245,6 @@ export function loadGame(username, localPlayerMode) {
 	// let url = `wss://10.12.1.10:8090/ws/socket-server/`;
 	let url = `wss://localhost:8090/ws/socket-server/`;
 
-	let gameSocket;
 
 	function initiateSocket() {
 		gameSocket = new WebSocket(url);
@@ -373,8 +375,19 @@ export function stopPongExecution() {
     continueExecution = false;
 }
 
+export function closePong1v1Socket() {
+    if (gameSocket === "")
+        return ;
+    gameSocket.send(JSON.stringify({
+        'type': 'terminate',
+        'username': user_name,
+    }))
+    gameSocket.close();
+    gameSocket = "";
+}
 
 export default {
     loadGame: loadGame,
-    stopPongExecution: stopPongExecution
+    stopPongExecution: stopPongExecution,
+    closePong1v1Socket: closePong1v1Socket
 };
