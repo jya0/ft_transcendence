@@ -97,7 +97,7 @@
 					<div class="col-3">
 						<div class="ratio ratio-1x1 bg-black border border-0">
 							<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}"
-								alt="Avatar" class="img-fluid rounded-circle p-1">
+								alt="Avatar" class="img-fluid rounded-circle p-1 object-fit-cover">
 						</div>
 					</div>
 					<div class="d-flex flex-column ps-2">
@@ -132,10 +132,10 @@
 						<div class="ratio ratio-1x1 bg-black p-1 border border-0">
 							{% if game.score1 > game.score2 %}
 							<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
-								alt="" class="img-fluid rounded-circle">
+								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% else %}
 							<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
-								alt="" class="img-fluid rounded-circle">
+								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% endif %}
 						</div>
 					</div>
@@ -150,10 +150,10 @@
 						<div class="ratio ratio-1x1 bg-black p-1 border border-0">
 							{% if game.score1 > game.score2 %}
 							<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
-								alt="" class="img-fluid rounded-circle">
+								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% else %}
 							<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
-								alt="" class="img-fluid rounded-circle">
+								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% endif %}
 						</div>
 					</div>
