@@ -54,6 +54,7 @@ class Tournament(models.Model):
     winner = models.CharField(max_length=50, unique=False, default="1")
     tournament_id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True, default="default")
+    count = models.IntegerField(default=0)
     status = models.BooleanField(default=False)
 
 

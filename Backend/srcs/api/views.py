@@ -58,16 +58,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-# # ______________________________________________________________________________________
-# # ______________________________________________________________________________________
-# # TOOURNAMENT ENDPOINTS
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_all_tournaments(request):
-    tourns = Tournament.objects.filter(Q(status=True))
-    serializer = TournamentSerializer(tourns, many=True)
-    return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(['GET'])
@@ -300,6 +290,7 @@ def join_tournament(request):
         return JsonResponse({'message': msg}, status=200)
     if joined:
         msg = 'Tournament joined successfully'
+        tourn.count = tourn.count + 1
     return JsonResponse({'message': msg}, status=200)
 
 
@@ -385,3 +376,55 @@ def get_image(request, username):
         response = HttpResponse(user.image, content_type='image/png')
         return response
     return JsonResponse({'error': 'Image not found'}, status=204)
+
+
+
+
+# # ______________________________________________________________________________________
+# # ______________________________________________________________________________________
+# # TOOURNAMENT ENDPOINTS
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_tournaments(request):
+    tourns = Tournament.objects.filter(Q(status=True))
+    # serializer = TournamentSerializer(tourns, many=True)
+
+
+    template = get_template('tournament.html')
+    template_content = template.template.source
+    template = Template(template_content)
+
+    context = Context({'tournaments': tourns})
+    rendered_template = template.render(context)
+    return HttpResponse(rendered_template, content_type='text/html')
+    # return JsonResponse(serializer.data, safe=False)
+
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_tournament(request):
+    name = request.GET.get('name')
+    try:
+        tourn = Tournament.objects.create(name=name, status=True)
+        Match.objects.create(tournament_id_id=tourn.tournament_id,
+                             id1_id=2, id2_id=3, score1=0, score2=0, ongoing=True)
+        Match.objects.create(tournament_id_id=tourn.tournament_id,
+                             id1_id=2, id2_id=3, score1=0, score2=0, ongoing=True)
+
+    except:
+        return JsonResponse({'message': 'Please choose another tournament name'}, status=200)
+    # get_all_tournaments(request)
+    tourns = Tournament.objects.filter(Q(status=True))
+    # serializer = TournamentSerializer(tourns, many=True)
+
+
+    template = get_template('tournament.html')
+    template_content = template.template.source
+    template = Template(template_content)
+
+    context = Context({'tournaments': tourns})
+    rendered_template = template.render(context)
+    print(tourns)
+    return HttpResponse(rendered_template, content_type='text/html')
