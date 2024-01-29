@@ -20,7 +20,7 @@ def send_otp(request, username):
     secret_key = pyotp.random_base32()
     totp = pyotp.TOTP(secret_key, interval=60)
     otp = totp.now()
-    valid_date = datetime.now() + timedelta(minutes=1)
+    valid_date = datetime.now() + timedelta(minutes=2)
     user.otp_secret_key = secret_key
     valid_date_utc_aware = valid_date.replace(tzinfo=timezone.utc)
     user.otp_valid_date = valid_date_utc_aware
