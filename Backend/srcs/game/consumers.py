@@ -86,6 +86,8 @@ class GameConsumer(WebsocketConsumer):
                         'type': 'start_game',
                         'mode' : mode,
                         'sender' : username,
+                        'player1': game.id1.intra,
+                        'player2' : game.id2.intra,
                         'status' : status
                     }
                 )
@@ -120,7 +122,7 @@ class GameConsumer(WebsocketConsumer):
                         'type': 'start_game',
                         'mode' : mode,
                         'sender' : username,
-                        'status' : status
+                        'status' : status,
                     }
                 )
 
@@ -159,7 +161,9 @@ class GameConsumer(WebsocketConsumer):
                         'type': 'start_game',
                         'mode' : mode,
                         'sender' : username,
-                        'status' : status
+                        'status' : status,
+                        'player1': game.id1.intra,
+                        'player2': game.id2.intra,
                     }
                 )
 
@@ -188,7 +192,10 @@ class GameConsumer(WebsocketConsumer):
             'type' : 'start',
             'mode' : mode,
             'sender' : sender,
-            'status' : message
+            'status' : message,
+            'player1': event['player1'],
+            'player2': event['player2'],
+
         }))
 
     def update_game(self, event):
