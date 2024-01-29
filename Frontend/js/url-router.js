@@ -718,7 +718,7 @@ async function handleUserData() {
 								<label for="otp-input" class="form-label">Your OTP Code is valid for 60 seconds</label>
 								<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
 							</div>
-							<button type="submit-otp" id="submit-otp" class="btn btn-primary">Validate OTP</button>
+							<button type="submit-otp" id="submit-otp" class="btn btn-outline-dark border border-2 border-black rounded">Validate OTP</button>
 						</div>
 					`;
 
@@ -767,7 +767,7 @@ async function handleUserData() {
 								}
 								else {
 									loadToast('Invalid OTP code');
-									const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-primary">Try Again</button>';
+									const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-outline-dark border border-2 border-black rounded">Try Again</button>';
 									if (!document.getElementById('try-again-btn')) {
 										document.getElementById('otp-container').insertAdjacentHTML('beforeend', tryAgainButton);
 									}
