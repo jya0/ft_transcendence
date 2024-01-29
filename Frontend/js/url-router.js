@@ -12,6 +12,17 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 	LOGIN_PAGE_HTML = data;
 });
 
+function loadLoginPage(message) {
+	document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+	if (message) {
+		loadToast(message);
+	}
+	localStorage.clear();
+	const docModalMain = document.getElementById('modalMain');
+	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+	tmpModalMain.hide();
+}
+
 await fetch('/api/get_user_data/', {
 	method: 'GET',
 }).then(response => {
@@ -312,11 +323,13 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 		})
 			.then(response => {
 				if (!response.ok) {
-					throw new Error('Network response was not ok');
+					loadLoginPage('Please login to continue');
+					return null
 				}
 				return response.json();
 			})
 			.then(async data => {
+				if (!data) return;
 				console.log('Data fetched:', data);
 				if (data.message === 'Logged out successfully') {
 					document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
@@ -682,7 +695,6 @@ async function handleUserData() {
 			.then(response => {
 				console.log('response', response)
 				if (!response.ok) {
-					console.log('response is NOT OKKKKK', response);
 					if (response.status === 400) {
 						document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 						loadToast('Invalid code');
