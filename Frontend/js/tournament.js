@@ -634,12 +634,12 @@ export function loadTournament(localMode) {
 	};
 
 
-	function startTournament() {
+	async function startTournament() {
 		if (localMode) {
 			setupLocalTournament();
 			return ;
 		}
-		setupOnlineTournament();
+		await setupOnlineTournament();
 	}
 	startTournament();
 
@@ -726,7 +726,7 @@ export function loadTournament(localMode) {
 	}
 
 	async function submitTournament() {
-		const tournamentName = document.getElementById('tournamentNameInput').value;
+		const tournamentName = document.getElementById('tournamentName').value;
 		if (!tournamentName) {
 			alert('Please enter a tournament name.');
 			return;
@@ -761,27 +761,27 @@ export function loadTournament(localMode) {
 				} else if (data.message === 'Tournament created successfully') {
 					alert('Tournament created successfully');
 				} else {
-					console.error('Unexpected response:', data);
+					// console.error('Unexpected response:', data);
 				}
 			})
 			.catch(error => console.error('Error creating tournament:', error));
 
 		// Remove the input field and submit button after creating the tournament
-		const tournamentNameInput = document.getElementById('tournamentNameInput');
-		const submitButton = document.getElementById('submitButton');
-		tournamentNameInput.parentNode.removeChild(tournamentNameInput);
-		submitButton.remove();
+		// const tournamentNameInput = document.getElementById('tournamentNameInput');
+		// const submitButton = document.getElementById('submitButton');
+		// tournamentNameInput.parentNode.removeChild(tournamentNameInput);
+		// submitButton.remove();
 
-		const tournamentList = document.getElementById('tourn-list');
-		const listItem = document.createElement('li');
-		listItem.textContent = tournamentName;
+		// const tournamentList = document.getElementById('tourn-list');
+		// const listItem = document.createElement('li');
+		// listItem.textContent = tournamentName;
 
-		const joinButton = document.createElement('button');
-		joinButton.textContent = 'Join';
-		joinButton.addEventListener('click', () => joinTournament(tournamentName));
+		// const joinButton = document.createElement('button');
+		// joinButton.textContent = 'Join';
+		// joinButton.addEventListener('click', () => joinTournament(tournamentName));
 
-		listItem.appendChild(joinButton);
-		tournamentList.appendChild(listItem);
+		// listItem.appendChild(joinButton);
+		// tournamentList.appendChild(listItem);
 	}
 
 	async function joinTournament(tournamentName) {
@@ -860,9 +860,43 @@ export function loadTournament(localMode) {
 		}
 	}
 
-	function setupOnlineTournament() {
+	async function setupOnlineTournament() {
 	    localPlayerMode = false;
-	    displayMenu();
+	    // displayMenu();
+		await fetch(`/api/tournaments`, {
+			method: 'GET',
+			headers: {
+				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+			},
+		}).then(response => {
+			if (!response.ok) {
+				// document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+				localStorage.clear();
+				console.log(response.statusText);
+				// loadToast('Please login to continue');
+				return null;
+			}
+			return response.text();
+		}).then(data => {
+			console.log(data);
+			if (!data) {
+				return;
+			}
+			document.getElementById('content').innerHTML += data;
+            //@TODO: modal text = data
+
+		}).catch((error) => {
+			console.error('Error:', error);
+		});
+
+
+
+        document.getElementById('createTourn').addEventListener('click', () => {
+            
+        });
+
+
+
 	};
 
 	async function gameLoop() {
