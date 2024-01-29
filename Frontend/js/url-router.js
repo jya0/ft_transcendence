@@ -22,8 +22,8 @@ function loadLoginPage(message) {
 	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
 	tmpModalMain.hide();
 }
-
-await fetch('/api/get_user_data/', {
+console.log(sessionStorage.getItem('username'))
+await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username')}`, {
 	method: 'GET',
 }).then(response => {
 	if (response.status === 204) {
@@ -383,8 +383,31 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 	});
 });
 
-const urlLocationHandler = async () => {
+async function generateTestUser() {
+	let location = window.location.pathname;
+	if (location == '/test_user') {
+		await fetch("/api/generate_test_user/").then(response => {
+			if (!response.ok) {
+				loadToast('Please login to continue');
+			}
+			return response.json();
+		}).then(data => {
+			localStorage.setItem('access_token', data.token);
+			user = data.user;
+			localStorage.setItem('user', data.user);
+			sessionStorage.setItem('username', user.username);
+			// window.location.reload();
+			console.log('Data fetched:', data);
+		}).catch((error) => {
+			console.error('Error:', error);
+		});
+	};
 
+}
+
+
+const urlLocationHandler = async () => {
+	generateTestUser();
 	if (!user) {
 		document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 		return;
@@ -821,25 +844,6 @@ function insertOrCreateContent() {
 		document.body.appendChild(content);
 	}
 }
-
-async function generateTestUser() {
-	await fetch("/api/generate_test_user/").then(response => {
-		if (!response.ok) {
-			loadToast('Please login to continue');
-		}
-		return response.json();
-	}).then(data => {
-		localStorage.setItem('access_token', data.token);
-		localStorage.setItem('user', data.user);
-		// window.location.reload();
-		console.log('Data fetched:', data);
-	}).catch((error) => {
-		console.error('Error:', error);
-	});
-	urlLocationHandler();
-
-}
-
 
 async function getAllUsers(override) {
 	let location = window.location.pathname;
