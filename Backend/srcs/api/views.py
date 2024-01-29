@@ -363,8 +363,9 @@ def get_user_data(request):
     if session_id:
         username = request.GET.get('username')
         print('-------------> ', username)
-        if not username:
+        if username == 'undefined' or 'null':
             username = request.session.get('username', None)
+            print('-------------> ', username)
         user = get_object_or_404(UserProfile, username=username)
         user_data = {
             'username': user.username,
