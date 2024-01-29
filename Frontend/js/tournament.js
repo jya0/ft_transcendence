@@ -1,4 +1,5 @@
 // import {io} from "socket.io-client";
+import { loadLoginPage, getCookie } from "./loadComponent.js";
 
 let LOGIN_PAGE_HTML = '';
 
@@ -6,34 +7,8 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 	LOGIN_PAGE_HTML = data;
 });
 
-function loadLoginPage(message) {
-	document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-	if (message) {
-		loadToast(message);
-	}
-	localStorage.clear();
-	const docModalMain = document.getElementById('modalMain');
-	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-	tmpModalMain.hide();
-}
 
 export function loadTournament(localMode) {
-
-	function getCookie(name) {
-		let cookieValue = null;
-		if (document.cookie && document.cookie !== '') {
-			const cookies = document.cookie.split(';');
-			for (let i = 0; i < cookies.length; i++) {
-				const cookie = cookies[i].trim();
-				if (cookie.substring(0, name.length + 1) === name + '=') {
-					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-					break;
-				}
-			}
-		}
-		return cookieValue;
-	}
-
 	
 	let tournament_name;
 	const canvas = document.getElementById('gameCanvas');

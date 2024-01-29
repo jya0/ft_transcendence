@@ -1,5 +1,5 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner, getCookie } from './loadComponent.js';
 import { loadTournament } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame } from './pong.js';
@@ -115,20 +115,6 @@ navbarLinks.forEach(function (link) {
 	});
 });
 
-function getCookie(name) {
-	let cookieValue = null;
-	if (document.cookie && document.cookie !== '') {
-		const cookies = document.cookie.split(';');
-		for (let i = 0; i < cookies.length; i++) {
-			const cookie = cookies[i].trim();
-			if (cookie.substring(0, name.length + 1) === name + '=') {
-				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-				break;
-			}
-		}
-	}
-	return cookieValue;
-}
 
 // create an object that maps the url to the template, title, and description
 const urlRoutes = {
@@ -681,7 +667,6 @@ async function handleUserData() {
 	console.log('code', code)
 	if (code) {
 		loadSpinner("content");
-		// document.getElementById("nav-container").classList.add("hidden");
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").style.display = 'none';
 		}
@@ -721,7 +706,6 @@ async function handleUserData() {
 				userToken = data.token;
 				user = data.user;
 				sessionStorage.setItem('user', JSON.stringify(user));
-				// isAuthDone = true;
 				const otp = data.otp
 				if (otp === 'validate_otp') {
 					console.log('validate otp');

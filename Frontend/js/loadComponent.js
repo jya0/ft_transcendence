@@ -123,3 +123,32 @@ export const loadSpinner = (elementId) => {
 		</div>
 	`;
 }
+
+export function loadLoginPage(message) {
+	console.log("loadLoginPage");
+	document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+	if (message) {
+		console.log("loadLoginPage message");
+		loadToast(message);
+	}
+	localStorage.clear();
+	const docModalMain = document.getElementById('modalMain');
+	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
+	tmpModalMain.hide();
+}
+
+
+export function getCookie(name) {
+	let cookieValue = null;
+	if (document.cookie && document.cookie !== '') {
+		const cookies = document.cookie.split(';');
+		for (let i = 0; i < cookies.length; i++) {
+			const cookie = cookies[i].trim();
+			if (cookie.substring(0, name.length + 1) === name + '=') {
+				cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+				break;
+			}
+		}
+	}
+	return cookieValue;
+}
