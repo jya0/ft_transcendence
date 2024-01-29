@@ -777,7 +777,8 @@ export function loadTournament(localMode) {
             console.error('Error:', error);
         });
 
-        document.getElementById('createTourn').addEventListener('click', async () => {
+        document.getElementById('createTourn').addEventListener('click', async function(event) {
+            event.preventDefault();
             await submitTournament();
         });
 

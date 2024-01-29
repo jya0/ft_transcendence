@@ -1,5 +1,5 @@
 import { loadSpinner } from "./loadComponent.js";
-
+import {urlLocationHandler} from "./url-router.js"
 let continueExecution = true;
 
 export function loadGame(localPlayerMode) {
@@ -101,7 +101,7 @@ export function loadGame(localPlayerMode) {
 		}
 	}
 
-	function update() {
+	async function update() {
 		if (isGameOver) return;
 
 		ball.x += ball.speedX;
@@ -145,7 +145,7 @@ export function loadGame(localPlayerMode) {
 			ball.x > canvas.width ? score.left++ : score.right++;
 			draw();
 			resetBall();
-			checkForWinner();
+			await checkForWinner();
 			return;
 		}
 	}
@@ -156,7 +156,11 @@ export function loadGame(localPlayerMode) {
 		ball.speedX *= -1;
 	}
 
-	function handleLocalWinner() {
+
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+
+	async function handleLocalWinner() {
 		let winnerMsg;
 
 		if (score.left > score.right) {
@@ -173,10 +177,14 @@ export function loadGame(localPlayerMode) {
 		socketStatus = false;
 		leftPlayer = true;
 		rightPlayer = false;
+        await delay(2000);
+        window.history.pushState({}, "", '/play');
+        urlLocationHandler();
+        return ;
 	}
 
 
-	function handleOnlineWinner() {
+	async function handleOnlineWinner() {
 		let winnerMsg;
 		if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
 			winnerMsg = "You lose! Press to play a new online game";
@@ -198,9 +206,12 @@ export function loadGame(localPlayerMode) {
 		gameSocket.close();
 		isGameOver = true;
 		socketStatus = false;
+        await delay(2000);
+        window.history.pushState({}, "", '/play');
+        urlLocationHandler();
 	}
 
-	function checkForWinner() {
+	async function checkForWinner() {
 
 		if (score.left >= 3 || score.right >= 3) {
 			isGameOver = true;
@@ -208,9 +219,9 @@ export function loadGame(localPlayerMode) {
 			ctx.fillStyle = 'red';
 
 			if (localPlayerMode)
-				handleLocalWinner();
+				await handleLocalWinner();
 			else
-				handleOnlineWinner();
+				await handleOnlineWinner();
 			resetGame();
 		}
 	}
@@ -295,7 +306,7 @@ export function loadGame(localPlayerMode) {
 		player_count = 1;
 	}
 
-	function gameLoop(timestamp) {
+	async function gameLoop(timestamp) {
 
         if (continueExecution == false)
             return ;
@@ -305,7 +316,7 @@ export function loadGame(localPlayerMode) {
 
 		if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
 			draw();
-			update();
+			await update();
 			lastTimestamp = timestamp;
 			if (isGameOver)
 				return;
