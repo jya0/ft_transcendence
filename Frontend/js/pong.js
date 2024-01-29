@@ -1,4 +1,4 @@
-import { loadSpinner } from "./loadComponent.js";
+import { loadSpinner, showGameWinner } from "./loadComponent.js";
 import {urlLocationHandler} from "./url-router.js"
 let continueExecution = true;
 
@@ -52,6 +52,9 @@ export function loadGame(localPlayerMode) {
 		ctx.textBaseline = "top";
 		ctx.fillText(score.left, canvas.width / 4, 50);
 		ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+		ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
+		ctx.fillText("left-player-fetch-from-backend",  canvas.width / 4, canvas.height / 5);
+		ctx.fillText("right-player-fetch-from-backend",  3 * canvas.width / 4, canvas.height / 5);
 	}
 
 	function updateBackend() {
@@ -161,23 +164,19 @@ export function loadGame(localPlayerMode) {
 
 
 	async function handleLocalWinner() {
-		let winnerMsg;
+		let winner;
 
 		if (score.left > score.right) {
-			winnerMsg = "Left Player WINS! Press to play a new local game";
+			winner = "Left Player";
 		} else {
-			winnerMsg = "Right Player WINS! Press to play a new local game";
+			winner = "Right Player";
 		}
 
-		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
-		ctx.textAlign = "center";
-		ctx.textBaseline = "center";
-		ctx.fillText(winnerMsg, canvas.width / 2, canvas.height / 2, canvas.width);
 		isGameOver = true;
 		socketStatus = false;
 		leftPlayer = true;
 		rightPlayer = false;
-        await delay(2000);
+        showGameWinner(winner);
         window.history.pushState({}, "", '/play');
         urlLocationHandler();
         return ;
@@ -198,15 +197,15 @@ export function loadGame(localPlayerMode) {
 				'score2': score.right,
 			}))
 		}
-		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
-		ctx.textAlign = "center";
-		ctx.textBaseline = "center";
-		ctx.fillText(winnerMsg, canvas.width / 2, canvas.height / 2, canvas.width);
+		// ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+		// ctx.textAlign = "center";
+		// ctx.textBaseline = "center";
+		// ctx.fillText(winnerMsg, canvas.width / 2, canvas.height / 2, canvas.width);
 
 		gameSocket.close();
 		isGameOver = true;
 		socketStatus = false;
-        await delay(2000);
+        showGameWinner(winnerMsg);
         window.history.pushState({}, "", '/play');
         urlLocationHandler();
 	}

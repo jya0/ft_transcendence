@@ -26,7 +26,7 @@ console.log(sessionStorage.getItem('username'))
 
 async function checkIfLoggedIn() {
 
-    await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username')}`, {
+    await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username') ? localStorage.getItem('username') : ''}`, {
         method: 'GET',
     }).then(response => {
         if (response.status === 204) {
