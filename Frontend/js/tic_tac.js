@@ -24,20 +24,21 @@ export function  loadTicTac(){
         var container = document.createElement('div');
         container.id = 'game-container';
         container.className = 'tictactoe';
+		container.classList = "d-flex flex-row h-100 w-100 p-5 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
         container.innerHTML = 
-			`<div class="d-flex flex-row h-100 w-100 p-5 mh-100 mw-100 gap-5 justify-content-around align-items-center overflow-auto font--argent">
-				<div id="tictactoe" class="flex-grow-1 h-75 w-75 border border-1 border-black"></div>
-				<div id="turn" class="text-capitalize text-black display-5 border border-1 border-black rounded p-4">
+			`
+				<div id="tictactoe" class="d-flex justify-content-center align-items-center flex-grow-1 h-75 w-75 border border-0 border-black"></div>
+				<div id="turn" class="text-capitalize text-black w-25 text-center h2 border border-1 border-black rounded p-4">
 					player x
 				</div>
-			</div>
+			
 			`;
         gameOver = false;
         document.getElementById('windowScreen').innerHTML = "";
         document.getElementById('windowScreen').appendChild(container);
-        var board = document.createElement('table');
-        board.setAttribute("border", 1);
-        board.setAttribute("cellspacing", 10);
+        var board = document.createElement('div');
+        // board.setAttribute("border", 1);
+        // board.setAttribute("cellspacing", 10);
 
         var identifier = 1;
         for (var i = 0; i < N_SIZE; i++) {
