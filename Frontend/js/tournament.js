@@ -1,5 +1,5 @@
 // import {io} from "socket.io-client";
-import { loadLoginPage, getCookie } from "./loadComponent.js";
+import { loadLoginPage, getCookie, loadModal } from "./loadComponent.js";
 
 let LOGIN_PAGE_HTML = '';
 
@@ -12,7 +12,7 @@ export function loadTournament(localMode) {
 	
 	let tournament_name;
 	const canvas = document.getElementById('gameCanvas');
-	const docModalMain = document.getElementById('modalMain');
+	const docModalGame = document.getElementById('modalGame');
 	const ctx = canvas.getContext('2d');
 
 	let localPlayerMode = true;
@@ -188,11 +188,11 @@ export function loadTournament(localMode) {
 		if (g_count == 0) {
 			// alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
 			//@todo - show bracket
-			docModalMain.querySelector('#winner-p1').innerHTML = winners[0];
+			docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
 			toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
 			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
-			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-			tmpModalMain.show();
+			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+			tmpModalGame.show();
 			isGameOver = true;
 			await delay(4000);
 			isGameOver = false;
@@ -201,11 +201,11 @@ export function loadTournament(localMode) {
 		if (g_count == 1) {
 			// alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
 			//@todo - show bracket
-			docModalMain.querySelector('#winner-p2').innerHTML = winners[1];
+			docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
 			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
 			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
-			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-			tmpModalMain.show();
+			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+			tmpModalGame.show();
 			isGameOver = true;
 			await delay(4000);
 			isGameOver = false;
@@ -232,11 +232,11 @@ export function loadTournament(localMode) {
 			tournReady = false;
 			isGameOver = true;
 			// alert(buttonText);
-			docModalMain.querySelector('#winner-final').innerHTML = winners[0];
+			docModalGame.querySelector('#winner-final').innerHTML = winners[0];
 			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
 			toggleHighlight("tWinnerHighlight", "");
-			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-			tmpModalMain.show();
+			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+			tmpModalGame.show();
 			//@todo - show bracket
 		}
 		else
@@ -386,7 +386,7 @@ export function loadTournament(localMode) {
 		localPlayerMode = true;
 		let player1 = pairings[0][0];
 		let player2 = pairings[0][1];
-		docModalMain.querySelector('#modalMainBody').innerHTML = 
+		loadModal('modalGameBody', 
 			`
 				<div class="container p-5 h-100 w-100 mh-100 mw-100 overflow-auto bg-black border border-1 border-white">
 					<div class="row border border-0 border-white">
@@ -396,7 +396,7 @@ export function loadTournament(localMode) {
 							</p>
 							<p class="p-0 m-0 placeholder-glow" id="tPlayer1Highlight" style="display: none;">
 								<span class="placeholder col-12"></span>
-						  	</p>
+							</p>
 						</div>
 					</div>
 					<div class="row border border-0 border-white">
@@ -501,15 +501,16 @@ export function loadTournament(localMode) {
 						</div>
 					</div>
 				</div>
-			`;
+				`);
+			
 		if (g_count == 0) {
 			isGameOver = false;
 			score.left = 0;
 			score.right = 0;
 
 			toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
-			const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-			tmpModalMain.show();
+			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+			tmpModalGame.show();
 
 			resetBall();
 			playGame();
@@ -518,55 +519,54 @@ export function loadTournament(localMode) {
 
 	function setupLocalTournament() {
 
-		docModalMain.querySelector('#modalMainBody').innerHTML =
+		loadModal('modalGameBody',
 			`
-					<form id="formPlayerNames">
-						<div class="row row-cols-2 gy-4 font--argent justify-content-center">
-							<div class="col">
-								<div class="input-group">
-									<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
-									<div class="form-floating">
-										<input type="text" class="form-control" id="player01" placeholder="player01">
-										<label for="player01" class="form-label text-capitalize">player01</label>
-									</div>
+				<form id="formPlayerNames">
+					<div class="row row-cols-2 gy-4 font--argent justify-content-center">
+						<div class="col">
+							<div class="input-group">
+								<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
+								<div class="form-floating">
+									<input type="text" class="form-control" id="player01" placeholder="player01">
+									<label for="player01" class="form-label text-capitalize">player01</label>
 								</div>
 							</div>
-							<div class="col">
-								<div class="input-group">
-									<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
-									<div class="form-floating">
-										<input type="text" class="form-control" id="player02" placeholder="player02">
-										<label for="player02" class="form-label text-capitalize">player02</label>
-									</div>
-								</div>
-							</div>
-							<div class="col">
-								<div class="input-group">
-									<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
-									<div class="form-floating">
-										<input type="text" class="form-control" id="player03" placeholder="player03">
-										<label for="player03" class="form-label text-capitalize">player03</label>
-									</div>
-								</div>
-							</div>
-							<div class="col">
-								<div class="input-group">
-									<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
-									<div class="form-floating">
-										<input type="text" class="form-control" id="player04" placeholder="player04">
-										<label for="player04" class="form-label text-capitalize">player04</label>
-									</div>
-								</div>
-							</div>
-							<button type="submit" class="col-auto btn btn-light btn-lg px-3 py-1 rounded-1" id="beginTournament">
-								<p class="display-5 text-capitalize text-black text-wrap p-0 m-0 g-0" style="font-size: calc(100% + 0.5vw);">start tournament</p>
-							</button>	
 						</div>
-					</form>
-				`;
-		const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-		tmpModalMain.show();
-
+						<div class="col">
+							<div class="input-group">
+								<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
+								<div class="form-floating">
+									<input type="text" class="form-control" id="player02" placeholder="player02">
+									<label for="player02" class="form-label text-capitalize">player02</label>
+								</div>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group">
+								<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
+								<div class="form-floating">
+									<input type="text" class="form-control" id="player03" placeholder="player03">
+									<label for="player03" class="form-label text-capitalize">player03</label>
+								</div>
+							</div>
+						</div>
+						<div class="col">
+							<div class="input-group">
+								<span class="input-group-text"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" height="24" width="24"><title>interface-essential-profile-male</title><g><path d="M22.8525 9.1425H24v5.715h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 14.857499999999998h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M21.7125 6.855h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 17.145h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M20.572499999999998 4.574999999999999h1.1400000000000001v2.2800000000000002h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 19.424999999999997h1.1475v1.1475H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M19.424999999999997 3.4275h1.1475V4.574999999999999H19.424999999999997Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 20.572499999999998h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M17.137500000000003 2.2874999999999996h2.2874999999999996v1.1400000000000001h-2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M15.997499999999999 15.997499999999999h1.1400000000000001v1.1475h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="m6.855 11.43 1.1400000000000001 0 0 -1.1475 8.0025 0 0 1.1475 1.1400000000000001 0 0 4.5675 1.1475 0 0 -9.1425 -1.1475 0 0 -1.1400000000000001 -1.1400000000000001 0 0 -1.1400000000000001 -8.0025 0 0 1.1400000000000001 -1.1400000000000001 0 0 1.1400000000000001 -1.1400000000000001 0 0 9.1425 1.1400000000000001 0 0 -4.5675z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 21.7125h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 17.145h1.1400000000000001v1.1400000000000001h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 12.57h1.1400000000000001v2.2874999999999996h-1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M14.857499999999998 1.1400000000000001h2.2800000000000002v1.1475h-2.2800000000000002Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 22.86h5.715V24h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 18.285h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M10.2825 15.997499999999999h3.4275v1.1475h-3.4275Z" fill="#000000" stroke-width="1"></path><path d="M9.1425 0h5.715v1.1400000000000001h-5.715Z" fill="#000000" stroke-width="1"></path><path d="M6.855 21.7125h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M7.995 17.145h1.1475v1.1400000000000001h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M7.995 12.57h1.1475v2.2874999999999996h-1.1475Z" fill="#000000" stroke-width="1"></path><path d="M6.855 1.1400000000000001h2.2874999999999996v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M6.855 15.997499999999999h1.1400000000000001v1.1475H6.855Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 20.572499999999998h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M4.5675 2.2874999999999996h2.2874999999999996v1.1400000000000001H4.5675Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 19.424999999999997h1.1400000000000001v1.1475H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M3.4275 3.4275h1.1400000000000001V4.574999999999999H3.4275Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 17.145h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M2.2874999999999996 4.574999999999999h1.1400000000000001v2.2800000000000002H2.2874999999999996Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 14.857499999999998h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M1.1400000000000001 6.855h1.1475v2.2874999999999996H1.1400000000000001Z" fill="#000000" stroke-width="1"></path><path d="M0 9.1425h1.1400000000000001v5.715H0Z" fill="#000000" stroke-width="1"></path></g></svg></span>
+								<div class="form-floating">
+									<input type="text" class="form-control" id="player04" placeholder="player04">
+									<label for="player04" class="form-label text-capitalize">player04</label>
+								</div>
+							</div>
+						</div>
+						<button type="submit" class="col-auto btn btn-light btn-lg px-3 py-1 rounded-1" id="beginTournament">
+							<p class="display-5 text-capitalize text-black text-wrap p-0 m-0 g-0" style="font-size: calc(100% + 0.5vw);">start tournament</p>
+						</button>	
+					</div>
+				</form>
+				`);
+		const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+		tmpModalGame.show();
 
 		document.getElementById('formPlayerNames').addEventListener('submit', function (event) {
 			event.preventDefault(); // Prevents the default form submission behavior
@@ -615,17 +615,17 @@ export function loadTournament(localMode) {
 	function toggleHighlight(highlightId1, highlightId2) {
 		if (highlightId1 !== "")
 		{
-			if (window.getComputedStyle(docModalMain.querySelector('#' + highlightId1)).display == "none")
-				docModalMain.querySelector('#' + highlightId1).style.display = "block";
+			if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId1)).display == "none")
+				docModalGame.querySelector('#' + highlightId1).style.display = "block";
 			else
-				docModalMain.querySelector('#' + highlightId1).style.display = "none";
+				docModalGame.querySelector('#' + highlightId1).style.display = "none";
 		}
 		if (highlightId2 !== "")
 		{
-			if (window.getComputedStyle(docModalMain.querySelector('#' + highlightId2)).display == "none")
-				docModalMain.querySelector('#' + highlightId2).style.display = "block";
+			if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId2)).display == "none")
+				docModalGame.querySelector('#' + highlightId2).style.display = "block";
 			else
-				docModalMain.querySelector('#' + highlightId2).style.display = "none";
+				docModalGame.querySelector('#' + highlightId2).style.display = "none";
 		}
 	};
 

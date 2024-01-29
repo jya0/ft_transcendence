@@ -18,9 +18,9 @@ function loadLoginPage(message) {
 		loadToast(message);
 	}
 	localStorage.clear();
-	const docModalMain = document.getElementById('modalMain');
-	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-	tmpModalMain.hide();
+	const docModalMain = document.getElementById('modalSetting');
+	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
+	tmpModalSetting.hide();
 }
 
 await fetch('/api/get_user_data/', {
@@ -230,9 +230,9 @@ async function updateProfile(file) {
 				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 				loadToast('Failed to update Image, You have to login again for security reasons!');
 				localStorage.clear();
-				const docModalMain = document.getElementById('modalMain');
-				const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-				tmpModalMain.hide();
+				const docModalMain = document.getElementById('modalSetting');
+				const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
+				tmpModalSetting.hide();
 				return null;
 			}
 			return response.json()
@@ -269,8 +269,8 @@ let loadModalFile = async function (event) {
 };
 
 
-document.getElementById('modalSetting').addEventListener('click', async () => {
-	loadModal(
+document.getElementById('modalSettingBtn').addEventListener('click', async () => {
+	loadModal('modalSettingBody',
 		`
 			<div class="d-flex flex-column align-items-center rounded p-5 border border-1 border-black w-100 h-100 font--argent gap-5">
 				<div class="input-group w-50">
@@ -298,7 +298,6 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 				</button>
 			</div>
 		`);
-
 
 	document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
 	document.getElementById('logout').addEventListener('click', () => {
@@ -328,9 +327,9 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 			.catch(error => {
 				console.error('Error fetching data:', error);
 			});
-		const docModalMain = document.getElementById('modalMain');
-		const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-		tmpModalMain.hide();
+		const docModalMain = document.getElementById('modalSetting');
+		const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
+		tmpModalSetting.hide();
 
 	});
 	document.getElementById('nickname-btn').addEventListener('click', async () => {
@@ -364,9 +363,9 @@ document.getElementById('modalSetting').addEventListener('click', async () => {
 				console.log('response', response);
 				document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 				loadToast('Failed to update display name, You have to login again for security reasons!');
-				const docModalMain = document.getElementById('modalMain');
-				const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-				tmpModalMain.hide();
+				const docModalMain = document.getElementById('modalSetting');
+				const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
+				tmpModalSetting.hide();
 				return null;
 			}
 			return response.json()
