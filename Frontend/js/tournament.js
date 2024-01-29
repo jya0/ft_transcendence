@@ -896,7 +896,8 @@ export function loadTournament(localMode) {
 				return;
 			}
 			loadModal('modalGameBody', data);
-
+			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+			tmpModalGame.show();
 		}).catch((error) => {
 			console.error('Error:', error);
 		});
