@@ -1,13 +1,13 @@
 const urlPageTitle = "Pong Os";
 import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner, getCookie } from './loadComponent.js';
-import { loadTournament } from './tournament.js';
+import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
-import { loadGame } from './pong.js';
+import { loadGame, stopPongExecution } from './pong.js';
 
 let userToken;
 let user;
 let LOGIN_PAGE_HTML = '';
-
+let gameMode = 'none';
 await fetch('/components/login.html').then(response => response.text()).then(data => {
 	LOGIN_PAGE_HTML = data;
 });
@@ -412,6 +412,23 @@ const urlLocationHandler = async () => {
 		document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 		return;
 	}
+
+    if (gameMode !== 'none') {
+        
+        console.log("heyyyyyyyyyyyyyyyyyyyyyy");
+        const canvasElement = document.getElementById("gameCanvas");
+        let animationId = canvasElement.dataset.animationFrameId;
+        window.cancelAnimationFrame(animationId);
+		canvasElement.remove();
+        if (gameMode === 'pong single')
+            stopPongExecution();
+        if (gameMode === 'pong tournament')
+            stopTournamentExecution();
+        gameMode = 'none';
+	}
+
+
+
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
@@ -452,24 +469,25 @@ const urlLocationHandler = async () => {
 		location === '/games_tictactoe_local' ||
 		location === '/games_tictactoe_online') {
 		setMainWindowframe();
-		// loadGameCanvas(function(canvas) {
-		// 	loadGame(canvas);
-		// });
 		loadGameCanvas();
 		switch (location) {
 			case '/games_pong_local':
+                gameMode = 'pong single';
 				loadGame(true);
 				break;
 			case '/games_pong_online':
+                gameMode = 'pong single';
 				loadGame(false);
 				break;
 			case '/games_tictactoe_local':
 				loadTicTac();
 				break;
 			case '/games_pong_local_tournament':
+                gameMode = 'pong tournament';
 				loadTournament(true);
 				break;
 			case '/games_pong_online_tournament':
+                gameMode = 'pong tournament';
 				loadTournament(false);
 				break;
 			default:
@@ -661,14 +679,6 @@ const urlLocationHandler = async () => {
 			document.getElementById("main-content").innerHTML = data;
 		});
 	}
-	if (document.getElementById("pongCanvas")) {
-
-		const canvasElement = document.getElementById("pongCanvas");
-		canvasElement.remove();
-		const canvasButton = document.getElementById('startButton');
-		canvasButton.remove();
-	}
-
 	document.title = route.title;
 };
 

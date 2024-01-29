@@ -1,6 +1,8 @@
 // import {io} from "socket.io-client";
 import { loadLoginPage, getCookie } from "./loadComponent.js";
 
+let continueExecution = true;
+
 let LOGIN_PAGE_HTML = '';
 
 await fetch('/components/login.html').then(response => response.text()).then(data => {
@@ -9,7 +11,7 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 
 
 export function loadTournament(localMode) {
-	
+    continueExecution = true;
 	let tournament_name;
 	const canvas = document.getElementById('gameCanvas');
 	const docModalMain = document.getElementById('modalMain');
@@ -158,7 +160,9 @@ export function loadTournament(localMode) {
 
 		if (tournReady == false)
 			return;
-
+	
+        if (!continueExecution)
+            return ;
 		//show results
 		if (g_count != 2) {
 
@@ -862,6 +866,8 @@ export function loadTournament(localMode) {
 	};
 
 	async function gameLoop() {
+        if (continueExecution == false)
+            return ;
 		await update();
 		draw();
 
@@ -870,6 +876,12 @@ export function loadTournament(localMode) {
 		}
 	}
 
+}
+
+
+// Function to stop the execution from the outside
+export function stopTournamentExecution() {
+    continueExecution = false;
 }
 
 
