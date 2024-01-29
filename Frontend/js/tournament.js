@@ -904,8 +904,8 @@ export function loadTournament(localMode) {
 
 
 
-        document.getElementById('createTourn').addEventListener('click', () => {
-            
+        document.getElementById('createTourn').addEventListener('click', async () => {
+            await submitTournament();
         });
 
 
