@@ -1,13 +1,13 @@
 const urlPageTitle = "Pong Os";
 import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner, getCookie } from './loadComponent.js';
-import { loadTournament } from './tournament.js';
+import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
-import { loadGame } from './pong.js';
+import { loadGame, stopPongExecution } from './pong.js';
 
 let userToken;
 let user;
 let LOGIN_PAGE_HTML = '';
-
+let gameMode = 'none';
 await fetch('/components/login.html').then(response => response.text()).then(data => {
 	LOGIN_PAGE_HTML = data;
 });
@@ -22,8 +22,8 @@ function loadLoginPage(message) {
 	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
 	tmpModalSetting.hide();
 }
-
-await fetch('/api/get_user_data/', {
+console.log(sessionStorage.getItem('username'))
+await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username')}`, {
 	method: 'GET',
 }).then(response => {
 	if (response.status === 204) {
@@ -382,12 +382,52 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
 	});
 });
 
-const urlLocationHandler = async () => {
+async function generateTestUser() {
+	let location = window.location.pathname;
+	if (location == '/test_user') {
+		await fetch("/api/generate_test_user/").then(response => {
+			if (!response.ok) {
+				loadToast('Please login to continue');
+			}
+			return response.json();
+		}).then(data => {
+			localStorage.setItem('access_token', data.token);
+			user = data.user;
+			localStorage.setItem('user', data.user);
+			sessionStorage.setItem('username', user.username);
+			// window.location.reload();
+			console.log('Data fetched:', data);
+		}).catch((error) => {
+			console.error('Error:', error);
+		});
+	};
 
+}
+
+
+const urlLocationHandler = async () => {
+	generateTestUser();
 	if (!user) {
 		document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 		return;
 	}
+
+    if (gameMode !== 'none') {
+        
+        console.log("heyyyyyyyyyyyyyyyyyyyyyy");
+        const canvasElement = document.getElementById("gameCanvas");
+        let animationId = canvasElement.dataset.animationFrameId;
+        window.cancelAnimationFrame(animationId);
+		canvasElement.remove();
+        if (gameMode === 'pong single')
+            stopPongExecution();
+        if (gameMode === 'pong tournament')
+            stopTournamentExecution();
+        gameMode = 'none';
+	}
+
+
+
 	insertOrCreateContent();
 	document.getElementById("content").innerHTML = ``;
 	document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
@@ -428,24 +468,25 @@ const urlLocationHandler = async () => {
 		location === '/games_tictactoe_local' ||
 		location === '/games_tictactoe_online') {
 		setMainWindowframe();
-		// loadGameCanvas(function(canvas) {
-		// 	loadGame(canvas);
-		// });
 		loadGameCanvas();
 		switch (location) {
 			case '/games_pong_local':
+                gameMode = 'pong single';
 				loadGame(true);
 				break;
 			case '/games_pong_online':
+                gameMode = 'pong single';
 				loadGame(false);
 				break;
 			case '/games_tictactoe_local':
 				loadTicTac();
 				break;
 			case '/games_pong_local_tournament':
+                gameMode = 'pong tournament';
 				loadTournament(true);
 				break;
 			case '/games_pong_online_tournament':
+                gameMode = 'pong tournament';
 				loadTournament(false);
 				break;
 			default:
@@ -637,14 +678,6 @@ const urlLocationHandler = async () => {
 			document.getElementById("main-content").innerHTML = data;
 		});
 	}
-	if (document.getElementById("pongCanvas")) {
-
-		const canvasElement = document.getElementById("pongCanvas");
-		canvasElement.remove();
-		const canvasButton = document.getElementById('startButton');
-		canvasButton.remove();
-	}
-
 	document.title = route.title;
 };
 
@@ -820,25 +853,6 @@ function insertOrCreateContent() {
 		document.body.appendChild(content);
 	}
 }
-
-async function generateTestUser() {
-	await fetch("/api/generate_test_user/").then(response => {
-		if (!response.ok) {
-			loadToast('Please login to continue');
-		}
-		return response.json();
-	}).then(data => {
-		localStorage.setItem('access_token', data.token);
-		localStorage.setItem('user', data.user);
-		// window.location.reload();
-		console.log('Data fetched:', data);
-	}).catch((error) => {
-		console.error('Error:', error);
-	});
-	urlLocationHandler();
-
-}
-
 
 async function getAllUsers(override) {
 	let location = window.location.pathname;
