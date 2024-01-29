@@ -24,11 +24,14 @@ export function  loadTicTac(){
         var container = document.createElement('div');
         container.id = 'game-container';
         container.className = 'tictactoe';
-        container.innerHTML = `<div id="tictactoe"></div>
-		<div align="center">
-			<span id='turn'>Player X</span>
-		</div>
-        `
+        container.innerHTML = 
+			`<div class="d-flex flex-row h-100 w-100 p-5 mh-100 mw-100 gap-5 justify-content-around align-items-center overflow-auto font--argent">
+				<div id="tictactoe" class="flex-grow-1 h-75 w-75 border border-1 border-black"></div>
+				<div id="turn" class="text-capitalize text-black display-5 border border-1 border-black rounded p-4">
+					player x
+				</div>
+			</div>
+			`;
         gameOver = false;
         document.getElementById('windowScreen').innerHTML = "";
         document.getElementById('windowScreen').appendChild(container);
