@@ -109,22 +109,22 @@ export const loadToast = (message) => {
 };
 
 // export const loadModal = (innerContent) => {
-// 	document.getElementById('modalMainBody').innerHTML = innerContent;
+// 	document.getElementById('modalSettingBody').innerHTML = innerContent;
 // };
 
-export const loadModal = (innerHTML) => {
-	document.getElementById('modalMainBody').innerHTML = innerHTML;
+export const loadModal = (idModalBody, innerHTML) => {
+	document.getElementById(idModalBody).innerHTML = innerHTML;
 };
 
-export const loadSpinner = (elementId) => {
+export const loadSpinner = (elementId, color) => {
 	document.getElementById(elementId).innerHTML = 
 	`
 		<div class="d-flex h-100 w-100 justify-content-center align-items-center">
-			<div id="spinner" class="d-flex flex-column justify-content-center align-items-center gap-5">
-				<div class="spinner-grow display-1 text-white" style="width: 5vw; height: 5vw;" role="status">
+			<div id="spinner" class="d-flex flex-column justify-content-center align-items-center gap-5 ${color}">
+				<div class="spinner-grow display-1" style="width: 5vw; height: 5vw;" role="status">
 					<span class="visually-hidden">Loading...</span>
 				</div>
-				<p class="m-0 p-0 font--neue text-white text-capitalize display-1">Hang tight...</p>
+				<p class="m-0 p-0 font--neue text-capitalize display-1">Hang tight...</p>
 			</div>
 		</div>
 	`;
@@ -138,9 +138,9 @@ export function loadLoginPage(message) {
 		loadToast(message);
 	}
 	localStorage.clear();
-	const docModalMain = document.getElementById('modalMain');
-	const tmpModalMain = bootstrap.Modal.getOrCreateInstance(docModalMain);
-	tmpModalMain.hide();
+	const docModalSetting = document.getElementById('modalSetting');
+	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalSetting);
+	tmpModalSetting.hide();
 }
 
 

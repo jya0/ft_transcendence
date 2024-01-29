@@ -1,7 +1,10 @@
+import { loadSpinner } from "./loadComponent.js";
+
 let continueExecution = true;
 
 export function loadGame(localPlayerMode) {
 
+	const docModalGame = document.getElementById('modalGame');
 	let isGameOver = true;
     continueExecution = true;
 	let lastTimestamp = 0;
@@ -284,7 +287,10 @@ export function loadGame(localPlayerMode) {
 
 			player_count = 1;
 
-			console.log("waiting for a second player...")
+			console.log("waiting for a second player...");
+			loadSpinner("modalGameBody", "text-black");
+			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+			tmpModalGame.show();
 		});
 		player_count = 1;
 	}

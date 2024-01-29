@@ -69,3 +69,18 @@
   ::-webkit-scrollbar-track {
 	background-color: #f1f1f1;
   }
+
+.animation--updown {
+    -webkit-animation: updown 1s infinite  alternate;
+    animation: updown 1s infinite  alternate;
+}
+
+@-webkit-keyframes updown {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(1vh); }
+}
+
+@keyframes updown {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(1vh); }
+}
