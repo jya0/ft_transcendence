@@ -2,7 +2,7 @@ const urlPageTitle = "Pong Os";
 import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner, getCookie } from './loadComponent.js';
 import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
-import { loadGame, stopPongExecution } from './pong.js';
+import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
 
 let userToken;
 let user;
@@ -209,7 +209,7 @@ function setMainWindowframe() {
     document.getElementById('close-me').addEventListener('click', () => {
 
         if (gameMode !== 'none') {
-
+            closePong1v1Socket();
             console.log("heyyyyyyyyyyyyyyyyyyyyyy");
             const canvasElement = document.getElementById("gameCanvas");
             let animationId = canvasElement.dataset.animationFrameId;
@@ -437,6 +437,7 @@ export const urlLocationHandler = async () => {
 
     if (gameMode !== 'none') {
 
+        closePong1v1Socket();
         console.log("heyyyyyyyyyyyyyyyyyyyyyy");
         const canvasElement = document.getElementById("gameCanvas");
         let animationId = canvasElement.dataset.animationFrameId;
