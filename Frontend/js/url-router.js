@@ -698,7 +698,7 @@ async function handleUserData() {
 	history.replaceState({}, '', mainUrl);
 	console.log('code', code)
 	if (code) {
-		loadSpinner("content");
+		loadSpinner("content", "text-white");
 		if (document.getElementById("navbar")) {
 			document.getElementById("navbar").style.display = 'none';
 		}
