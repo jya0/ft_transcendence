@@ -6,244 +6,244 @@ let continueExecution = true;
 let LOGIN_PAGE_HTML = '';
 
 await fetch('/components/login.html').then(response => response.text()).then(data => {
-	LOGIN_PAGE_HTML = data;
+    LOGIN_PAGE_HTML = data;
 });
 
 
 export function loadTournament(localMode) {
     continueExecution = true;
-	let tournament_name;
-	const canvas = document.getElementById('gameCanvas');
-	const docModalGame = document.getElementById('modalGame');
-	const ctx = canvas.getContext('2d');
+    let tournament_name;
+    const canvas = document.getElementById('gameCanvas');
+    const docModalGame = document.getElementById('modalGame');
+    const ctx = canvas.getContext('2d');
 
-	let localPlayerMode = true;
-	let pairings = [];
-	let winners = [];
+    let localPlayerMode = true;
+    let pairings = [];
+    let winners = [];
 
-	const paddle = { width: 10, height: 100, speed: 8 };
-	const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
-	const score = { left: 0, right: 0 };
-	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
-	const keys = {};
+    const paddle = { width: 10, height: 100, speed: 8 };
+    const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
+    const score = { left: 0, right: 0 };
+    const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
+    const keys = {};
 
-	let tournReady = false;
-	let isGameOver = false;
-	let animationFrameId;
+    let tournReady = false;
+    let isGameOver = false;
+    let animationFrameId;
 
-	let socketStatus = false;
-	let btnCounter = 0;
-	let keyPressed;
-	let leftPlayer = true;
-	let rightPlayer = false;
-	let g_count = 0;
+    let socketStatus = false;
+    let btnCounter = 0;
+    let keyPressed;
+    let leftPlayer = true;
+    let rightPlayer = false;
+    let g_count = 0;
 
-	function draw() {
-		ctx.fillStyle = '#000';
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = '#fff';
-		ctx.fillRect(0, players.left, paddle.width, paddle.height);
-		ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
-		ctx.beginPath();
-		ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.font = '30px Arial';
-		ctx.fillText(score.left, canvas.width / 4, 50);
-		ctx.fillText(score.right, 3 * canvas.width / 4, 50);
-	}
+    function draw() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, players.left, paddle.width, paddle.height);
+        ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = '30px Arial';
+        ctx.fillText(score.left, canvas.width / 4, 50);
+        ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+    }
 
-	function updateBackend() {
-		if (rightPlayer) {
-			if (keys['w'] && players.right > 0) {
-				players.right -= paddle.speed;
-				keyPressed = 'w';
-				gameSocket.send(JSON.stringify({
-					'type': 'update',
-					'mode': 'tournament',
-					'tournament_name': tournament_name,
-					'username': localStorage.getItem('username'),
-					'key': keyPressed
-				}))
-			}
-			if (keys['s'] && players.right < canvas.height - paddle.height) {
-				players.right += paddle.speed;
-				keyPressed = 's';
-				gameSocket.send(JSON.stringify({
-					'type': 'update',
-					'mode': 'tournament',
-					'tournament_name': tournament_name,
-					'username': localStorage.getItem('username'),
-					'key': keyPressed
-				}))
-			}
-		}
-		else {
-			if (keys['w'] && players.left > 0) {
-				players.left -= paddle.speed;
-				keyPressed = 'w';
-				gameSocket.send(JSON.stringify({
-					'type': 'update',
-					'mode': 'tournament',
-					'tournament_name': tournament_name,
-					'username': localStorage.getItem('username'),
-					'key': keyPressed
-				}))
-			}
-			if (keys['s'] && players.left < canvas.height - paddle.height) {
-				players.left += paddle.speed;
-				keyPressed = 's';
-				gameSocket.send(JSON.stringify({
-					'type': 'update',
-					'mode': 'tournament',
-					'tournament_name': tournament_name,
-					'username': localStorage.getItem('username'),
-					'key': keyPressed
-				}))
-			}
-		}
-	}
-
-
-	function resetGame() {
-
-		ball.x = canvas.width / 2;
-		ball.y = canvas.height / 2;
-		score.left = 0;
-		score.right = 0;
-		players.left = (canvas.height - paddle.height) / 2;
-		players.right = (canvas.height - paddle.height) / 2;
-	}
+    function updateBackend() {
+        if (rightPlayer) {
+            if (keys['w'] && players.right > 0) {
+                players.right -= paddle.speed;
+                keyPressed = 'w';
+                gameSocket.send(JSON.stringify({
+                    'type': 'update',
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
+                    'username': localStorage.getItem('username'),
+                    'key': keyPressed
+                }))
+            }
+            if (keys['s'] && players.right < canvas.height - paddle.height) {
+                players.right += paddle.speed;
+                keyPressed = 's';
+                gameSocket.send(JSON.stringify({
+                    'type': 'update',
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
+                    'username': localStorage.getItem('username'),
+                    'key': keyPressed
+                }))
+            }
+        }
+        else {
+            if (keys['w'] && players.left > 0) {
+                players.left -= paddle.speed;
+                keyPressed = 'w';
+                gameSocket.send(JSON.stringify({
+                    'type': 'update',
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
+                    'username': localStorage.getItem('username'),
+                    'key': keyPressed
+                }))
+            }
+            if (keys['s'] && players.left < canvas.height - paddle.height) {
+                players.left += paddle.speed;
+                keyPressed = 's';
+                gameSocket.send(JSON.stringify({
+                    'type': 'update',
+                    'mode': 'tournament',
+                    'tournament_name': tournament_name,
+                    'username': localStorage.getItem('username'),
+                    'key': keyPressed
+                }))
+            }
+        }
+    }
 
 
-	async function update() {
-		if (isGameOver) return;
+    function resetGame() {
 
-		ball.x += ball.speedX;
-		ball.y += ball.speedY;
-
-		if (ball.y < ball.size || ball.y > canvas.height - ball.size) {
-			ball.speedY *= -1;
-		}
-
-		if (ball.x < paddle.width && ball.y > players.left && ball.y < players.left + paddle.height ||
-			ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
-			ball.speedX *= -1;
-		}
-
-		if (localPlayerMode == true) {
-			if (keys['ArrowUp'] && players.right > 0) players.right -= paddle.speed;
-			if (keys['ArrowDown'] && players.right < canvas.height - paddle.height) players.right += paddle.speed;
-			if (keys['w'] && players.left > 0) players.left -= paddle.speed;
-			if (keys['s'] && players.left < canvas.height - paddle.height) players.left += paddle.speed;
-		}
-		else
-			updateBackend();
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        score.left = 0;
+        score.right = 0;
+        players.left = (canvas.height - paddle.height) / 2;
+        players.right = (canvas.height - paddle.height) / 2;
+    }
 
 
-		if (ball.x < 0 || ball.x > canvas.width) {
-			ball.x > canvas.width ? score.left++ : score.right++;
-			resetBall();
-			await checkForWinner();
-			return;
-		}
+    async function update() {
+        if (isGameOver) return;
 
-	}
+        ball.x += ball.speedX;
+        ball.y += ball.speedY;
 
-	function resetBall() {
-		ball.x = canvas.width / 2;
-		ball.y = canvas.height / 2;
-		ball.speedX *= -1;
-	}
+        if (ball.y < ball.size || ball.y > canvas.height - ball.size) {
+            ball.speedY *= -1;
+        }
 
-	async function handleLocalWinner() {
-		let buttonText;
+        if (ball.x < paddle.width && ball.y > players.left && ball.y < players.left + paddle.height ||
+            ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
+            ball.speedX *= -1;
+        }
 
-		if (tournReady == false)
-			return;
-	
+        if (localPlayerMode == true) {
+            if (keys['ArrowUp'] && players.right > 0) players.right -= paddle.speed;
+            if (keys['ArrowDown'] && players.right < canvas.height - paddle.height) players.right += paddle.speed;
+            if (keys['w'] && players.left > 0) players.left -= paddle.speed;
+            if (keys['s'] && players.left < canvas.height - paddle.height) players.left += paddle.speed;
+        }
+        else
+            updateBackend();
+
+
+        if (ball.x < 0 || ball.x > canvas.width) {
+            ball.x > canvas.width ? score.left++ : score.right++;
+            resetBall();
+            await checkForWinner();
+            return;
+        }
+
+    }
+
+    function resetBall() {
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        ball.speedX *= -1;
+    }
+
+    async function handleLocalWinner() {
+        let buttonText;
+
+        if (tournReady == false)
+            return;
+
         if (!continueExecution)
-            return ;
-		//show results
-		if (g_count != 2) {
+            return;
+        //show results
+        if (g_count != 2) {
 
-			// alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
-			// console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
-		}
+            // alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
+            // console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
+        }
 
-		//update winners
-		if (g_count == 0 || g_count == 1) {
-			winners.push((pairings[g_count][0] > pairings[g_count][1]) ? pairings[g_count][0] : pairings[g_count][1]);
-		}
-
-
-		//reset
-		isGameOver = false;
-		socketStatus = false;
-		leftPlayer = true;
-		rightPlayer = false;
-		score.left = 0;
-		score.right = 0;
-		resetBall();
-		paddle.width = 10;
-		paddle.height = 100;
+        //update winners
+        if (g_count == 0 || g_count == 1) {
+            winners.push((pairings[g_count][0] > pairings[g_count][1]) ? pairings[g_count][0] : pairings[g_count][1]);
+        }
 
 
-		//prompt new match
-		if (g_count == 0) {
-			// alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
-			//@todo - show bracket
-			docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
-			toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
-			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
-			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-			tmpModalGame.show();
-			isGameOver = true;
-			await delay(4000);
+        //reset
+        isGameOver = false;
+        socketStatus = false;
+        leftPlayer = true;
+        rightPlayer = false;
+        score.left = 0;
+        score.right = 0;
+        resetBall();
+        paddle.width = 10;
+        paddle.height = 100;
+
+
+        //prompt new match
+        if (g_count == 0) {
+            // alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
+            //@todo - show bracket
+            docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
+            toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
+            toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
+            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+            tmpModalGame.show();
+            isGameOver = true;
+            await delay(4000);
             tmpModalGame.hide();
-			isGameOver = false;
-			resetGame();
-		}
-		if (g_count == 1) {
-			// alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
-			//@todo - show bracket
-			docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
-			toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
-			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
-			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-			tmpModalGame.show();
-			isGameOver = true;
-			await delay(4000);
+            isGameOver = false;
+            resetGame();
+        }
+        if (g_count == 1) {
+            // alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
+            //@todo - show bracket
+            docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
+            toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
+            toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
+            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+            tmpModalGame.show();
+            isGameOver = true;
+            await delay(4000);
             tmpModalGame.hide();
 
-			isGameOver = false;
-			resetGame();
-		}
-	
+            isGameOver = false;
+            resetGame();
+        }
 
-		// end tournament
-		if (g_count == 2) {
-			tournReady = false;
-			let winner;
-			if (score.left > score.right) {
-				buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
-				winner = winners[0];
 
-			} else {
-				buttonText = `Right Player - ${winners[1]} WINS! Press to play a new local game`;
-				winner = winners[1];
+        // end tournament
+        if (g_count == 2) {
+            tournReady = false;
+            let winner;
+            if (score.left > score.right) {
+                buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
+                winner = winners[0];
 
-			}
-			winners = [];
-			winners.push(winner);
-			g_count = 0;
-			tournReady = false;
-			isGameOver = true;
-			// alert(buttonText);
-			docModalGame.querySelector('#winner-final').innerHTML = winners[0];
-			toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
-			toggleHighlight("tWinnerHighlight", "");
-			loadModal('modalGameBody', 
-				`<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 overflow-hidden font--neue align-items-center justify-content-center gap-2 border border-1 border-white bg-black">
+            } else {
+                buttonText = `Right Player - ${winners[1]} WINS! Press to play a new local game`;
+                winner = winners[1];
+
+            }
+            winners = [];
+            winners.push(winner);
+            g_count = 0;
+            tournReady = false;
+            isGameOver = true;
+            // alert(buttonText);
+            docModalGame.querySelector('#winner-final').innerHTML = winners[0];
+            toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
+            toggleHighlight("tWinnerHighlight", "");
+            loadModal('modalGameBody',
+                `<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 overflow-hidden font--neue align-items-center justify-content-center gap-2 border border-1 border-white bg-black">
 					<div class="d-flex p-0 m-0 h-25 w-25 animation--updown">
 						<div class="ratio ratio-1x1">
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><title>interface-essential-crown</title><g><path d="M29.715 9.145h1.52v3.04h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M26.665 7.615h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="m26.665 18.285 1.53 0 0 -4.57 1.52 0 0 -1.53 -3.05 0 0 -3.04 -1.52 0 0 4.57 1.52 0 0 4.57z" fill="#ffffff" stroke-width="1"></path><path d="m25.145 19.805 -1.53 0 0 1.53 1.53 0 0 1.52 -18.29 0 0 -1.52 1.53 0 0 -1.53 -1.53 0 0 -1.52 -1.52 0 0 7.62 1.52 0 0 1.52 18.29 0 0 -1.52 1.52 0 0 -7.62 -1.52 0 0 1.52z" fill="#ffffff" stroke-width="1"></path><path d="M23.615 13.715h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M22.095 15.235h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M20.575 16.765h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M19.045 19.805h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M19.045 13.715h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M17.525 10.665h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M17.525 6.095h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M14.475 9.145h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M14.475 4.575h3.05v1.52h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M14.475 18.285h3.05v3.05h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M12.955 10.665h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M12.955 6.095h1.52v3.05h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M11.425 13.715h1.53v3.05h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="M9.905 19.805h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M9.905 16.765h1.52v1.52h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M8.385 15.235h1.52v1.53h-1.52Z" fill="#ffffff" stroke-width="1"></path><path d="M6.855 13.715h1.53v1.52h-1.53Z" fill="#ffffff" stroke-width="1"></path><path d="m2.285 12.185 0 1.53 1.53 0 0 4.57 1.52 0 0 -4.57 1.52 0 0 -4.57 -1.52 0 0 3.04 -3.05 0z" fill="#ffffff" stroke-width="1"></path><path d="M2.285 7.615h3.05v1.53h-3.05Z" fill="#ffffff" stroke-width="1"></path><path d="M0.765 9.145h1.52v3.04H0.765Z" fill="#ffffff" stroke-width="1"></path></g></svg>
@@ -253,158 +253,158 @@ export function loadTournament(localMode) {
 						${winner}
 					</p>
 				</div>`);
-			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-			tmpModalGame.show();
-			//@todo - show bracket
-		}
-		else
-			g_count++;
-	}
+            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+            tmpModalGame.show();
+            //@todo - show bracket
+        }
+        else
+            g_count++;
+    }
 
 
-	function handleOnlineWinner() {
-		let buttonText;
-		if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-			buttonText = "You lose! Press to play a new online game";
-		else {
-			buttonText = "You win! Press to play a new online game";
-			gameSocket.send(JSON.stringify({
-				'type': 'end',
-				'mode': 'tournament',
-				'tournament_name': tournament_name,
-				'username': localStorage.getItem('username'),
-				'score1': score.left,
-				'score2': score.right,
-			}))
-		}
-		// document.getElementById("startOnlineTournButton").innerHTML = buttonText;
-		gameSocket.close();
-		isGameOver = true;
-		socketStatus = false;
-	}
+    function handleOnlineWinner() {
+        let buttonText;
+        if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
+            buttonText = "You lose! Press to play a new online game";
+        else {
+            buttonText = "You win! Press to play a new online game";
+            gameSocket.send(JSON.stringify({
+                'type': 'end',
+                'mode': 'tournament',
+                'tournament_name': tournament_name,
+                'username': localStorage.getItem('username'),
+                'score1': score.left,
+                'score2': score.right,
+            }))
+        }
+        // document.getElementById("startOnlineTournButton").innerHTML = buttonText;
+        gameSocket.close();
+        isGameOver = true;
+        socketStatus = false;
+    }
 
-	async function checkForWinner() {
+    async function checkForWinner() {
 
-		if (score.left >= 3 || score.right >= 3) {
-			isGameOver = true;
-			ctx.fillStyle = 'red';
-			if (localPlayerMode)
-				await handleLocalWinner();
-			else
-				handleOnlineWinner();
-		}
-	}
+        if (score.left >= 3 || score.right >= 3) {
+            isGameOver = true;
+            ctx.fillStyle = 'red';
+            if (localPlayerMode)
+                await handleLocalWinner();
+            else
+                handleOnlineWinner();
+        }
+    }
 
-	document.addEventListener('keydown', (event) => {
-		keys[event.key] = true;
-	});
+    document.addEventListener('keydown', (event) => {
+        keys[event.key] = true;
+    });
 
-	document.addEventListener('keyup', (event) => {
-		keys[event.key] = false;
-	});
+    document.addEventListener('keyup', (event) => {
+        keys[event.key] = false;
+    });
 
-	let player_count = 0;
-	let url = `wss://localhost:8090/ws/socket-server/`
-	let gameSocket;
+    let player_count = 0;
+    let url = `wss://localhost:8090/ws/socket-server/`
+    let gameSocket;
 
-	function initiateSocket() {
-		gameSocket = new WebSocket(url);
+    function initiateSocket() {
+        gameSocket = new WebSocket(url);
 
-		gameSocket.onmessage = function (e) {
-			let data = JSON.parse(e.data)
-			console.log('Data: ', data)
+        gameSocket.onmessage = function (e) {
+            let data = JSON.parse(e.data)
+            console.log('Data: ', data)
 
-			if (data.mode === 'single')
-				return;
+            if (data.mode === 'single')
+                return;
 
-			if (data.type === 'start' && data["status"] == "start") {
-				player_count = 2;
-				if (data.sender == localStorage.getItem('username')) {
-					leftPlayer = false;
-					rightPlayer = true;
-				}
-				playOnlineTournamentMatch();
-			}
+            if (data.type === 'start' && data["status"] == "start") {
+                player_count = 2;
+                if (data.sender == localStorage.getItem('username')) {
+                    leftPlayer = false;
+                    rightPlayer = true;
+                }
+                playOnlineTournamentMatch();
+            }
 
-			if (data.sender == localStorage.getItem('username'))
-				return;
+            if (data.sender == localStorage.getItem('username'))
+                return;
 
-			if (data.type == 'update') {
-				if (leftPlayer) {
-					if (data['key'] == 'w' && players.right > 0) players.right -= paddle.speed;
-					if (data['key'] == 's' && players.right < canvas.height - paddle.height) players.right += paddle.speed;
-				}
-				else {
-					if (data['key'] == 'w' && players.left > 0) players.left -= paddle.speed;
-					if (data['key'] == 's' && players.left < canvas.height - paddle.height) players.left += paddle.speed;
-				}
-			}
-			else if (data.type == 'close') {
-				gameOver = true;
-				player_count = 1;
-				gameSocket.close();
-			}
-			else {
-				// console.log("woops not yet...")
-			}
-		}
+            if (data.type == 'update') {
+                if (leftPlayer) {
+                    if (data['key'] == 'w' && players.right > 0) players.right -= paddle.speed;
+                    if (data['key'] == 's' && players.right < canvas.height - paddle.height) players.right += paddle.speed;
+                }
+                else {
+                    if (data['key'] == 'w' && players.left > 0) players.left -= paddle.speed;
+                    if (data['key'] == 's' && players.left < canvas.height - paddle.height) players.left += paddle.speed;
+                }
+            }
+            else if (data.type == 'close') {
+                gameOver = true;
+                player_count = 1;
+                gameSocket.close();
+            }
+            else {
+                // console.log("woops not yet...")
+            }
+        }
 
-		gameSocket.addEventListener("open", (event) => {
-			if (socketStatus == true)
-				return
-			socketStatus = true;
+        gameSocket.addEventListener("open", (event) => {
+            if (socketStatus == true)
+                return
+            socketStatus = true;
 
-			gameSocket.send(JSON.stringify({
-				'type': 'start',
-				'mode': 'tournament',
-				'tournament_name': tournament_name,
-				'username': localStorage.getItem('username')
-			}))
+            gameSocket.send(JSON.stringify({
+                'type': 'start',
+                'mode': 'tournament',
+                'tournament_name': tournament_name,
+                'username': localStorage.getItem('username')
+            }))
 
-			player_count = 1;
-			console.log("waiting for a second player...")
-		});
-		player_count = 1;
-	}
-
-
-	// Simple random pairing function
-	function randomPairing(playerNames) {
-		const shuffledPlayers = [...playerNames].sort(() => Math.random() - 0.5);
-		const pairings = [];
-
-		for (let i = 0; i < shuffledPlayers.length; i += 2) {
-			pairings.push([shuffledPlayers[i], shuffledPlayers[i + 1]]);
-		}
-
-		return pairings;
-	}
+            player_count = 1;
+            console.log("waiting for a second player...")
+        });
+        player_count = 1;
+    }
 
 
-	async function playGame() {
+    // Simple random pairing function
+    function randomPairing(playerNames) {
+        const shuffledPlayers = [...playerNames].sort(() => Math.random() - 0.5);
+        const pairings = [];
 
-		localPlayerMode = true;
-		if (isGameOver || !animationFrameId) {
-			isGameOver = false;
-			score.left = 0;
-			score.right = 0;
-			resetBall();
-			animationFrameId = requestAnimationFrame(gameLoop);
-		}
+        for (let i = 0; i < shuffledPlayers.length; i += 2) {
+            pairings.push([shuffledPlayers[i], shuffledPlayers[i + 1]]);
+        }
 
-	}
-	const delay = ms => new Promise(res => setTimeout(res, ms));
+        return pairings;
+    }
 
-	async function startLocalTournament() {
-		console.log("sup mfs");
-		// if (tournReady == false)
-		//     return;
-		let winners = [];
-		localPlayerMode = true;
-		let player1 = pairings[0][0];
-		let player2 = pairings[0][1];
-		loadModal('modalGameBody', 
-			`
+
+    async function playGame() {
+
+        localPlayerMode = true;
+        if (isGameOver || !animationFrameId) {
+            isGameOver = false;
+            score.left = 0;
+            score.right = 0;
+            resetBall();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+    }
+    const delay = ms => new Promise(res => setTimeout(res, ms));
+
+    async function startLocalTournament() {
+        console.log("sup mfs");
+        // if (tournReady == false)
+        //     return;
+        let winners = [];
+        localPlayerMode = true;
+        let player1 = pairings[0][0];
+        let player2 = pairings[0][1];
+        loadModal('modalGameBody',
+            `
 				<div class="container p-5 h-100 w-100 mh-100 mw-100 overflow-auto bg-black border border-1 border-white">
 					<div class="row border border-0 border-white">
 						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
@@ -519,25 +519,25 @@ export function loadTournament(localMode) {
 					</div>
 				</div>
 				`);
-		if (g_count == 0) {
-			isGameOver = false;
-			score.left = 0;
-			score.right = 0;
+        if (g_count == 0) {
+            isGameOver = false;
+            score.left = 0;
+            score.right = 0;
 
-			toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
-			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-			tmpModalGame.show();
+            toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
+            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+            tmpModalGame.show();
             await delay(4000);
-			tmpModalGame.hide();
-			resetBall();
-			playGame();
-		}
-	}
+            tmpModalGame.hide();
+            resetBall();
+            playGame();
+        }
+    }
 
-	function setupLocalTournament() {
+    function setupLocalTournament() {
 
-		loadModal('modalGameBody',
-			`
+        loadModal('modalGameBody',
+            `
 				<form id="formPlayerNames">
 					<div class="row row-cols-2 gy-4 font--argent justify-content-center">
 						<div class="col">
@@ -582,327 +582,200 @@ export function loadTournament(localMode) {
 					</div>
 				</form>
 				`);
-		const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-		tmpModalGame.show();
+        const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+        tmpModalGame.show();
 
-		document.getElementById('formPlayerNames').addEventListener('submit', function (event) {
-			event.preventDefault(); // Prevents the default form submission behavior
+        document.getElementById('formPlayerNames').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevents the default form submission behavior
 
-			// Get the values from the input fields
-			// var player01Value = document.getElementById('player01').value;
-			// var player02Value = document.getElementById('player02').value;
-			// var player03Value = document.getElementById('player03').value;
-			// var player04Value = document.getElementById('player04').value;
+            // Get the values from the input fields
+            // var player01Value = document.getElementById('player01').value;
+            // var player02Value = document.getElementById('player02').value;
+            // var player03Value = document.getElementById('player03').value;
+            // var player04Value = document.getElementById('player04').value;
 
-			// Do something with the form data (e.g., send it to the server or perform some action)
-			// console.log('Player 01:', player01Value);
-			// console.log('Player 02:', player02Value);
-			// console.log('Player 03:', player03Value);
-			// console.log('Player 04:', player04Value);
+            // Do something with the form data (e.g., send it to the server or perform some action)
+            // console.log('Player 01:', player01Value);
+            // console.log('Player 02:', player02Value);
+            // console.log('Player 03:', player03Value);
+            // console.log('Player 04:', player04Value);
 
-			// Add any additional logic here
+            // Add any additional logic here
 
-			// Reset the form if needed
-			// document.getElementById('yourFormId').reset();
+            // Reset the form if needed
+            // document.getElementById('yourFormId').reset();
 
-			const form = document.getElementById('formPlayerNames');
-			const playerInputs = form.querySelectorAll('input[id^="player"]');
-			const playerNames = Array.from(playerInputs).map(input => input.value);
+            const form = document.getElementById('formPlayerNames');
+            const playerInputs = form.querySelectorAll('input[id^="player"]');
+            const playerNames = Array.from(playerInputs).map(input => input.value);
 
-			console.log(playerNames);
+            console.log(playerNames);
 
-			// Check if all player names are unique
-			if (hasDuplicates(playerNames)) {
-				alert("Player names must be unique. Please enter distinct names for each player.");
-				return;
-			}
-			// Perform matchmaking logic (for demonstration, this is a simple random pairing)
-			pairings = randomPairing(playerNames);
+            // Check if all player names are unique
+            if (hasDuplicates(playerNames)) {
+                alert("Player names must be unique. Please enter distinct names for each player.");
+                return;
+            }
+            // Perform matchmaking logic (for demonstration, this is a simple random pairing)
+            pairings = randomPairing(playerNames);
 
-			//@todo: show pairings via modal:
+            //@todo: show pairings via modal:
 
-			tournReady = true;
-			// playerNameContainer.remove();
-			startLocalTournament();
-		});
+            tournReady = true;
+            // playerNameContainer.remove();
+            startLocalTournament();
+        });
 
-	};
-
-
-	function toggleHighlight(highlightId1, highlightId2) {
-		if (highlightId1 !== "")
-		{
-			if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId1)).display == "none")
-				docModalGame.querySelector('#' + highlightId1).style.display = "block";
-			else
-				docModalGame.querySelector('#' + highlightId1).style.display = "none";
-		}
-		if (highlightId2 !== "")
-		{
-			if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId2)).display == "none")
-				docModalGame.querySelector('#' + highlightId2).style.display = "block";
-			else
-				docModalGame.querySelector('#' + highlightId2).style.display = "none";
-		}
-	};
+    };
 
 
-	async function startTournament() {
-		if (localMode) {
-			setupLocalTournament();
-			return ;
-		}
-		await setupOnlineTournament();
-	}
-	startTournament();
+    function toggleHighlight(highlightId1, highlightId2) {
+        if (highlightId1 !== "") {
+            if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId1)).display == "none")
+                docModalGame.querySelector('#' + highlightId1).style.display = "block";
+            else
+                docModalGame.querySelector('#' + highlightId1).style.display = "none";
+        }
+        if (highlightId2 !== "") {
+            if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId2)).display == "none")
+                docModalGame.querySelector('#' + highlightId2).style.display = "block";
+            else
+                docModalGame.querySelector('#' + highlightId2).style.display = "none";
+        }
+    };
 
-	// Function to check for duplicate values in an array
-	function hasDuplicates(array) {
-		return (new Set(array)).size !== array.length;
-	}
+
+    async function startTournament() {
+        if (localMode) {
+            setupLocalTournament();
+            return;
+        }
+        await setupOnlineTournament();
+    }
+    startTournament();
+
+    // Function to check for duplicate values in an array
+    function hasDuplicates(array) {
+        return (new Set(array)).size !== array.length;
+    }
 
 
 
-	async function displayMenu() {
-		const menuContainer = document.createElement('div');
-		menuContainer.id = 'menu-container';
+    async function displayMenu() {
+        const menuContainer = document.createElement('div');
+        menuContainer.id = 'menu-container';
 
-		// Fetch the list of online tournaments from the backend
-		// fetch('http://localhost:8000/api/tournaments');
-
-
-		await fetch('/api/tournaments', {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-				'Content-Type': 'application/json'
-			}
-		}).then(response => response.json())
-			.then(tournaments => {
-				const tournamentList = document.createElement('ul');
-				tournamentList.innerHTML = '<p>Online Tournaments:</p>';
-				tournamentList.id = 'tourn-list';
-				console.log(tournaments);
-				tournaments.forEach(tournament => {
-					const listItem = document.createElement('li');
-					listItem.textContent = tournament.name;
-
-					const joinButton = document.createElement('button');
-					joinButton.textContent = 'Join';
-					joinButton.addEventListener('click', () => joinTournament(tournament.name));
-
-					listItem.appendChild(joinButton);
-					tournamentList.appendChild(listItem);
-				});
-
-				menuContainer.appendChild(tournamentList);
-			})
-			.catch(error => console.error('Error fetching tournaments:', error));
-
-		// Button to create a new tournament
-		const createButton = document.createElement('button');
-		createButton.textContent = 'Create New Tournament';
-		createButton.addEventListener('click', createNewTournament);
-		
-		menuContainer.appendChild(createButton);
-		menuContainer.style.zIndex = 4;
-		menuContainer.style.position = "absolute";
-		menuContainer.style.color = "white";
-		// Append the menu to the document
-		document.getElementById('windowScreen').appendChild(menuContainer);
-	}
-
-	function createNewTournament() {
-		// Check if the input field already exists
-		const inputField = document.getElementById('tournamentNameInput');
-		if (inputField) {
-			alert('Please enter a tournament name before creating a new tournament.');
-			return;
-		}
-
-		// Create an input field for the tournament name
-		const tournamentNameInput = document.createElement('input');
-		tournamentNameInput.type = 'text';
-		tournamentNameInput.id = 'tournamentNameInput';
-		tournamentNameInput.placeholder = 'Enter tournament name';
-
-		// Button to submit the tournament name
-		const submitButton = document.createElement('button');
-		submitButton.textContent = 'Submit';
-		submitButton.id = 'submitButton';
-		submitButton.addEventListener('click', () => submitTournament());
-
-		// Append the input field and submit button next to the create button
-		const menuContainer = document.getElementById('menu-container');
-		menuContainer.appendChild(tournamentNameInput);
-		menuContainer.appendChild(submitButton);
-	}
-
-	async function submitTournament() {
-		const tournamentName = document.getElementById('tournamentName').value;
-		if (!tournamentName) {
-			alert('Please enter a tournament name.');
-			return;
-		}
-
-		// Perform logic to create a new tournament
-		// You can make a POST request to the backend and handle the response
-		await fetch(`/api/create_tournament/?name=${tournamentName}`, {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-				'x-csrftoken': getCookie('csrftoken'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				// Include any necessary data for creating a tournament
-				// (e.g., tournament name, settings, etc.)
-			}),
-		})
-			.then(response => {
-				if (!response.ok) {
-					loadLoginPage('Please login again');
-					return null;
-				}
-				response.json()
-			})
-			.then(data => {
-				if(!data) return;
-				// Handle the response from the backend
-				if (data.message === 'Please choose another tournament name') {
-					alert('Please choose another tournament name');
-				} else if (data.message === 'Tournament created successfully') {
-					alert('Tournament created successfully');
-				} else {
-					// console.error('Unexpected response:', data);
-				}
-			})
-			.catch(error => console.error('Error creating tournament:', error));
-
-		// Remove the input field and submit button after creating the tournament
-		// const tournamentNameInput = document.getElementById('tournamentNameInput');
-		// const submitButton = document.getElementById('submitButton');
-		// tournamentNameInput.parentNode.removeChild(tournamentNameInput);
-		// submitButton.remove();
-
-		// const tournamentList = document.getElementById('tourn-list');
-		// const listItem = document.createElement('li');
-		// listItem.textContent = tournamentName;
-
-		// const joinButton = document.createElement('button');
-		// joinButton.textContent = 'Join';
-		// joinButton.addEventListener('click', () => joinTournament(tournamentName));
-
-		// listItem.appendChild(joinButton);
-		// tournamentList.appendChild(listItem);
-	}
-
-	async function joinTournament(tournamentName) {
-		// Perform logic to join the selected tournament
-		// You can make an API call or update the game state accordingly
-		console.log(`Joining tournament with name ${tournamentName}`);
-		tournament_name = tournamentName;
-		await fetch(`/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
-			method: 'POST',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-				'x-csrftoken': getCookie('csrftoken'),
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				// Include any necessary data for creating a tournament
-				// (e.g., tournament name, settings, etc.)
-			}),
-		})
-			.then(response => {
-				if (!response.ok) {
-					loadLoginPage('Please login again');
-					return null;
-				}
-				response.json()
-			})
-			.then(data => {
-				if (!data) return;
-				// Handle the response from the backend
-				if (data.message === 'Tournament joined successfully') {
-					alert('Tournament joined successfully');
-
-					//@TODO : Clear screen !
-					const menuContainer = document.getElementById('menu-container');
-					menuContainer.remove();
-					// startLocalButton.style.visibility = 'hidden';
-
-					//@TODO : Display WAIT message
-					console.log("Waiting for lobby to fill & tournament to start ...");
-
-					//@TODO : Open socket
-					initiateSocket();
+        // Fetch the list of online tournaments from the backend
+        // fetch('http://localhost:8000/api/tournaments');
 
 
-				} else if (data.message === "Sorry ur late. tournament is full :/") {
-					alert("Sorry ur late. tournament is full :/");
-				} else if (data.message === "You are already in the tournament") {
-					alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
+        await fetch('/api/tournaments', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'Content-Type': 'application/json'
+            }
+        }).then(response => response.json())
+            .then(tournaments => {
+                const tournamentList = document.createElement('ul');
+                tournamentList.innerHTML = '<p>Online Tournaments:</p>';
+                tournamentList.id = 'tourn-list';
+                console.log(tournaments);
+                tournaments.forEach(tournament => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = tournament.name;
 
-					//@TODO : Clear screen !
-					const menuContainer = document.getElementById('menu-container');
-					menuContainer.remove();
-					// startLocalButton.style.visibility = 'hidden';
+                    const joinButton = document.createElement('button');
+                    joinButton.textContent = 'Join';
+                    joinButton.addEventListener('click', () => joinTournament(tournament.name));
 
-					//@TODO : Display WAIT message
-					console.log("Waiting for lobby to fill & tournament to start ...");
-				}
-				else {
-					console.error('Failed to join tournament', data);
-				}
-			})
-			.catch(error => console.error('Error joining tournament:', error));
-	}
+                    listItem.appendChild(joinButton);
+                    tournamentList.appendChild(listItem);
+                });
 
+                menuContainer.appendChild(tournamentList);
+            })
+            .catch(error => console.error('Error fetching tournaments:', error));
 
-	function playOnlineTournamentMatch() {
-		localPlayerMode = false;
-		// startLocalButton.disabled = true;
-		// startOnlineButton.disabled = true;
-		if (isGameOver || !animationFrameId) {
-			isGameOver = false;
-			score.left = 0;
-			score.right = 0;
-			resetBall();
-			animationFrameId = requestAnimationFrame(gameLoop);
-		}
-	}
+        // Button to create a new tournament
+        const createButton = document.createElement('button');
+        createButton.textContent = 'Create New Tournament';
+        createButton.addEventListener('click', createNewTournament);
 
-	async function setupOnlineTournament() {
-	    localPlayerMode = false;
-	    // displayMenu();
-		await fetch(`/api/tournaments`, {
-			method: 'GET',
-			headers: {
-				'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-			},
-		}).then(response => {
-			if (!response.ok) {
-				// document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
-				localStorage.clear();
-				console.log(response.statusText);
-				// loadToast('Please login to continue');
-				return null;
-			}
-			return response.text();
-		}).then(data => {
-			console.log(data);
-			if (!data) {
-				return;
-			}
-			loadModal('modalGameBody', data);
-			const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-			tmpModalGame.show();
-		}).catch((error) => {
-			console.error('Error:', error);
-		});
+        menuContainer.appendChild(createButton);
+        menuContainer.style.zIndex = 4;
+        menuContainer.style.position = "absolute";
+        menuContainer.style.color = "white";
+        // Append the menu to the document
+        document.getElementById('windowScreen').appendChild(menuContainer);
+    }
 
+    function createNewTournament() {
+        // Check if the input field already exists
+        const inputField = document.getElementById('tournamentNameInput');
+        if (inputField) {
+            alert('Please enter a tournament name before creating a new tournament.');
+            return;
+        }
 
+        // Create an input field for the tournament name
+        const tournamentNameInput = document.createElement('input');
+        tournamentNameInput.type = 'text';
+        tournamentNameInput.id = 'tournamentNameInput';
+        tournamentNameInput.placeholder = 'Enter tournament name';
+
+        // Button to submit the tournament name
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Submit';
+        submitButton.id = 'submitButton';
+        submitButton.addEventListener('click', () => submitTournament());
+
+        // Append the input field and submit button next to the create button
+        const menuContainer = document.getElementById('menu-container');
+        menuContainer.appendChild(tournamentNameInput);
+        menuContainer.appendChild(submitButton);
+    }
+
+    async function submitTournament() {
+        const tournamentName = document.getElementById('tournamentName').value;
+        if (!tournamentName) {
+            alert('Please enter a tournament name.');
+            return;
+        }
+
+        // Perform logic to create a new tournament
+        // You can make a POST request to the backend and handle the response
+        await fetch(`/api/create_tournament/?name=${tournamentName}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'x-csrftoken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // Include any necessary data for creating a tournament
+                // (e.g., tournament name, settings, etc.)
+            }),
+        }).then(response => {
+            if (!response.ok) {
+                // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+                localStorage.clear();
+                console.log(response.statusText);
+                // loadToast('Please login to continue');
+                return null;
+            }
+            return response.text();
+        }).then(data => {
+            console.log(data);
+            if (!data) {
+                return;
+            }
+            loadModal('modalGameBody', data);
+            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+            tmpModalGame.show();
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
 
         document.getElementById('createTourn').addEventListener('click', async () => {
             await submitTournament();
@@ -910,18 +783,182 @@ export function loadTournament(localMode) {
 
 
 
-	};
+        // .then(response => {
+        // 	if (!response.ok) {
+        // 		loadLoginPage('Please login again');
+        // 		return null;
+        // 	}
+        // 	// response.json()
+        //     response.text();
+        // })
+        // .then(data => {
+        // 	if(!data) return;
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log("********************************************************")
+        //     console.log(data);
+        //     loadModal('modalGameBody', data);
+        //     const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+        //     tmpModalGame.show();
 
-	async function gameLoop() {
+        // 	// Handle the response from the backend
+        // 	if (data.message === 'Please choose another tournament name') {
+        // 		alert('Please choose another tournament name');
+        // 	} else if (data.message === 'Tournament created successfully') {
+        // 		alert('Tournament created successfully');
+        // 	} else {
+        // 		// console.error('Unexpected response:', data);
+        // 	}
+        // })
+        // .catch(error => console.error('Error creating tournament:', error));
+
+        // Remove the input field and submit button after creating the tournament
+        // const tournamentNameInput = document.getElementById('tournamentNameInput');
+        // const submitButton = document.getElementById('submitButton');
+        // tournamentNameInput.parentNode.removeChild(tournamentNameInput);
+        // submitButton.remove();
+
+        // const tournamentList = document.getElementById('tourn-list');
+        // const listItem = document.createElement('li');
+        // listItem.textContent = tournamentName;
+
+        // const joinButton = document.createElement('button');
+        // joinButton.textContent = 'Join';
+        // joinButton.addEventListener('click', () => joinTournament(tournamentName));
+
+        // listItem.appendChild(joinButton);
+        // tournamentList.appendChild(listItem);
+    }
+
+    async function joinTournament(tournamentName) {
+        // Perform logic to join the selected tournament
+        // You can make an API call or update the game state accordingly
+        console.log(`Joining tournament with name ${tournamentName}`);
+        tournament_name = tournamentName;
+        await fetch(`/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                'x-csrftoken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                // Include any necessary data for creating a tournament
+                // (e.g., tournament name, settings, etc.)
+            }),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    loadLoginPage('Please login again');
+                    return null;
+                }
+                response.json()
+            })
+            .then(data => {
+                if (!data) return;
+                // Handle the response from the backend
+                if (data.message === 'Tournament joined successfully') {
+                    alert('Tournament joined successfully');
+
+                    //@TODO : Clear screen !
+                    const menuContainer = document.getElementById('menu-container');
+                    menuContainer.remove();
+                    // startLocalButton.style.visibility = 'hidden';
+
+                    //@TODO : Display WAIT message
+                    console.log("Waiting for lobby to fill & tournament to start ...");
+
+                    //@TODO : Open socket
+                    initiateSocket();
+
+
+                } else if (data.message === "Sorry ur late. tournament is full :/") {
+                    alert("Sorry ur late. tournament is full :/");
+                } else if (data.message === "You are already in the tournament") {
+                    alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
+
+                    //@TODO : Clear screen !
+                    const menuContainer = document.getElementById('menu-container');
+                    menuContainer.remove();
+                    // startLocalButton.style.visibility = 'hidden';
+
+                    //@TODO : Display WAIT message
+                    console.log("Waiting for lobby to fill & tournament to start ...");
+                }
+                else {
+                    console.error('Failed to join tournament', data);
+                }
+            })
+            .catch(error => console.error('Error joining tournament:', error));
+    }
+
+
+    function playOnlineTournamentMatch() {
+        localPlayerMode = false;
+        // startLocalButton.disabled = true;
+        // startOnlineButton.disabled = true;
+        if (isGameOver || !animationFrameId) {
+            isGameOver = false;
+            score.left = 0;
+            score.right = 0;
+            resetBall();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+    }
+
+    async function setupOnlineTournament() {
+        localPlayerMode = false;
+        // displayMenu();
+        await fetch(`/api/tournaments`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            },
+        }).then(response => {
+            if (!response.ok) {
+                // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+                localStorage.clear();
+                console.log(response.statusText);
+                // loadToast('Please login to continue');
+                return null;
+            }
+            return response.text();
+        }).then(data => {
+            console.log(data);
+            if (!data) {
+                return;
+            }
+            loadModal('modalGameBody', data);
+            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
+            tmpModalGame.show();
+        }).catch((error) => {
+            console.error('Error:', error);
+        });
+
+        document.getElementById('createTourn').addEventListener('click', async () => {
+            await submitTournament();
+        });
+
+    };
+
+    async function gameLoop() {
         if (continueExecution == false)
-            return ;
-		await update();
-		draw();
+            return;
+        await update();
+        draw();
 
-		if (!isGameOver) {
-			animationFrameId = requestAnimationFrame(gameLoop);
-		}
-	}
+        if (!isGameOver) {
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+    }
 
 }
 
