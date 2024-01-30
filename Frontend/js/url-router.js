@@ -292,11 +292,7 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
                 console.log('Data fetched:', data);
                 if (data.message === 'Logged out successfully') {
                     document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-                    loadToast('You have been logged out successfully');
-                }
-                else {
-                    loadLoginPage('Please login to continue');
-                    document.getElementById('logout').remove();
+                    loadToast('You have been logged out successfully ;(');
                 }
             })
             .catch(error => {
