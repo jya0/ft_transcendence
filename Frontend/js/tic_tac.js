@@ -350,10 +350,10 @@ export function  loadTicTac(){
             moves += 1;
 
             if (win(boxes[data['cellIndex']])) {
-                alert('Winner: Player ' + turn);
+                loadToast('Winner: Player ' + turn);
                 endGame();
             } else if (moves === N_SIZE * N_SIZE) {
-                alert("Draw");
+                loadToast("Draw");
                 endGame();
             } else {
                 turn = turn === "X" ? "O" : "X";

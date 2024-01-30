@@ -1,5 +1,5 @@
 // import {io} from "socket.io-client";
-import { loadLoginPage, getCookie, loadModal, showGameWinner } from "./loadComponent.js";
+import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast } from "./loadComponent.js";
 import {urlLocationHandler} from "./url-router.js"
 
 let continueExecution = true;
@@ -192,7 +192,6 @@ export function loadTournament(localMode) {
         //show results
         if (g_count != 2) {
 
-            // alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
             // console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
         }
 
@@ -200,7 +199,6 @@ export function loadTournament(localMode) {
         if (g_count == 0 || g_count == 1) {
             winners.push((pairings[g_count][0] > pairings[g_count][1]) ? pairings[g_count][0] : pairings[g_count][1]);
         }
-
 
 		// resetGame();
         //reset
@@ -217,7 +215,6 @@ export function loadTournament(localMode) {
 
         //prompt new match
         if (g_count == 0) {
-            // alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
             //@todo - show bracket
             docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
             toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
@@ -231,7 +228,6 @@ export function loadTournament(localMode) {
             resetGame();
         }
         if (g_count == 1) {
-            // alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
             //@todo - show bracket
             docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
             toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
@@ -262,7 +258,6 @@ export function loadTournament(localMode) {
             g_count = 0;
             tournReady = false;
             isGameOver = true;
-            // alert(buttonText);
             docModalGame.querySelector('#winner-final').innerHTML = winners[0];
             toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
             toggleHighlight("tWinnerHighlight", "");
@@ -630,7 +625,7 @@ export function loadTournament(localMode) {
 
             // Check if all player names are unique
             if (hasDuplicates(playerNames)) {
-                alert("Player names must be unique. Please enter distinct names for each player.");
+				loadToast("Player names must be unique. Please enter distinct names for each player.");
                 return;
             }
             // Perform matchmaking logic (for demonstration, this is a simple random pairing)
@@ -731,7 +726,8 @@ export function loadTournament(localMode) {
         // Check if the input field already exists
         const inputField = document.getElementById('tournamentNameInput');
         if (inputField) {
-            alert('Please enter a tournament name before creating a new tournament.');
+            loadToast('Please enter a tournament name before creating a new tournament.');
+			
             return;
         }
 
@@ -756,7 +752,7 @@ export function loadTournament(localMode) {
     async function submitTournament() {
         const tournamentName = document.getElementById('tournamentName').value;
         if (!tournamentName) {
-            alert('Please enter a tournament name.');
+            loadToast('Please enter a tournament name.');
             return;
         }
         let contentType;
@@ -845,7 +841,7 @@ export function loadTournament(localMode) {
             if (!data) return;
             // Handle the response from the backend
             if (data.message === 'Tournament joined successfully') {
-                alert('Tournament joined successfully');
+                loadToast('Tournament joined successfully');
         
                 //@TODO : Clear screen !
                 // const menuContainer = document.getElementById('menu-container');
@@ -858,9 +854,9 @@ export function loadTournament(localMode) {
                 //@TODO : Open socket
                 initiateSocket();
             } else if (data.message === "Sorry ur late. tournament is full :/") {
-                alert("Sorry ur late. tournament is full :/");
+                loadToast("Sorry ur late. tournament is full :/");
             } else if (data.message === "You are already in the tournament") {
-                alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
+                loadToast('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
         
                 //@TODO : Clear screen !
                 // const menuContainer = document.getElementById('menu-container');
