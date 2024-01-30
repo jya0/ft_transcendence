@@ -24,38 +24,36 @@ function loadLoginPage(message) {
 }
 console.log(sessionStorage.getItem('username'))
 
-async function checkIfLoggedIn() {
 
-    await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username') ? localStorage.getItem('username') : ''}`, {
-        method: 'GET',
-    }).then(response => {
-        if (response.status === 204) {
-            console.log('User is not authenticated');
-            localStorage.clear();
-            return null;
-        }
-        else if (!response.ok) {
-            console.log(`response`, response.status);
-            return null;
-        }
-        return response.json();
-    }).then(data => {
-        if (!data) {
-            return false;
-        }
-        console.log('Data fetched:', data);
-        user = data.user_data;
-        if (user) {
-            console.log('user is authenticated');
-            sessionStorage.setItem('user', JSON.stringify(user));
-        }
-    })
-
-
-}
+await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username') ? localStorage.getItem('username') : ''}`, {
+    method: 'GET',
+}).then(response => {
+    if (response.status === 204) {
+        console.log('User is not authenticated');
+        localStorage.clear();
+        return null;
+    }
+    else if (!response.ok) {
+        console.log(`response`, response.status);
+        return null;
+    }
+    return response.json();
+}).then(data => {
+    if (!data) {
+        return false;
+    }
+    console.log('Data fetched:', data);
+    user = data.user_data;
+    if (user) {
+        console.log('user is authenticated');
+        sessionStorage.setItem('user', JSON.stringify(user));
+    }
+})
 
 
-checkIfLoggedIn();
+
+
+
 
 const viewUserProfile = (username) => {
     console.log(`Viewing profile for ${username}`);
@@ -496,7 +494,7 @@ export const urlLocationHandler = async () => {
         switch (location) {
             case '/games_pong_local':
                 gameMode = 'pong single';
-                loadGame(localStorage.getItem('username'),true);
+                loadGame(localStorage.getItem('username'), true);
                 break;
             case '/games_pong_online':
                 gameMode = 'pong single';
@@ -520,13 +518,6 @@ export const urlLocationHandler = async () => {
         return;
     }
     else if (location === '/play') {
-        if (checkIfLoggedIn() == false)
-        {
-            sessionStorage.clear();
-            localStorage.clear();
-            return ;
-        }
-
         setMainWindowframe();
         loadGameMenu();
         let gameMenu = document.querySelectorAll('#gameMenu a');
@@ -616,6 +607,7 @@ export const urlLocationHandler = async () => {
     }
     else if (location === '/profile') {
         setMainWindowframe();
+        console.log(user)
         if (!user) {
             document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
             localStorage.clear();
