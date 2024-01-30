@@ -154,7 +154,6 @@ export function loadGame(username, localPlayerMode) {
 
 		if (ball.x < 0 || ball.x > canvas.width) {
 			ball.x > canvas.width ? score.left++ : score.right++;
-			draw();
 			resetBall();
 			await checkForWinner();
 			return;
