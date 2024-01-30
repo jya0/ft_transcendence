@@ -123,7 +123,6 @@ CORS_ALLOW_HEADERS = [
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ["Bearer"],
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
 
