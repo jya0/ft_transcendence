@@ -22,11 +22,11 @@ export function loadTournament(localMode) {
     let pairings = [];
     let winners = [];
 
-    const paddle = { width: 10, height: 100, speed: 8 };
-    const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
-    const score = { left: 0, right: 0 };
-    const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
-    const keys = {};
+	const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
+	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
+	const score = { left: 0, right: 0 };
+	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
+	const keys = {};
 
     let tournReady = false;
     let isGameOver = false;
@@ -40,17 +40,20 @@ export function loadTournament(localMode) {
     let g_count = 0;
 
     function draw() {
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, players.left, paddle.width, paddle.height);
-        ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.font = '30px Arial';
-        ctx.fillText(score.left, canvas.width / 4, 50);
-        ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+		ctx.fillStyle = '#000';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(0, players.left, paddle.width, paddle.height);
+		ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
+		ctx.beginPath();
+		ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+		ctx.textAlign = "center";
+		ctx.textBaseline = "top";
+		ctx.fillText(score.left, canvas.width / 4, 50);
+		ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+		ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
     }
 
     function updateBackend() {
@@ -912,7 +915,7 @@ export function loadTournament(localMode) {
 
     };
 
-    async function gameLoop() {
+    async function gameLoop(timestamp) {
         if (continueExecution == false)
             return;
         await update();

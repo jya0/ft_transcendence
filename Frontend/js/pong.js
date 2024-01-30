@@ -33,6 +33,7 @@ export function loadGame(username, localPlayerMode) {
 		score.right = 0;
 		players.left = (canvas.height - paddle.height) / 2;
 		players.right = (canvas.height - paddle.height) / 2;
+		lastTimestamp = 0;
 	}
 
 	let socketStatus = false;
