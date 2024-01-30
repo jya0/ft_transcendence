@@ -24,7 +24,7 @@ def prepare_final_round(tourn, user):
 
 
 def remove_from_lobbies(text_data_json):
-    sender = text_data_json["username"]
+    sender = text_data_json["sender"]
     open_lobbies = Match.objects.filter(Q(open_lobby=True) & (Q(id1__intra=sender) | Q(id2__intra=sender)))
 
     for game in open_lobbies:
@@ -35,6 +35,10 @@ def remove_from_lobbies(text_data_json):
             game.id2 = UserProfile.objects.get(intra='temp2')
             print("succesfully removed from a lobby")
         game.save()
+
+
+
+    
 
 
 class GameConsumer(WebsocketConsumer):
@@ -54,6 +58,33 @@ class GameConsumer(WebsocketConsumer):
         print('openng a connection')
         self.accept()
 
+    def kick_out_of_game(self, text_data_json):
+        username = text_data_json["sender"]
+        ongoing_games = Match.objects.filter(
+            (Q(id1__intra=username) | Q(id2__intra=username)) & Q(ongoing=True)
+        )
+
+        for game in ongoing_games:
+            # Set the winner to the other player
+            if game.id1.intra == username:
+                game.winner = game.id2.intra
+            else:
+                game.winner = game.id1.intra
+
+            game.ongoing = False
+            game.save()
+            
+            async_to_sync(self.channel_layer.group_send)(
+                        self.room_group_name,
+                        {
+                            'type': 'terminate',
+                            'mode' : text_data_json['mode'],
+                            'sender' : text_data_json['sender'],
+                            'player1': game.id1.intra,
+                            'player2': game.id2.intra,
+                        }
+                    )
+        
     def receive(self, text_data):
 
         text_data_json = json.loads(text_data)
@@ -63,6 +94,7 @@ class GameConsumer(WebsocketConsumer):
         
         if (type == 'terminate'):
             remove_from_lobbies(text_data_json)
+            self.kick_out_of_game(text_data_json)
             self.disconnect(1000)
             return
         
@@ -227,6 +259,17 @@ class GameConsumer(WebsocketConsumer):
                     'mode' : mode,
                     'sender': sender,
                     'key' : message,
+                }))
+        
+    def terminate(self, event):
+        sender = event['sender']
+        mode = event['mode']
+        self.send(text_data=json.dumps({
+                    'type' : 'terminate',
+                    'mode' : mode,
+                    'sender': sender,
+                    'player1' : event['player1'],
+                    'player2' : event['player2'],
                 }))
 
     def disconnect(self, code):
