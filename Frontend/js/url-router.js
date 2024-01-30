@@ -24,7 +24,7 @@ function loadLoginPage(message) {
 }
 console.log(sessionStorage.getItem('username'))
 
-await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username') ? localStorage.getItem('username') : ''}`, {
+await fetch(`/api/get_user_data/`, {
     method: 'GET',
 }).then(response => {
     if (response.status === 204) {
@@ -117,40 +117,8 @@ navbarLinks.forEach(function (link) {
 });
 
 
-// create an object that maps the url to the template, title, and description
-const urlRoutes = {
-    404: {
-        title: "404 | " + urlPageTitle,
-        description: "Page not found",
-    },
-    "/": {
-        title: "login | " + urlPageTitle,
-        description: "This is the login page",
-    },
-    "/desktop": {
-        title: "About Us | " + urlPageTitle,
-        description: "This is the desktop page",
-    },
-    "/myprofile": {
-        title: "myprofile | " + urlPageTitle,
-        description: "This is the myprofile page",
-    },
-    "/play": {
-        title: "play | " + urlPageTitle,
-        description: "This is the play page",
-    },
-    "/users": {
-        title: "users | " + urlPageTitle,
-        description: "This is the users page",
-    },
-    "/profile": {
-        title: "profile | " + urlPageTitle,
-        description: "This is the profile page",
-    },
-};
-
 const urlRoute = (event) => {
-    console.log('urlroute event', event);
+    console.log('urlroute event--------------------------------------------------------', event);
     event = event || window.event; // get window.event if event argument not provided
     event.preventDefault();
     let href = event.target.parentElement.parentElement.parentElement.href;
@@ -161,16 +129,6 @@ const urlRoute = (event) => {
     window.history.pushState({}, "", href);
     urlLocationHandler();
 };
-
-const insertCSS = (filePath) => {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = filePath;
-    document.head.appendChild(link);
-};
-
-// insertCSS("/assets/css/global.css");
-// insertCSS("/assets/css/index.css");
 
 function setMainWindowframe() {
     insertOrCreateContent();
@@ -355,8 +313,8 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
         const nicknameValue = newDisplayName.value;
         const displayNameElement = document.getElementById('displayName');
 
-        if (!nicknameValue) {
-            loadToast('Display name should not be empty');
+        if (!nicknameValue || nicknameValue.trim().length === 0 || nicknameValue.trim().length < 5) {
+            loadToast('Display name should not be empty, more than 5 characters and less than 50 characters');
             return;
         }
         else if (nicknameValue.length >= 50) {
@@ -399,31 +357,62 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
     });
 });
 
-async function generateTestUser() {
-    let location = window.location.pathname;
-    if (location == '/test_user') {
-        await fetch("/api/generate_test_user/").then(response => {
-            if (!response.ok) {
-                loadToast('Please login to continue');
-            }
-            return response.json();
-        }).then(data => {
-            localStorage.setItem('access_token', data.token);
-            user = data.user;
-            localStorage.setItem('user', data.user);
-            sessionStorage.setItem('username', user.username);
-            // window.location.reload();
-            console.log('Data fetched:', data);
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
-    };
+const urlRoutes = {
+    404: {
+        title: "404 | " + urlPageTitle,
+        description: "Page not found",
+    },
+    "/": {
+        title: "login | " + urlPageTitle,
+        description: "Pongos login page",
+    },
+    "/desktop": {
+        title: "Desktop | " + urlPageTitle,
+        description: "Pongos desktop page",
+    },
+    "/profile": {
+        title: "Profile | " + urlPageTitle,
+        description: "Pongos myprofile page",
+    },
+    "/play": {
+        title: "Play | " + urlPageTitle,
+        description: "Pongos play page",
+    },
+    "/users": {
+        title: "Users | " + urlPageTitle,
+        description: "Pongos users page",
+    },
+};
 
-}
+const gameRoutes = {
+    "/games_pong_local": {
+        title: "pong | " + urlPageTitle,
+        description: "Pongos local page",
+    },
+    "/games_pong_online": {
+        title: "pong | " + urlPageTitle,
+        description: "Pongos online page",
+    },
+    "/games_pong_local_tournament": {
+        title: "pong | " + urlPageTitle,
+        description: "Pongos local tournament page",
+    },
+    "/games_pong_online_tournament": {
+        title: "pong | " + urlPageTitle,
+        description: "Pongos online tournaments page",
+    },
+    "/games_tictactoe_local": {
+        title: "tic tac toe | " + urlPageTitle,
+        description: "Pongos tic tac toe page",
+    },
+    "/games_tictactoe_online": {
+        title: "tic tac toe | " + urlPageTitle,
+        description: "Pongos tic tac toe page",
+    },
+};
 
 
 export const urlLocationHandler = async () => {
-    generateTestUser();
     if (!user) {
         document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
         return;
@@ -444,11 +433,8 @@ export const urlLocationHandler = async () => {
         gameMode = 'none';
     }
 
-
-
     insertOrCreateContent();
     document.getElementById("content").innerHTML = ``;
-    document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
     let location = window.location.pathname;
     if (location[location.length - 1] === '/') {
         location = location.slice(0, location.length - 1);
@@ -477,14 +463,11 @@ export const urlLocationHandler = async () => {
         document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
         return;
     }
-    document.getElementById("navbar").style.display = 'flex';
 
-    if (location === '/games_pong_local' ||
-        location === '/games_pong_online' ||
-        location === '/games_pong_local_tournament' ||
-        location === '/games_pong_online_tournament' ||
-        location === '/games_tictactoe_local' ||
-        location === '/games_tictactoe_online') {
+    document.getElementById("navbar").style.display = 'flex';
+    document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
+
+    if (gameRoutes.hasOwnProperty(location)) {
         setMainWindowframe();
         loadGameCanvas();
         switch (location) {
@@ -627,12 +610,11 @@ export const urlLocationHandler = async () => {
             document.getElementById("main-content").innerHTML = data;
         });
     }
+
     document.title = route.title;
 };
 
-// add an event listener to the window that watches for url changes
 
-// call the urlLocationHandler function to handle the initial url
 handleUserData();
 
 async function handleUserData() {
