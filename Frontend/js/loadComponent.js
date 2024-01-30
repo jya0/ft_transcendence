@@ -108,6 +108,7 @@ export const loadToast = (message) => {
 	toastBootstrap.show();
 };
 
+
 // export const loadModal = (innerContent) => {
 // 	document.getElementById('modalSettingBody').innerHTML = innerContent;
 // };
