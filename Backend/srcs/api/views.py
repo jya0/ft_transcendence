@@ -294,9 +294,7 @@ def generate_test_user(request):
 def get_user_data(request):
     session_id = request.COOKIES.get('sessionid')
     if session_id:
-        username = request.GET.get('username')
-        if username == 'undefined' or 'null':
-            username = request.session.get('username', None)
+        username = request.session.get('username', None)
         user = get_object_or_404(UserProfile, username=username)
         user_data = {
             'username': user.username,
