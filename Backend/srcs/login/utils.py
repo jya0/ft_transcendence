@@ -6,9 +6,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import json
-import base64
-import hashlib
-import hmac
 import os
 import requests
 
@@ -41,8 +38,8 @@ def send_otp(request, username):
 
 
 def get_user_token(request, username, password):
-    # base_url = request.build_absolute_uri('/')[:-1]
-    base_url = "http://localhost:8000"
+    base_url = f'{request.build_absolute_uri("/")[:-1]}:8000'
+
     data = {
         'username': username,
         'password': password,

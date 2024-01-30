@@ -24,7 +24,6 @@ function loadLoginPage(message) {
 }
 console.log(sessionStorage.getItem('username'))
 
-
 await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username') ? localStorage.getItem('username') : ''}`, {
     method: 'GET',
 }).then(response => {
@@ -624,7 +623,7 @@ export const urlLocationHandler = async () => {
         });
     }
     else {
-        await fetch('/components/404-component.html').then(response => response.text()).then(data => {
+        await fetch('/components/404.html').then(response => response.text()).then(data => {
             document.getElementById("main-content").innerHTML = data;
         });
     }
