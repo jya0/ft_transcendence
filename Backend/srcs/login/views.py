@@ -24,11 +24,8 @@ secret_key = settings.SECRET_KEY
 
 @api_view(['get'])
 def logout(request):
-    if request.user.is_authenticated:
-        user = get_object_or_404(UserProfile, username=request.user.username)
-        auth_logout(request)
-        return JsonResponse({'message': 'Logged out successfully'}, status=200)
-    return JsonResponse({'message': 'already logged out'}, status=200)
+    auth_logout(request)
+    return JsonResponse({'message': 'Logged out successfully'}, status=200)
 
 
 def ssr_render(request, template_name, user, messages):

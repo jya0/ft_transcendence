@@ -26,20 +26,13 @@ function updateTime() {
 		document.getElementById("datetime").innerHTML = formatDate;
 	}
 }
-// let windowInterval = setInterval(updateTime, 1000);
 
-// setTimeout(() => {
-// 	clearInterval(windowInterval);
-// 	windowInterval = setInterval(updateTime, 1000);
-// }, 1100);
-let windowInterval;
+let windowInterval = setInterval(updateTime, 1000);
 
 function updateInterval() {
     clearInterval(windowInterval);
     windowInterval = setInterval(updateTime, 1000);
 }
-
-windowInterval = setInterval(updateTime, 1000);
 
 setTimeout(updateInterval, 1100);
 
