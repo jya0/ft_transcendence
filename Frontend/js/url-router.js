@@ -4,10 +4,65 @@ import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
 
+const urlRoutes = {
+    404: {
+        title: "404 | " + urlPageTitle,
+        description: "Page not found",
+    },
+    "/": {
+        title: "login | " + urlPageTitle,
+        description: "Pongos login page",
+    },
+    "/desktop": {
+        title: "Desktop | " + urlPageTitle,
+        description: "Pongos desktop page",
+    },
+    "/profile": {
+        title: "Profile | " + urlPageTitle,
+        description: "Pongos myprofile page",
+    },
+    "/play": {
+        title: "Play | " + urlPageTitle,
+        description: "Pongos play page",
+    },
+    "/users": {
+        title: "Users | " + urlPageTitle,
+        description: "Pongos users page",
+    },
+};
+
+const gameRoutes = {
+    "/games_pong_local": {
+        title: "local pong | " + urlPageTitle,
+        description: "Pongos local page",
+    },
+    "/games_pong_online": {
+        title: "online pong | " + urlPageTitle,
+        description: "Pongos online page",
+    },
+    "/games_pong_local_tournament": {
+        title: "local tournaments pong | " + urlPageTitle,
+        description: "Pongos local tournament page",
+    },
+    "/games_pong_online_tournament": {
+        title: "online tournaments pong | " + urlPageTitle,
+        description: "Pongos online tournaments page",
+    },
+    "/games_tictactoe_local": {
+        title: "tic tac toe | " + urlPageTitle,
+        description: "Pongos tic tac toe page",
+    },
+    "/games_tictactoe_online": {
+        title: "tic tac toe | " + urlPageTitle,
+        description: "Pongos tic tac toe page",
+    },
+};
+
 let userToken;
 let user;
 let LOGIN_PAGE_HTML = '';
 let gameMode = 'none';
+
 await fetch('/components/login.html').then(response => response.text()).then(data => {
     LOGIN_PAGE_HTML = data;
 });
@@ -48,7 +103,6 @@ await fetch(`/api/get_user_data/`, {
         sessionStorage.setItem('user', JSON.stringify(user));
     }
 })
-
 
 const viewUserProfile = (username) => {
     console.log(`Viewing profile for ${username}`);
@@ -352,60 +406,6 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
         })
     });
 });
-
-const urlRoutes = {
-    404: {
-        title: "404 | " + urlPageTitle,
-        description: "Page not found",
-    },
-    "/": {
-        title: "login | " + urlPageTitle,
-        description: "Pongos login page",
-    },
-    "/desktop": {
-        title: "Desktop | " + urlPageTitle,
-        description: "Pongos desktop page",
-    },
-    "/profile": {
-        title: "Profile | " + urlPageTitle,
-        description: "Pongos myprofile page",
-    },
-    "/play": {
-        title: "Play | " + urlPageTitle,
-        description: "Pongos play page",
-    },
-    "/users": {
-        title: "Users | " + urlPageTitle,
-        description: "Pongos users page",
-    },
-};
-
-const gameRoutes = {
-    "/games_pong_local": {
-        title: "local pong | " + urlPageTitle,
-        description: "Pongos local page",
-    },
-    "/games_pong_online": {
-        title: "online pong | " + urlPageTitle,
-        description: "Pongos online page",
-    },
-    "/games_pong_local_tournament": {
-        title: "local tournaments pong | " + urlPageTitle,
-        description: "Pongos local tournament page",
-    },
-    "/games_pong_online_tournament": {
-        title: "online tournaments pong | " + urlPageTitle,
-        description: "Pongos online tournaments page",
-    },
-    "/games_tictactoe_local": {
-        title: "tic tac toe | " + urlPageTitle,
-        description: "Pongos tic tac toe page",
-    },
-    "/games_tictactoe_online": {
-        title: "tic tac toe | " + urlPageTitle,
-        description: "Pongos tic tac toe page",
-    },
-};
 
 
 export const urlLocationHandler = async () => {
