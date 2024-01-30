@@ -14,6 +14,9 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 export function loadTournament(localMode) {
     continueExecution = true;
     let tournament_name;
+	let lastTimestamp = 0;
+	const maxFrameRate = 60;
+	const frameInterval = 1000 / maxFrameRate;
     const canvas = document.getElementById('gameCanvas');
     const docModalGame = document.getElementById('modalGame');
     const ctx = canvas.getContext('2d');
@@ -116,6 +119,7 @@ export function loadTournament(localMode) {
         score.right = 0;
         players.left = (canvas.height - paddle.height) / 2;
         players.right = (canvas.height - paddle.height) / 2;
+		lastTimestamp = 0;
     }
 
 
@@ -129,10 +133,28 @@ export function loadTournament(localMode) {
             ball.speedY *= -1;
         }
 
-        if (ball.x < paddle.width && ball.y > players.left && ball.y < players.left + paddle.height ||
-            ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
-            ball.speedX *= -1;
-        }
+        // if (ball.x < paddle.width && ball.y > players.left && ball.y < players.left + paddle.height ||
+        //     ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
+        //     ball.speedX *= -1;
+        // }
+		let paddleLeftEdgeX = 0;
+		let paddleRightEdgeX = canvas.width - paddle.width;
+		// Check collision with left paddle
+		if (ball.x - ball.size < paddleLeftEdgeX + paddle.width &&
+			ball.y + ball.size > players.left &&
+			ball.y - ball.size < players.left + paddle.height) {
+			// Adjust the ball's X position to prevent it from going inside the paddle
+			ball.x = paddleLeftEdgeX + paddle.width + ball.size;
+			ball.speedX *= -1;
+		}
+		// Check collision with right paddle
+		if (ball.x + ball.size > paddleRightEdgeX &&
+			ball.y + ball.size > players.right &&
+			ball.y - ball.size < players.right + paddle.height) {
+			// Adjust the ball's X position to prevent it from going inside the paddle
+			ball.x = paddleRightEdgeX - ball.size;
+			ball.speedX *= -1;
+		}
 
         if (localPlayerMode == true) {
             if (keys['ArrowUp'] && players.right > 0) players.right -= paddle.speed;
@@ -180,6 +202,7 @@ export function loadTournament(localMode) {
         }
 
 
+		// resetGame();
         //reset
         isGameOver = false;
         socketStatus = false;
@@ -188,8 +211,8 @@ export function loadTournament(localMode) {
         score.left = 0;
         score.right = 0;
         resetBall();
-        paddle.width = 10;
-        paddle.height = 100;
+        // paddle.width = 10;
+        // paddle.height = 100;
 
 
         //prompt new match
@@ -915,16 +938,33 @@ export function loadTournament(localMode) {
 
     };
 
-    async function gameLoop(timestamp) {
-        if (continueExecution == false)
-            return;
-        await update();
-        draw();
+    // async function gameLoop(timestamp) {
+    //     if (continueExecution == false)
+    //         return;
+    //     await update();
+    //     draw();
 
-        if (!isGameOver) {
-            animationFrameId = requestAnimationFrame(gameLoop);
-        }
-    }
+    //     if (!isGameOver) {
+    //         animationFrameId = requestAnimationFrame(gameLoop);
+    //     }
+    // }
+	async function gameLoop(timestamp) {
+
+        if (continueExecution == false)
+            return ;
+
+        const elapsed = timestamp - lastTimestamp;
+		console.log(timestamp);
+
+		if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
+			draw();
+			await update();
+			lastTimestamp = timestamp;
+			if (isGameOver)
+				return;
+			requestAnimationFrame(gameLoop);
+		}
+	}
 
 }
 
