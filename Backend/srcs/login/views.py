@@ -1,10 +1,8 @@
-from datetime import datetime, timedelta, timezone
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from rest_framework.decorators import api_view
+from datetime import datetime
+from django.contrib.auth import login as auth_login, logout as auth_logout
+from django.http import HttpResponse, JsonResponse
 from .models import UserProfile
-from django.views.decorators.cache import never_cache
 from django.db import IntegrityError
 from datetime import datetime
 from django.template.loader import get_template
@@ -12,9 +10,6 @@ from django.template import Context, Template
 from .utils import send_otp, get_user_token
 import os
 import requests
-from rest_framework.decorators import api_view, permission_classes
-from django.views.decorators.csrf import csrf_exempt
-from django.contrib.sessions.models import Session
 from django.conf import settings
 
 
