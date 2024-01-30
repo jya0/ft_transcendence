@@ -382,19 +382,19 @@ const urlRoutes = {
 
 const gameRoutes = {
     "/games_pong_local": {
-        title: "pong | " + urlPageTitle,
+        title: "local pong | " + urlPageTitle,
         description: "Pongos local page",
     },
     "/games_pong_online": {
-        title: "pong | " + urlPageTitle,
+        title: "online pong | " + urlPageTitle,
         description: "Pongos online page",
     },
     "/games_pong_local_tournament": {
-        title: "pong | " + urlPageTitle,
+        title: "local tournaments pong | " + urlPageTitle,
         description: "Pongos local tournament page",
     },
     "/games_pong_online_tournament": {
-        title: "pong | " + urlPageTitle,
+        title: "online tournaments pong | " + urlPageTitle,
         description: "Pongos online tournaments page",
     },
     "/games_tictactoe_local": {
@@ -464,6 +464,7 @@ export const urlLocationHandler = async () => {
     document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
 
     if (gameRoutes.hasOwnProperty(location)) {
+        const gameRoute = gameRoutes[location];
         setMainWindowframe();
         loadGameCanvas();
         switch (location) {
@@ -489,7 +490,7 @@ export const urlLocationHandler = async () => {
             default:
                 break;
         }
-        document.title = route.title;
+        document.title = gameRoute.title;
         return;
     }
     else if (location === '/play') {
