@@ -27,13 +27,14 @@ export function loadGame(username, localPlayerMode) {
 
     function resetGame(params) {
 
-        ball.x = canvas.width / 2;
-        ball.y = canvas.height / 2;
-        score.left = 0;
-        score.right = 0;
-        players.left = (canvas.height - paddle.height) / 2;
-        players.right = (canvas.height - paddle.height) / 2;
-    }
+		ball.x = canvas.width / 2;
+		ball.y = canvas.height / 2;
+		score.left = 0;
+		score.right = 0;
+		players.left = (canvas.height - paddle.height) / 2;
+		players.right = (canvas.height - paddle.height) / 2;
+		lastTimestamp = 0;
+	}
 
     let socketStatus = false;
 
@@ -151,14 +152,13 @@ export function loadGame(username, localPlayerMode) {
             updateBackend();
 
 
-        if (ball.x < 0 || ball.x > canvas.width) {
-            ball.x > canvas.width ? score.left++ : score.right++;
-            draw();
-            resetBall();
-            await checkForWinner();
-            return;
-        }
-    }
+		if (ball.x < 0 || ball.x > canvas.width) {
+			ball.x > canvas.width ? score.left++ : score.right++;
+			resetBall();
+			await checkForWinner();
+			return;
+		}
+	}
 
     function resetBall() {
         ball.x = canvas.width / 2;

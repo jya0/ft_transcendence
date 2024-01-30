@@ -25,6 +25,7 @@ services:
     build:
       context: ./Backend
     command: python manage.py runserver 0.0.0.0:8000
+    # command: gunicorn pong_os.wsgi:application -w 4 -b 0.0.0.0:8000 # in production
     volumes:
       - ./Backend/srcs:/app/
     ports:

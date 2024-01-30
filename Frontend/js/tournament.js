@@ -1,5 +1,5 @@
 // import {io} from "socket.io-client";
-import { loadLoginPage, getCookie, loadModal, showGameWinner } from "./loadComponent.js";
+import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast } from "./loadComponent.js";
 import {urlLocationHandler} from "./url-router.js"
 
 let continueExecution = true;
@@ -14,6 +14,9 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 export function loadTournament(localMode) {
     continueExecution = true;
     let tournament_name;
+	let lastTimestamp = 0;
+	const maxFrameRate = 60;
+	const frameInterval = 1000 / maxFrameRate;
     const canvas = document.getElementById('gameCanvas');
     const docModalGame = document.getElementById('modalGame');
     const ctx = canvas.getContext('2d');
@@ -22,11 +25,11 @@ export function loadTournament(localMode) {
     let pairings = [];
     let winners = [];
 
-    const paddle = { width: 10, height: 100, speed: 8 };
-    const ball = { size: 10, x: canvas.width / 2, y: canvas.height / 2, speedX: 6, speedY: 6 };
-    const score = { left: 0, right: 0 };
-    const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
-    const keys = {};
+	const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
+	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
+	const score = { left: 0, right: 0 };
+	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
+	const keys = {};
 
     let tournReady = false;
     let isGameOver = false;
@@ -40,17 +43,20 @@ export function loadTournament(localMode) {
     let g_count = 0;
 
     function draw() {
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, players.left, paddle.width, paddle.height);
-        ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.font = '30px Arial';
-        ctx.fillText(score.left, canvas.width / 4, 50);
-        ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+		ctx.fillStyle = '#000';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(0, players.left, paddle.width, paddle.height);
+		ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
+		ctx.beginPath();
+		ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+		ctx.fill();
+		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+		ctx.textAlign = "center";
+		ctx.textBaseline = "top";
+		ctx.fillText(score.left, canvas.width / 4, 50);
+		ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+		ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
     }
 
     function updateBackend() {
@@ -113,6 +119,7 @@ export function loadTournament(localMode) {
         score.right = 0;
         players.left = (canvas.height - paddle.height) / 2;
         players.right = (canvas.height - paddle.height) / 2;
+		lastTimestamp = 0;
     }
 
 
@@ -126,10 +133,28 @@ export function loadTournament(localMode) {
             ball.speedY *= -1;
         }
 
-        if (ball.x < paddle.width && ball.y > players.left && ball.y < players.left + paddle.height ||
-            ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
-            ball.speedX *= -1;
-        }
+        // if (ball.x < paddle.width && ball.y > players.left && ball.y < players.left + paddle.height ||
+        //     ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
+        //     ball.speedX *= -1;
+        // }
+		let paddleLeftEdgeX = 0;
+		let paddleRightEdgeX = canvas.width - paddle.width;
+		// Check collision with left paddle
+		if (ball.x - ball.size < paddleLeftEdgeX + paddle.width &&
+			ball.y + ball.size > players.left &&
+			ball.y - ball.size < players.left + paddle.height) {
+			// Adjust the ball's X position to prevent it from going inside the paddle
+			ball.x = paddleLeftEdgeX + paddle.width + ball.size;
+			ball.speedX *= -1;
+		}
+		// Check collision with right paddle
+		if (ball.x + ball.size > paddleRightEdgeX &&
+			ball.y + ball.size > players.right &&
+			ball.y - ball.size < players.right + paddle.height) {
+			// Adjust the ball's X position to prevent it from going inside the paddle
+			ball.x = paddleRightEdgeX - ball.size;
+			ball.speedX *= -1;
+		}
 
         if (localPlayerMode == true) {
             if (keys['ArrowUp'] && players.right > 0) players.right -= paddle.speed;
@@ -167,7 +192,6 @@ export function loadTournament(localMode) {
         //show results
         if (g_count != 2) {
 
-            // alert(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
             // console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
         }
 
@@ -176,7 +200,7 @@ export function loadTournament(localMode) {
             winners.push((pairings[g_count][0] > pairings[g_count][1]) ? pairings[g_count][0] : pairings[g_count][1]);
         }
 
-
+		// resetGame();
         //reset
         isGameOver = false;
         socketStatus = false;
@@ -185,13 +209,12 @@ export function loadTournament(localMode) {
         score.left = 0;
         score.right = 0;
         resetBall();
-        paddle.width = 10;
-        paddle.height = 100;
+        // paddle.width = 10;
+        // paddle.height = 100;
 
 
         //prompt new match
         if (g_count == 0) {
-            // alert(`Match ${g_count + 2}: ${pairings[1][0]} vs ${pairings[1][1]}\n Press to start`);
             //@todo - show bracket
             docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
             toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
@@ -205,7 +228,6 @@ export function loadTournament(localMode) {
             resetGame();
         }
         if (g_count == 1) {
-            // alert(`Match ${g_count + 2}: ${winners[0]} vs ${winners[1]}\n Press to start`);
             //@todo - show bracket
             docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
             toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
@@ -236,7 +258,6 @@ export function loadTournament(localMode) {
             g_count = 0;
             tournReady = false;
             isGameOver = true;
-            // alert(buttonText);
             docModalGame.querySelector('#winner-final').innerHTML = winners[0];
             toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
             toggleHighlight("tWinnerHighlight", "");
@@ -604,7 +625,7 @@ export function loadTournament(localMode) {
 
             // Check if all player names are unique
             if (hasDuplicates(playerNames)) {
-                alert("Player names must be unique. Please enter distinct names for each player.");
+				loadToast("Player names must be unique. Please enter distinct names for each player.");
                 return;
             }
             // Perform matchmaking logic (for demonstration, this is a simple random pairing)
@@ -705,7 +726,8 @@ export function loadTournament(localMode) {
         // Check if the input field already exists
         const inputField = document.getElementById('tournamentNameInput');
         if (inputField) {
-            alert('Please enter a tournament name before creating a new tournament.');
+            loadToast('Please enter a tournament name before creating a new tournament.');
+			
             return;
         }
 
@@ -730,7 +752,7 @@ export function loadTournament(localMode) {
     async function submitTournament() {
         const tournamentName = document.getElementById('tournamentName').value;
         if (!tournamentName) {
-            alert('Please enter a tournament name.');
+            loadToast('Please enter a tournament name.');
             return;
         }
         let contentType;
@@ -819,7 +841,7 @@ export function loadTournament(localMode) {
             if (!data) return;
             // Handle the response from the backend
             if (data.message === 'Tournament joined successfully') {
-                alert('Tournament joined successfully');
+                loadToast('Tournament joined successfully');
         
                 //@TODO : Clear screen !
                 // const menuContainer = document.getElementById('menu-container');
@@ -832,9 +854,9 @@ export function loadTournament(localMode) {
                 //@TODO : Open socket
                 initiateSocket();
             } else if (data.message === "Sorry ur late. tournament is full :/") {
-                alert("Sorry ur late. tournament is full :/");
+                loadToast("Sorry ur late. tournament is full :/");
             } else if (data.message === "You are already in the tournament") {
-                alert('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
+                loadToast('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
         
                 //@TODO : Clear screen !
                 // const menuContainer = document.getElementById('menu-container');
@@ -912,16 +934,33 @@ export function loadTournament(localMode) {
 
     };
 
-    async function gameLoop() {
-        if (continueExecution == false)
-            return;
-        await update();
-        draw();
+    // async function gameLoop(timestamp) {
+    //     if (continueExecution == false)
+    //         return;
+    //     await update();
+    //     draw();
 
-        if (!isGameOver) {
-            animationFrameId = requestAnimationFrame(gameLoop);
-        }
-    }
+    //     if (!isGameOver) {
+    //         animationFrameId = requestAnimationFrame(gameLoop);
+    //     }
+    // }
+	async function gameLoop(timestamp) {
+
+        if (continueExecution == false)
+            return ;
+
+        const elapsed = timestamp - lastTimestamp;
+		console.log(timestamp);
+
+		if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
+			draw();
+			await update();
+			lastTimestamp = timestamp;
+			if (isGameOver)
+				return;
+			requestAnimationFrame(gameLoop);
+		}
+	}
 
 }
 

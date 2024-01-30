@@ -24,11 +24,12 @@ export function  loadTicTac(){
         var container = document.createElement('div');
         container.id = 'game-container';
         container.className = 'tictactoe';
-		container.classList = "d-flex flex-row h-100 w-100 p-5 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
+		container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
         container.innerHTML = 
 			`
-				<div id="tictactoe" class="d-flex justify-content-center align-items-center flex-grow-1 h-75 w-75 border border-0 border-black"></div>
-				<div id="turn" class="text-capitalize text-black w-25 text-center h2 border border-1 border-black rounded p-4">
+				<div id="tictactoe" class="d-flex flex-column h-100 justify-content-center align-items-center flex-grow-1 h-100 w-100 border border-0 border-black">
+				</div>
+				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-1">
 					player x
 				</div>
 			
@@ -46,8 +47,8 @@ export function  loadTicTac(){
             board.appendChild(row);
             for (var j = 0; j < N_SIZE; j++) {
                 var cell = document.createElement('td');
-                cell.setAttribute('height', 120);
-                cell.setAttribute('width', 120);
+                cell.setAttribute('height', 100);
+                cell.setAttribute('width', 100);
                 cell.setAttribute('align', 'center');
                 cell.setAttribute('valign', 'center');
                 cell.classList.add('col' + j, 'row' + i);
@@ -64,6 +65,9 @@ export function  loadTicTac(){
                 identifier += identifier;
             }
         }
+		// board.classList.add("ratio", "ratio-1x1");
+		console.log(document.getElementById("windowScreen").getBoundingClientRect().height);
+		board.style.scale = document.getElementById("windowScreen").getBoundingClientRect().width / 300 * 0.5;
         document.getElementById('tictactoe').appendChild(board);
         console.log("heheeee");
 
@@ -350,10 +354,10 @@ export function  loadTicTac(){
             moves += 1;
 
             if (win(boxes[data['cellIndex']])) {
-                alert('Winner: Player ' + turn);
+                loadToast('Winner: Player ' + turn);
                 endGame();
             } else if (moves === N_SIZE * N_SIZE) {
-                alert("Draw");
+                loadToast("Draw");
                 endGame();
             } else {
                 turn = turn === "X" ? "O" : "X";
