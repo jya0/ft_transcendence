@@ -1,5 +1,6 @@
 // import {io} from "socket.io-client";
 import { loadLoginPage, getCookie, loadModal, showGameWinner } from "./loadComponent.js";
+import {urlLocationHandler} from "./url-router.js"
 
 let continueExecution = true;
 
@@ -225,10 +226,11 @@ export function loadTournament(localMode) {
             tournReady = false;
             let winner;
             if (score.left > score.right) {
-                buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
                 winner = winners[0];
-
+                buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
             }
+            else
+                winner = winners[1];
             winners = [];
             winners.push(winner);
             g_count = 0;
@@ -239,6 +241,9 @@ export function loadTournament(localMode) {
             toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
             toggleHighlight("tWinnerHighlight", "");
             showGameWinner(winner);
+            window.history.pushState({}, "", '/play');
+            urlLocationHandler();
+            return ;
             //@todo - show bracket
         }
         else
@@ -265,6 +270,8 @@ export function loadTournament(localMode) {
         gameSocket.close();
         isGameOver = true;
         socketStatus = false;
+        window.history.pushState({}, "", '/play');
+        urlLocationHandler();
     }
 
     async function checkForWinner() {
