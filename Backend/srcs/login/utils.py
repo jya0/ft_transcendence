@@ -18,9 +18,9 @@ EMAIL_HOST = os.environ.get("EMAIL_HOST")
 def send_otp(request, username):
     user = get_object_or_404(UserProfile, username=username)
     secret_key = pyotp.random_base32()
-    totp = pyotp.TOTP(secret_key, interval=60)
+    totp = pyotp.TOTP(secret_key, interval=300)
     otp = totp.now()
-    valid_date = datetime.now() + timedelta(minutes=2)
+    valid_date = datetime.now() + timedelta(minutes=300)
     user.otp_secret_key = secret_key
     valid_date_utc_aware = valid_date.replace(tzinfo=timezone.utc)
     user.otp_valid_date = valid_date_utc_aware

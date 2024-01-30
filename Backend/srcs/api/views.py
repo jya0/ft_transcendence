@@ -40,6 +40,7 @@ import pyotp
 BASE_DIR = settings.BASE_DIR
 SECRET_KEY = settings.SECRET_KEY
 
+
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -56,8 +57,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
 
 
 @api_view(['GET'])
@@ -237,9 +236,6 @@ def create_tournament(request):
     return JsonResponse({'message': 'Tournament created successfully'}, status=200)
 
 
-
-
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def enable_or_disable_2fa(request):
@@ -250,7 +246,7 @@ def enable_or_disable_2fa(request):
     if user.is_2fa_enabled:
         request.session['username'] = user.username
         return HttpResponse("2FA Enabled successfully")
-    
+
     return HttpResponse("2FA disabled successfully")
 
 
@@ -258,14 +254,14 @@ def enable_or_disable_2fa(request):
 def validate_otp(request):
     user = get_object_or_404(UserProfile, username=request.user.username)
     otp = request.POST.get('otp')
-    totp = pyotp.TOTP(user.otp_secret_key, interval=60)
+    totp = pyotp.TOTP(user.otp_secret_key, interval=300)
     if otp and totp.verify(otp):
         current_datetime = datetime.now(timezone.utc)
         stored_datetime = user.otp_valid_date
 
-        if current_datetime <= stored_datetime:
-            auth_login(request, user)
-            return JsonResponse({'message': 'OTP is valid'})
+        # if current_datetime <= stored_datetime:
+        auth_login(request, user)
+        return JsonResponse({'message': 'OTP is valid'})
 
     return JsonResponse({'message': 'Invalid OTP'}, status=200)
 
@@ -299,10 +295,8 @@ def get_user_data(request):
     session_id = request.COOKIES.get('sessionid')
     if session_id:
         username = request.GET.get('username')
-        print('-------------> ', username)
         if username == 'undefined' or 'null':
             username = request.session.get('username', None)
-            print('-------------> ', username)
         user = get_object_or_404(UserProfile, username=username)
         user_data = {
             'username': user.username,
@@ -324,8 +318,6 @@ def get_image(request, username):
     return JsonResponse({'error': 'Image not found'}, status=204)
 
 
-
-
 # # ______________________________________________________________________________________
 # # ______________________________________________________________________________________
 # # TOOURNAMENT ENDPOINTS
@@ -336,7 +328,6 @@ def get_all_tournaments(request):
     tourns = Tournament.objects.filter(Q(status=True))
     # serializer = TournamentSerializer(tourns, many=True)
 
-
     template = get_template('tournament.html')
     template_content = template.template.source
     template = Template(template_content)
@@ -345,7 +336,6 @@ def get_all_tournaments(request):
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
     # return JsonResponse(serializer.data, safe=False)
-
 
 
 @api_view(['POST'])
@@ -365,7 +355,6 @@ def create_tournament(request):
     tourns = Tournament.objects.filter(Q(status=True))
     # serializer = TournamentSerializer(tourns, many=True)
 
-
     template = get_template('tournament.html')
     template_content = template.template.source
     template = Template(template_content)
@@ -374,7 +363,6 @@ def create_tournament(request):
     rendered_template = template.render(context)
     print(tourns)
     return HttpResponse(rendered_template, content_type='text/html')
-
 
 
 @api_view(['POST'])
@@ -394,7 +382,7 @@ def join_tournament(request):
     if (tourn.name == 'defTourn'):
         joined = False
         return JsonResponse({'message': 'This ones not allowed...'}, status=200)
-        
+
     # Case 1: already in the tournament lobby:
     if (games[0].id1 == user or games[0].id2 == user):
         msg = "You are already in the tournament"
@@ -436,5 +424,5 @@ def join_tournament(request):
         msg = 'Tournament joined successfully'
         tourn.count = tourn.count + 1
     print(msg)
-    
+
     return JsonResponse({'message': msg}, status=200)

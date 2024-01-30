@@ -6,7 +6,6 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
-    TokenRefreshView,
     TokenVerifyView,
 )
 
@@ -42,7 +41,6 @@ urlpatterns = [
     path("two_fa_toggle/", two_fa_toggle, name='2fa_toggle'),
     path('42_intra_link/', intra_link, name='intra_link'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('toggle_friend/', add_or_remove_friend,
          name='add_or_remove_friend'),

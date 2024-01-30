@@ -51,10 +51,6 @@ await fetch(`/api/get_user_data/?username=${sessionStorage.getItem('username') ?
 })
 
 
-
-
-
-
 const viewUserProfile = (username) => {
     console.log(`Viewing profile for ${username}`);
     const url = `/api/users/${username}?username=${user.username}}`;
@@ -342,6 +338,7 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
                     loadToast('You have been logged out successfully');
                 }
                 else {
+                    loadLoginPage('Please login to continue');
                     document.getElementById('logout').remove();
                 }
             })
@@ -533,77 +530,7 @@ export const urlLocationHandler = async () => {
         return;
     }
     else if (location === '/desktop') {
-
-        // function openSmallWindow() {
-        //     // const width = 200;
-        //     // const height = 150;
-
-
-        //     const left = Math.abs(Math.floor((Math.random() * window.innerWidth - width)) - 1000);
-        //     const top = Math.abs(Math.floor((Math.random() * window.innerHeight - height / 2)) - 500);
-        //     console.log(left, top);
-
-        //     const windowFrame = document.createElement('div');
-        //     windowFrame.className = 'small-window-frame';
-        //     windowFrame.style.left = left + 'px';
-        //     windowFrame.style.top = top + 'px';
-
-
-        //     const topBar = document.createElement('div');
-        //     topBar.className = 'small-top-bar';
-        //     windowFrame.appendChild(topBar);
-
-
-        //     const rectangleIcon = document.createElement('img');
-        //     rectangleIcon.className = 'small-top-bar-child';
-        //     rectangleIcon.src = './assets/public/rectangle-4.svg';
-        //     topBar.appendChild(rectangleIcon);
-
-        //     const options = document.createElement('div');
-        //     options.className = 'small-options';
-        //     topBar.appendChild(options);
-
-        //     const vectorIcon = document.createElement('img');
-        //     vectorIcon.className = 'small-vector-icon';
-        //     vectorIcon.src = './assets/public/vector.svg';
-        //     options.appendChild(vectorIcon);
-
-        //     const dotGridIcon = document.createElement('img');
-        //     dotGridIcon.className = 'small-dot-grid-icon';
-        //     dotGridIcon.src = './assets/public/dot-grid.svg';
-        //     options.appendChild(dotGridIcon);
-
-
-        //     const windowContent = document.createElement('div');
-        //     windowContent.className = 'small-window';
-
-
-        //     const welcomeText = document.createElement('div');
-        //     welcomeText.className = 'small-welcome-text';
-        //     welcomeText.textContent = `Welcome ${user ? user.username : ''}!`;
-        //     windowContent.appendChild(welcomeText);
-
-        //     windowFrame.appendChild(windowContent);
-
-        //     document.body.appendChild(windowFrame);
-
-        //     windowFrame.style.display = 'block';
-
-
-
-        //     setTimeout(() => {
-        //         document.body.removeChild(windowFrame);
-        //     }, 500);
-        // }
-
-        // const windowInterval = setInterval(openSmallWindow, 50);
-        loadToast(`Welcome ${user ? user.username : ''}!`);
-
-        const location = window.location.pathname;
-
-        setTimeout(() => {
-            clearInterval(windowInterval);
-        }, 500);
+        loadToast(`Welcome ${user.username}!`);
     }
     else if (location === '/profile') {
         setMainWindowframe();
