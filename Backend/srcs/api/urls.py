@@ -21,8 +21,7 @@ urlpatterns = [
     path('enable_or_disable_2fa/', views.enable_or_disable_2fa,
          name='enable_or_disable_2fa'),
     path('validate_otp/', views.validate_otp, name='validate_otp'),
-    path('generate_test_user/', views.generate_test_user,
-         name='generate_test_user'),
+	path('check_auth/', views.check_auth, name='check_auth'),
 
     path("tournaments/", get_all_tournaments, name="get_all_tournaments"),
     path("join/", join_tournament, name="join_tournament"),

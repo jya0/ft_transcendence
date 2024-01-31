@@ -67,12 +67,36 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
     LOGIN_PAGE_HTML = data;
 });
 
-function loadLoginPage(message) {
+function checkAuth() {
+    console.log(localStorage.getItem('access_token'))
+    fetch('api/check_auth/', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+    }).then(response => {
+        if (!response.ok) {
+            console.log('response', response);
+            loadLoginPage('Unauthorized, please login again!');
+        }
+    });
+}
+
+async function loadLoginPage(message) {
     document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
     if (message) {
         loadToast(message);
     }
     localStorage.clear();
+    await fetch('/api/logout/', {
+        credentials: 'include',
+    })
+        .then(response => {
+            if (!response.ok) {
+                return null
+            }
+            return null;
+        })
     const docModalMain = document.getElementById('modalSetting');
     const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
     tmpModalSetting.hide();
@@ -494,6 +518,7 @@ export const urlLocationHandler = async () => {
         return;
     }
     else if (location === '/play') {
+        checkAuth();
         setMainWindowframe();
         loadGameMenu();
         let gameMenu = document.querySelectorAll('#gameMenu a');
@@ -675,7 +700,7 @@ async function handleUserData() {
                         `
 						<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 gap-5 justify-content-center align-items-center font--argent" id="otp-container">
 							<div class="p-5">
-								<label for="otp-input" class="form-label">Your OTP Code is valid for 2 minutes</label>
+								<label for="otp-input" class="form-label">Your OTP Code is valid for 5 minutes</label>
 								<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
 							</div>
 							<button type="submit-otp" id="submit-otp" class="btn btn-outline-dark border border-2 border-black rounded">Validate OTP</button>
