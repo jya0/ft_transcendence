@@ -117,6 +117,26 @@ export const loadModal = (idModalBody, innerHTML) => {
 	elementIdEditInnerHTML(idModalBody, innerHTML);
 };
 
+export const showModal = (idModal) => {
+	const docModal = document.getElementById(idModal);
+	if (docModal)
+	{
+		const tmpModal = bootstrap.Modal.getOrCreateInstance(docModal);
+		tmpModal.show();
+	}
+}
+
+export const hideModal = (idModal) => {
+	const docModal = document.getElementById(idModal);
+	if (docModal)
+	{
+		const tmpModal = bootstrap.Modal.getOrCreateInstance(docModal);
+		tmpModal.hide();
+	}
+}
+
+
+
 export const showGameWinner = (winner) => {
 	loadModal('modalGameBody', 
 		`<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 overflow-hidden font--neue align-items-center justify-content-center gap-2 border border-1 border-white bg-black">
@@ -129,11 +149,7 @@ export const showGameWinner = (winner) => {
 				winner: ${winner}
 			</p>
 		</div>`);
-	let docModalGame = document.getElementById("modalGame");
-	if (!docModalGame)
-		return ;
-	const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-	tmpModalGame.show();
+	showModal("modalGame");
 };
 
 export const loadSpinner = (elementId, color) => {
@@ -155,15 +171,13 @@ export function loadLoginPage(message) {
 	elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
 	if (!document.getElementById("main-content"))
 		return ;
-	// document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+	// elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
 	if (message) {
 		console.log("loadLoginPage message");
 		loadToast(message);
 	}
 	localStorage.clear();
-	const docModalSetting = document.getElementById('modalSetting');
-	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalSetting);
-	tmpModalSetting.hide();
+	hideModal("modalSetting");
 }
 
 
