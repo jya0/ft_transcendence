@@ -10,7 +10,6 @@ export function loadGame(username, localPlayerMode) {
 	const canvas = document.getElementById('gameCanvas');
 	if (!docModalGame || !canvas)
 		return ;
-    console.log(gameSocket);
     let player1 = username;
     user_name = username;
     let player2 = "";
@@ -63,8 +62,15 @@ export function loadGame(username, localPlayerMode) {
         ctx.fillText(score.right, 3 * canvas.width / 4, 50);
         ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
         if (!localPlayerMode) {
-            ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
-            ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
+            if (leftPlayer)
+            {
+                ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
+                ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
+            }
+            else {
+                ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
+                ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
+            }
         }
 
     }
@@ -75,6 +81,7 @@ export function loadGame(username, localPlayerMode) {
                 players.right -= paddle.speed;
                 keyPressed = 'w';
                 gameSocket.send(JSON.stringify({
+                    'game': 'pong',
                     'type': 'update',
                     'mode': 'single',
                     'username': username,
@@ -85,6 +92,7 @@ export function loadGame(username, localPlayerMode) {
                 players.right += paddle.speed;
                 keyPressed = 's';
                 gameSocket.send(JSON.stringify({
+                    'game': 'pong',
                     'type': 'update',
                     'mode': 'single',
                     'username': username,
@@ -97,6 +105,7 @@ export function loadGame(username, localPlayerMode) {
                 players.left -= paddle.speed;
                 keyPressed = 'w';
                 gameSocket.send(JSON.stringify({
+                    'game': 'pong',
                     'type': 'update',
                     'mode': 'single',
                     'username': username,
@@ -107,6 +116,7 @@ export function loadGame(username, localPlayerMode) {
                 players.left += paddle.speed;
                 keyPressed = 's';
                 gameSocket.send(JSON.stringify({
+                    'game': 'pong',
                     'type': 'update',
                     'mode': 'single',
                     'username': username,
@@ -200,12 +210,15 @@ export function loadGame(username, localPlayerMode) {
         if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
         {
             winner = player2;
-            winnerMsg = ` ${winner}\nSorry You lose!`;
+            winnerMsg = ` ${winner}
+            Sorry You lose!`;
         }
         else {
             winner = player1;
-            winnerMsg = ` ${winner}\nCongrats You won!`;
+            winnerMsg = ` ${winner}
+            Congrats You won!`;
             gameSocket.send(JSON.stringify({
+                'game': 'pong',
                 'type': 'end',
                 'mode': 'single',
                 'username': winner,
@@ -261,6 +274,8 @@ export function loadGame(username, localPlayerMode) {
 
             if (btnCounter == 0)
                 return;
+            if (data.game === 'tic')
+                return ;
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 // loadSpinner("modalGameBody", "text-black");
@@ -318,6 +333,7 @@ export function loadGame(username, localPlayerMode) {
             socketStatus = true;
 
             gameSocket.send(JSON.stringify({
+                'game': 'pong',
                 'type': 'start',
                 'mode': 'single',
                 'username': username
@@ -414,6 +430,7 @@ export function closePong1v1Socket() {
     if (gameSocket === "")
         return;
     gameSocket.send(JSON.stringify({
+        'game': 'pong',
         'type': 'terminate',
         'mode': 'online1v1',
         'sender': user_name,
