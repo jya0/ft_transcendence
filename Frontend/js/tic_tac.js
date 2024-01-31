@@ -40,9 +40,14 @@ export function loadTicTac(username, localPlayerMode) {
 
         gameOver = false;
 
+        gameOver = false;
+
         var container = document.createElement('div');
         container.id = 'tictac-container';
         container.className = 'tictactoe';
+        container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
+        container.innerHTML =
+            `
         container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
         container.innerHTML =
             `
@@ -80,6 +85,12 @@ export function loadTicTac(username, localPlayerMode) {
                 identifier += identifier;
             }
         }
+        // board.classList.add("ratio", "ratio-1x1");
+        console.log(docWinScreen.getBoundingClientRect().height);
+        board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
+        container.querySelector("#tictactoe").appendChild(board);
+        docWinScreen.innerHTML = "";
+        docWinScreen.appendChild(container);
         // board.classList.add("ratio", "ratio-1x1");
         console.log(docWinScreen.getBoundingClientRect().height);
         board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
@@ -126,6 +137,8 @@ export function loadTicTac(username, localPlayerMode) {
         var elements = document.querySelectorAll(selector);
         if (!elements)
             return (false);
+        if (!elements)
+            return (false);
         return [].filter.call(elements, function (element) {
             return RegExp(text).test(element.textContent);
         });
@@ -146,6 +159,8 @@ export function loadTicTac(username, localPlayerMode) {
             // alert('Winner: Player ' + turn);
             querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
             return;
+            querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
+            return;
         } else if (moves === N_SIZE * N_SIZE) {
             // alert("Draw");
             querySelectIdEditInnerHTML(docWinScreen, "turn", `DRAW!`);
@@ -154,6 +169,7 @@ export function loadTicTac(username, localPlayerMode) {
             return;
         } else {
             turn = turn === "X" ? "O" : "X";
+            querySelectIdEditInnerHTML(docWinScreen, "turn", 'Player ' + turn);
             querySelectIdEditInnerHTML(docWinScreen, "turn", 'Player ' + turn);
         }
     }
