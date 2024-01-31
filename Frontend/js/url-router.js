@@ -1,8 +1,9 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner, getCookie } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas, loadToast, loadModal, showModal, hideModal, loadSpinner, getCookie } from './loadComponent.js';
 import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
+import { elementIdEditInnerHTML } from './utility.js';
 
 const urlRoutes = {
     404: {
@@ -83,7 +84,9 @@ function checkAuth() {
 }
 
 async function loadLoginPage(message) {
-    document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+	elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+
+    // elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
     if (message) {
         loadToast(message);
     }
@@ -99,7 +102,7 @@ async function loadLoginPage(message) {
         })
     const docModalAll = document.querySelectorAll(".modal");
 	const tmpModalBs = '';
-	docModalAll.forEach(element => {
+	docModalAll?.forEach(element => {
 		tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
 		tmpModalBs.hide();
 	});
@@ -144,9 +147,9 @@ const viewUserProfile = (username) => {
         .then(response => response.text())
         .then(data => {
             console.log(data);
-            document.getElementsByClassName("window")[0].innerHTML = data;
+			elementIdEditInnerHTML("windowScreen", data);
             const addFriendButton = document.getElementById('add-friend');
-            addFriendButton.addEventListener('click', async () => {
+            addFriendButton?.addEventListener('click', async () => {
                 addFriend(addFriendButton, user.username, username);
             });
         })
@@ -167,7 +170,8 @@ const addFriend = async (button, username, newFriend) => {
         });
 
         if (!response.ok) {
-            document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+			elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+            // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
             loadToast('Unauthorized, please login again!')
             localStorage.clear();
             return;
@@ -214,49 +218,50 @@ const urlRoute = (event) => {
 
 function setMainWindowframe() {
     insertOrCreateContent();
-    document.getElementById("content").innerHTML =
-        `					
-			<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
-				<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
-					<!-- WINDOW-BAR -->
-					<div class="d-flex p-0 border border-0 border-light bg-black">
-						<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me" aria-label="Close">
-							<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
-								viewBox="0 0 20 20" fill="none">
-								<path
-									d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
-									fill="#E1E0DF" />
-							</svg>
-						</button>
-						<div class="container-fluid my-1 me-1 border border-0 border-light bg--polka">
+	elementIdEditInnerHTML("content",
+			`					
+				<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
+					<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
+						<!-- WINDOW-BAR -->
+						<div class="d-flex p-0 border border-0 border-light bg-black">
+							<button type="button" class="d-flex m-2 border border-0 border-light bg-transparent" id="close-me" aria-label="Close">
+								<svg xmlns="https://www.w3.org/2000/svg" width="20" height="20"
+									viewBox="0 0 20 20" fill="none">
+									<path
+										d="M2.21736 20H4.44931V17.7697H6.66667V15.5539H8.88403V13.3382H11.116V15.5539H13.3333V17.7697H15.5653V20H17.7826V17.7697H20V15.5539H17.7826V13.3382H15.5653V11.1079H13.3333V8.89213H15.5653V6.67639H17.7826V4.44606H20V2.23032H17.7826V0H15.5653V2.23032H13.3333V4.44606H11.116V6.67639H8.88403V4.44606H6.66667V2.23032H4.44931V0H2.21736V2.23032H0V4.44606H2.21736V6.67639H4.44931V8.89213H6.66667V11.1079H4.44931V13.3382H2.21736V15.5539H0V17.7697H2.21736V20Z"
+										fill="#E1E0DF" />
+								</svg>
+							</button>
+							<div class="container-fluid my-1 me-1 border border-0 border-light bg--polka">
+							</div>
 						</div>
-					</div>
-					<!-- WINDOW-SCREEN -->
-					<div class="ratio ratio-4x3">
-						<div class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window" id="windowScreen">
+						<!-- WINDOW-SCREEN -->
+						<div class="ratio ratio-4x3">
+							<div class="d-flex h-100 w-100 flex-grow-1 border border-0 border-light bg-light window" id="windowScreen">
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		`;
-    document.getElementById('close-me').addEventListener('click', () => {
-
-        if (gameMode !== 'none') {
-            closePong1v1Socket();
-            console.log("heyyyyyyyyyyyyyyyyyyyyyy");
-            const canvasElement = document.getElementById("gameCanvas");
-            let animationId = canvasElement.dataset.animationFrameId;
-            window.cancelAnimationFrame(animationId);
-            canvasElement.remove();
-            if (gameMode === 'pong single')
-                stopPongExecution();
-            if (gameMode === 'pong tournament')
-                stopTournamentExecution();
-            gameMode = 'none';
-        }
-        document.getElementById('closeWindow').innerHTML = '';
-
-    });
+			`);
+    document.getElementById('close-me')?.addEventListener('click', () => {
+		if (gameMode !== 'none') {
+			closePong1v1Socket();
+			console.log("heyyyyyyyyyyyyyyyyyyyyyy");
+			const canvasElement = document.getElementById("gameCanvas");
+			if (canvasElement)
+			{
+				let animationId = canvasElement.dataset.animationFrameId;
+				window.cancelAnimationFrame(animationId);
+				canvasElement.remove();
+				if (gameMode === 'pong single')
+					stopPongExecution();
+				if (gameMode === 'pong tournament')
+					stopTournamentExecution();
+				gameMode = 'none';
+			};
+		}
+		elementIdEditInnerHTML("closeWindow", "");
+	});
 }
 
 async function updateProfile(file) {
@@ -283,18 +288,18 @@ async function updateProfile(file) {
         .then(response => {
             if (!response.ok) {
                 console.log('response', response);
-                document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Failed to update Image, You have to login again for security reasons!');
                 localStorage.clear();
-                const docModalMain = document.getElementById('modalSetting');
-                const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
-                tmpModalSetting.hide();
+				hideModal("modalSetting");
+
                 return null;
             }
             return response.json()
 
         }).then(data => {
             if (!data) {
+				console.log("data is null");
                 return;
             }
             loadToast('Image updated successfully');
@@ -308,24 +313,21 @@ async function updateProfile(file) {
 let loadModalFile = async function (event) {
     let image = document.getElementById('output');
 
-    document.getElementById('inputFile-btn').addEventListener('click', async () => {
+    document.getElementById('inputFile-btn')?.addEventListener('click', async () => {
         let modalInput = document.getElementById('modal-inputFile');
         if (modalInput) {
             let modalFile = modalInput.files[0];
 
-            if (modalFile) {
-                updateProfile(modalFile, image);
-                if (image) {
-                    image.src = URL.createObjectURL(event.target.files[0]);
-                }
-            }
+			updateProfile(modalFile, image);
+			if (image)
+				image.src = URL.createObjectURL(event.target.files[0]);
         }
     });
 
 };
 
 
-document.getElementById('modalSettingBtn').addEventListener('click', async () => {
+document.getElementById('modalSettingBtn')?.addEventListener('click', async () => {
     loadModal('modalSettingBody',
         `
 			<div class="d-flex flex-column align-items-center rounded p-5 border border-1 border-black w-100 h-100 font--argent gap-5">
@@ -355,8 +357,8 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
 			</div>
 		`);
 
-    document.getElementById('modal-inputFile').addEventListener('change', loadModalFile, false);
-    document.getElementById('logout').addEventListener('click', () => {
+    document.getElementById('modal-inputFile')?.addEventListener('change', loadModalFile, false);
+    document.getElementById('logout')?.addEventListener('click', () => {
         localStorage.clear();
         console.log('logout');
         fetch('/api/logout', {
@@ -373,21 +375,18 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
                 if (!data) return;
                 console.log('Data fetched:', data);
                 if (data.message === 'Logged out successfully') {
-                    document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                     loadToast('You have been logged out successfully ;(');
                 }
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-        const docModalMain = document.getElementById('modalSetting');
-        const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
-        tmpModalSetting.hide();
-
+			hideModal("modalSetting");
     });
-    document.getElementById('nickname-btn').addEventListener('click', async () => {
+    document.getElementById('nickname-btn')?.addEventListener('click', async () => {
 
-        const newDisplayName = document.getElementById('displayNameInput');
+		const newDisplayName = document.getElementById('displayNameInput');
         const nicknameValue = newDisplayName.value;
         const displayNameElement = document.getElementById('displayName');
 
@@ -414,11 +413,9 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
         ).then(response => {
             if (!response.ok) {
                 console.log('response', response);
-                document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Failed to update display name, You have to login again for security reasons!');
-                const docModalMain = document.getElementById('modalSetting');
-                const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
-                tmpModalSetting.hide();
+				hideModal("modalSetting");
                 return null;
             }
             return response.json()
@@ -438,7 +435,7 @@ document.getElementById('modalSettingBtn').addEventListener('click', async () =>
 
 export const urlLocationHandler = async () => {
     if (!user) {
-        document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
         return;
     }
 
@@ -447,18 +444,21 @@ export const urlLocationHandler = async () => {
         closePong1v1Socket();
         console.log("heyyyyyyyyyyyyyyyyyyyyyy");
         const canvasElement = document.getElementById("gameCanvas");
-        let animationId = canvasElement.dataset.animationFrameId;
-        window.cancelAnimationFrame(animationId);
-        canvasElement.remove();
-        if (gameMode === 'pong single')
-            stopPongExecution();
-        if (gameMode === 'pong tournament')
-            stopTournamentExecution();
-        gameMode = 'none';
+		if (canvasElement)
+		{
+			let animationId = canvasElement.dataset.animationFrameId;
+			window.cancelAnimationFrame(animationId);
+			canvasElement.remove();
+			if (gameMode === 'pong single')
+				stopPongExecution();
+			if (gameMode === 'pong tournament')
+				stopTournamentExecution();
+			gameMode = 'none';
+		}
     }
 
     insertOrCreateContent();
-    document.getElementById("content").innerHTML = ``;
+	elementIdEditInnerHTML("content", "");
     let location = window.location.pathname;
     if (location[location.length - 1] === '/') {
         location = location.slice(0, location.length - 1);
@@ -480,16 +480,13 @@ export const urlLocationHandler = async () => {
 
     if (location === '/') {
         console.log('login route');
-        if (document.getElementById("navbar")) {
-            document.getElementById("navbar").remove();
-        }
+    	document.getElementById("navbar")?.remove();
         console.log('login route')
-        document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
         return;
     }
 
-    document.getElementById("navbar").style.display = 'flex';
-    document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
+	elementIdEditInnerHTML("username-welcome", `${user ? user.username : ''}`);
 
     if (gameRoutes.hasOwnProperty(location)) {
         const gameRoute = gameRoutes[location];
@@ -544,7 +541,7 @@ export const urlLocationHandler = async () => {
         setMainWindowframe();
         console.log(user)
         if (!user) {
-            document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+            elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
             localStorage.clear();
             return;
         }
@@ -555,7 +552,7 @@ export const urlLocationHandler = async () => {
             },
         }).then(response => {
             if (!response.ok) {
-                document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 localStorage.clear();
                 console.log(response.statusText);
                 loadToast('Please login to continue');
@@ -567,8 +564,7 @@ export const urlLocationHandler = async () => {
             if (!data) {
                 return;
             }
-            document.getElementById("windowScreen").innerHTML = data;
-
+			elementIdEditInnerHTML("windowScreen", data);
         }).catch((error) => {
             console.error('Error:', error);
         });
@@ -585,7 +581,7 @@ export const urlLocationHandler = async () => {
                 });
 
                 if (!response.ok) {
-                    document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                     loadToast('Please login to to verify your identity');
                     localStorage.clear();
                     throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
@@ -594,11 +590,12 @@ export const urlLocationHandler = async () => {
                 const data = await response.text();
 
                 if (data === '2FA disabled successfully') {
-                    document.getElementById('2fa-button').innerHTML = 'Enable 2FA';
+					elementIdEditInnerHTML("2fa-button", "Enable 2FA");
+
                     loadToast('2FA disabled successfully');
                 } else {
                     document.getElementById("navbar").style.display = 'none';
-                    document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                     localStorage.clear();
                     loadToast('2FA enabled successfully, please login again');
                 }
@@ -611,7 +608,7 @@ export const urlLocationHandler = async () => {
     else if (location === '/users') {
         setMainWindowframe();
         await fetch('/components/player-card.html').then(response => response.text()).then(data => {
-            document.getElementsByClassName("window")[0].innerHTML = data;
+			elementIdEditInnerHTML("windowScreen", data);
         });
         let users = getAllUsers();
 
@@ -633,7 +630,7 @@ export const urlLocationHandler = async () => {
     }
     else {
         await fetch('/components/404.html').then(response => response.text()).then(data => {
-            document.getElementById("main-content").innerHTML = data;
+			elementIdEditInnerHTML("main-content", data);
         });
     }
 
@@ -654,6 +651,7 @@ async function handleUserData() {
 
     history.replaceState({}, '', mainUrl);
     console.log('code', code)
+
     if (code) {
         loadSpinner("content", "text-white");
         if (document.getElementById("navbar")) {
@@ -670,12 +668,12 @@ async function handleUserData() {
                 console.log('response', response)
                 if (!response.ok) {
                     if (response.status === 400) {
-                        document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+                        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                         loadToast('Invalid code');
                         localStorage.clear();
                         return;
                     }
-                    document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                     loadToast('Please login to continue');
                     localStorage.clear();
                     return;
@@ -699,17 +697,16 @@ async function handleUserData() {
                 if (otp === 'validate_otp') {
                     console.log('validate otp');
                     setMainWindowframe();
-
-                    document.getElementById('windowScreen').innerHTML =
+					elementIdEditInnerHTML("windowScreen",
                         `
-						<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 gap-5 justify-content-center align-items-center font--argent" id="otp-container">
-							<div class="p-5">
-								<label for="otp-input" class="form-label">Your OTP Code is valid for 5 minutes</label>
-								<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
+							<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 gap-5 justify-content-center align-items-center font--argent" id="otp-container">
+								<div class="p-5">
+									<label for="otp-input" class="form-label">Your OTP Code is valid for 5 minutes</label>
+									<input type="text" class="form-control" id="otp-input" placeholder="Enter OTP code">
+								</div>
+								<button type="submit-otp" id="submit-otp" class="btn btn-outline-dark border border-2 border-black rounded">Validate OTP</button>
 							</div>
-							<button type="submit-otp" id="submit-otp" class="btn btn-outline-dark border border-2 border-black rounded">Validate OTP</button>
-						</div>
-					`;
+						`);
 
                     document.getElementById('submit-otp').addEventListener('click', async () => {
                         console.log('submit otp clicked');
@@ -733,7 +730,7 @@ async function handleUserData() {
                         })
                             .then(response => {
                                 if (!response.ok) {
-                                    document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+                                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                                     loadToast('Please login to continue');
                                     localStorage.clear();
                                     throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
@@ -745,7 +742,7 @@ async function handleUserData() {
                                 if (data.message === 'OTP is valid') {
                                     console.log(data);
                                     localStorage.setItem('access_token', userToken);
-                                    document.getElementsByClassName("window")[0].innerHTML = '';
+									elementIdEditInnerHTML("windowScreen", "");
                                     loadToast('OTP is valid, enjoy pongos');
                                     window.history.pushState({}, "", '/desktop');
 
@@ -761,7 +758,7 @@ async function handleUserData() {
                                         document.getElementById('otp-container').insertAdjacentHTML('beforeend', tryAgainButton);
                                     }
                                     document.getElementById('try-again-btn').addEventListener('click', () => {
-                                        document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
+                                        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                                         localStorage.clear();
                                     });
                                 }
@@ -830,7 +827,7 @@ async function getAllUsers(override) {
         if (!response.ok) {
             if (!response.ok) {
                 localStorage.clear();
-                document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Please login to continue');
                 return null;
             }
@@ -876,7 +873,7 @@ async function getAllFriends(override) {
         if (!response.ok) {
             if (!response.ok) {
                 localStorage.clear();
-                document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Please login to continue');
                 return null;
             }
@@ -897,12 +894,12 @@ async function getAllFriends(override) {
 }
 
 async function insertAllUsers(users) {
-    if (!users) {
+	let playerCardDiv = document.getElementById("player-card-div");
+
+    if (!users || !playerCardDiv) {
         return;
     }
-    if (document.getElementById('player-card-div')) {
-        document.getElementById('player-card-div').innerHTML = '';
-    }
+	playerCardDiv.innerHTML = "";
     let friends = await getAllFriends();
     //call getAllFriends here:
     console.log(friends);
@@ -936,9 +933,7 @@ async function insertAllUsers(users) {
 									</div>
 								</div>
 								</div>`;
-
-        document.getElementById('player-card-div').innerHTML += playerCard;
-
+		playerCardDiv.innerHTML += playerCard;
     });
     const buttons = document.getElementsByClassName('view-profile-btn');
     for (let i = 0; i < buttons.length; i++) {

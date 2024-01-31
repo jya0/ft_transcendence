@@ -13,13 +13,17 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 
 
 export function loadTournament(localMode) {
+    const canvas = document.getElementById('gameCanvas');
+    const docModalGame = document.getElementById('modalGame');
+
+	if (!canvas || !docModalGame)
+		return ;
+
     continueExecution = true;
     let tournament_name;
 	let lastTimestamp = 0;
 	const maxFrameRate = 60;
 	const frameInterval = 1000 / maxFrameRate;
-    const canvas = document.getElementById('gameCanvas');
-    const docModalGame = document.getElementById('modalGame');
     const ctx = canvas.getContext('2d');
 
     let localPlayerMode = true;
@@ -221,11 +225,10 @@ export function loadTournament(localMode) {
 			querySelectIdEditInnerHTML(docModalGame, "winner-p1", winners[0]);
             toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
             toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
-            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-            tmpModalGame.show();
+			showModal("modalGame");
             isGameOver = true;
             await delay(4000);
-            tmpModalGame.hide();
+			hideModal("modalGame");
             isGameOver = false;
             resetGame();
         }
@@ -235,11 +238,10 @@ export function loadTournament(localMode) {
 			querySelectIdEditInnerHTML(docModalGame, "winner-p2", winners[1]);
             toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
             toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
-            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-            tmpModalGame.show();
+			showModal("modalGame");
             isGameOver = true;
             await delay(4000);
-            tmpModalGame.hide();
+            hideModal("modalGame");
 
             isGameOver = false;
             resetGame();
@@ -539,10 +541,9 @@ export function loadTournament(localMode) {
             score.right = 0;
 
             toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
-            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-            tmpModalGame.show();
+			showModal("modalGame");
             await delay(4000);
-            tmpModalGame.hide();
+            hideModal("modalGame");
             resetBall();
             playGame();
         }
@@ -596,8 +597,7 @@ export function loadTournament(localMode) {
 					</div>
 				</form>
 				`);
-        const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-        tmpModalGame.show();
+			showModal("modalGame");
 
         document.getElementById('formPlayerNames')?.addEventListener('submit', function (event) {
             event.preventDefault(); // Prevents the default form submission behavior
@@ -678,7 +678,7 @@ export function loadTournament(localMode) {
 
 
 
-    async function displayMenu() {
+/*     async function displayMenu() {
         const menuContainer = document.createElement('div');
         menuContainer.id = 'menu-container';
 
@@ -724,10 +724,11 @@ export function loadTournament(localMode) {
         menuContainer.style.position = "absolute";
         menuContainer.style.color = "white";
         // Append the menu to the document
-        document.getElementById('windowScreen').appendChild(menuContainer);
-    }
 
-    function createNewTournament() {
+        document.getElementById('windowScreen').appendChild(menuContainer);
+    } */
+
+/*     function createNewTournament() {
         // Check if the input field already exists
         const inputField = document.getElementById('tournamentNameInput');
         if (inputField) {
@@ -752,7 +753,7 @@ export function loadTournament(localMode) {
         const menuContainer = document.getElementById('menu-container');
         menuContainer.appendChild(tournamentNameInput);
         menuContainer.appendChild(submitButton);
-    }
+    } */
 
     async function submitTournament() {
         const tournamentName = document.getElementById('tournamentName').value;
@@ -790,8 +791,7 @@ export function loadTournament(localMode) {
             }
             if (data.length > 55) {
                 loadModal('modalGameBody', data);
-                const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-                tmpModalGame.show();
+				showModal("modalGame");
                 document.getElementById('createTourn').addEventListener('click', async function (event) {
                     event.preventDefault();
                     await submitTournament();
@@ -916,8 +916,7 @@ export function loadTournament(localMode) {
                 return;
             }
             loadModal('modalGameBody', data);
-            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-            tmpModalGame.show();
+			showModal("modalGame");
         }).catch((error) => {
             console.error('Error:', error);
         });
@@ -936,7 +935,7 @@ export function loadTournament(localMode) {
             });
         });
 
-        document.getElementById('createTourn').addEventListener('click', async () => {
+        document.getElementById('createTourn')?.addEventListener('click', async () => {
             await submitTournament();
         });
 
