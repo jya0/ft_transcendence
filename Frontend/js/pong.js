@@ -199,12 +199,11 @@ export function loadGame(username, localPlayerMode) {
         let winner;
         if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
         {
-            winner = player1;
-            winnerMsg = ` - ${winner} - Sorry You lose!`;
+            winnerMsg = `Sorry You lose!`;
         }
         else {
-            winnerMsg = `${player2} - Congrats You won!`;
-            winner = player2;
+            winner= player1;
+            winnerMsg = `Congrats You won!`;
 
             gameSocket.send(JSON.stringify({
                 'type': 'end',
@@ -214,10 +213,6 @@ export function loadGame(username, localPlayerMode) {
                 'score2': score.right,
             }))
         }
-        // ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
-        // ctx.textAlign = "center";
-        // ctx.textBaseline = "center";
-        // ctx.fillText(winnerMsg, canvas.width / 2, canvas.height / 2, canvas.width);
 
         gameSocket.close();
         gameSocket = "";
@@ -355,24 +350,7 @@ export function loadGame(username, localPlayerMode) {
         });
         if (continueExecution == false)
             return;
-        // if (performance.navigation.type == performance.navigation.TYPE) {
-        //     console.info( "This page is reloaded" );
-        //     console.log("Heyyyy");
-        //     console.log(btnCounter);
-        //     console.log(isGameOver);
-
-        //     if (!animationFrameId && !isGameOver) {
-        //         // Call the closePong1v1Socket function to terminate the game
-        //         closePong1v1Socket();
-        //         showGameWinner('You lose!');
-        //         window.history.pushState({}, "", '/play');
-        //         urlLocationHandler();
-        //         // Display a custom message (some browsers may not support this)
-        //         event.returnValue = 'Are you sure you want to leave?';
-        //     }
-        //   } 
         const elapsed = timestamp - lastTimestamp;
-        // console.log(timestamp);
 
         if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
             draw();
