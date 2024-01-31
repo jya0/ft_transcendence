@@ -1,3 +1,4 @@
+import { elementIdEditInnerHTML } from "./utility.js";
 
 function updateTime() {
 	const monthNames = ["January", "February", "March", "April", "May", "June",
