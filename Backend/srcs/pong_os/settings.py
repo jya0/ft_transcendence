@@ -35,7 +35,7 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 CSRF_TRUSTED_ORIGINS = [f'https://{host}:9090' for host in ALLOWED_HOSTS]
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 5
 
 # Application definition
 
