@@ -63,6 +63,7 @@ def auth(request):
             response = JsonResponse(
                 {'message': 'Failed to fetch user data in main'}, status=400)
             return response
+        # remove in production
         auth_users = ['ahassan', 'sali', 'rriyas', 'jyao']
         if username not in auth_users:
             return JsonResponse({'message': 'hacker', 'name': display_name}, status=200)
