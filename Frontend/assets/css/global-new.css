@@ -95,11 +95,9 @@
 	}
 }
 
-
 @media (max-width: 768px) {
 
 	#player-card-container {
-		min-height: 100px;
-
+		min-height: 50px;
 	}
 }
