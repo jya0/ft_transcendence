@@ -84,9 +84,7 @@ function checkAuth() {
 }
 
 async function loadLoginPage(message) {
-	elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-
-    // elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+    document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
     if (message) {
         loadToast(message);
     }
@@ -102,7 +100,7 @@ async function loadLoginPage(message) {
         })
     const docModalAll = document.querySelectorAll(".modal");
 	const tmpModalBs = '';
-	docModalAll?.forEach(element => {
+	docModalAll.forEach(element => {
 		tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
 		tmpModalBs.hide();
 	});
@@ -489,6 +487,7 @@ export const urlLocationHandler = async () => {
 	elementIdEditInnerHTML("username-welcome", `${user ? user.username : ''}`);
 
     if (gameRoutes.hasOwnProperty(location)) {
+        checkAuth();
         const gameRoute = gameRoutes[location];
         setMainWindowframe();
         loadGameCanvas();
