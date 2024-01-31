@@ -14,3 +14,13 @@ export const querySelectIdEditInnerHTML = (docElement, id, innerHTML) => {
 	}
 	queryElement.innerHTML = innerHTML;
 };
+
+export const elementIdEditInnerHTML = (id, innerHTML) => {
+	let docElement = document.getElementById(id);
+	if (!docElement)
+	{
+		console.log("Couldn't find your document element!");
+		return ;
+	}
+	docElement.innerHTML = innerHTML;
+};
