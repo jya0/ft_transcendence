@@ -71,3 +71,4 @@ class Match(models.Model):
     score1 = models.IntegerField()
     score2 = models.IntegerField()
     ongoing = models.BooleanField(default=False)
+    time = models.CharField(max_length=50, default = "")
