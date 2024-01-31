@@ -1,4 +1,4 @@
-import { hideModal, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
+import { hideModal, loadModal, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
 
 let continueExecution = true;
@@ -38,7 +38,6 @@ export function loadTicTac(username, localPlayerMode) {
 
     function local_init() {
 
-        gameOver = false;
 
         gameOver = false;
 
@@ -119,7 +118,12 @@ export function loadTicTac(username, localPlayerMode) {
             var items = contains('#tictactoe ' + testClass, turn);
             if (items.length == N_SIZE) {
                 gameOver = true;
-                if (turn === currentPlayerSymbol) {
+                
+                if (localPlayerMode) {
+                    showGameWinner(turn);
+                }
+
+                if (!localPlayerMode && turn === currentPlayerSymbol) {
                     handleOnlineWinner(true); // true indicates the current player is the winner
                 }
                 return true;
@@ -142,7 +146,7 @@ export function loadTicTac(username, localPlayerMode) {
 
 
     function set() {
-        if (gameOver || this.innerHTML !== EMPTY || turn !== currentPlayerSymbol) {
+        if (gameOver || this.innerHTML !== EMPTY ||( !localPlayerMode && turn !== currentPlayerSymbol)) {
             return;
         }
 
