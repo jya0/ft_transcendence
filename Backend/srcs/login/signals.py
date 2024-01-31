@@ -10,5 +10,7 @@ def user_logged_in_handler(sender, request, user, **kwargs):
 
 @receiver(user_logged_out)
 def user_logged_out_handler(sender, request, user, **kwargs):
+    if user is None:
+        return
     user.is_online = False
     user.save(update_fields=['is_online'])
