@@ -488,6 +488,7 @@ export const urlLocationHandler = async () => {
     document.getElementById("username-welcome").innerHTML = `${user ? user.username : ''}`;
 
     if (gameRoutes.hasOwnProperty(location)) {
+        checkAuth();
         const gameRoute = gameRoutes[location];
         setMainWindowframe();
         loadGameCanvas();
@@ -950,4 +951,13 @@ async function insertAllUsers(users) {
             addFriend(button, user.username, users[i].username);
         });
     }
+}
+
+
+if ('optionalChain' in {}) {
+    // ECMAScript 2020 (or later) is supported
+    console.log('Optional chaining is supported.');
+} else {
+    // ECMAScript 2020 (or later) is not supported
+    console.log('Optional chaining is not supported.');
 }
