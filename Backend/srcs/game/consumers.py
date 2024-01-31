@@ -6,9 +6,9 @@ from asgiref.sync import async_to_sync
 from login.models import UserProfile, Match, Tournament
 from django.db.models import Q
 
-def create_new_game_lobby():
+def create_new_game_lobby(game):
     dummy = Tournament.objects.all()[0]
-    Match.objects.create(tournament_id_id=dummy.tournament_id, id1_id=2, id2_id=3, score1=0, score2=0, ongoing=False)
+    Match.objects.create(tournament_id_id=dummy.tournament_id, id1_id=2, id2_id=3, score1=0, score2=0, ongoing=False, type=game)
 
 def prepare_final_round(tourn, user):
     if (Match.objects.filter(tournament_id_id=tourn.tournament_id).count() == 2):
@@ -38,12 +38,9 @@ def remove_from_lobbies(text_data_json):
 
 
 class GameConsumer(WebsocketConsumer):
-    lobbyCount = 0
  
     def connect(self):
         
-        #@TODO: if already in game - refuse connection
-
         self.room_group_name = 'test'
 
         #here we create a new group
@@ -66,7 +63,6 @@ class GameConsumer(WebsocketConsumer):
                 game.winner = game.id2.intra
             else:
                 game.winner = game.id1.intra
-
             game.ongoing = False
             game.save()
             
@@ -74,13 +70,90 @@ class GameConsumer(WebsocketConsumer):
                         self.room_group_name,
                         {
                             'type': 'terminate',
+                            'game': text_data_json['game'],
                             'mode' : text_data_json['mode'],
                             'sender' : text_data_json['sender'],
                             'player1': game.id1.intra,
                             'player2': game.id2.intra,
                         }
                     )
+    
+
+    def tic_recv(self, text_data_json):
         
+        type = text_data_json['type']
+        mode = text_data_json['mode']
+        username = text_data_json['username']
+        choice = text_data_json['game']
+        #handle in-game player movements
+        if (type == 'update'):
+            key = text_data_json['key']
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name,
+                {
+                    'type': 'update_game',
+                    'game':'tic',
+                    'mode' : mode,
+                    'sender': username,
+                    'key': key
+                }
+            )
+        else:
+            #handle new game request:
+            if (type == 'start'):
+                status = 'waiting'
+                dummy = Tournament.objects.all()[0]
+                open_lobby = Match.objects.filter(Q(open_lobby=True)& Q(tournament_id_id=dummy) & Q(type='tic')).exists()
+                print(open_lobby)
+                game = Match.objects.filter(Q(open_lobby=True) & Q(tournament_id_id=dummy) & Q(type='tic'))
+                if (not game):
+                    create_new_game_lobby('tic')
+                else:
+                    game = game[0]
+                player = UserProfile.objects.filter(Q(intra=username)).all()[0]
+                if (open_lobby == True):
+                    #case 1: no players yet
+                    if (game.id1.intra == 'temp1'):
+                        print("looks like ur the first player!!!!")
+                        # self.room_group_name = username
+                        game.id1 = player
+                    #case 2: lobby half full
+                    else :
+                        if (game.id1 != player):
+                            print("we found u a match!!!!!!!")
+                            # self.room_group_name = game.id1.intra
+                            game.id2 = player
+                            status = 'start'
+                            game.open_lobby = False
+                            game.ongoing = True
+                            create_new_game_lobby('tic')
+                    game.save()
+                    #@todo:
+                    #if game full, create a new one now:
+
+                async_to_sync(self.channel_layer.group_send)(
+                    self.room_group_name,
+                    {
+                        'type': 'start_game',
+                        'game':'tic',
+                        'mode' : mode,
+                        'sender' : username,
+                        'status' : status,
+                        'player1': game.id1.intra,
+                        'player2': game.id2.intra,
+                    }
+                )
+
+            #handle game ends
+            if (type == 'end'):
+                current_game = Match.objects.filter((Q(id1__intra=username)|Q(id2__intra=username)) & Q(ongoing=True) & Q(type='tic'))[0]
+                player = UserProfile.objects.filter(Q(intra=username))[0]
+                current_game.winner = text_data_json['winner']
+                current_game.ongoing = False
+                current_game.save()
+                self.close()
+
+
     def receive(self, text_data):
 
         text_data_json = json.loads(text_data)
@@ -96,8 +169,10 @@ class GameConsumer(WebsocketConsumer):
         
         mode = text_data_json['mode']
         username = text_data_json['username']
-        
-    
+        choice = text_data_json['game']
+        if (choice == 'tic'):
+            self.tic_recv(text_data_json)
+            return 
         
         #handle in-game player movements
         if (type == 'update'):
@@ -106,6 +181,7 @@ class GameConsumer(WebsocketConsumer):
                 self.room_group_name,
                 {
                     'type': 'update_game',
+                    'game': 'pong',
                     'mode' : mode,
                     'sender': username,
                     'key' : key,
@@ -132,6 +208,7 @@ class GameConsumer(WebsocketConsumer):
                     self.room_group_name,
                     {
                         'type': 'start_game',
+                        'game': 'pong',
                         'mode' : mode,
                         'sender' : username,
                         'player1': game.id1.intra,
@@ -168,6 +245,7 @@ class GameConsumer(WebsocketConsumer):
                     self.room_group_name,
                     {
                         'type': 'start_game',
+                        'game': 'pong',
                         'mode' : mode,
                         'sender' : username,
                         'status' : status,
@@ -198,7 +276,7 @@ class GameConsumer(WebsocketConsumer):
                             status = 'start'
                             game.open_lobby = False
                             game.ongoing = True
-                            create_new_game_lobby()
+                            create_new_game_lobby('pong')
                     game.save()
                     #@todo:
                     #if game full, create a new one now:
@@ -207,6 +285,7 @@ class GameConsumer(WebsocketConsumer):
                     self.room_group_name,
                     {
                         'type': 'start_game',
+                        'game':'pong',
                         'mode' : mode,
                         'sender' : username,
                         'status' : status,
@@ -238,6 +317,7 @@ class GameConsumer(WebsocketConsumer):
         mode = event['mode']
         self.send(text_data=json.dumps({
             'type' : 'start',
+            'game': event['game'],
             'mode' : mode,
             'sender' : sender,
             'status' : message,
@@ -252,6 +332,7 @@ class GameConsumer(WebsocketConsumer):
         mode = event['mode']
         self.send(text_data=json.dumps({
                     'type' : 'update',
+                    'game': event['game'],
                     'mode' : mode,
                     'sender': sender,
                     'key' : message,
@@ -262,6 +343,7 @@ class GameConsumer(WebsocketConsumer):
         mode = event['mode']
         self.send(text_data=json.dumps({
                     'type' : 'terminate',
+                    'game': event['game'],
                     'mode' : mode,
                     'sender': sender,
                     'player1' : event['player1'],

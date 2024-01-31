@@ -31,7 +31,8 @@ t1.intra=t1.username;\
 t2.intra=t2.username;\
 t1.save();\
 t2.save();\
-Match.objects.create(tournament_id_id=dummy.tournament_id, id1=t1, id2=t2, score1=0, score2=0, ongoing=False);"| python manage.py shell
+Match.objects.create(tournament_id_id=dummy.tournament_id, id1=t1, id2=t2, score1=0, score2=0, ongoing=False,type='tic');\
+Match.objects.create(tournament_id_id=dummy.tournament_id, id1=t1, id2=t2, score1=0, score2=0, ongoing=False,type='pong');"| python manage.py shell
 
 cat pong_os/random_users.py  | python manage.py shell
 

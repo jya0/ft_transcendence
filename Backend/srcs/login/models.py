@@ -60,6 +60,7 @@ class Tournament(models.Model):
 
 class Match(models.Model):
     open_lobby = models.BooleanField(default=True)
+    type = models.CharField(max_length=50, default="pong")
     match_id = models.AutoField(primary_key=True)
     tournament_id = models.ForeignKey(Tournament, on_delete=models.CASCADE)
     id1 = models.ForeignKey(
