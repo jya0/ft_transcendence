@@ -1,5 +1,12 @@
 // import {io} from "socket.io-client";
+
+import { elementIdEditInnerHTML, querySelectIdEditInnerHTML } from "./utility.js";
+
+
 export function  loadTicTac(){
+	let docWinScreen = document.getElementById('windowScreen');
+	if (!docWinScreen)
+		return ;
 
 
     let btnCounter = 0;
@@ -21,6 +28,8 @@ export function  loadTicTac(){
 
     function local_init() {
 
+		gameOver = false;
+	
         var container = document.createElement('div');
         container.id = 'game-container';
         container.className = 'tictactoe';
@@ -29,14 +38,11 @@ export function  loadTicTac(){
 			`
 				<div id="tictactoe" class="d-flex flex-column h-100 justify-content-center align-items-center flex-grow-1 h-100 w-100 border border-0 border-black">
 				</div>
-				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-1">
+				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-0 order-1">
 					player x
 				</div>
 			
 			`;
-        gameOver = false;
-        document.getElementById('windowScreen').innerHTML = "";
-        document.getElementById('windowScreen').appendChild(container);
         var board = document.createElement('div');
         // board.setAttribute("border", 1);
         // board.setAttribute("cellspacing", 10);
@@ -66,9 +72,11 @@ export function  loadTicTac(){
             }
         }
 		// board.classList.add("ratio", "ratio-1x1");
-		console.log(document.getElementById("windowScreen").getBoundingClientRect().height);
-		board.style.scale = document.getElementById("windowScreen").getBoundingClientRect().width / 300 * 0.5;
-        document.getElementById('tictactoe').appendChild(board);
+		console.log(docWinScreen.getBoundingClientRect().height);
+		board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
+		container.querySelector("#tictactoe").appendChild(board);
+		docWinScreen.innerHTML = "";
+		docWinScreen.appendChild(container);
         console.log("heheeee");
 
     }
@@ -124,17 +132,17 @@ export function  loadTicTac(){
             // document.getElementById('game-container').remove();
             // startNewGame();
             // alert('Winner: Player ' + turn);
-            document.getElementById('turn').textContent =`PLAYER ${turn} WINS!`;
+			querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
             return ;
         } else if (moves === N_SIZE * N_SIZE) {
             // alert("Draw");
-            document.getElementById('turn').textContent =`DRAW!`;
+            querySelectIdEditInnerHTML(docWinScreen, "turn", `DRAW!`);
 
             // startNewGame();
             return;
         } else {
             turn = turn === "X" ? "O" : "X";
-            document.getElementById('turn').textContent = 'Player ' + turn;
+			querySelectIdEditInnerHTML(docWinScreen, "turn", 'Player ' + turn);
         }
 
     }
@@ -212,11 +220,11 @@ export function  loadTicTac(){
     // }
 
     function handleOnlineWinner() {
-        let buttonText;
+        let winnerText;
         if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-            buttonText = "You lose! Press to play a new online game";
+            winnerText = "You lose! Press to play a new online game";
         else {
-            buttonText = "You win! Press to play a new online game";
+            winnerText = "You win! Press to play a new online game";
             gameSocket.send(JSON.stringify({
                 'type': 'end',
                 'mode': 'single',
@@ -225,7 +233,7 @@ export function  loadTicTac(){
                 'score2': score.right,
             }))
         }
-        document.getElementById("startOnlineButton").innerHTML = buttonText;
+		elementIdEditInnerHTML("startOnlineButton", winnerText);
         gameSocket.close();
         isGameOver = true;
         socketStatus = false;

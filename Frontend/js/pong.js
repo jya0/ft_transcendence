@@ -1,21 +1,25 @@
-import { loadSpinner, showGameWinner } from "./loadComponent.js";
+import { hideModal, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
+
 let continueExecution = true;
 let gameSocket = "";
 let user_name = "";
+
 export function loadGame(username, localPlayerMode) {
+	const docModalGame = document.getElementById('modalGame');
+	const canvas = document.getElementById('gameCanvas');
+	if (!docModalGame || !canvas)
+		return ;
     console.log(gameSocket);
     let player1 = username;
     user_name = username;
     let player2 = "";
-    const docModalGame = document.getElementById('modalGame');
     let isGameOver = true;
     continueExecution = true;
     let lastTimestamp = 0;
     const maxFrameRate = 60;
     const frameInterval = 1000 / maxFrameRate;
     let btnCounter = 0;
-    const canvas = document.getElementById('gameCanvas');
     console.log("ayyy");
     const ctx = canvas.getContext('2d');
 
@@ -277,8 +281,7 @@ export function loadGame(username, localPlayerMode) {
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 // loadSpinner("modalGameBody", "text-black");
-                const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-                tmpModalGame.hide();
+				hideModal("modalGame");
                 player1 = data["player1"];
                 player2 = data["player2"];
                 startGame();
@@ -340,8 +343,7 @@ export function loadGame(username, localPlayerMode) {
 
             console.log("waiting for a second player...");
             loadSpinner("modalGameBody", "text-black");
-            const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
-            tmpModalGame.show();
+			showModal("modalGame");
         });
         player_count = 1;
     }
