@@ -3,10 +3,10 @@
 import { elementIdEditInnerHTML, querySelectIdEditInnerHTML } from "./utility.js";
 
 
-export function  loadTicTac(){
-	let docWinScreen = document.getElementById('windowScreen');
-	if (!docWinScreen)
-		return ;
+export function loadTicTac() {
+    let docWinScreen = document.getElementById('windowScreen');
+    if (!docWinScreen)
+        return;
 
 
     let btnCounter = 0;
@@ -28,14 +28,14 @@ export function  loadTicTac(){
 
     function local_init() {
 
-		gameOver = false;
-	
+        gameOver = false;
+
         var container = document.createElement('div');
         container.id = 'game-container';
         container.className = 'tictactoe';
-		container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
-        container.innerHTML = 
-			`
+        container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
+        container.innerHTML =
+            `
 				<div id="tictactoe" class="d-flex flex-column h-100 justify-content-center align-items-center flex-grow-1 h-100 w-100 border border-0 border-black">
 				</div>
 				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-0 order-1">
@@ -71,12 +71,12 @@ export function  loadTicTac(){
                 identifier += identifier;
             }
         }
-		// board.classList.add("ratio", "ratio-1x1");
-		console.log(docWinScreen.getBoundingClientRect().height);
-		board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
-		container.querySelector("#tictactoe").appendChild(board);
-		docWinScreen.innerHTML = "";
-		docWinScreen.appendChild(container);
+        // board.classList.add("ratio", "ratio-1x1");
+        console.log(docWinScreen.getBoundingClientRect().height);
+        board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
+        container.querySelector("#tictactoe").appendChild(board);
+        docWinScreen.innerHTML = "";
+        docWinScreen.appendChild(container);
         console.log("heheeee");
 
     }
@@ -113,15 +113,15 @@ export function  loadTicTac(){
 
     function contains(selector, text) {
         var elements = document.querySelectorAll(selector);
-		if (!elements)
-			return (false);
+        if (!elements)
+            return (false);
         return [].filter.call(elements, function (element) {
             return RegExp(text).test(element.textContent);
         });
     }
     function set() {
         if (gameOver)
-            return ;
+            return;
         if (this.innerHTML !== EMPTY) {
             return;
         }
@@ -132,8 +132,8 @@ export function  loadTicTac(){
             // document.getElementById('game-container').remove();
             // startNewGame();
             // alert('Winner: Player ' + turn);
-			querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
-            return ;
+            querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
+            return;
         } else if (moves === N_SIZE * N_SIZE) {
             // alert("Draw");
             querySelectIdEditInnerHTML(docWinScreen, "turn", `DRAW!`);
@@ -142,14 +142,14 @@ export function  loadTicTac(){
             return;
         } else {
             turn = turn === "X" ? "O" : "X";
-			querySelectIdEditInnerHTML(docWinScreen, "turn", 'Player ' + turn);
+            querySelectIdEditInnerHTML(docWinScreen, "turn", 'Player ' + turn);
         }
 
     }
 
     let player_count = 0;
     // let url = `wss://10.12.1.10:8000/ws/socket-server/`;
-	let url = `wss://localhost:8090/ws/socket-server/`;
+    let url = `wss://localhost:9090/ws/socket-server/`;
 
     let gameSocket;
 
@@ -233,7 +233,7 @@ export function  loadTicTac(){
                 'score2': score.right,
             }))
         }
-		elementIdEditInnerHTML("startOnlineButton", winnerText);
+        elementIdEditInnerHTML("startOnlineButton", winnerText);
         gameSocket.close();
         isGameOver = true;
         socketStatus = false;

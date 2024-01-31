@@ -682,7 +682,7 @@ export function loadTournament(localMode) {
             menuContainer.id = 'menu-container';
     
             // Fetch the list of online tournaments from the backend
-            // fetch('http://localhost:8000/api/tournaments');
+            // fetch('https://localhost:8090/api/tournaments');
     
     
             await fetch('/api/tournaments', {

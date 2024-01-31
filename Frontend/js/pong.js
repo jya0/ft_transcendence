@@ -6,10 +6,10 @@ let gameSocket = "";
 let user_name = "";
 
 export function loadGame(username, localPlayerMode) {
-	const docModalGame = document.getElementById('modalGame');
-	const canvas = document.getElementById('gameCanvas');
-	if (!docModalGame || !canvas)
-		return ;
+    const docModalGame = document.getElementById('modalGame');
+    const canvas = document.getElementById('gameCanvas');
+    if (!docModalGame || !canvas)
+        return;
     console.log(gameSocket);
     let player1 = username;
     user_name = username;
@@ -31,14 +31,14 @@ export function loadGame(username, localPlayerMode) {
 
     function resetGame(params) {
 
-		ball.x = canvas.width / 2;
-		ball.y = canvas.height / 2;
-		score.left = 0;
-		score.right = 0;
-		players.left = (canvas.height - paddle.height) / 2;
-		players.right = (canvas.height - paddle.height) / 2;
-		lastTimestamp = 0;
-	}
+        ball.x = canvas.width / 2;
+        ball.y = canvas.height / 2;
+        score.left = 0;
+        score.right = 0;
+        players.left = (canvas.height - paddle.height) / 2;
+        players.right = (canvas.height - paddle.height) / 2;
+        lastTimestamp = 0;
+    }
 
     let socketStatus = false;
 
@@ -156,13 +156,13 @@ export function loadGame(username, localPlayerMode) {
             updateBackend();
 
 
-		if (ball.x < 0 || ball.x > canvas.width) {
-			ball.x > canvas.width ? score.left++ : score.right++;
-			resetBall();
-			await checkForWinner();
-			return;
-		}
-	}
+        if (ball.x < 0 || ball.x > canvas.width) {
+            ball.x > canvas.width ? score.left++ : score.right++;
+            resetBall();
+            await checkForWinner();
+            return;
+        }
+    }
 
     function resetBall() {
         ball.x = canvas.width / 2;
@@ -197,8 +197,7 @@ export function loadGame(username, localPlayerMode) {
     async function handleOnlineWinner() {
         let winnerMsg;
         let winner;
-        if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-        {
+        if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3)) {
             winner = player2;
             winnerMsg = ` ${winner}\nSorry You lose!`;
         }
@@ -248,8 +247,8 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    // let url = `wss://10.12.1.10:8090/ws/socket-server/`;
-    let url = `wss://localhost:8090/ws/socket-server/`;
+    let url = `wss://10.11.5.1:9090/ws/socket-server/`;
+    // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
     function initiateSocket() {
@@ -329,7 +328,7 @@ export function loadGame(username, localPlayerMode) {
             console.log(player1);
             console.log(player2);
             loadSpinner("modalGameBody", "text-black");
-			showModal("modalGame");
+            showModal("modalGame");
             console.log("showing");
         });
         player_count = 1;
