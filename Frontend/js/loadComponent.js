@@ -119,8 +119,11 @@ export const loadModal = (idModalBody, innerHTML) => {
 
 export const showModal = (idModal) => {
 	const docModal = document.getElementById(idModal);
+	console.log("SHOWWW OUT");
+
 	if (docModal)
 	{
+		console.log("SHOWWW INNNNNN");
 		const tmpModal = bootstrap.Modal.getOrCreateInstance(docModal);
 		tmpModal.show();
 	}
@@ -128,8 +131,11 @@ export const showModal = (idModal) => {
 
 export const hideModal = (idModal) => {
 	const docModal = document.getElementById(idModal);
+	console.log("______________");
 	if (docModal)
 	{
+	console.log("______________+++++++++++++++");
+
 		const tmpModal = bootstrap.Modal.getOrCreateInstance(docModal);
 		tmpModal.hide();
 	}

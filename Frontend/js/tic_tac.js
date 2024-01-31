@@ -1,21 +1,31 @@
-// import {io} from "socket.io-client";
+import { hideModal, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
+import { urlLocationHandler } from "./url-router.js"
 
+let continueExecution = true;
+let gameSocket = "";
+let user_name = "";
 import { elementIdEditInnerHTML, querySelectIdEditInnerHTML } from "./utility.js";
 
 
-export function  loadTicTac(){
-	let docWinScreen = document.getElementById('windowScreen');
-	if (!docWinScreen)
-		return ;
+export function loadTicTac(username, localPlayerMode) {
+    let docWinScreen = document.getElementById('windowScreen');
 
+    if (!docWinScreen)
+        return;
 
+    let player1 = username;
+    user_name = username;
+    let player2 = "";
+    let isGameOver = true;
+    continueExecution = true;
+    let lastTimestamp = 0;
     let btnCounter = 0;
-    let localPlayerMode = false;
-    let isGameOver = false;
     let socketStatus = false;
     let keyPressed;
     let leftPlayer = true;
     let rightPlayer = false;
+    let currentPlayerSymbol = "";
+
 
 
     var N_SIZE = 3,
@@ -28,20 +38,19 @@ export function  loadTicTac(){
 
     function local_init() {
 
-		gameOver = false;
-	
+        gameOver = false;
+
         var container = document.createElement('div');
-        container.id = 'game-container';
+        container.id = 'tictac-container';
         container.className = 'tictactoe';
-		container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
-        container.innerHTML = 
-			`
+        container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
+        container.innerHTML =
+            `
 				<div id="tictactoe" class="d-flex flex-column h-100 justify-content-center align-items-center flex-grow-1 h-100 w-100 border border-0 border-black">
 				</div>
 				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-0 order-1">
 					player x
 				</div>
-			
 			`;
         var board = document.createElement('div');
         // board.setAttribute("border", 1);
@@ -71,14 +80,13 @@ export function  loadTicTac(){
                 identifier += identifier;
             }
         }
-		// board.classList.add("ratio", "ratio-1x1");
-		console.log(docWinScreen.getBoundingClientRect().height);
-		board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
-		container.querySelector("#tictactoe").appendChild(board);
-		docWinScreen.innerHTML = "";
-		docWinScreen.appendChild(container);
+        // board.classList.add("ratio", "ratio-1x1");
+        console.log(docWinScreen.getBoundingClientRect().height);
+        board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
+        container.querySelector("#tictactoe").appendChild(board);
+        docWinScreen.innerHTML = "";
+        docWinScreen.appendChild(container);
         console.log("heheeee");
-
     }
 
 
@@ -92,48 +100,52 @@ export function  loadTicTac(){
         boxes?.forEach(function (square) {
             square.innerHTML = EMPTY;
         });
+
+
     }
 
 
     function win(clicked) {
-        // Get all cell classes
         var memberOf = clicked.className.split(/\s+/);
         for (var i = 0; i < memberOf.length; i++) {
             var testClass = '.' + memberOf[i];
             var items = contains('#tictactoe ' + testClass, turn);
-            // winning condition: turn == N_SIZE
             if (items.length == N_SIZE) {
                 gameOver = true;
-
+                if (turn === currentPlayerSymbol) {
+                    handleOnlineWinner(true); // true indicates the current player is the winner
+                }
                 return true;
             }
         }
         return false;
     }
 
+
     function contains(selector, text) {
         var elements = document.querySelectorAll(selector);
-		if (!elements)
-			return (false);
+        if (!elements)
+            return (false);
         return [].filter.call(elements, function (element) {
             return RegExp(text).test(element.textContent);
         });
     }
+
+
     function set() {
-        if (gameOver)
-            return ;
-        if (this.innerHTML !== EMPTY) {
+        if (gameOver || this.innerHTML !== EMPTY || turn !== currentPlayerSymbol) {
             return;
         }
+
         this.innerHTML = turn;
         moves += 1;
         score[turn] += this.identifier;
         if (win(this)) {
-            // document.getElementById('game-container').remove();
+            // document.getElementById('tictac-container').remove();
             // startNewGame();
             // alert('Winner: Player ' + turn);
-			querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
-            return ;
+            querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
+            return;
         } else if (moves === N_SIZE * N_SIZE) {
             // alert("Draw");
             querySelectIdEditInnerHTML(docWinScreen, "turn", `DRAW!`);
@@ -142,136 +154,126 @@ export function  loadTicTac(){
             return;
         } else {
             turn = turn === "X" ? "O" : "X";
-			querySelectIdEditInnerHTML(docWinScreen, "turn", 'Player ' + turn);
+            querySelectIdEditInnerHTML(docWinScreen, "turn", 'Player ' + turn);
         }
-
     }
 
     let player_count = 0;
     // let url = `wss://10.12.1.10:8000/ws/socket-server/`;
-	let url = `wss://localhost:8090/ws/socket-server/`;
+    let url = `wss://localhost:8090/ws/socket-server/`;
 
-    let gameSocket;
 
-    // startLocalButton.addEventListener('click', () => {
-    //     gameOver = true;
-    //     console.log('hi');
-    //     startLocalButton.style.visibility = 'hidden';
-    //     startOnlineButton.style.visibility = 'hidden';
-
-    //     local_init();
-    //     startNewGame();
-    // });
 
     function playGame() {
         console.log("HEYYY");
-        gameOver = true;
+        gameOver = false;
         console.log('hi');
 
-        local_init();
-        startNewGame();
+
+        if (localPlayerMode) {
+            local_init();
+            startNewGame();
+        }
+        else {
+            initiateSocket();
+            online_init();
+            console.log("yooooooooooo");
+        }
+
     }
     playGame();
-    // function updateBackend() {
-    //     if (rightPlayer) {
-    //         if (keys['w'] && players.right > 0) {
-    //             players.right -= paddle.speed;
-    //             keyPressed = 'w';
-    //             gameSocket.send(JSON.stringify({
-    //                 'type': 'update',
-    //                 'mode': 'single',
-    //                 'username': localStorage.getItem('username'),
-    //                 'key': keyPressed,
-    //             }))
-    //         }
-    //         if (keys['s'] && players.right < canvas.height - paddle.height) {
-    //             players.right += paddle.speed;
-    //             keyPressed = 's';
-    //             gameSocket.send(JSON.stringify({
-    //                 'type': 'update',
-    //                 'mode': 'single',
-    //                 'username': localStorage.getItem('username'),
-    //                 'key': keyPressed
-    //             }))
-    //         }
-    //     }
-    //     else {
-    //         if (keys['w'] && players.left > 0) {
-    //             players.left -= paddle.speed;
-    //             keyPressed = 'w';
-    //             gameSocket.send(JSON.stringify({
-    //                 'type': 'update',
-    //                 'mode': 'single',
-    //                 'username': localStorage.getItem('username'),
-    //                 'key': keyPressed
-    //             }))
-    //         }
-    //         if (keys['s'] && players.left < canvas.height - paddle.height) {
-    //             players.left += paddle.speed;
-    //             keyPressed = 's';
-    //             gameSocket.send(JSON.stringify({
-    //                 'type': 'update',
-    //                 'mode': 'single',
-    //                 'username': localStorage.getItem('username'),
-    //                 'key': keyPressed
-    //             }))
-    //         }
-    //     }
-    // }
 
-    function handleOnlineWinner() {
-        let winnerText;
-        if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-            winnerText = "You lose! Press to play a new online game";
-        else {
-            winnerText = "You win! Press to play a new online game";
+    function handleOnlineWinner(isWinner) {
+        let winnerMsg;
+        if (isWinner) {
+            winnerMsg = `${user_name}
+            Congrats You won!`;
             gameSocket.send(JSON.stringify({
+                'game': 'tic',
                 'type': 'end',
+                'game': 'tic',
                 'mode': 'single',
-                'username': localStorage.getItem('username'),
-                'score1': score.left,
-                'score2': score.right,
-            }))
+                'username': user_name,
+            }));
+        } else {
+            winnerMsg = `Sorry, you lost!`;
         }
-		elementIdEditInnerHTML("startOnlineButton", winnerText);
+
         gameSocket.close();
+        gameSocket = "";
         isGameOver = true;
         socketStatus = false;
+        showGameWinner(winnerMsg);
+        window.history.pushState({}, "", '/play');
+        urlLocationHandler();
     }
+
 
     function initiateSocket() {
         gameSocket = new WebSocket(url);
 
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
-            // console.log('Data: ', data)
+            console.log('Data: ', data)
 
-            if (btnCounter == 0)
+            if (data.game === 'pong')
                 return;
-            if (data.type === 'start' && data["status"] == "start") {
+            if (data.type === 'start' && data["status"] === "start") {
                 player_count = 2;
-                document.getElementById("startOnlineButton").innerHTML = "In-game";
-                if (data.sender == localStorage.getItem('username')) {
+                console.log("BOYS U CAN START NOW!");
+                hideModal("modalGame");
+                window.addEventListener('beforeunload', function (event) {
+                    console.info("This page is reloaded");
+                    console.log("Heyyyy");
+                    // console.log(btnCounter);
+                    if (gameSocket !== "" && player2 != "") {
+                        // Call the closePong1v1Socket function to terminate the game
+                        closeTicTac1v1Socket();
+                        showGameWinner('You lose!');
+                        window.history.pushState({}, "", '/play');
+                        urlLocationHandler();
+                        // Display a custom message (some browsers may not support this)
+                        event.returnValue = 'Are you sure you want to leave?';
+                    }
+                });
+                if (continueExecution == false)
+                    return;
+                // loadSpinner("modalGameBody", "text-black");
+                if (data["player2"] == user_name)
+                    player2 = data["player1"];
+                else
+                    player2 = data["player2"];
+
+                currentPlayerSymbol = (data["player1"] === user_name) ? "X" : "O";
+                startNewGame();
+                if (data.sender == username) {
                     leftPlayer = false;
                     rightPlayer = true;
                 }
-                console.log(leftPlayer);
-                console.log(rightPlayer);
-                startOnlineButton.disabled = false;
-                startOnlineButton.click();
             }
 
-            if (data.sender == localStorage.getItem('username'))
+            if (data.sender == username)
                 return;
 
             if (data.type == 'update') {
-                if (isGameOver) return;
-                handleMove();
+                // if (isGameOver) return;
+                handleMove(data);
             }
-            else if (data.type == 'close') {
-                gameOver = true;
+
+            else if (data.type === 'terminate' && (data.player1 === user_name || data.player2 === user_name)) {
+                gameSocket.close();
+                gameSocket = "";
+                isGameOver = true;
+                socketStatus = false;
+                continueExecution = false;
+                showGameWinner(' You Win!');
+                window.history.pushState({}, "", '/play');
+                urlLocationHandler();
+                return;
+            }
+            else if (data.type === 'close') {
+                isGameOver = true;
                 player_count = 1;
-                endGame();
                 gameSocket.close();
             }
             else {
@@ -285,14 +287,20 @@ export function  loadTicTac(){
             socketStatus = true;
 
             gameSocket.send(JSON.stringify({
+                'game': 'tic',
                 'type': 'start',
                 'mode': 'single',
-                'username': localStorage.getItem('username')
+                'username': username
             }))
 
             player_count = 1;
 
-            console.log("waiting for a second player...")
+            console.log("waiting for a second player...");
+            console.log(player1);
+            console.log(player2);
+            loadSpinner("modalGameBody", "text-black");
+            showModal("modalGame");
+            console.log("showing");
         });
         player_count = 1;
     }
@@ -302,19 +310,23 @@ export function  loadTicTac(){
     function online_init() {
 
         var container = document.createElement('div');
-        container.id = 'game-container';
+        container.id = 'tictac-container';
         container.className = 'tictactoe';
-        container.innerHTML = `<div id="tictactoe"></div>
-		<div align="center">
-			<span id='turn'>Player X</span>
-		</div>
-        `
+        container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
+        container.innerHTML =
+            `
+				<div id="tictactoe" class="d-flex flex-column h-100 justify-content-center align-items-center flex-grow-1 h-100 w-100 border border-0 border-black">
+				</div>
+				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-0 order-1">
+					player x
+				</div>
+			
+			`;
+        // document.getElementsByClassName('container')[0].appendChild(container);
 
-        document.getElementsByClassName('container')[0].appendChild(container);
-
-        var board = document.createElement('table');
-        board.setAttribute("border", 1);
-        board.setAttribute("cellspacing", 10);
+        var board = document.createElement('div');
+        // board.setAttribute("border", 1);
+        // board.setAttribute("cellspacing", 10);
 
         var identifier = 1;
         for (var i = 0; i < N_SIZE; i++) {
@@ -324,18 +336,22 @@ export function  loadTicTac(){
                 var cell = document.createElement('td');
                 cell.addEventListener("click", function () {
                     // Send the clicked cell information to the server
-                    if (!isGameOver && this.innerHTML === EMPTY) {
+                    if (this.innerHTML === EMPTY) {
+                        console.log("SENDING!");
                         const cellIndex = boxes.indexOf(this);
+                        if (turn !== currentPlayerSymbol)
+                            return;
                         gameSocket.send(JSON.stringify({
-                            'type': 'move',
-                            'mode': 'ticTacToe',
+                            'type': 'update',
+                            'game': 'tic',
+                            'mode': 'single',
                             'username': localStorage.getItem('username'),
-                            'cellIndex': cellIndex
+                            'key': cellIndex
                         }));
                     }
                 });
-                cell.setAttribute('height', 120);
-                cell.setAttribute('width', 120);
+                cell.setAttribute('height', 100);
+                cell.setAttribute('width', 100);
                 cell.setAttribute('align', 'center');
                 cell.setAttribute('valign', 'center');
                 cell.classList.add('col' + j, 'row' + i);
@@ -352,23 +368,36 @@ export function  loadTicTac(){
                 identifier += identifier;
             }
         }
-        document.getElementById('tictactoe').appendChild(board);
+        // document.getElementById('tictactoe').appendChild(board);
+        console.log(docWinScreen.getBoundingClientRect().height);
+        board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
+        container.querySelector("#tictactoe").appendChild(board);
+        docWinScreen.innerHTML = "";
+        docWinScreen.appendChild(container);
+        console.log("heheeee");
 
         // document.getElementById("container").appendChild(board);
     }
 
     function handleMove(data) {
-        if (!isGameOver && data['cellIndex'] >= 0 && data['cellIndex'] < boxes.length &&
-            boxes[data['cellIndex']].innerHTML === EMPTY) {
-            boxes[data['cellIndex']].innerHTML = turn;
+        hideModal("modalGame");
+        if (data['key'] >= 0 && data['key'] < boxes.length && boxes[data['key']].innerHTML === EMPTY) {
+            boxes[data['key']].innerHTML = turn;
             moves += 1;
-
-            if (win(boxes[data['cellIndex']])) {
-                loadToast('Winner: Player ' + turn);
-                endGame();
+            if (win(boxes[data['key']])) {
+                // If the opponent wins, display the losing message
+                if (turn !== currentPlayerSymbol) {
+                    gameOver = true;
+                    showGameWinner(` ${player2}
+                    Sorry, you lost!`);
+                    gameSocket.close();
+                    gameSocket = "";
+                    socketStatus = false;
+                    window.history.pushState({}, "", '/play');
+                    urlLocationHandler();
+                }
             } else if (moves === N_SIZE * N_SIZE) {
-                loadToast("Draw");
-                endGame();
+                // Handle draw condition if necessary
             } else {
                 turn = turn === "X" ? "O" : "X";
                 document.getElementById('turn').textContent = 'Player ' + turn;
@@ -376,33 +405,26 @@ export function  loadTicTac(){
         }
     }
 
-    function endGame() {
-        isGameOver = true;
-        tictacButtonOnline.style.visibility = 'visible';
-        tictacButtonLocal.style.visibility = 'visible';
-    }
 
-
-
-    // startOnlineButton.addEventListener('click', () => {
-    //     localPlayerMode = false;
-    //     startLocalButton.disabled = true;
-    //     startOnlineButton.disabled = true;
-    //     startLocalButton.style.visibility = 'hidden';
-
-    //     console.log("YUUUUUU");
-    //     if (btnCounter == 0) {
-    //         initiateSocket();
-    //         document.getElementById("startOnlineButton").innerHTML = "Waiting for second player ..."
-    //         console.log("first press - ready to play!");
-    //         btnCounter = btnCounter + 1;
-    //         return;
-    //     }
-    //     online_init();
-    //     startNewGame();
-    // });
 }
 
 
+// Function to stop the execution from the outside
+export function stopTicTacExecution() {
+    continueExecution = false;
+    console.error("AAAAAAAAAAAA");
+}
 
-
+export function closeTicTac1v1Socket() {
+    if (gameSocket === "")
+        return;
+    console.log("terminating....");
+    gameSocket.send(JSON.stringify({
+        'game': 'tic',
+        'type': 'terminate',
+        'mode': 'online1v1',
+        'sender': user_name,
+    }))
+    gameSocket.close();
+    gameSocket = "";
+}

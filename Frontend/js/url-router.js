@@ -1,8 +1,9 @@
 const urlPageTitle = "Pong Os";
 import { loadGameMenu, loadGameCanvas, loadToast, loadModal, showModal, hideModal, loadSpinner, getCookie } from './loadComponent.js';
 import { loadTournament, stopTournamentExecution } from './tournament.js';
-import { loadTicTac } from './tic_tac.js'
+import { loadTicTac, closeTicTac1v1Socket, stopTicTacExecution } from './tic_tac.js'
 import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
+
 import { elementIdEditInnerHTML } from './utility.js';
 
 const urlRoutes = {
@@ -99,11 +100,11 @@ async function loadLoginPage(message) {
             return null;
         })
     const docModalAll = document.querySelectorAll(".modal");
-	const tmpModalBs = '';
-	docModalAll.forEach(element => {
-		tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
-		tmpModalBs.hide();
-	});
+    const tmpModalBs = '';
+    docModalAll.forEach(element => {
+        tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
+        tmpModalBs.hide();
+    });
 }
 
 console.log(sessionStorage.getItem('username'))
@@ -145,7 +146,7 @@ const viewUserProfile = (username) => {
         .then(response => response.text())
         .then(data => {
             console.log(data);
-			elementIdEditInnerHTML("windowScreen", data);
+            elementIdEditInnerHTML("windowScreen", data);
             const addFriendButton = document.getElementById('add-friend');
             addFriendButton?.addEventListener('click', async () => {
                 addFriend(addFriendButton, user.username, username);
@@ -168,7 +169,7 @@ const addFriend = async (button, username, newFriend) => {
         });
 
         if (!response.ok) {
-			elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+            elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
             // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
             loadToast('Unauthorized, please login again!')
             localStorage.clear();
@@ -216,8 +217,8 @@ const urlRoute = (event) => {
 
 function setMainWindowframe() {
     insertOrCreateContent();
-	elementIdEditInnerHTML("content",
-			`					
+    elementIdEditInnerHTML("content",
+        `					
 				<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
 					<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 						<!-- WINDOW-BAR -->
@@ -242,24 +243,32 @@ function setMainWindowframe() {
 				</div>
 			`);
     document.getElementById('close-me')?.addEventListener('click', () => {
-		if (gameMode !== 'none') {
-			closePong1v1Socket();
-			console.log("heyyyyyyyyyyyyyyyyyyyyyy");
-			const canvasElement = document.getElementById("gameCanvas");
-			if (canvasElement)
-			{
-				let animationId = canvasElement.dataset.animationFrameId;
-				window.cancelAnimationFrame(animationId);
-				canvasElement.remove();
-				if (gameMode === 'pong single')
-					stopPongExecution();
-				if (gameMode === 'pong tournament')
-					stopTournamentExecution();
-				gameMode = 'none';
-			};
-		}
-		elementIdEditInnerHTML("closeWindow", "");
-	});
+        if (gameMode !== 'none') {
+            closePong1v1Socket();
+            closeTicTac1v1Socket();
+            console.log("heyyyyyyyyyyyyyyyyyyyyyy");
+            const canvasElement = document.getElementById("gameCanvas");
+            if (canvasElement) {
+                let animationId = canvasElement.dataset.animationFrameId;
+                window.cancelAnimationFrame(animationId);
+                canvasElement.remove();
+                if (gameMode === 'pong single')
+                    stopPongExecution();
+                if (gameMode === 'pong tournament')
+                    stopTournamentExecution();
+                gameMode = 'none';
+
+            }
+            const tictacContainer = document.getElementById("tictac-container");
+            if (tictacContainer) {
+                tictacContainer.remove();
+                if (gameMode === 'tic tac single')
+                    stopTicTacExecution();
+                gameMode = 'none';
+            }
+        }
+        elementIdEditInnerHTML("closeWindow", "");
+    });
 }
 
 async function updateProfile(file) {
@@ -289,7 +298,7 @@ async function updateProfile(file) {
                 elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Failed to update Image, You have to login again for security reasons!');
                 localStorage.clear();
-				hideModal("modalSetting");
+                hideModal("modalSetting");
 
                 return null;
             }
@@ -297,7 +306,7 @@ async function updateProfile(file) {
 
         }).then(data => {
             if (!data) {
-				console.log("data is null");
+                console.log("data is null");
                 return;
             }
             loadToast('Image updated successfully');
@@ -316,9 +325,9 @@ let loadModalFile = async function (event) {
         if (modalInput) {
             let modalFile = modalInput.files[0];
 
-			updateProfile(modalFile, image);
-			if (image)
-				image.src = URL.createObjectURL(event.target.files[0]);
+            updateProfile(modalFile, image);
+            if (image)
+                image.src = URL.createObjectURL(event.target.files[0]);
         }
     });
 
@@ -380,11 +389,11 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-			hideModal("modalSetting");
+        hideModal("modalSetting");
     });
     document.getElementById('nickname-btn')?.addEventListener('click', async () => {
 
-		const newDisplayName = document.getElementById('displayNameInput');
+        const newDisplayName = document.getElementById('displayNameInput');
         const nicknameValue = newDisplayName.value;
         const displayNameElement = document.getElementById('displayName');
 
@@ -413,7 +422,7 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
                 console.log('response', response);
                 elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Failed to update display name, You have to login again for security reasons!');
-				hideModal("modalSetting");
+                hideModal("modalSetting");
                 return null;
             }
             return response.json()
@@ -436,27 +445,37 @@ export const urlLocationHandler = async () => {
         elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
         return;
     }
+    console.log("gamemode = " + gameMode);
 
     if (gameMode !== 'none') {
 
-        closePong1v1Socket();
         console.log("heyyyyyyyyyyyyyyyyyyyyyy");
         const canvasElement = document.getElementById("gameCanvas");
-		if (canvasElement)
-		{
-			let animationId = canvasElement.dataset.animationFrameId;
-			window.cancelAnimationFrame(animationId);
-			canvasElement.remove();
-			if (gameMode === 'pong single')
-				stopPongExecution();
-			if (gameMode === 'pong tournament')
-				stopTournamentExecution();
-			gameMode = 'none';
-		}
+        if (canvasElement) {
+            closePong1v1Socket();
+            let animationId = canvasElement.dataset.animationFrameId;
+            window.cancelAnimationFrame(animationId);
+            canvasElement.remove();
+            if (gameMode === 'pong single')
+                stopPongExecution();
+            if (gameMode === 'pong tournament')
+                stopTournamentExecution();
+            gameMode = 'none';
+        }
+        //tic
+        const tictacContainer = document.getElementById("tictac-container");
+        if (tictacContainer) {
+            console.log("YAOOOOOOOOOOOOOOOO");
+            // closeTicTac1v1Socket();
+            tictacContainer.remove();
+            if (gameMode === 'tic tac single')
+                stopTicTacExecution();
+            gameMode = 'none';
+        }
     }
 
     insertOrCreateContent();
-	elementIdEditInnerHTML("content", "");
+    elementIdEditInnerHTML("content", "");
     let location = window.location.pathname;
     if (location[location.length - 1] === '/') {
         location = location.slice(0, location.length - 1);
@@ -478,14 +497,14 @@ export const urlLocationHandler = async () => {
 
     if (location === '/') {
         console.log('login route');
-    	document.getElementById("navbar")?.remove();
+        document.getElementById("navbar")?.remove();
         console.log('login route')
         elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
         return;
     }
 
     document.getElementById("navbar").style.display = 'flex';
-	elementIdEditInnerHTML("username-welcome", `${user ? user.username : ''}`);
+    elementIdEditInnerHTML("username-welcome", `${user ? user.username : ''}`);
 
     if (gameRoutes.hasOwnProperty(location)) {
         checkAuth();
@@ -502,7 +521,11 @@ export const urlLocationHandler = async () => {
                 loadGame(localStorage.getItem('username'), false);
                 break;
             case '/games_tictactoe_local':
-                loadTicTac();
+                loadTicTac(localStorage.getItem('username'), true);
+                break;
+            case '/games_tictactoe_online':
+                gameMode = 'tic tac single';
+                loadTicTac(localStorage.getItem('username'), false);
                 break;
             case '/games_pong_local_tournament':
                 gameMode = 'pong tournament';
@@ -564,7 +587,7 @@ export const urlLocationHandler = async () => {
             if (!data) {
                 return;
             }
-			elementIdEditInnerHTML("windowScreen", data);
+            elementIdEditInnerHTML("windowScreen", data);
         }).catch((error) => {
             console.error('Error:', error);
         });
@@ -590,7 +613,7 @@ export const urlLocationHandler = async () => {
                 const data = await response.text();
 
                 if (data === '2FA disabled successfully') {
-					elementIdEditInnerHTML("2fa-button", "Enable 2FA");
+                    elementIdEditInnerHTML("2fa-button", "Enable 2FA");
 
                     loadToast('2FA disabled successfully');
                 } else {
@@ -608,7 +631,7 @@ export const urlLocationHandler = async () => {
     else if (location === '/users') {
         setMainWindowframe();
         await fetch('/components/player-card.html').then(response => response.text()).then(data => {
-			elementIdEditInnerHTML("windowScreen", data);
+            elementIdEditInnerHTML("windowScreen", data);
         });
         let users = getAllUsers();
 
@@ -630,7 +653,7 @@ export const urlLocationHandler = async () => {
     }
     else {
         await fetch('/components/404.html').then(response => response.text()).then(data => {
-			elementIdEditInnerHTML("main-content", data);
+            elementIdEditInnerHTML("main-content", data);
         });
     }
 
@@ -697,7 +720,7 @@ async function handleUserData() {
                 if (otp === 'validate_otp') {
                     console.log('validate otp');
                     setMainWindowframe();
-					elementIdEditInnerHTML("windowScreen",
+                    elementIdEditInnerHTML("windowScreen",
                         `
 							<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 gap-5 justify-content-center align-items-center font--argent" id="otp-container">
 								<div class="p-5">
@@ -742,7 +765,7 @@ async function handleUserData() {
                                 if (data.message === 'OTP is valid') {
                                     console.log(data);
                                     localStorage.setItem('access_token', userToken);
-									elementIdEditInnerHTML("windowScreen", "");
+                                    elementIdEditInnerHTML("windowScreen", "");
                                     loadToast('OTP is valid, enjoy pongos');
                                     window.history.pushState({}, "", '/desktop');
 
@@ -787,7 +810,7 @@ async function handleUserData() {
                 // call the urlLocationHandler function to handle the initial url
                 window.route = urlRoute;
                 urlLocationHandler();
-                
+
 
             })
         return;
@@ -893,12 +916,12 @@ async function getAllFriends(override) {
 }
 
 async function insertAllUsers(users) {
-	let playerCardDiv = document.getElementById("player-card-div");
+    let playerCardDiv = document.getElementById("player-card-div");
 
     if (!users || !playerCardDiv) {
         return;
     }
-	playerCardDiv.innerHTML = "";
+    playerCardDiv.innerHTML = "";
     let friends = await getAllFriends();
     //call getAllFriends here:
     console.log(friends);
@@ -932,7 +955,7 @@ async function insertAllUsers(users) {
 									</div>
 								</div>
 								</div>`;
-		playerCardDiv.innerHTML += playerCard;
+        playerCardDiv.innerHTML += playerCard;
     });
     const buttons = document.getElementsByClassName('view-profile-btn');
     for (let i = 0; i < buttons.length; i++) {
