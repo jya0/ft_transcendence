@@ -1,4 +1,6 @@
 
+import { querySelectIdEditInnerHTML } from "./utility.js";
+
 let LOGIN_PAGE_HTML = '';
 
 await fetch('/components/login.html').then(response => response.text()).then(data => {
@@ -6,7 +8,10 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 });
 
 export const loadGameMenu = () => {
-	document.getElementById("windowScreen").innerHTML =
+	let docWinScreen = document.getElementById("windowScreen");
+	if (!docWinScreen)
+		return ;
+	docWinScreen.innerHTML =
 		`
 			<div class="row p-0 m-0 d-flex mh-100 mw-100 h-100 w-100 overflow-auto border border-0 border-danger" id="gameMenu">
 				<!-- BACKGROUND DECOR -->
@@ -78,32 +83,30 @@ export const loadGameMenu = () => {
 				</div>
 			</div>
 			<script src="/js/pong.js" type="module"></script>
-
-
-		`
+		`;
 }
 
 export const loadGameCanvas = () => {
-    console.log("LOADCANVAS");
-    console.log(document.getElementById('windowScreen').getBoundingClientRect().width);
-    if (!document.getElementById("gameCanvas")) {
-        let canvasElement = document.createElement('canvas');
-        canvasElement.id = 'gameCanvas';
-        canvasElement.width = 1200;
-        canvasElement.height = 900;
-		// canvasElement.style.margin = '0 auto';
-        // let scale =	(document.getElementById('windowScreen').getBoundingClientRect().width) / (canvasElement.width);
-        canvasElement.style.scale = 1;
-        const ctx = canvasElement.getContext('2d');
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
-        document.getElementById('windowScreen').appendChild(canvasElement);
-    }
+
+	let canvasElement = document.createElement('canvas');
+	canvasElement.id = 'gameCanvas';
+	canvasElement.width = 1200;
+	canvasElement.height = 900;
+	// canvasElement.style.margin = '0 auto';
+	// let scale =	(document.getElementById('windowScreen').getBoundingClientRect().width) / (canvasElement.width);
+	canvasElement.style.scale = 1;
+	const ctx = canvasElement.getContext('2d');
+	ctx.fillStyle = '#000';
+	ctx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+	document.getElementById('windowScreen')?.appendChild(canvasElement);
 }
 
 export const loadToast = (message) => {
 	const toastAlert = document.getElementById('mainToast');
-	toastAlert.querySelector('.toast-body').innerHTML = message;
+	if (!toastAlert)
+		return ;
+	// toastAlert.querySelector('.toast-body').innerHTML = message;
+	querySelectIdEditInnerHTML(toastAlert, "toast-text", message);
 	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastAlert);
 	toastBootstrap.show();
 };

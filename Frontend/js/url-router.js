@@ -186,7 +186,7 @@ const addFriend = async (button, username, newFriend) => {
 
 let navbarLinks = document.querySelectorAll('#navbar a');
 
-navbarLinks.forEach(function (link) {
+navbarLinks?.forEach(function (link) {
     link.addEventListener('click', function (event) {
         event.preventDefault();
         window.history.pushState({}, "", link);
@@ -523,7 +523,7 @@ export const urlLocationHandler = async () => {
         loadGameMenu();
         let gameMenu = document.querySelectorAll('#gameMenu a');
 
-        gameMenu.forEach(function (link) {
+        gameMenu?.forEach(function (link) {
             link.addEventListener('click', function (event) {
                 event.preventDefault();
                 window.history.pushState({}, "", link);
@@ -903,7 +903,7 @@ async function insertAllUsers(users) {
     //call getAllFriends here:
     console.log(friends);
 
-    users.forEach(user => {
+    users?.forEach(user => {
         let isFriend = false;
         console.log(user.username);
         isFriend = elementExistsInArray(friends, user.intra)
