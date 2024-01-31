@@ -956,12 +956,3 @@ async function insertAllUsers(users) {
         });
     }
 }
-
-
-if ('optionalChain' in {}) {
-    // ECMAScript 2020 (or later) is supported
-    console.log('Optional chaining is supported.');
-} else {
-    // ECMAScript 2020 (or later) is not supported
-    console.log('Optional chaining is not supported.');
-}
