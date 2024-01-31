@@ -1,5 +1,5 @@
 
-import { querySelectIdEditInnerHTML } from "./utility.js";
+import { querySelectIdEditInnerHTML, elementIdEditInnerHTML } from "./utility.js";
 
 let LOGIN_PAGE_HTML = '';
 
@@ -8,10 +8,7 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 });
 
 export const loadGameMenu = () => {
-	let docWinScreen = document.getElementById("windowScreen");
-	if (!docWinScreen)
-		return ;
-	docWinScreen.innerHTML =
+	elementIdEditInnerHTML("windowScreen",
 		`
 			<div class="row p-0 m-0 d-flex mh-100 mw-100 h-100 w-100 overflow-auto border border-0 border-danger" id="gameMenu">
 				<!-- BACKGROUND DECOR -->
@@ -83,7 +80,7 @@ export const loadGameMenu = () => {
 				</div>
 			</div>
 			<script src="/js/pong.js" type="module"></script>
-		`;
+		`);
 }
 
 export const loadGameCanvas = () => {
@@ -117,7 +114,7 @@ export const loadToast = (message) => {
 // };
 
 export const loadModal = (idModalBody, innerHTML) => {
-	document.getElementById(idModalBody).innerHTML = innerHTML;
+	elementIdEditInnerHTML(idModalBody, innerHTML);
 };
 
 export const showGameWinner = (winner) => {
@@ -133,27 +130,32 @@ export const showGameWinner = (winner) => {
 			</p>
 		</div>`);
 	let docModalGame = document.getElementById("modalGame");
+	if (!docModalGame)
+		return ;
 	const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
 	tmpModalGame.show();
 };
 
 export const loadSpinner = (elementId, color) => {
-	document.getElementById(elementId).innerHTML = 
-	`
-		<div class="d-flex h-100 w-100 justify-content-center align-items-center">
-			<div id="spinner" class="d-flex flex-column justify-content-center align-items-center gap-5 ${color}">
-				<div class="spinner-grow display-1" style="width: 5vw; height: 5vw;" role="status">
-					<span class="visually-hidden">Loading...</span>
+	elementIdEditInnerHTML(elementId, 
+		`
+			<div class="d-flex h-100 w-100 justify-content-center align-items-center">
+				<div id="spinner" class="d-flex flex-column justify-content-center align-items-center gap-5 ${color}">
+					<div class="spinner-grow display-1" style="width: 5vw; height: 5vw;" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<p class="m-0 p-0 font--neue text-capitalize display-1">Hang tight...</p>
 				</div>
-				<p class="m-0 p-0 font--neue text-capitalize display-1">Hang tight...</p>
 			</div>
-		</div>
-	`;
+		`);
 }
 
 export function loadLoginPage(message) {
 	console.log("loadLoginPage");
-	document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+	elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+	if (!document.getElementById("main-content"))
+		return ;
+	// document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
 	if (message) {
 		console.log("loadLoginPage message");
 		loadToast(message);
