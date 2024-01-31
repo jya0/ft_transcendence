@@ -37,10 +37,6 @@ def remove_from_lobbies(text_data_json):
         game.save()
 
 
-
-    
-
-
 class GameConsumer(WebsocketConsumer):
     lobbyCount = 0
  
