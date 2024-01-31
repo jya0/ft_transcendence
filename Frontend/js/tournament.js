@@ -1,6 +1,6 @@
 // import {io} from "socket.io-client";
-import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast } from "./loadComponent.js";
-import {urlLocationHandler} from "./url-router.js"
+import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast, showModal, hideModal } from "./loadComponent.js";
+import { urlLocationHandler } from "./url-router.js"
 import { querySelectIdEditInnerHTML } from "./utility.js";
 
 let continueExecution = true;
@@ -16,25 +16,25 @@ export function loadTournament(localMode) {
     const canvas = document.getElementById('gameCanvas');
     const docModalGame = document.getElementById('modalGame');
 
-	if (!canvas || !docModalGame)
-		return ;
+    if (!canvas || !docModalGame)
+        return;
 
     continueExecution = true;
     let tournament_name;
-	let lastTimestamp = 0;
-	const maxFrameRate = 60;
-	const frameInterval = 1000 / maxFrameRate;
+    let lastTimestamp = 0;
+    const maxFrameRate = 60;
+    const frameInterval = 1000 / maxFrameRate;
     const ctx = canvas.getContext('2d');
 
     let localPlayerMode = true;
     let pairings = [];
     let winners = [];
 
-	const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
-	const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
-	const score = { left: 0, right: 0 };
-	const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
-	const keys = {};
+    const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
+    const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
+    const score = { left: 0, right: 0 };
+    const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
+    const keys = {};
 
     let tournReady = false;
     let isGameOver = false;
@@ -48,20 +48,20 @@ export function loadTournament(localMode) {
     let g_count = 0;
 
     function draw() {
-		ctx.fillStyle = '#000';
-		ctx.fillRect(0, 0, canvas.width, canvas.height);
-		ctx.fillStyle = '#fff';
-		ctx.fillRect(0, players.left, paddle.width, paddle.height);
-		ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
-		ctx.beginPath();
-		ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-		ctx.fill();
-		ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
-		ctx.textAlign = "center";
-		ctx.textBaseline = "top";
-		ctx.fillText(score.left, canvas.width / 4, 50);
-		ctx.fillText(score.right, 3 * canvas.width / 4, 50);
-		ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, players.left, paddle.width, paddle.height);
+        ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(score.left, canvas.width / 4, 50);
+        ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+        ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
     }
 
     function updateBackend() {
@@ -124,7 +124,7 @@ export function loadTournament(localMode) {
         score.right = 0;
         players.left = (canvas.height - paddle.height) / 2;
         players.right = (canvas.height - paddle.height) / 2;
-		lastTimestamp = 0;
+        lastTimestamp = 0;
     }
 
 
@@ -142,24 +142,24 @@ export function loadTournament(localMode) {
         //     ball.x > canvas.width - paddle.width && ball.y > players.right && ball.y < players.right + paddle.height) {
         //     ball.speedX *= -1;
         // }
-		let paddleLeftEdgeX = 0;
-		let paddleRightEdgeX = canvas.width - paddle.width;
-		// Check collision with left paddle
-		if (ball.x - ball.size < paddleLeftEdgeX + paddle.width &&
-			ball.y + ball.size > players.left &&
-			ball.y - ball.size < players.left + paddle.height) {
-			// Adjust the ball's X position to prevent it from going inside the paddle
-			ball.x = paddleLeftEdgeX + paddle.width + ball.size;
-			ball.speedX *= -1;
-		}
-		// Check collision with right paddle
-		if (ball.x + ball.size > paddleRightEdgeX &&
-			ball.y + ball.size > players.right &&
-			ball.y - ball.size < players.right + paddle.height) {
-			// Adjust the ball's X position to prevent it from going inside the paddle
-			ball.x = paddleRightEdgeX - ball.size;
-			ball.speedX *= -1;
-		}
+        let paddleLeftEdgeX = 0;
+        let paddleRightEdgeX = canvas.width - paddle.width;
+        // Check collision with left paddle
+        if (ball.x - ball.size < paddleLeftEdgeX + paddle.width &&
+            ball.y + ball.size > players.left &&
+            ball.y - ball.size < players.left + paddle.height) {
+            // Adjust the ball's X position to prevent it from going inside the paddle
+            ball.x = paddleLeftEdgeX + paddle.width + ball.size;
+            ball.speedX *= -1;
+        }
+        // Check collision with right paddle
+        if (ball.x + ball.size > paddleRightEdgeX &&
+            ball.y + ball.size > players.right &&
+            ball.y - ball.size < players.right + paddle.height) {
+            // Adjust the ball's X position to prevent it from going inside the paddle
+            ball.x = paddleRightEdgeX - ball.size;
+            ball.speedX *= -1;
+        }
 
         if (localPlayerMode == true) {
             if (keys['ArrowUp'] && players.right > 0) players.right -= paddle.speed;
@@ -205,7 +205,7 @@ export function loadTournament(localMode) {
             winners.push((pairings[g_count][0] > pairings[g_count][1]) ? pairings[g_count][0] : pairings[g_count][1]);
         }
 
-		// resetGame();
+        // resetGame();
         //reset
         isGameOver = false;
         socketStatus = false;
@@ -222,23 +222,27 @@ export function loadTournament(localMode) {
         if (g_count == 0) {
             //@todo - show bracket
             // docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
-			querySelectIdEditInnerHTML(docModalGame, "winner-p1", winners[0]);
-            toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
-            toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
-			showModal("modalGame");
+            querySelectIdEditInnerHTML(docModalGame, "winner-p1", winners[0]);
+            toggleHighlight("tPlayer1Highlight");
+            toggleHighlight("tPlayer2Highlight");
+            toggleHighlight("tPlayer3Highlight");
+            toggleHighlight("tPlayer4Highlight");
+            showModal("modalGame");
             isGameOver = true;
             await delay(4000);
-			hideModal("modalGame");
+            hideModal("modalGame");
             isGameOver = false;
             resetGame();
         }
         if (g_count == 1) {
             //@todo - show bracket
             // docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
-			querySelectIdEditInnerHTML(docModalGame, "winner-p2", winners[1]);
-            toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
-            toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
-			showModal("modalGame");
+            querySelectIdEditInnerHTML(docModalGame, "winner-p2", winners[1]);
+            toggleHighlight("tPlayer3Highlight");
+            toggleHighlight("tPlayer4Highlight");
+            toggleHighlight("tWinnerP1Highlight");
+            toggleHighlight("tWinnerP2Highlight");
+            showModal("modalGame");
             isGameOver = true;
             await delay(4000);
             hideModal("modalGame");
@@ -262,13 +266,14 @@ export function loadTournament(localMode) {
             tournReady = false;
             isGameOver = true;
             // docModalGame.querySelector('#winner-final').innerHTML = champion;
-			querySelectIdEditInnerHTML(docModalGame, "winner-final", champion);
-            toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
-            toggleHighlight("tWinnerHighlight", "");
+            querySelectIdEditInnerHTML(docModalGame, "winner-final", champion);
+            toggleHighlight("tWinnerP1Highlight");
+            toggleHighlight("tWinnerP2Highlight");
+            toggleHighlight("tWinnerHighlight");
             showGameWinner(champion);
             window.history.pushState({}, "", '/play');
             urlLocationHandler();
-            return ;
+            return;
             //@todo - show bracket
         }
         else
@@ -320,7 +325,7 @@ export function loadTournament(localMode) {
     });
 
     let player_count = 0;
-    let url = `wss://localhost:8090/ws/socket-server/`
+    let url = `wss://localhost:9090/ws/socket-server/`
     let gameSocket;
 
     function initiateSocket() {
@@ -540,8 +545,9 @@ export function loadTournament(localMode) {
             score.left = 0;
             score.right = 0;
 
-            toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
-			showModal("modalGame");
+            toggleHighlight("tPlayer1Highlight");
+            toggleHighlight("tPlayer2Highlight");
+            showModal("modalGame");
             await delay(4000);
             hideModal("modalGame");
             resetBall();
@@ -597,7 +603,7 @@ export function loadTournament(localMode) {
 					</div>
 				</form>
 				`);
-			showModal("modalGame");
+        showModal("modalGame");
 
         document.getElementById('formPlayerNames')?.addEventListener('submit', function (event) {
             event.preventDefault(); // Prevents the default form submission behavior
@@ -628,7 +634,7 @@ export function loadTournament(localMode) {
 
             // Check if all player names are unique
             if (hasDuplicates(playerNames)) {
-				loadToast("Player names must be unique. Please enter distinct names for each player.");
+                loadToast("Player names must be unique. Please enter distinct names for each player.");
                 return;
             }
             // Perform matchmaking logic (for demonstration, this is a simple random pairing)
@@ -644,20 +650,13 @@ export function loadTournament(localMode) {
     };
 
 
-    function toggleHighlight(highlightId1, highlightId2) {
-		let highlight1 = docModalGame.querySelector('#' + highlightId1);
-		let highlight2 = docModalGame.querySelector('#' + highlightId2);
-        if (highlight1) {
-            if (window.getComputedStyle(highlight1).display == "none")
-                highlight1.style.display = "block";
+    function toggleHighlight(highlightId) {
+        if (highlightId) {
+            let highlight = docModalGame.querySelector('#' + highlightId);
+            if (window.getComputedStyle(highlight).display == "none")
+                highlight.style.display = "block";
             else
-                highlight1.style.display = "none";
-        }
-        if (highlight2) {
-            if (window.getComputedStyle(highlight2).display == "none")
-                highlight2.style.display = "block";
-            else
-                highlight2.style.display = "none";
+                highlight.style.display = "none";
         }
     };
 
@@ -678,82 +677,82 @@ export function loadTournament(localMode) {
 
 
 
-/*     async function displayMenu() {
-        const menuContainer = document.createElement('div');
-        menuContainer.id = 'menu-container';
+    /*     async function displayMenu() {
+            const menuContainer = document.createElement('div');
+            menuContainer.id = 'menu-container';
+    
+            // Fetch the list of online tournaments from the backend
+            // fetch('http://localhost:8000/api/tournaments');
+    
+    
+            await fetch('/api/tournaments', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json())
+                .then(tournaments => {
+                    const tournamentList = document.createElement('ul');
+                    tournamentList.innerHTML = '<p>Online Tournaments:</p>';
+                    tournamentList.id = 'tourn-list';
+                    console.log(tournaments);
+                    tournaments?.forEach(tournament => {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = tournament.name;
+    
+                        const joinButton = document.createElement('button');
+                        joinButton.textContent = 'Join';
+                        joinButton.addEventListener('click', () => joinTournament(tournament.name));
+    
+                        listItem.appendChild(joinButton);
+                        tournamentList.appendChild(listItem);
+                    });
+    
+                    menuContainer.appendChild(tournamentList);
+                })
+                .catch(error => console.error('Error fetching tournaments:', error));
+    
+            // Button to create a new tournament
+            const createButton = document.createElement('button');
+            createButton.textContent = 'Create New Tournament';
+            createButton.addEventListener('click', createNewTournament);
+    
+            menuContainer.appendChild(createButton);
+            menuContainer.style.zIndex = 4;
+            menuContainer.style.position = "absolute";
+            menuContainer.style.color = "white";
+            // Append the menu to the document
+    
+            document.getElementById('windowScreen').appendChild(menuContainer);
+        } */
 
-        // Fetch the list of online tournaments from the backend
-        // fetch('http://localhost:8000/api/tournaments');
-
-
-        await fetch('/api/tournaments', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                'Content-Type': 'application/json'
+    /*     function createNewTournament() {
+            // Check if the input field already exists
+            const inputField = document.getElementById('tournamentNameInput');
+            if (inputField) {
+                loadToast('Please enter a tournament name before creating a new tournament.');
+            	
+                return;
             }
-        }).then(response => response.json())
-            .then(tournaments => {
-                const tournamentList = document.createElement('ul');
-                tournamentList.innerHTML = '<p>Online Tournaments:</p>';
-                tournamentList.id = 'tourn-list';
-                console.log(tournaments);
-                tournaments?.forEach(tournament => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = tournament.name;
-
-                    const joinButton = document.createElement('button');
-                    joinButton.textContent = 'Join';
-                    joinButton.addEventListener('click', () => joinTournament(tournament.name));
-
-                    listItem.appendChild(joinButton);
-                    tournamentList.appendChild(listItem);
-                });
-
-                menuContainer.appendChild(tournamentList);
-            })
-            .catch(error => console.error('Error fetching tournaments:', error));
-
-        // Button to create a new tournament
-        const createButton = document.createElement('button');
-        createButton.textContent = 'Create New Tournament';
-        createButton.addEventListener('click', createNewTournament);
-
-        menuContainer.appendChild(createButton);
-        menuContainer.style.zIndex = 4;
-        menuContainer.style.position = "absolute";
-        menuContainer.style.color = "white";
-        // Append the menu to the document
-
-        document.getElementById('windowScreen').appendChild(menuContainer);
-    } */
-
-/*     function createNewTournament() {
-        // Check if the input field already exists
-        const inputField = document.getElementById('tournamentNameInput');
-        if (inputField) {
-            loadToast('Please enter a tournament name before creating a new tournament.');
-			
-            return;
-        }
-
-        // Create an input field for the tournament name
-        const tournamentNameInput = document.createElement('input');
-        tournamentNameInput.type = 'text';
-        tournamentNameInput.id = 'tournamentNameInput';
-        tournamentNameInput.placeholder = 'Enter tournament name';
-
-        // Button to submit the tournament name
-        const submitButton = document.createElement('button');
-        submitButton.textContent = 'Submit';
-        submitButton.id = 'submitButton';
-        submitButton.addEventListener('click', () => submitTournament());
-
-        // Append the input field and submit button next to the create button
-        const menuContainer = document.getElementById('menu-container');
-        menuContainer.appendChild(tournamentNameInput);
-        menuContainer.appendChild(submitButton);
-    } */
+    
+            // Create an input field for the tournament name
+            const tournamentNameInput = document.createElement('input');
+            tournamentNameInput.type = 'text';
+            tournamentNameInput.id = 'tournamentNameInput';
+            tournamentNameInput.placeholder = 'Enter tournament name';
+    
+            // Button to submit the tournament name
+            const submitButton = document.createElement('button');
+            submitButton.textContent = 'Submit';
+            submitButton.id = 'submitButton';
+            submitButton.addEventListener('click', () => submitTournament());
+    
+            // Append the input field and submit button next to the create button
+            const menuContainer = document.getElementById('menu-container');
+            menuContainer.appendChild(tournamentNameInput);
+            menuContainer.appendChild(submitButton);
+        } */
 
     async function submitTournament() {
         const tournamentName = document.getElementById('tournamentName').value;
@@ -781,7 +780,7 @@ export function loadTournament(localMode) {
                 localStorage.clear();
                 console.log(response.statusText);
                 // loadToast('Please login to continue');
-                return; x
+                return;
             }
             return response.text();
         }).then(data => {
@@ -791,7 +790,7 @@ export function loadTournament(localMode) {
             }
             if (data.length > 55) {
                 loadModal('modalGameBody', data);
-				showModal("modalGame");
+                showModal("modalGame");
                 document.getElementById('createTourn').addEventListener('click', async function (event) {
                     event.preventDefault();
                     await submitTournament();
@@ -802,7 +801,7 @@ export function loadTournament(localMode) {
                     button.addEventListener('click', function () {
                         // Extract the tournament name from the closest card
                         const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
-        
+
                         // Call joinTournament with the extracted tournament name
                         joinTournament(tournamentName);
                     });
@@ -821,8 +820,8 @@ export function loadTournament(localMode) {
     async function joinTournament(tournamentName) {
         // Perform logic to join the selected tournament
         // You can make an API call or update the game state accordingly
-		if (!tournamentName)
-			return ;
+        if (!tournamentName)
+            return;
         console.log(`Joining tournament with name ${tournamentName}`);
         tournament_name = tournamentName;
         await fetch(`/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
@@ -837,46 +836,46 @@ export function loadTournament(localMode) {
                 // (e.g., tournament name, settings, etc.)
             }),
         })
-        .then(async response => {
-            if (!response.ok) {
-                return null;
-            }
-            // loadLoginPage('Please login again');
-            return response.json();
-        })
-        
-        .then(async data => {
-            if (!data) return;
-            // Handle the response from the backend
-            if (data.message === 'Tournament joined successfully') {
-                loadToast('Tournament joined successfully');
-        
-                //@TODO : Clear screen !
-                // const menuContainer = document.getElementById('menu-container');
-                // menuContainer.remove();
-                // startLocalButton.style.visibility = 'hidden';
-        
-                //@TODO : Display WAIT message
-                console.log("Waiting for lobby to fill & tournament to start ...");
-        
-                //@TODO : Open socket
-                initiateSocket();
-            } else if (data.message === "Sorry ur late. tournament is full :/") {
-                loadToast("Sorry ur late. tournament is full :/");
-            } else if (data.message === "You are already in the tournament") {
-                loadToast('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
-        
-                //@TODO : Clear screen !
-                // const menuContainer = document.getElementById('menu-container');
-                // menuContainer.remove();
-                // startLocalButton.style.visibility = 'hidden';
-        
-                //@TODO : Display WAIT message
-                console.log("Waiting for lobby to fill & tournament to start ...");
-            } else {
-                console.error('Failed to join tournament', data);
-            }
-        });        
+            .then(async response => {
+                if (!response.ok) {
+                    return null;
+                }
+                // loadLoginPage('Please login again');
+                return response.json();
+            })
+
+            .then(async data => {
+                if (!data) return;
+                // Handle the response from the backend
+                if (data.message === 'Tournament joined successfully') {
+                    loadToast('Tournament joined successfully');
+
+                    //@TODO : Clear screen !
+                    // const menuContainer = document.getElementById('menu-container');
+                    // menuContainer.remove();
+                    // startLocalButton.style.visibility = 'hidden';
+
+                    //@TODO : Display WAIT message
+                    console.log("Waiting for lobby to fill & tournament to start ...");
+
+                    //@TODO : Open socket
+                    initiateSocket();
+                } else if (data.message === "Sorry ur late. tournament is full :/") {
+                    loadToast("Sorry ur late. tournament is full :/");
+                } else if (data.message === "You are already in the tournament") {
+                    loadToast('idiot ur already in the damn tournament STOP CHANGING PAGES !!STAY HERE PRICK');
+
+                    //@TODO : Clear screen !
+                    // const menuContainer = document.getElementById('menu-container');
+                    // menuContainer.remove();
+                    // startLocalButton.style.visibility = 'hidden';
+
+                    //@TODO : Display WAIT message
+                    console.log("Waiting for lobby to fill & tournament to start ...");
+                } else {
+                    console.error('Failed to join tournament', data);
+                }
+            });
     }
 
 
@@ -916,7 +915,7 @@ export function loadTournament(localMode) {
                 return;
             }
             loadModal('modalGameBody', data);
-			showModal("modalGame");
+            showModal("modalGame");
         }).catch((error) => {
             console.error('Error:', error);
         });
@@ -952,23 +951,23 @@ export function loadTournament(localMode) {
     //         animationFrameId = requestAnimationFrame(gameLoop);
     //     }
     // }
-	async function gameLoop(timestamp) {
+    async function gameLoop(timestamp) {
 
         if (continueExecution == false)
-            return ;
+            return;
 
         const elapsed = timestamp - lastTimestamp;
-		console.log(timestamp);
+        console.log(timestamp);
 
-		if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
-			draw();
-			await update();
-			lastTimestamp = timestamp;
-			if (isGameOver)
-				return;
-			requestAnimationFrame(gameLoop);
-		}
-	}
+        if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
+            draw();
+            await update();
+            lastTimestamp = timestamp;
+            if (isGameOver)
+                return;
+            requestAnimationFrame(gameLoop);
+        }
+    }
 
 }
 
