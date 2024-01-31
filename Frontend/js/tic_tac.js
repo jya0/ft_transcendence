@@ -81,7 +81,7 @@ export function  loadTicTac(){
         };
         moves = 0;
         turn = "X";
-        boxes.forEach(function (square) {
+        boxes?.forEach(function (square) {
             square.innerHTML = EMPTY;
         });
     }
@@ -105,6 +105,8 @@ export function  loadTicTac(){
 
     function contains(selector, text) {
         var elements = document.querySelectorAll(selector);
+		if (!elements)
+			return (false);
         return [].filter.call(elements, function (element) {
             return RegExp(text).test(element.textContent);
         });
