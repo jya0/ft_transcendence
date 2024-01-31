@@ -1,5 +1,5 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner, getCookie } from './loadComponent.js';
+import { loadGameMenu, loadGameCanvas, loadToast, loadModal, loadSpinner, getCookie, loadLoginPage } from './loadComponent.js';
 import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac } from './tic_tac.js'
 import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
@@ -80,29 +80,6 @@ function checkAuth() {
             loadLoginPage('Unauthorized, please login again!');
         }
     });
-}
-
-async function loadLoginPage(message) {
-    document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-    if (message) {
-        loadToast(message);
-    }
-    localStorage.clear();
-    await fetch('/api/logout/', {
-        credentials: 'include',
-    })
-        .then(response => {
-            if (!response.ok) {
-                return null
-            }
-            return null;
-        })
-    const docModalAll = document.querySelectorAll(".modal");
-	const tmpModalBs = '';
-	docModalAll.forEach(element => {
-		tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
-		tmpModalBs.hide();
-	});
 }
 
 console.log(sessionStorage.getItem('username'))

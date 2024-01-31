@@ -101,7 +101,7 @@ export const loadGameCanvas = () => {
 export const loadToast = (message) => {
 	const toastAlert = document.getElementById('mainToast');
 	if (!toastAlert)
-		return ;
+		return;
 	// toastAlert.querySelector('.toast-body').innerHTML = message;
 	querySelectIdEditInnerHTML(toastAlert, "toast-text", message);
 	const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastAlert);
@@ -118,7 +118,7 @@ export const loadModal = (idModalBody, innerHTML) => {
 };
 
 export const showGameWinner = (winner) => {
-	loadModal('modalGameBody', 
+	loadModal('modalGameBody',
 		`<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 overflow-hidden font--neue align-items-center justify-content-center gap-2 border border-1 border-white bg-black">
 			<div class="d-flex p-0 m-0 h-25 w-25 animation--updown">
 				<div class="ratio ratio-1x1">
@@ -131,13 +131,13 @@ export const showGameWinner = (winner) => {
 		</div>`);
 	let docModalGame = document.getElementById("modalGame");
 	if (!docModalGame)
-		return ;
+		return;
 	const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
 	tmpModalGame.show();
 };
 
 export const loadSpinner = (elementId, color) => {
-	elementIdEditInnerHTML(elementId, 
+	elementIdEditInnerHTML(elementId,
 		`
 			<div class="d-flex h-100 w-100 justify-content-center align-items-center">
 				<div id="spinner" class="d-flex flex-column justify-content-center align-items-center gap-5 ${color}">
@@ -149,23 +149,6 @@ export const loadSpinner = (elementId, color) => {
 			</div>
 		`);
 }
-
-export function loadLoginPage(message) {
-	console.log("loadLoginPage");
-	elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-	if (!document.getElementById("main-content"))
-		return ;
-	// document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-	if (message) {
-		console.log("loadLoginPage message");
-		loadToast(message);
-	}
-	localStorage.clear();
-	const docModalSetting = document.getElementById('modalSetting');
-	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalSetting);
-	tmpModalSetting.hide();
-}
-
 
 export function getCookie(name) {
 	let cookieValue = null;
@@ -180,4 +163,27 @@ export function getCookie(name) {
 		}
 	}
 	return cookieValue;
+}
+
+export async function loadLoginPage(message) {
+	document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+	if (message) {
+		loadToast(message);
+	}
+	localStorage.clear();
+	await fetch('/api/logout/', {
+		credentials: 'include',
+	})
+		.then(response => {
+			if (!response.ok) {
+				return null
+			}
+			return null;
+		})
+	const docModalAll = document.querySelectorAll(".modal");
+	const tmpModalBs = '';
+	docModalAll.forEach(element => {
+		tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
+		tmpModalBs.hide();
+	});
 }
