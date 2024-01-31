@@ -33,8 +33,9 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
-CSRF_TRUSTED_ORIGINS = [f'https://{host}:8090' for host in ALLOWED_HOSTS]
+CSRF_TRUSTED_ORIGINS = [f'https://{host}:9090' for host in ALLOWED_HOSTS]
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 5
 
 # Application definition
 
@@ -108,7 +109,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [f'https://{host}:8090' for host in ALLOWED_HOSTS]
+CORS_ALLOWED_ORIGINS = [f'https://{host}:9090' for host in ALLOWED_HOSTS]
 
 CORS_ALLOW_HEADERS = [
     'Access-Control-Allow-Origin',

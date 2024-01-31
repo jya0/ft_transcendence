@@ -36,9 +36,7 @@ urlpatterns = [
 
     path("get_all_users/", get_all_users, name="get_all_users"),
     path("update_user_profile/", update_user_profile, name="update_user_profile"),
-    path("get_user_profile/", get_user_profile, name="get_user_profile"),
     path("update_display_name/", update_display_name, name="update_display_name"),
-    path("two_fa_toggle/", two_fa_toggle, name='2fa_toggle'),
     path('42_intra_link/', intra_link, name='intra_link'),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
