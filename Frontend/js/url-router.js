@@ -97,10 +97,14 @@ async function loadLoginPage(message) {
             }
             return null;
         })
-    const docModalMain = document.getElementById('modalSetting');
-    const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalMain);
-    tmpModalSetting.hide();
+    const docModalAll = document.querySelectorAll(".modal");
+	const tmpModalBs = '';
+	docModalAll.forEach(element => {
+		tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
+		tmpModalBs.hide();
+	});
 }
+
 console.log(sessionStorage.getItem('username'))
 
 await fetch(`/api/get_user_data/`, {
