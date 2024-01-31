@@ -21,7 +21,7 @@ function updateTime() {
 	hours = hours < 10 ? '0' + hours : hours;
 	seconds = seconds < 10 ? '0' + seconds : seconds;
 
-	let formatDate = dayNames[dow].substr(0, 3) + " " + dom + " " + monthNames[month].substr(0, 3) + " " + hours + ":" + minutes + ":" + seconds + " " + ampm;
+	let formatDate = dayNames[dow].substring(0, 3) + " " + dom + " " + monthNames[month].substring(0, 3) + " " + hours + ":" + minutes + ":" + seconds + " " + ampm;
 	elementIdEditInnerHTML("datetime", formatDate);
 }
 
