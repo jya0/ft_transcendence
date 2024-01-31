@@ -930,11 +930,12 @@ async function insertAllUsers(users) {
         let isFriend = false;
         console.log(user.username);
         isFriend = elementExistsInArray(friends, user.intra)
+        const userImage = `https://10.11.5.1:9090/api/get_image/${user.username}`;
         const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
 									<div class="ratio ratio-1x1 bg-black mh-100 mw-100">
-										<img src="${user.image ? user.image : user.picture.link}" class="object-fit-cover rounded-circle img-fluid p-1" alt="...">
+										<img src="${user.image ? userImage : user.picture.link}" class="object-fit-cover rounded-circle img-fluid p-1" alt="...">
 									</div>
 								</div>
 								<div class="col d-flex flex-column ps-2 justify-content-center text-truncate text-break border border-1 border-dark">
