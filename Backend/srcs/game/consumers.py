@@ -5,7 +5,7 @@ from asgiref.sync import async_to_sync
 
 from login.models import UserProfile, Match, Tournament
 from django.db.models import Q
-
+from datetime import date
 
 def create_new_game_lobby(game):
     dummy = Tournament.objects.all()[0]
@@ -158,6 +158,13 @@ class GameConsumer(WebsocketConsumer):
                 player = UserProfile.objects.filter(Q(intra=username))[0]
                 current_game.winner = text_data_json['winner']
                 current_game.ongoing = False
+                current_game.time = date.today()
+                if (current_game.id1.intra == current_game.winner):
+                    current_game.score1 = 1
+                    current_game.score2 = 0
+                else :
+                    current_game.score1 = 0
+                    current_game.score2 = 1
                 current_game.save()
                 self.close()
 
@@ -243,6 +250,7 @@ class GameConsumer(WebsocketConsumer):
                     current_game.winner = current_game.id2.intra
                 current_game.score1 = score1
                 current_game.score2 = score2
+                current_game.time = date.today()
                 current_game.save()
 
                 ready = prepare_final_round(tourn, player)
@@ -318,6 +326,7 @@ class GameConsumer(WebsocketConsumer):
                     current_game.winner = current_game.id2.intra
                 current_game.score1 = score1
                 current_game.score2 = score2
+                current_game.time = date.today()
                 current_game.save()
                 self.close()
 
