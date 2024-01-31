@@ -325,7 +325,7 @@ export function loadTournament(localMode) {
     });
 
     let player_count = 0;
-    let url = `wss://localhost:9090/ws/socket-server/`
+    let url = `wss://10.11.5.1:9090/ws/socket-server/`
     let gameSocket;
 
     function initiateSocket() {

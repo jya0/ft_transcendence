@@ -48,9 +48,6 @@ export function loadTicTac(username, localPlayerMode) {
         container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
         container.innerHTML =
             `
-        container.classList = "d-flex flex-row h-100 w-100 mh-100 mw-100 border border-0 border-black justify-content-around align-items-center overflow-auto font--argent"
-        container.innerHTML =
-            `
 				<div id="tictactoe" class="d-flex flex-column h-100 justify-content-center align-items-center flex-grow-1 h-100 w-100 border border-0 border-black">
 				</div>
 				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-0 order-1">
@@ -176,7 +173,7 @@ export function loadTicTac(username, localPlayerMode) {
 
     let player_count = 0;
     // let url = `wss://10.12.1.10:8000/ws/socket-server/`;
-    let url = `wss://localhost:8090/ws/socket-server/`;
+    let url = `wss://10.11.5.1:9090/ws/socket-server/`;
 
 
 
@@ -207,6 +204,7 @@ export function loadTicTac(username, localPlayerMode) {
             gameSocket.send(JSON.stringify({
                 'game': 'tic',
                 'type': 'end',
+                'winner': user_name,
                 'game': 'tic',
                 'mode': 'single',
                 'username': user_name,
@@ -396,6 +394,8 @@ export function loadTicTac(username, localPlayerMode) {
     }
 
     function handleMove(data) {
+        if (continueExecution == false)
+            return;
         hideModal("modalGame");
         if (data['key'] >= 0 && data['key'] < boxes.length && boxes[data['key']].innerHTML === EMPTY) {
             boxes[data['key']].innerHTML = turn;
@@ -428,7 +428,7 @@ export function loadTicTac(username, localPlayerMode) {
 // Function to stop the execution from the outside
 export function stopTicTacExecution() {
     continueExecution = false;
-    console.error("AAAAAAAAAAAA");
+    // console.error("AAAAAAAAAAAA");
 }
 
 export function closeTicTac1v1Socket() {
