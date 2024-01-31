@@ -8,9 +8,11 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+
+# rm in production
+# router = routers.DefaultRouter()
+# router.register(r'users', views.UserViewSet)
+# router.register(r'groups', views.GroupViewSet)
 
 
 urlpatterns = [

@@ -22,9 +22,10 @@ from api import views
 from django.conf import settings
 from django.conf.urls.static import static
 
-router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'groups', views.GroupViewSet)
+# rm in production
+# router = routers.DefaultRouter()
+# router.register(r'users', views.UserViewSet)
+# router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -33,7 +34,6 @@ urlpatterns = [
     path('api/', include('api.urls'))
 ]
 
-urlpatterns += router.urls
 
 
 if settings.DEBUG:
