@@ -146,7 +146,7 @@ export const showGameWinner = (winner) => {
 				</div>
 			</div>
 			<p class="display-1 text-uppercase text-white text-center animation--updown">
-				winner: ${winner}
+				${winner}
 			</p>
 		</div>`);
 	showModal("modalGame");
