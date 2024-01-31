@@ -196,22 +196,23 @@ export function loadGame(username, localPlayerMode) {
 
     async function handleOnlineWinner() {
         let winnerMsg;
+        let winner;
         if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-            winnerMsg = ` - ${player1} - Sorry You lose!`;
+        {
+            winner = player2;
+            winnerMsg = ` ${winner}\nSorry You lose!`;
+        }
         else {
-            winnerMsg = `${player1} - Congrats You won!`;
+            winner = player1;
+            winnerMsg = ` ${winner}\nCongrats You won!`;
             gameSocket.send(JSON.stringify({
                 'type': 'end',
                 'mode': 'single',
-                'username': username,
+                'username': winner,
                 'score1': score.left,
                 'score2': score.right,
             }))
         }
-        // ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
-        // ctx.textAlign = "center";
-        // ctx.textBaseline = "center";
-        // ctx.fillText(winnerMsg, canvas.width / 2, canvas.height / 2, canvas.width);
 
         gameSocket.close();
         gameSocket = "";
@@ -254,24 +255,6 @@ export function loadGame(username, localPlayerMode) {
     function initiateSocket() {
         gameSocket = new WebSocket(url);
 
-        // gameSocket.onclose = function (e) {
-        //     console.log('User disconnected.')
-        //     console.info("This page is reloaded");
-        //     console.log("Heyyyy");
-        //     console.log(isGameOver);
-
-        //     if (!animationFrameId && !isGameOver) {
-        //         // Call the closePong1v1Socket function to terminate the game
-        //         closePong1v1Socket();
-        //         showGameWinner('You lose!');
-        //         window.history.pushState({}, "", '/play');
-        //         urlLocationHandler();
-        //         // Display a custom message (some browsers may not support this)
-        //         event.returnValue = 'Are you sure you want to leave?';
-        //     }
-        // };
-
-
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
             console.log('Data: ', data)
@@ -281,9 +264,10 @@ export function loadGame(username, localPlayerMode) {
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 // loadSpinner("modalGameBody", "text-black");
-				hideModal("modalGame");
-                player1 = data["player1"];
-                player2 = data["player2"];
+                if (data["player2"] == user_name)
+                    player2 = data["player1"];
+                else
+                    player2 = data["player2"];
                 startGame();
 
                 if (data.sender == username) {
@@ -342,13 +326,18 @@ export function loadGame(username, localPlayerMode) {
             player_count = 1;
 
             console.log("waiting for a second player...");
+            console.log(player1);
+            console.log(player2);
             loadSpinner("modalGameBody", "text-black");
 			showModal("modalGame");
+            console.log("showing");
         });
         player_count = 1;
     }
 
     async function gameLoop(timestamp) {
+        hideModal("modalGame");
+
         window.addEventListener('beforeunload', function (event) {
             console.info("This page is reloaded");
             console.log("Heyyyy");
@@ -367,24 +356,7 @@ export function loadGame(username, localPlayerMode) {
         });
         if (continueExecution == false)
             return;
-        // if (performance.navigation.type == performance.navigation.TYPE) {
-        //     console.info( "This page is reloaded" );
-        //     console.log("Heyyyy");
-        //     console.log(btnCounter);
-        //     console.log(isGameOver);
-
-        //     if (!animationFrameId && !isGameOver) {
-        //         // Call the closePong1v1Socket function to terminate the game
-        //         closePong1v1Socket();
-        //         showGameWinner('You lose!');
-        //         window.history.pushState({}, "", '/play');
-        //         urlLocationHandler();
-        //         // Display a custom message (some browsers may not support this)
-        //         event.returnValue = 'Are you sure you want to leave?';
-        //     }
-        //   } 
         const elapsed = timestamp - lastTimestamp;
-        // console.log(timestamp);
 
         if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
             draw();
