@@ -1,4 +1,3 @@
-import { loadToast } from './loadComponent.js';
 
 function updateTime() {
 	const monthNames = ["January", "February", "March", "April", "May", "June",
@@ -35,36 +34,3 @@ function updateInterval() {
 }
 
 setTimeout(updateInterval, 1100);
-
-
-if (document.getElementById('test_user')) {
-
-	document.getElementById('test_user').addEventListener('click', async () => {
-		await fetch("/api/generate_test_user/").then(response => {
-			if (!response.ok) {
-				response.statusText === 'Unauthorized' ? alert('Unauthorized') : alert('Network response was not ok');
-			}
-			return response.json();
-		}).then(data => {
-			console.log(data.token)
-			userToken = data.token;
-			user = data.user;
-			localStorage.setItem('access_token', data.token);
-			localStorage.setItem('user', JSON.stringify(data.user));
-			isAuthDone = true;
-			if (localStorage.getItem('access_token')) {
-				console.log('authDone', localStorage.getItem('access_token'))
-			}
-			// window.location.reload();
-			console.log('Data fetched:', data);
-			location = '/desktop';
-			window.history.pushState({}, "", location);
-			isAuthDone = true;
-			document.getElementById("main-content").innerHTML = '';
-			urlLocationHandler();
-
-		}).catch((error) => {
-			console.error('Error:', error);
-		});
-	});
-}
