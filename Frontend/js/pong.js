@@ -196,14 +196,20 @@ export function loadGame(username, localPlayerMode) {
 
     async function handleOnlineWinner() {
         let winnerMsg;
+        let winner;
         if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
-            winnerMsg = ` - ${player1} - Sorry You lose!`;
+        {
+            winner = player1;
+            winnerMsg = ` - ${winner} - Sorry You lose!`;
+        }
         else {
-            winnerMsg = `${player1} - Congrats You won!`;
+            winnerMsg = `${player2} - Congrats You won!`;
+            winner = player2;
+
             gameSocket.send(JSON.stringify({
                 'type': 'end',
                 'mode': 'single',
-                'username': username,
+                'username': winner,
                 'score1': score.left,
                 'score2': score.right,
             }))
@@ -253,24 +259,6 @@ export function loadGame(username, localPlayerMode) {
 
     function initiateSocket() {
         gameSocket = new WebSocket(url);
-
-        // gameSocket.onclose = function (e) {
-        //     console.log('User disconnected.')
-        //     console.info("This page is reloaded");
-        //     console.log("Heyyyy");
-        //     console.log(isGameOver);
-
-        //     if (!animationFrameId && !isGameOver) {
-        //         // Call the closePong1v1Socket function to terminate the game
-        //         closePong1v1Socket();
-        //         showGameWinner('You lose!');
-        //         window.history.pushState({}, "", '/play');
-        //         urlLocationHandler();
-        //         // Display a custom message (some browsers may not support this)
-        //         event.returnValue = 'Are you sure you want to leave?';
-        //     }
-        // };
-
 
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
