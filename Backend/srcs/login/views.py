@@ -23,16 +23,6 @@ def logout(request):
     return JsonResponse({'message': 'Logged out successfully'}, status=200)
 
 
-def ssr_render(request, template_name, user, messages):
-    template = get_template(template_name)
-    template_content = template.template.source
-    template = Template(template_content)
-    context = Context({'user': user, 'messages': messages})
-
-    rendered_template = template.render(context)
-    return HttpResponse(rendered_template, content_type='text/html')
-
-
 @api_view(['get'])
 def auth(request):
     code = request.GET.get("code")
