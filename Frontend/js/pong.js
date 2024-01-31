@@ -199,12 +199,12 @@ export function loadGame(username, localPlayerMode) {
         let winner;
         if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3))
         {
-            winnerMsg = `Sorry You lose!`;
+            winner = player2;
+            winnerMsg = ` ${winner}\nSorry You lose!`;
         }
         else {
-            winner= player1;
-            winnerMsg = `Congrats You won!`;
-
+            winner = player1;
+            winnerMsg = ` ${winner}\nCongrats You won!`;
             gameSocket.send(JSON.stringify({
                 'type': 'end',
                 'mode': 'single',
@@ -264,9 +264,10 @@ export function loadGame(username, localPlayerMode) {
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 // loadSpinner("modalGameBody", "text-black");
-				hideModal("modalGame");
-                player1 = data["player1"];
-                player2 = data["player2"];
+                if (data["player2"] == user_name)
+                    player2 = data["player1"];
+                else
+                    player2 = data["player2"];
                 startGame();
 
                 if (data.sender == username) {
@@ -325,13 +326,18 @@ export function loadGame(username, localPlayerMode) {
             player_count = 1;
 
             console.log("waiting for a second player...");
+            console.log(player1);
+            console.log(player2);
             loadSpinner("modalGameBody", "text-black");
 			showModal("modalGame");
+            console.log("showing");
         });
         player_count = 1;
     }
 
     async function gameLoop(timestamp) {
+        hideModal("modalGame");
+
         window.addEventListener('beforeunload', function (event) {
             console.info("This page is reloaded");
             console.log("Heyyyy");
