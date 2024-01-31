@@ -19,7 +19,6 @@ export function loadGame(username, localPlayerMode) {
     const maxFrameRate = 60;
     const frameInterval = 1000 / maxFrameRate;
     let btnCounter = 0;
-    console.log("ayyy");
     const ctx = canvas.getContext('2d');
 
     const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
@@ -260,7 +259,7 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    let url = `wss://10.11.5.1:9090/ws/socket-server/`;
+    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
     // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
@@ -345,7 +344,6 @@ export function loadGame(username, localPlayerMode) {
             console.log(player2);
             loadSpinner("modalGameBody", "text-black");
             showModal("modalGame");
-            console.log("showing");
         });
         player_count = 1;
     }
@@ -355,9 +353,6 @@ export function loadGame(username, localPlayerMode) {
 
         window.addEventListener('beforeunload', function (event) {
             console.info("This page is reloaded");
-            console.log("Heyyyy");
-            console.log(btnCounter);
-            console.log(isGameOver);
 
             if (gameSocket !== "" && player2 != "") {
                 // Call the closePong1v1Socket function to terminate the game

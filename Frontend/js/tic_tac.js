@@ -94,7 +94,6 @@ export function loadTicTac(username, localPlayerMode) {
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
         docWinScreen.appendChild(container);
-        console.log("heheeee");
     }
 
 
@@ -172,15 +171,13 @@ export function loadTicTac(username, localPlayerMode) {
     }
 
     let player_count = 0;
-    // let url = `wss://10.12.1.10:8000/ws/socket-server/`;
-    let url = `wss://10.11.5.1:9090/ws/socket-server/`;
+    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
+    // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
 
     function playGame() {
-        console.log("HEYYY");
         gameOver = false;
-        console.log('hi');
 
 
         if (localPlayerMode) {
@@ -190,7 +187,6 @@ export function loadTicTac(username, localPlayerMode) {
         else {
             initiateSocket();
             online_init();
-            console.log("yooooooooooo");
         }
 
     }
@@ -238,7 +234,6 @@ export function loadTicTac(username, localPlayerMode) {
                 hideModal("modalGame");
                 window.addEventListener('beforeunload', function (event) {
                     console.info("This page is reloaded");
-                    console.log("Heyyyy");
                     // console.log(btnCounter);
                     if (gameSocket !== "" && player2 != "") {
                         // Call the closePong1v1Socket function to terminate the game
@@ -310,8 +305,6 @@ export function loadTicTac(username, localPlayerMode) {
             player_count = 1;
 
             console.log("waiting for a second player...");
-            console.log(player1);
-            console.log(player2);
             loadSpinner("modalGameBody", "text-black");
             showModal("modalGame");
             console.log("showing");
@@ -388,7 +381,6 @@ export function loadTicTac(username, localPlayerMode) {
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
         docWinScreen.appendChild(container);
-        console.log("heheeee");
 
         // document.getElementById("container").appendChild(board);
     }
