@@ -484,6 +484,7 @@ export const urlLocationHandler = async () => {
         return;
     }
 
+    document.getElementById("navbar").style.display = 'flex';
 	elementIdEditInnerHTML("username-welcome", `${user ? user.username : ''}`);
 
     if (gameRoutes.hasOwnProperty(location)) {
@@ -624,7 +625,7 @@ export const urlLocationHandler = async () => {
                 insertAllUsers(users);
                 return;
             }
-            insertAllUsers(users.filter((user) => user.username.startsWith(inputValue)));
+            insertAllUsers(users.filter((user) => user.username.startsWith(inputValue.toLowerCase())));
         });
     }
     else {
@@ -780,14 +781,13 @@ async function handleUserData() {
 
                 }
 
-
                 window.history.pushState({}, "", '/desktop');
 
                 window.onpopstate = urlLocationHandler;
                 // call the urlLocationHandler function to handle the initial url
                 window.route = urlRoute;
                 urlLocationHandler();
-
+                
 
             })
         return;
