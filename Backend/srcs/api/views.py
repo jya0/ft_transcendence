@@ -295,7 +295,10 @@ def get_user_data(request):
     session_id = request.COOKIES.get('sessionid')
     if session_id:
         username = request.session.get('username', None)
-        user = get_object_or_404(UserProfile, username=username)
+        try:
+            user = get_object_or_404(UserProfile, username=username)
+        except:
+            return JsonResponse({'error': 'User not found'}, status=204)
         user_data = {
             'username': user.username,
             'email': user.email,
