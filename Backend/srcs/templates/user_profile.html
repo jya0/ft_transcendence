@@ -1,35 +1,15 @@
-<!-- <!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title class="text-capitalize">modal prompt component</title>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-		<link href="../assets/css/global-new.css" rel="stylesheet"> 
-	</head>
-	<body>
-        <div class="vh-100 vw-100 bg--main" id="REMOVE________________________________________THIS!!!">
-            <section> -->
+
 <div id="profile-container" class="flex-column gap-4 p-3 pb-5 m-0 d-flex mh-100 mw-100 h-100 w-100 overflow-auto border border-1 border-black font--argent">
 	<div class="d-flex h-25 flex-row w-100 border border-1 border-black overflow-hidden">
 		<div class="col d-flex flex-row align-items-center border border-0 border-black p-3 overflow-auto">
 			<div class="col-4">
 				<div class="ratio ratio-1x1 bg-black p-1 border border-0">
 					{% if image != 'other' %}
-					<!-- <div id="imageContainer"> -->
-					<!-- <label for="file"> -->
-					<img src="{% if user.image %}https://localhost:8090/api/get_image/{{user.username}}/{% else %}{{ user.picture.link }}{% endif %}"
+					<img src="{% if user.image %}https://localhost:9090/api/get_image/{{user.username}}/{% else %}{{ user.picture.link }}{% endif %}"
 						alt="Avatar" class="img-fluid rounded-circle p-1 object-fit-cover" style="cursor: pointer;"
 						id="output">
-					<!-- <span id="hoverText" style="color: purple; font-size: 16px; display: none;">Change Image</span>
-											</label> -->
-					<!-- <input type="file" accept="image/*" name="image" id="file" style="display: none;">
-											<div>
-												<label for="file" style="cursor: pointer;"></label>
-											</div> -->
-					<!-- </div> -->
 					{% else %}
-					<img src="{% if user.image %}https://localhost:8090/api/get_image/{{user.username}}/{% else %}{{ user.picture.link }}{% endif %}"
+					<img src="{% if user.image %}https://localhost:9090/api/get_image/{{user.username}}/{% else %}{{ user.picture.link }}{% endif %}"
 						alt="Avatar" class="img-fluid rounded-circle" style="cursor: pointer;">
 					{% endif %}
 				</div>
@@ -96,7 +76,7 @@
 				<div class="w-100 d-flex flex-row border-bottom border-1 border-dark">
 					<div class="col-3">
 						<div class="ratio ratio-1x1 bg-black border border-0">
-							<img src="{% if user.image %}http://localhost:8000{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}"
+							<img src="{% if user.image %}https://localhost:9090{{ user.image.url }}{% else %}{{ user.picture.link }}{% endif %}"
 								alt="Avatar" class="img-fluid rounded-circle p-1 object-fit-cover">
 						</div>
 					</div>
@@ -131,10 +111,10 @@
 					<div class="col">
 						<div class="ratio ratio-1x1 bg-black p-1 border border-0">
 							{% if game.score1 > game.score2 %}
-							<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
+							<img src="{% if game.id1.image %}https://localhost:9090{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
 								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% else %}
-							<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
+							<img src="{% if game.id2.image %}https://localhost:9090{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
 								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% endif %}
 						</div>
@@ -149,10 +129,10 @@
 					<div class="col">
 						<div class="ratio ratio-1x1 bg-black p-1 border border-0">
 							{% if game.score1 > game.score2 %}
-							<img src="{% if game.id2.image %}http://localhost:8000{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
+							<img src="{% if game.id2.image %}https://localhost:9090{{ game.id2.image.url }}{% else %}{{ game.id2.picture.link }}{% endif %}"
 								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% else %}
-							<img src="{% if game.id1.image %}http://localhost:8000{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
+							<img src="{% if game.id1.image %}https://localhost:9090{{ game.id1.image.url }}{% else %}{{ game.id1.picture.link }}{% endif %}"
 								alt="" class="img-fluid rounded-circle object-fit-cover">
 							{% endif %}
 						</div>
@@ -166,8 +146,3 @@
 		</div>
 	</div>
 </div>
-<!-- </section>
-		</div>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-	</body>
-</html> -->

@@ -38,7 +38,8 @@ def send_otp(request, username):
 
 
 def get_user_token(request, username, password):
-    base_url = f'{request.build_absolute_uri("/")[:-1]}:8000'
+    # base_url = f'{request.build_absolute_uri("/")[:-1]}:8000'
+    base_url = 'http://localhost:8000'
 
     data = {
         'username': username,
