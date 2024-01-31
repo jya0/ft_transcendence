@@ -1,6 +1,7 @@
 // import {io} from "socket.io-client";
 import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast } from "./loadComponent.js";
 import {urlLocationHandler} from "./url-router.js"
+import { querySelectIdEditInnerHTML } from "./utility.js";
 
 let continueExecution = true;
 
@@ -216,7 +217,8 @@ export function loadTournament(localMode) {
         //prompt new match
         if (g_count == 0) {
             //@todo - show bracket
-            docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
+            // docModalGame.querySelector('#winner-p1').innerHTML = winners[0];
+			querySelectIdEditInnerHTML(docModalGame, "winner-p1", winners[0]);
             toggleHighlight("tPlayer1Highlight", "tPlayer2Highlight");
             toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
             const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
@@ -229,7 +231,8 @@ export function loadTournament(localMode) {
         }
         if (g_count == 1) {
             //@todo - show bracket
-            docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
+            // docModalGame.querySelector('#winner-p2').innerHTML = winners[1];
+			querySelectIdEditInnerHTML(docModalGame, "winner-p2", winners[1]);
             toggleHighlight("tPlayer3Highlight", "tPlayer4Highlight");
             toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
             const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
@@ -246,22 +249,21 @@ export function loadTournament(localMode) {
         // end tournament
         if (g_count == 2) {
             tournReady = false;
-            let winner;
+            let champion;
             if (score.left > score.right) {
-                winner = winners[0];
+                champion = winners[0];
                 buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
             }
             else
-                winner = winners[1];
-            winners = [];
-            winners.push(winner);
+                champion = winners[1];
             g_count = 0;
             tournReady = false;
             isGameOver = true;
-            docModalGame.querySelector('#winner-final').innerHTML = winners[0];
+            // docModalGame.querySelector('#winner-final').innerHTML = champion;
+			querySelectIdEditInnerHTML(docModalGame, "winner-final", champion);
             toggleHighlight("tWinnerP1Highlight", "tWinnerP2Highlight");
             toggleHighlight("tWinnerHighlight", "");
-            showGameWinner(winner);
+            showGameWinner(champion);
             window.history.pushState({}, "", '/play');
             urlLocationHandler();
             return ;
@@ -597,7 +599,7 @@ export function loadTournament(localMode) {
         const tmpModalGame = bootstrap.Modal.getOrCreateInstance(docModalGame);
         tmpModalGame.show();
 
-        document.getElementById('formPlayerNames').addEventListener('submit', function (event) {
+        document.getElementById('formPlayerNames')?.addEventListener('submit', function (event) {
             event.preventDefault(); // Prevents the default form submission behavior
 
             // Get the values from the input fields
@@ -617,9 +619,10 @@ export function loadTournament(localMode) {
             // Reset the form if needed
             // document.getElementById('yourFormId').reset();
 
-            const form = document.getElementById('formPlayerNames');
-            const playerInputs = form.querySelectorAll('input[id^="player"]');
-            const playerNames = Array.from(playerInputs).map(input => input.value);
+            // const form = document.getElementById('formPlayerNames');
+            // const playerInputs = form.querySelectorAll('input[id^="player"]');
+            // const playerNames = Array.from(playerInput).map(input => input.value);
+            const playerNames = Array.from(document.getElementById('formPlayerNames').querySelectorAll('input[id^="player"]')).map(input => input.value);
 
             console.log(playerNames);
 
@@ -642,17 +645,19 @@ export function loadTournament(localMode) {
 
 
     function toggleHighlight(highlightId1, highlightId2) {
-        if (highlightId1 !== "") {
-            if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId1)).display == "none")
-                docModalGame.querySelector('#' + highlightId1).style.display = "block";
+		let highlight1 = docModalGame.querySelector('#' + highlightId1);
+		let highlight2 = docModalGame.querySelector('#' + highlightId2);
+        if (highlight1) {
+            if (window.getComputedStyle(highlight1).display == "none")
+                highlight1.style.display = "block";
             else
-                docModalGame.querySelector('#' + highlightId1).style.display = "none";
+                highlight1.style.display = "none";
         }
-        if (highlightId2 !== "") {
-            if (window.getComputedStyle(docModalGame.querySelector('#' + highlightId2)).display == "none")
-                docModalGame.querySelector('#' + highlightId2).style.display = "block";
+        if (highlight2) {
+            if (window.getComputedStyle(highlight2).display == "none")
+                highlight2.style.display = "block";
             else
-                docModalGame.querySelector('#' + highlightId2).style.display = "none";
+                highlight2.style.display = "none";
         }
     };
 
@@ -693,7 +698,7 @@ export function loadTournament(localMode) {
                 tournamentList.innerHTML = '<p>Online Tournaments:</p>';
                 tournamentList.id = 'tourn-list';
                 console.log(tournaments);
-                tournaments.forEach(tournament => {
+                tournaments?.forEach(tournament => {
                     const listItem = document.createElement('li');
                     listItem.textContent = tournament.name;
 
@@ -792,10 +797,11 @@ export function loadTournament(localMode) {
                     await submitTournament();
                 });
                 const joinButtons = document.querySelectorAll('[id="joinTourn"]');
-                joinButtons.forEach(function (button) {
+
+                joinButtons?.forEach(function (button) {
                     button.addEventListener('click', function () {
                         // Extract the tournament name from the closest card
-                        const tournamentName = button.closest('.card').querySelector('#tname').innerText.trim();
+                        const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
         
                         // Call joinTournament with the extracted tournament name
                         joinTournament(tournamentName);
@@ -815,6 +821,8 @@ export function loadTournament(localMode) {
     async function joinTournament(tournamentName) {
         // Perform logic to join the selected tournament
         // You can make an API call or update the game state accordingly
+		if (!tournamentName)
+			return ;
         console.log(`Joining tournament with name ${tournamentName}`);
         tournament_name = tournamentName;
         await fetch(`/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
@@ -917,10 +925,11 @@ export function loadTournament(localMode) {
         // const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
         const joinButtons = document.querySelectorAll('[id="joinTourn"]');
-        joinButtons.forEach(function (button) {
+
+        joinButtons?.forEach(function (button) {
             button.addEventListener('click', function () {
                 // Extract the tournament name from the closest card
-                const tournamentName = button.closest('.card').querySelector('#tname').innerText.trim();
+                const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
 
                 // Call joinTournament with the extracted tournament name
                 joinTournament(tournamentName);
