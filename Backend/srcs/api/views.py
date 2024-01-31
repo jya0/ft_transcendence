@@ -6,7 +6,6 @@ from django.db import IntegrityError
 from datetime import datetime
 import requests
 from login.models import UserProfile
-from login.views import ssr_render
 from django.shortcuts import render
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
@@ -59,25 +58,6 @@ class GroupViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def two_fa_toggle(request):
-    try:
-        user = get_object_or_404(UserProfile, username=request.user.username)
-        print(request.user.username)
-        users_list = UserProfile.objects.all().exclude(username='admin')
-    except:
-        return JsonResponse({'message': 'UserProfile not found'}, status=400)
-
-    template = get_template('user_profile.html')
-    template_content = template.template.source
-    template = Template(template_content)
-    context = Context({'user': user, 'users_list': users_list})
-
-    rendered_template = template.render(context)
-    return HttpResponse(rendered_template, content_type='text/html')
-
-
 def intra_link(request):
     forty_two_url = settings.FORTY_TWO_URL
     return JsonResponse({'forty_two_url': forty_two_url})
@@ -119,23 +99,6 @@ def update_display_name(request):
         return JsonResponse({'message': 'Profile updated successfully'}, status=200)
     else:
         return JsonResponse({'error': 'nickname not provided'}, status=200)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def get_user_profile(request):
-    print(request.GET.get('username'))
-    user = UserProfile.objects.get(username=request.GET.get('username'))
-    users_list = UserProfile.objects.all().exclude(username='admin')
-
-    template = get_template('user_profile.html')
-    template_content = template.template.source
-    template = Template(template_content)
-    context = Context(
-        {'user': user, 'users_list': users_list, 'messages': 'other'})
-
-    rendered_template = template.render(context)
-    return HttpResponse(rendered_template, content_type='text/html')
 
 
 @api_view(['GET'])
@@ -261,10 +224,7 @@ def validate_otp(request):
     otp = request.POST.get('otp')
     totp = pyotp.TOTP(user.otp_secret_key, interval=300)
     if otp and totp.verify(otp):
-        current_datetime = datetime.now(timezone.utc)
-        stored_datetime = user.otp_valid_date
 
-        # if current_datetime <= stored_datetime:
         auth_login(request, user)
         return JsonResponse({'message': 'OTP is valid'})
 
