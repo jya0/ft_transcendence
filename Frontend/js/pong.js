@@ -268,8 +268,8 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    let url = `wss://172.25.210.89:9090/ws/socket-server/`;
-    // let url = `wss://172.25.210.89:9090:9090/ws/socket-server/`;
+    let url = `wss://10.11.6.2/ws/socket-server/`;
+    // let url = `wss://10.11.6.2:9090/ws/socket-server/`;
 
 
     async function initiateSocket() {
