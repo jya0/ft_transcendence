@@ -1,7 +1,7 @@
 // import {io} from "socket.io-client";
 import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast, showModal, hideModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
-import { querySelectIdEditInnerHTML } from "./utility.js";
+import { querySelectIdEditInnerHTML, checkName } from "./utility.js";
 
 let continueExecution = true;
 
@@ -633,7 +633,14 @@ export function loadTournament(localMode) {
             const playerNames = Array.from(document.getElementById('formPlayerNames').querySelectorAll('input[id^="player"]')).map(input => input.value);
 
             console.log(playerNames);
-
+			for (let i = 0; i < playerNames.length(); ++i)
+			{
+				if (!checkName(playerNames[i]))
+				{
+					loadToast("Player name is not valid");
+					return ;
+				}
+			}
             // Check if all player names are unique
             if (hasDuplicates(playerNames)) {
                 loadToast("Player names must be unique. Please enter distinct names for each player.");
