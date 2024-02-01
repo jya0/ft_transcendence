@@ -375,6 +375,8 @@ export function loadTicTac(username, localPlayerMode) {
                             'type': 'update',
                             'game': 'tic',
                             'mode': 'single',
+                            'player1': player1,
+                            'player2': player2,
                             'username': localStorage.getItem('username'),
                             'key': cellIndex
                         }));
