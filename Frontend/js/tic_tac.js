@@ -170,7 +170,7 @@ export function loadTicTac(username, localPlayerMode) {
     }
 
     let player_count = 0;
-    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
+    let url = `wss://localhost:9090/ws/socket-server/`;
     // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
@@ -350,7 +350,7 @@ export function loadTicTac(username, localPlayerMode) {
 				<div id="turn" class="container-fluid text-capitalize text-black w-25 me-5 text-center h2 border border-1 border-black rounded p-4 order-0 order-1">
 					player x
 				</div>
-			
+
 			`;
         // document.getElementsByClassName('container')[0].appendChild(container);
 

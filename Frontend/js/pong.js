@@ -6,10 +6,10 @@ let gameSocket = "";
 let user_name = "";
 
 export function loadGame(username, localPlayerMode) {
-	const docModalGame = document.getElementById('modalGame');
-	const canvas = document.getElementById('gameCanvas');
-	if (!docModalGame || !canvas)
-		return ;
+    const docModalGame = document.getElementById('modalGame');
+    const canvas = document.getElementById('gameCanvas');
+    if (!docModalGame || !canvas)
+        return;
     let player1 = username;
     user_name = username;
     let player2 = "";
@@ -60,16 +60,16 @@ export function loadGame(username, localPlayerMode) {
         ctx.fillText(score.left, canvas.width / 4, 50);
         ctx.fillText(score.right, 3 * canvas.width / 4, 50);
         ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
-        if (!localPlayerMode) {
-            if (leftPlayer)
-            {
-                ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
-                ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
-            }
-            else {
-                ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
-                ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
-            }
+        if (localPlayerMode) {
+            player2 = "guest";
+        }
+        if (leftPlayer) {
+            ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
+            ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
+        }
+        else {
+            ctx.fillText(player2, canvas.width / 4, canvas.height / 5);
+            ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
         }
 
     }
@@ -83,6 +83,8 @@ export function loadGame(username, localPlayerMode) {
                     'game': 'pong',
                     'type': 'update',
                     'mode': 'single',
+                    'player1':player1,
+                    'player2':player2,
                     'username': username,
                     'key': keyPressed,
                 }))
@@ -93,6 +95,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
+                    'player1':player1,
+                    'player2':player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -106,6 +110,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
+                    'player1':player1,
+                    'player2':player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -117,6 +123,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
+                    'player1':player1,
+                    'player2':player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -187,9 +195,9 @@ export function loadGame(username, localPlayerMode) {
         let winner;
 
         if (score.left > score.right) {
-            winner = "Left Player";
+            winner = player1;
         } else {
-            winner = "Right Player";
+            winner = "Guest";
         }
 
         isGameOver = true;
@@ -219,6 +227,8 @@ export function loadGame(username, localPlayerMode) {
                 'game': 'pong',
                 'type': 'end',
                 'mode': 'single',
+                'player1':player1,
+                'player2':player2,
                 'username': winner,
                 'score1': score.left,
                 'score2': score.right,
@@ -273,6 +283,8 @@ export function loadGame(username, localPlayerMode) {
             if (btnCounter == 0)
                 return;
             if (data.game === 'tic')
+                return;
+            if (data.player1 != username && data.player2 != username)
                 return ;
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;

@@ -4,7 +4,7 @@ import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac, closeTicTac1v1Socket, stopTicTacExecution } from './tic_tac.js'
 import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
 
-import { elementIdEditInnerHTML } from './utility.js';
+import { elementIdEditInnerHTML, checkName } from './utility.js';
 
 const urlRoutes = {
     404: {
@@ -101,10 +101,12 @@ async function loadLoginPage(message) {
         })
     const docModalAll = document.querySelectorAll(".modal");
     const tmpModalBs = '';
-    docModalAll.forEach(element => {
-        tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
-        tmpModalBs.hide();
-    });
+    if (docModalAll) {
+        docModalAll.forEach(element => {
+            tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
+            tmpModalBs.hide();
+        });
+    }
 }
 
 console.log(sessionStorage.getItem('username'))
@@ -170,7 +172,6 @@ const addFriend = async (button, username, newFriend) => {
 
         if (!response.ok) {
             elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-            // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
             loadToast('Unauthorized, please login again!')
             localStorage.clear();
             return;
@@ -201,24 +202,10 @@ navbarLinks?.forEach(function (link) {
     });
 });
 
-
-const urlRoute = (event) => {
-    console.log('urlroute event--------------------------------------------------------', event);
-    event = event || window.event; // get window.event if event argument not provided
-    event.preventDefault();
-    let href = event.target.parentElement.parentElement.parentElement.href;
-    console.log('urlroute href', href);
-    console.log('urlroute event.target.tagName', event.target.tagName);
-    if (event.target.tagName !== 'A')
-        href = event.target.parentElement.href;
-    window.history.pushState({}, "", href);
-    urlLocationHandler();
-};
-
 function setMainWindowframe() {
     insertOrCreateContent();
     elementIdEditInnerHTML("content",
-        `					
+        `
 				<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
 					<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 						<!-- WINDOW-BAR -->
@@ -397,14 +384,8 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
         const nicknameValue = newDisplayName.value;
         const displayNameElement = document.getElementById('displayName');
 
-        if (!nicknameValue || nicknameValue.trim().length === 0 || nicknameValue.trim().length < 5) {
-            loadToast('Display name should not be empty, more than 5 characters and less than 50 characters');
+        if (!checkName(nicknameValue))
             return;
-        }
-        else if (nicknameValue.length >= 50) {
-            loadToast('Size of display name should be less than 50 characters');
-            return;
-        }
 
         await fetch('/api/update_display_name/', {
             method: 'POST',
@@ -770,13 +751,11 @@ async function handleUserData() {
                                     window.history.pushState({}, "", '/desktop');
 
                                     window.onpopstate = urlLocationHandler;
-                                    // call the urlLocationHandler function to handle the initial url
-                                    window.route = urlRoute;
                                     urlLocationHandler();
                                 }
                                 else {
                                     loadToast('Invalid OTP code');
-                                    const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-outline-dark border border-2 border-black rounded">Try Again</button>';
+                                    const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-outline-dark border border-2 border-black rounded">Go back to Login</button>';
                                     if (!document.getElementById('try-again-btn')) {
                                         document.getElementById('otp-container').insertAdjacentHTML('beforeend', tryAgainButton);
                                     }
@@ -807,8 +786,6 @@ async function handleUserData() {
                 window.history.pushState({}, "", '/desktop');
 
                 window.onpopstate = urlLocationHandler;
-                // call the urlLocationHandler function to handle the initial url
-                window.route = urlRoute;
                 urlLocationHandler();
 
 
@@ -816,8 +793,6 @@ async function handleUserData() {
         return;
     }
     window.onpopstate = urlLocationHandler;
-    // call the urlLocationHandler function to handle the initial url
-    window.route = urlRoute;
     urlLocationHandler();
 }
 
@@ -905,7 +880,6 @@ async function getAllFriends(override) {
         if (!data) {
             return;
         }
-        // console.log(data);
         users = data;
         console.log(users);
         return users;
@@ -930,7 +904,7 @@ async function insertAllUsers(users) {
         let isFriend = false;
         console.log(user.username);
         isFriend = elementExistsInArray(friends, user.intra)
-        const userImage = `https://10.11.6.2:9090/api/get_image/${user.username}`;
+        const userImage = `https://localhost:9090/api/get_image/${user.username}`;
         const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
