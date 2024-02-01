@@ -413,7 +413,7 @@ export function loadGame(username, localPlayerMode) {
                 score.left = 0;
                 score.right = 0;
                 resetBall();
-                await delay(3000);
+                // await delay(3000);
         		document.dispatchEvent(modalMenuDisposeEvent);
 
                 animationFrameId = requestAnimationFrame(gameLoop);
