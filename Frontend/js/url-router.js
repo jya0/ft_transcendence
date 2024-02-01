@@ -218,7 +218,7 @@ const urlRoute = (event) => {
 function setMainWindowframe() {
     insertOrCreateContent();
     elementIdEditInnerHTML("content",
-        `					
+        `
 				<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
 					<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 						<!-- WINDOW-BAR -->
@@ -770,7 +770,7 @@ async function handleUserData() {
                                 }
                                 else {
                                     loadToast('Invalid OTP code');
-                                    const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-outline-dark border border-2 border-black rounded">Try Again</button>';
+                                    const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-outline-dark border border-2 border-black rounded">Go back to Login</button>';
                                     if (!document.getElementById('try-again-btn')) {
                                         document.getElementById('otp-container').insertAdjacentHTML('beforeend', tryAgainButton);
                                     }
@@ -924,7 +924,7 @@ async function insertAllUsers(users) {
         let isFriend = false;
         console.log(user.username);
         isFriend = elementExistsInArray(friends, user.intra)
-        const userImage = `https://10.11.6.2:9090/api/get_image/${user.username}`;
+        const userImage = `https://10.11.6.4:9090/api/get_image/${user.username}`;
         const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
