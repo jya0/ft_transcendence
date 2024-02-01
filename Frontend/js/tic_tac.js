@@ -160,7 +160,8 @@ export function loadTicTac(username, localPlayerMode) {
         } else if (moves === N_SIZE * N_SIZE) {
             // alert("Draw");
             querySelectIdEditInnerHTML(docWinScreen, "turn", `DRAW!`);
-            handleOnlineDraw(false);
+            if (!localPlayerMode)
+                handleOnlineDraw(false);
             return;
         } else {
             turn = turn === "X" ? "O" : "X";
@@ -423,14 +424,18 @@ export function loadTicTac(username, localPlayerMode) {
                     gameOver = true;
                     showGameWinner(` ${player2}
                     Sorry, you lost!`);
-                    gameSocket.close();
-                    gameSocket = "";
-                    socketStatus = false;
+                    if (!localPlayerMode) {
+                        gameSocket.close();
+                        gameSocket = "";
+                        socketStatus = false;
+                    }
+                    
                     window.history.pushState({}, "", '/play');
                     urlLocationHandler();
                 }
             } else if (moves === N_SIZE * N_SIZE) {
                 gameOver = true;
+
                 handleOnlineDraw(turn !== currentPlayerSymbol);
 
             } else {

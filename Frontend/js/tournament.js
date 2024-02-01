@@ -110,7 +110,6 @@ export function loadTournament(username, localPlayerMode) {
                     'player1':player1,
                     'player2':player2,
                     'round': round,
-
                     'mode': 'tournament',
                     'tournament_name': tournament_name,
                     'username': localStorage.getItem('username'),
