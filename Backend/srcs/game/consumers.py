@@ -112,6 +112,8 @@ class GameConsumer(WebsocketConsumer):
                     'game': 'tic',
                     'mode': mode,
                     'sender': username,
+                    'player1': text_data_json['player1'],
+                    'player2': text_data_json['player2'],
                     'key': key
                 }
             )
