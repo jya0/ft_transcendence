@@ -326,7 +326,7 @@ export function loadTournament(localMode) {
 
     let player_count = 0;
     // let url = `wss://localhost:9090/ws/socket-server/`
-    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
+    let url = `wss://10.11.6.4:9090/ws/socket-server/`;
 
     let gameSocket;
 
@@ -601,7 +601,7 @@ export function loadTournament(localMode) {
 						</div>
 						<button type="submit" class="col-auto btn btn-light btn-lg px-3 py-1 rounded-1" id="beginTournament">
 							<p class="display-5 text-capitalize text-black text-wrap p-0 m-0 g-0" style="font-size: calc(100% + 0.5vw);">start tournament</p>
-						</button>	
+						</button>
 					</div>
 				</form>
 				`);
@@ -682,11 +682,11 @@ export function loadTournament(localMode) {
     /*     async function displayMenu() {
             const menuContainer = document.createElement('div');
             menuContainer.id = 'menu-container';
-    
+
             // Fetch the list of online tournaments from the backend
             // fetch('https://localhost:8090/api/tournaments');
-    
-    
+
+
             await fetch('/api/tournaments', {
                 method: 'GET',
                 headers: {
@@ -702,30 +702,30 @@ export function loadTournament(localMode) {
                     tournaments?.forEach(tournament => {
                         const listItem = document.createElement('li');
                         listItem.textContent = tournament.name;
-    
+
                         const joinButton = document.createElement('button');
                         joinButton.textContent = 'Join';
                         joinButton.addEventListener('click', () => joinTournament(tournament.name));
-    
+
                         listItem.appendChild(joinButton);
                         tournamentList.appendChild(listItem);
                     });
-    
+
                     menuContainer.appendChild(tournamentList);
                 })
                 .catch(error => console.error('Error fetching tournaments:', error));
-    
+
             // Button to create a new tournament
             const createButton = document.createElement('button');
             createButton.textContent = 'Create New Tournament';
             createButton.addEventListener('click', createNewTournament);
-    
+
             menuContainer.appendChild(createButton);
             menuContainer.style.zIndex = 4;
             menuContainer.style.position = "absolute";
             menuContainer.style.color = "white";
             // Append the menu to the document
-    
+
             document.getElementById('windowScreen').appendChild(menuContainer);
         } */
 
@@ -734,22 +734,22 @@ export function loadTournament(localMode) {
             const inputField = document.getElementById('tournamentNameInput');
             if (inputField) {
                 loadToast('Please enter a tournament name before creating a new tournament.');
-            	
+
                 return;
             }
-    
+
             // Create an input field for the tournament name
             const tournamentNameInput = document.createElement('input');
             tournamentNameInput.type = 'text';
             tournamentNameInput.id = 'tournamentNameInput';
             tournamentNameInput.placeholder = 'Enter tournament name';
-    
+
             // Button to submit the tournament name
             const submitButton = document.createElement('button');
             submitButton.textContent = 'Submit';
             submitButton.id = 'submitButton';
             submitButton.addEventListener('click', () => submitTournament());
-    
+
             // Append the input field and submit button next to the create button
             const menuContainer = document.getElementById('menu-container');
             menuContainer.appendChild(tournamentNameInput);
