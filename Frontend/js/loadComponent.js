@@ -148,6 +148,7 @@ export	const loadModalMenu = (idModal, innerHTML) => {
 	document.addEventListener("modalMenuDisposeEvent", event => {
 		isDefaultAction = true;
 		hideModal(idModal);
+		// document.removeEventListener("modalMenuDisposeEvent", event);
 	});
 	document.getElementById(idModal)?.addEventListener('hidden.bs.modal', event => {
 		if (isDefaultAction)
