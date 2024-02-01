@@ -17,10 +17,11 @@ def send_otp(request, username):
     secret_key = pyotp.random_base32()
     totp = pyotp.TOTP(secret_key, interval=300)
     otp = totp.now()
-    valid_date = datetime.now() + timedelta(minutes=300)
     user.otp_secret_key = secret_key
-    valid_date_utc_aware = valid_date.replace(tzinfo=timezone.utc)
-    user.otp_valid_date = valid_date_utc_aware
+    # rm in production
+    # valid_date = datetime.now() + timedelta(minutes=300)
+    # valid_date_utc_aware = valid_date.replace(tzinfo=timezone.utc)
+    # user.otp_valid_date = valid_date_utc_aware
     user.save()
     subject = "Your OTP"
     message = f"Your OTP is: {otp}"
@@ -38,8 +39,7 @@ def send_otp(request, username):
 
 
 def get_user_token(request, username, password):
-    # base_url = f'{request.build_absolute_uri("/")[:-1]}:8000'
-    base_url = 'http://localhost:8000'
+    base_url = os.environ.get("DJANGO_URL")
 
     data = {
         'username': username,
@@ -52,9 +52,7 @@ def get_user_token(request, username, password):
     if response.status_code == 200:
         token_pair = response.json()
         access_token = token_pair['access']
-        refresh_token = token_pair['refresh']
         print(f'Access Token: {access_token}')
-        print(f'Refresh Token: {refresh_token}')
         return access_token
     else:
         print(response.json())

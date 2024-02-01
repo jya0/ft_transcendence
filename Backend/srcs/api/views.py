@@ -224,7 +224,6 @@ def validate_otp(request):
     otp = request.POST.get('otp')
     totp = pyotp.TOTP(user.otp_secret_key, interval=300)
     if otp and totp.verify(otp):
-
         auth_login(request, user)
         return JsonResponse({'message': 'OTP is valid'})
 
