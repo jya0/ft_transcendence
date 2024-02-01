@@ -350,6 +350,7 @@ export function loadTournament(localMode) {
     let gameSocket;
 
     function initiateSocket() {
+		document.dispatchEvent(modalMenuDisposeEvent);
         gameSocket = new WebSocket(url);
 
         gameSocket.onmessage = function (e) {
@@ -970,6 +971,7 @@ export function loadTournament(localMode) {
 
         document.getElementById('createTournForm')?.addEventListener('submit', async (event) => {
             event.preventDefault();
+			document.dispatchEvent(modalMenuDisposeEvent);
             await submitTournament();
         });
         showModal("modalMenu");
