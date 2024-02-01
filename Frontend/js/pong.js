@@ -4,7 +4,8 @@ import { urlLocationHandler } from "./url-router.js"
 let continueExecution = true;
 let gameSocket = "";
 let user_name = "";
-
+let player1 = "";
+let player2 = "";
 export function loadGame(username, localPlayerMode) {
     const docModalGame = document.getElementById('modalGame');
     const canvas = document.getElementById('gameCanvas');
@@ -281,8 +282,23 @@ export function loadGame(username, localPlayerMode) {
 
             if (btnCounter == 0)
                 return;
+            console.log('_>>>>>>Data: ', data)
+
             if (data.game === 'tic')
                 return;
+            if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
+                console.log("TERMINATING HERE TOO CUZ I GOT A MESG TO DO SO");
+                gameSocket.close();
+                gameSocket = "";
+                isGameOver = true;
+                socketStatus = false;
+                continueExecution = false;
+                showGameWinner(' You Win!');
+                window.history.pushState({}, "", '/play');
+                urlLocationHandler();
+                return;
+            }
+            
             if (data.player1 != username && data.player2 != username)
                 return ;
             if (data.type === 'start' && data["status"] == "start") {
@@ -316,6 +332,7 @@ export function loadGame(username, localPlayerMode) {
                 }
             }
             else if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
+                console.log("TERMINATING HERE TOO CUZ I GOT A MESG TO DO SO");
                 gameSocket.close();
                 gameSocket = "";
                 isGameOver = true;
@@ -442,6 +459,8 @@ export function closePong1v1Socket() {
     gameSocket.send(JSON.stringify({
         'game': 'pong',
         'type': 'terminate',
+        'player1':player1,
+        'player2':player2,
         'mode': 'single',
         'sender': user_name,
     }))
