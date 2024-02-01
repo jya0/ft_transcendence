@@ -381,6 +381,7 @@ export function loadGame(username, localPlayerMode) {
         const elapsed = timestamp - lastTimestamp;
 
         if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
+            document.dispatchEvent(modalMenuDisposeEvent);
             draw();
             await update();
             lastTimestamp = timestamp;
@@ -414,7 +415,7 @@ export function loadGame(username, localPlayerMode) {
                 score.right = 0;
                 resetBall();
                 // await delay(3000);
-        		document.dispatchEvent(modalMenuDisposeEvent);
+        		
 
                 animationFrameId = requestAnimationFrame(gameLoop);
                 //TODO
