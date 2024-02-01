@@ -15,7 +15,6 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 export function loadTournament(localMode) {
     const canvas = document.getElementById('gameCanvas');
     const docModalGame = document.getElementById('modalGame');
-
     if (!canvas || !docModalGame)
         return;
 
@@ -27,6 +26,7 @@ export function loadTournament(localMode) {
     const ctx = canvas.getContext('2d');
 
     let localPlayerMode = true;
+	let localCurrentPair = [];
     let pairings = [];
     let winners = [];
 
@@ -47,6 +47,22 @@ export function loadTournament(localMode) {
     let rightPlayer = false;
     let g_count = 0;
 
+/*     function draw() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, players.left, paddle.width, paddle.height);
+        ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
+        ctx.beginPath();
+        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(score.left, canvas.width / 4, 50);
+        ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+        ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
+    } */
     function draw() {
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -62,6 +78,10 @@ export function loadTournament(localMode) {
         ctx.fillText(score.left, canvas.width / 4, 50);
         ctx.fillText(score.right, 3 * canvas.width / 4, 50);
         ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
+        if (localPlayerMode === true) {
+			ctx.fillText(localCurrentPair[0], canvas.width / 4, canvas.height / 5);
+			ctx.fillText(localCurrentPair[1], 3 * canvas.width / 4, canvas.height / 5);
+		}
     }
 
     function updateBackend() {
@@ -202,8 +222,10 @@ export function loadTournament(localMode) {
 
         //update winners
         if (g_count == 0 || g_count == 1) {
-            winners.push((pairings[g_count][0] > pairings[g_count][1]) ? pairings[g_count][0] : pairings[g_count][1]);
+            winners += getWinner(score, pairings[g_count][0], pairings[g_count][1]);
+			console.log("winners: ", winners);
         }
+		if (score)
 
         // resetGame();
         //reset
@@ -229,6 +251,7 @@ export function loadTournament(localMode) {
             toggleHighlight("tPlayer4Highlight");
             showModal("modalGame");
             isGameOver = true;
+			updateLocalPlayerDisplay(pairings[1][0], pairings[1][1]);
             await delay(4000);
             hideModal("modalGame");
             isGameOver = false;
@@ -244,24 +267,17 @@ export function loadTournament(localMode) {
             toggleHighlight("tWinnerP2Highlight");
             showModal("modalGame");
             isGameOver = true;
+			updateLocalPlayerDisplay(winners[0], winners[1]);
             await delay(4000);
             hideModal("modalGame");
 
             isGameOver = false;
             resetGame();
         }
-
-
         // end tournament
         if (g_count == 2) {
             tournReady = false;
-            let champion;
-            if (score.left > score.right) {
-                champion = winners[0];
-                buttonText = `Left Player - ${winners[0]} WINS! Press to play a new local game`;
-            }
-            else
-                champion = winners[1];
+            let champion = getWinner(score, winners[1], winners[0]);
             g_count = 0;
             tournReady = false;
             isGameOver = true;
@@ -280,6 +296,10 @@ export function loadTournament(localMode) {
             g_count++;
     }
 
+	function	getWinner(scoreObj, playerLeft, playerRight)
+	{
+		return (scoreObj.left > scoreObj.right ? playerLeft : playerRight);
+	}
 
     function handleOnlineWinner() {
         let buttonText;
@@ -399,7 +419,7 @@ export function loadTournament(localMode) {
         for (let i = 0; i < shuffledPlayers.length; i += 2) {
             pairings.push([shuffledPlayers[i], shuffledPlayers[i + 1]]);
         }
-
+		console.log("match1: ", pairings[0], " match2: ", pairings[1]);
         return pairings;
     }
 
@@ -424,8 +444,6 @@ export function loadTournament(localMode) {
         //     return;
         let winners = [];
         localPlayerMode = true;
-        let player1 = pairings[0][0];
-        let player2 = pairings[0][1];
         loadModal('modalGameBody',
             `
 				<div class="container p-5 h-100 w-100 mh-100 mw-100 overflow-auto bg-black border border-1 border-white">
@@ -546,16 +564,22 @@ export function loadTournament(localMode) {
             isGameOver = false;
             score.left = 0;
             score.right = 0;
-
             toggleHighlight("tPlayer1Highlight");
             toggleHighlight("tPlayer2Highlight");
             showModal("modalGame");
+			updateLocalPlayerDisplay(pairings[0][0], pairings[0][1]);
             await delay(4000);
             hideModal("modalGame");
             resetBall();
             playGame();
         }
     }
+
+	function updateLocalPlayerDisplay(playerLeft, playerRight) {
+		localCurrentPair = [playerLeft, playerRight];
+		// localCurrentPair.push(playerLeft, playerRight);
+		console.log("player left:", localCurrentPair[0], " player right:", localCurrentPair[1]);
+	};
 
     function setupLocalTournament() {
 
@@ -963,7 +987,7 @@ export function loadTournament(localMode) {
             return;
 
         const elapsed = timestamp - lastTimestamp;
-        console.log(timestamp);
+        // console.log(timestamp);
 
         if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
             draw();
