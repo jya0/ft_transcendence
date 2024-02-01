@@ -190,7 +190,6 @@ export function loadGame(username, localPlayerMode) {
 
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
-
     async function handleLocalWinner() {
         let winner;
 
@@ -269,11 +268,11 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
-    // let url = `wss://localhost:9090/ws/socket-server/`;
+    let url = `wss://172.25.210.89:9090/ws/socket-server/`;
+    // let url = `wss://172.25.210.89:9090:9090/ws/socket-server/`;
 
 
-    function initiateSocket() {
+    async function initiateSocket() {
         gameSocket = new WebSocket(url);
 
         gameSocket.onmessage = function (e) {
@@ -362,7 +361,7 @@ export function loadGame(username, localPlayerMode) {
     }
 
     async function gameLoop(timestamp) {
-		document.dispatchEvent(modalMenuDisposeEvent);
+		// document.dispatchEvent(modalMenuDisposeEvent);
 
         window.addEventListener('beforeunload', function (event) {
             console.info("This page is reloaded");
@@ -414,6 +413,9 @@ export function loadGame(username, localPlayerMode) {
                 score.left = 0;
                 score.right = 0;
                 resetBall();
+                // await delay(3000);
+        		document.dispatchEvent(modalMenuDisposeEvent);
+
                 animationFrameId = requestAnimationFrame(gameLoop);
                 //TODO
                 canvas.dataset.animationFrameId = animationFrameId;
