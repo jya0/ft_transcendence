@@ -1,4 +1,4 @@
-import { hideModal, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
+import { hideModal, loadModalMenu, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
 
 let continueExecution = true;
@@ -342,8 +342,9 @@ export function loadGame(username, localPlayerMode) {
             console.log("waiting for a second player...");
             console.log(player1);
             console.log(player2);
-            loadSpinner("modalGameBody", "text-black");
-            showModal("modalGame");
+			loadModalMenu("modalMenu", "");
+            loadSpinner("modalMenuBody", "text-black");
+            showModal("modalMenu");
         });
         player_count = 1;
     }

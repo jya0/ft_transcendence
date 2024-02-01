@@ -1,5 +1,5 @@
 // import {io} from "socket.io-client";
-import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast, showModal, hideModal } from "./loadComponent.js";
+import { loadLoginPage, modalMenuDisposeEvent, getCookie, loadModal, loadModalMenu, showGameWinner, loadToast, showModal, hideModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
 import { querySelectIdEditInnerHTML, checkName } from "./utility.js";
 
@@ -581,8 +581,7 @@ export function loadTournament(localMode) {
     };
 
     function setupLocalTournament() {
-
-        loadModal('modalGameBody',
+        loadModalMenu("modalMenu",
             `
 				<form id="formPlayerNames">
 					<div class="row row-cols-2 gy-4 font--argent justify-content-center">
@@ -628,7 +627,7 @@ export function loadTournament(localMode) {
 					</div>
 				</form>
 				`);
-        showModal("modalGame");
+        showModal("modalMenu");
 
         document.getElementById('formPlayerNames')?.addEventListener('submit', function (event) {
             event.preventDefault(); // Prevents the default form submission behavior
@@ -671,8 +670,9 @@ export function loadTournament(localMode) {
             //@todo: show pairings via modal:
 
             tournReady = true;
+			document.dispatchEvent(modalMenuDisposeEvent);
+			startLocalTournament();
             // playerNameContainer.remove();
-            startLocalTournament();
         });
 
     };
@@ -955,7 +955,7 @@ export function loadTournament(localMode) {
     };
 
     function displayTournamentLobby(data) {
-        loadModal('modalGameBody', data);
+		loadModalMenu("modalMenu", data);
         const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
         joinButtons?.forEach(function (button) {
@@ -972,7 +972,7 @@ export function loadTournament(localMode) {
             event.preventDefault();
             await submitTournament();
         });
-        showModal("modalGame");
+        showModal("modalMenu");
     }
 
     // async function gameLoop(timestamp) {
