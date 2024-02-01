@@ -14,17 +14,23 @@ def create_new_game_lobby(game):
 
 
 def prepare_final_round(tourn, user):
-    if (Match.objects.filter(tournament_id_id=tourn.tournament_id).count() == 2):
+    game = Match.objects.filter(
+        Q(tournament_id_id=tourn.tournament_id) & (Q(id1_id=2) | Q(id2_id=3)))
+    if (not game):
+        print("creating a final round now...")
+        print(game.__dict__)
         game = Match.objects.create(
             tournament_id_id=tourn.tournament_id, id1_id=2, id2_id=5, score1=0, score2=0, ongoing=True)
         game.id1 = user
         game.save()
         return False
-    game = Match.objects.filter(
-        Q(tournament_id_id=tourn.tournament_id) & (Q(id1_id=2) | Q(id2_id=3)))
     game = Match.objects.get(match_id=game.match_id)
+    print("getting second player to the final round now...")
+    print(game.__dict__)
     game.id2 = user
     game.save()
+    print("heres the final round now...")
+    print(game)
     return True
 
 
@@ -72,15 +78,21 @@ class GameConsumer(WebsocketConsumer):
             game.ongoing = False
             game.save()
 
+            #If the game is part of a tournament, prepare for the final round
+            if text_data_json['mode'] == 'tournament':
+                tourn = Tournament.objects.get(tournament_id=game.tournament_id_id)
+                player = UserProfile.objects.get(intra=username)
+                prepare_final_round(tourn, player)
+
             async_to_sync(self.channel_layer.group_send)(
                 self.room_group_name,
                 {
                     'type': 'terminate',
-                            'game': text_data_json['game'],
-                            'mode': text_data_json['mode'],
-                            'sender': text_data_json['sender'],
-                            'player1': game.id1.intra,
-                            'player2': game.id2.intra,
+                    'game': text_data_json['game'],
+                    'mode': text_data_json['mode'],
+                    'sender': text_data_json['sender'],
+                    'player1': game.id1.intra,
+                    'player2': game.id2.intra,
                 }
             )
 
@@ -100,6 +112,8 @@ class GameConsumer(WebsocketConsumer):
                     'game': 'tic',
                     'mode': mode,
                     'sender': username,
+                    'player1': text_data_json['player1'],
+                    'player2': text_data_json['player2'],
                     'key': key
                 }
             )
@@ -163,7 +177,7 @@ class GameConsumer(WebsocketConsumer):
                     current_game.score1 = 1
                     current_game.score2 = 0
                 else :
-                    current_game.score1 = 0
+                    current_game.score1 = 0 
                     current_game.score2 = 1
                 current_game.save()
                 self.close()
@@ -197,6 +211,8 @@ class GameConsumer(WebsocketConsumer):
                     'game': 'pong',
                     'mode': mode,
                     'sender': username,
+                    'player1': text_data_json['player1'],
+                    'player2': text_data_json['player2'],
                     'key': key,
                 }
             )
@@ -205,18 +221,78 @@ class GameConsumer(WebsocketConsumer):
             print(text_data_json)
             t_name = text_data_json['tournament_name']
             # handle new game request:
-            if (type == 'start'):
+            if (type == 'start' and text_data_json['round'] != 'final'):
                 status = 'waiting'
+                lobbyFull = False
                 tourn = Tournament.objects.get(name=t_name)
                 games = Match.objects.filter(
                     Q(tournament_id=tourn.tournament_id))
                 player = UserProfile.objects.get(intra=username)
-                lobbyFull = True
                 game = games[0]
-                if (game.id1.intra == 'temp1' or game.id2.intra == 'temp2'):
-                    lobbyFull = False
+                if (game.id1.intra == 'temp1'):
+                    game.id1 = player
+                elif (game.id2.intra == 'temp2'):
+                    game.id2 = player
+                else :
+                    game = games[1]
+                    if (game.id1.intra == 'temp1'):
+                        game.id1 = player
+                    if (game.id2.intra == 'temp2'):
+                        game.id2 = player
+                    lobbyFull = True
 
+                    
                 if (lobbyFull):
+                    status = 'start'
+                    print("game 1: " + games[0].id1.intra + games[0].id2.intra)
+                    print("game 2: " + games[1].id1.intra + games[1].id2.intra)
+
+                    sender = games[0].id2.intra
+                    print("sender :" + sender)
+                    async_to_sync(self.channel_layer.group_send)(
+                        self.room_group_name,
+                        {
+                            'type': 'start_game',
+                            'game': 'pong',
+                            'mode': mode,
+                            'sender': 'server',
+                            'player1': games[0].id1.intra,
+                            'player2': games[0].id2.intra,
+                            'status': status
+                        }
+                    )
+                    games[0].ongoing = True
+                    games[1].ongoing = True
+                    games[0].open_lobby = False
+                    games[1].open_lobby = False
+                    sender = games[1].id2.intra
+                    print("sender :" + sender)
+                    async_to_sync(self.channel_layer.group_send)(
+                        self.room_group_name,
+                        {
+                            'type': 'start_game',
+                            'game': 'pong',
+                            'mode': mode,
+                            'round': 'final',
+                            'sender': 'server',
+                            'player1': games[1].id1.intra,
+                            'player2': games[1].id2.intra,
+                            'status': status
+                        }
+                    )
+            
+
+            if (type == 'start' and text_data_json['round'] == 'final'):
+                tourn = Tournament.objects.get(name=t_name)
+                print("tourn = ")
+                print(tourn.__dict__)
+                player = UserProfile.objects.get(intra=username)
+                print("player = ")
+                print(player.__dict__)
+                ready = prepare_final_round(tourn, player)
+                final_game = Match.objects.filter(Q(tournament_id_id=tourn.tournament_id) & Q(open_lobby=True)).get()
+                status = 'waiting'
+                if (ready):
                     status = 'start'
                 async_to_sync(self.channel_layer.group_send)(
                     self.room_group_name,
@@ -225,18 +301,33 @@ class GameConsumer(WebsocketConsumer):
                         'game': 'pong',
                         'mode': mode,
                         'sender': username,
-                        'player1': game.id1.intra,
-                        'player2': game.id2.intra,
-                        'status': status
+                        'status': status,
+                        'player1': final_game.id1.intra,
+                        'player2': final_game.id2.intra,
                     }
                 )
 
+
             # handle game ends
             if (type == 'end'):
+                print("************************************************")
+                print("________________________________________________")
+                print("________________________________________________")
+                print("________________________________________________")
+                print("___________________EENNNDDD_____________________")
+
+
+                print(text_data_json)
+                print("________________________________________________")
+                print("________________________________________________")
+                print("________________________________________________")
+                print("************************************************")
+
                 tourn = Tournament.objects.get(name=t_name)
                 player = UserProfile.objects.get(intra=username)
-                games = Match.objects.filter(
-                    Q(ongoing=True) & Q(tournament_id=tourn.tournament_id))
+                # print("tourn = " + tourn)
+                # print("player = " + player)
+                games = Match.objects.filter(Q(tournament_id=tourn.tournament_id))
                 if (games[0].id1 == player or games[0].id2 == player):
                     current_game = games[0]
                 else:
@@ -250,23 +341,10 @@ class GameConsumer(WebsocketConsumer):
                     current_game.winner = current_game.id2.intra
                 current_game.score1 = score1
                 current_game.score2 = score2
+                current_game.open_lobby = False
                 current_game.time = date.today()
                 current_game.save()
-
-                ready = prepare_final_round(tourn, player)
-                status = 'waiting'
-                if (ready):
-                    status = 'start'
-                async_to_sync(self.channel_layer.group_send)(
-                    self.room_group_name,
-                    {
-                        'type': 'start_game',
-                        'game': 'pong',
-                        'mode': mode,
-                        'sender': username,
-                        'status': status,
-                    }
-                )
+                self.close()
 
         else:
             # handle new game request:
@@ -352,9 +430,11 @@ class GameConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
             'type': 'update',
             'game': event['game'],
-                    'mode': mode,
-                    'sender': sender,
-                    'key': message,
+            'mode': mode,
+            'sender': sender,
+            'key': message,
+            'player1': event['player1'],
+            'player2': event['player2'],
         }))
 
     def terminate(self, event):
@@ -365,8 +445,8 @@ class GameConsumer(WebsocketConsumer):
             'game': event['game'],
                     'mode': mode,
                     'sender': sender,
-                    'player1': event['player1'],
-                    'player2': event['player2'],
+                    # 'player1': event['player1'],
+                    # 'player2': event['player2'],
         }))
 
     def disconnect(self, code):
