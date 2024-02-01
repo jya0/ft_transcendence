@@ -1,5 +1,6 @@
 
 import { querySelectIdEditInnerHTML, elementIdEditInnerHTML } from "./utility.js";
+import { urlLocationHandler } from "./url-router.js"
 
 let LOGIN_PAGE_HTML = '';
 
@@ -137,7 +138,25 @@ export const hideModal = (idModal) => {
 	}
 }
 
+export const	modalMenuDisposeEvent = new Event("modalMenuDisposeEvent");
 
+export	const loadModalMenu = (idModal, innerHTML) => {
+	let	isDefaultAction;
+
+	elementIdEditInnerHTML(idModal + "Body", innerHTML);
+	isDefaultAction = false;
+	document.addEventListener("modalMenuDisposeEvent", event => {
+		isDefaultAction = true;
+		hideModal(idModal);
+		// document.removeEventListener("modalMenuDisposeEvent", event);
+	});
+	document.getElementById(idModal)?.addEventListener('hidden.bs.modal', event => {
+		if (isDefaultAction)
+			return ;
+		window.history.pushState({}, "", '/play');
+		urlLocationHandler();
+	});
+}
 
 export const showGameWinner = (winner) => {
 	loadModal('modalGameBody',

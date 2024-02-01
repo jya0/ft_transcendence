@@ -1,4 +1,4 @@
-import { hideModal, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
+import { hideModal, loadModalMenu, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
 
 let continueExecution = true;
@@ -21,7 +21,7 @@ export function loadGame(username, localPlayerMode) {
     let btnCounter = 0;
     const ctx = canvas.getContext('2d');
 
-    const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
+    const paddle = { width: canvas.width / 75, height: canvas.width / 75 * 8, speed: canvas.width / 100 };
     const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
     const score = { left: 0, right: 0 };
     const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
@@ -354,8 +354,9 @@ export function loadGame(username, localPlayerMode) {
             console.log("waiting for a second player...");
             console.log(player1);
             console.log(player2);
-            loadSpinner("modalGameBody", "text-black");
-            showModal("modalGame");
+			loadModalMenu("modalMenu", "");
+            loadSpinner("modalMenuBody", "text-black");
+            showModal("modalMenu");
         });
         player_count = 1;
     }

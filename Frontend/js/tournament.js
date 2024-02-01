@@ -1,5 +1,5 @@
 // import {io} from "socket.io-client";
-import { loadLoginPage, getCookie, loadModal, showGameWinner, loadToast, showModal, hideModal } from "./loadComponent.js";
+import { loadLoginPage, modalMenuDisposeEvent, getCookie, loadModal, loadModalMenu, showGameWinner, loadToast, showModal, hideModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
 import { querySelectIdEditInnerHTML, checkName } from "./utility.js";
 
@@ -36,7 +36,7 @@ export function loadTournament(username, localPlayerMode) {
     let pairings = [];
     let winners = [];
 
-    const paddle = { width: canvas.width / 50, height: canvas.width / 50 * 8, speed: canvas.width / 100 };
+    const paddle = { width: canvas.width / 75, height: canvas.width / 75 * 8, speed: canvas.width / 100 };
     const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
     const score = { left: 0, right: 0 };
     const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
@@ -466,6 +466,7 @@ export function loadTournament(username, localPlayerMode) {
     // let gameSocket;
 
     function initiateSocket() {
+		document.dispatchEvent(modalMenuDisposeEvent);
         gameSocket = new WebSocket(url);
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
@@ -725,8 +726,7 @@ export function loadTournament(username, localPlayerMode) {
     };
 
     function setupLocalTournament() {
-
-        loadModal('modalGameBody',
+        loadModalMenu("modalMenu",
             `
 				<form id="formPlayerNames">
 					<div class="row row-cols-2 gy-4 font--argent justify-content-center">
@@ -772,7 +772,7 @@ export function loadTournament(username, localPlayerMode) {
 					</div>
 				</form>
 				`);
-        showModal("modalGame");
+        showModal("modalMenu");
 
         document.getElementById('formPlayerNames')?.addEventListener('submit', function (event) {
             event.preventDefault(); // Prevents the default form submission behavior
@@ -796,8 +796,9 @@ export function loadTournament(username, localPlayerMode) {
             //@todo: show pairings via modal:
 
             tournReady = true;
+			document.dispatchEvent(modalMenuDisposeEvent);
+			startLocalTournament();
             // playerNameContainer.remove();
-            startLocalTournament();
         });
 
     };
@@ -1027,7 +1028,7 @@ export function loadTournament(username, localPlayerMode) {
     };
 
     function displayTournamentLobby(data) {
-        loadModal('modalGameBody', data);
+		loadModalMenu("modalMenu", data);
         const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
         joinButtons?.forEach(function (button) {
@@ -1042,9 +1043,10 @@ export function loadTournament(username, localPlayerMode) {
 
         document.getElementById('createTournForm')?.addEventListener('submit', async (event) => {
             event.preventDefault();
+			document.dispatchEvent(modalMenuDisposeEvent);
             await submitTournament();
         });
-        showModal("modalGame");
+        showModal("modalMenu");
     }
 
     async function gameLoop(timestamp) {
