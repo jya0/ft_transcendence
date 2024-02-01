@@ -1,4 +1,4 @@
-import { hideModal, loadModalMenu, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
+import { hideModal, loadModalMenu, loadSpinner, modalMenuDisposeEvent, showGameWinner, showModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
 
 let continueExecution = true;
@@ -127,7 +127,7 @@ export function loadGame(username, localPlayerMode) {
 
     async function update() {
         if (isGameOver) return;
-
+		// document.dispatchEvent(modalMenuDisposeEvent);
         ball.x += ball.speedX;
         ball.y += ball.speedY;
 
@@ -350,7 +350,7 @@ export function loadGame(username, localPlayerMode) {
     }
 
     async function gameLoop(timestamp) {
-        hideModal("modalGame");
+		document.dispatchEvent(modalMenuDisposeEvent);
 
         window.addEventListener('beforeunload', function (event) {
             console.info("This page is reloaded");
