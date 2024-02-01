@@ -118,7 +118,7 @@ export function loadTicTac(username, localPlayerMode) {
             var items = contains('#tictactoe ' + testClass, turn);
             if (items.length == N_SIZE) {
                 gameOver = true;
-                
+
                 if (localPlayerMode) {
                     showGameWinner(turn);
                 }
@@ -126,6 +126,7 @@ export function loadTicTac(username, localPlayerMode) {
                 if (!localPlayerMode && turn === currentPlayerSymbol) {
                     handleOnlineWinner(true); // true indicates the current player is the winner
                 }
+
                 return true;
             }
         }
@@ -146,7 +147,7 @@ export function loadTicTac(username, localPlayerMode) {
 
 
     function set() {
-        if (gameOver || this.innerHTML !== EMPTY ||( !localPlayerMode && turn !== currentPlayerSymbol)) {
+        if (gameOver || this.innerHTML !== EMPTY || (!localPlayerMode && turn !== currentPlayerSymbol)) {
             return;
         }
 
@@ -154,18 +155,12 @@ export function loadTicTac(username, localPlayerMode) {
         moves += 1;
         score[turn] += this.identifier;
         if (win(this)) {
-            // document.getElementById('tictac-container').remove();
-            // startNewGame();
-            // alert('Winner: Player ' + turn);
-            querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
-            return;
             querySelectIdEditInnerHTML(docWinScreen, "turn", `PLAYER ${turn} WINS!`);
             return;
         } else if (moves === N_SIZE * N_SIZE) {
             // alert("Draw");
             querySelectIdEditInnerHTML(docWinScreen, "turn", `DRAW!`);
-
-            // startNewGame();
+            handleOnlineDraw(false);
             return;
         } else {
             turn = turn === "X" ? "O" : "X";
@@ -211,6 +206,30 @@ export function loadTicTac(username, localPlayerMode) {
             }));
         } else {
             winnerMsg = `Sorry, you lost!`;
+        }
+
+        gameSocket.close();
+        gameSocket = "";
+        isGameOver = true;
+        socketStatus = false;
+        showGameWinner(winnerMsg);
+        window.history.pushState({}, "", '/play');
+        urlLocationHandler();
+    }
+    function handleOnlineDraw(winner) {
+        let winnerMsg;
+        winnerMsg = `NONE :
+         DRAW`;
+        if (winner) {
+
+            gameSocket.send(JSON.stringify({
+                'game': 'tic',
+                'type': 'end',
+                'winner': 'NONE',
+                'game': 'tic',
+                'mode': 'single',
+                'username': user_name,
+            }));
         }
 
         gameSocket.close();
@@ -409,7 +428,9 @@ export function loadTicTac(username, localPlayerMode) {
                     urlLocationHandler();
                 }
             } else if (moves === N_SIZE * N_SIZE) {
-                // Handle draw condition if necessary
+                gameOver = true;
+                handleOnlineDraw(turn !== currentPlayerSymbol);
+
             } else {
                 turn = turn === "X" ? "O" : "X";
                 document.getElementById('turn').textContent = 'Player ' + turn;
