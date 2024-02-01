@@ -623,7 +623,7 @@ export function loadTournament(localMode) {
 								</div>
 							</div>
 						</div>
-						<button type="submit" class="col-auto btn btn-light btn-lg px-3 py-1 rounded-1" id="beginTournament">
+						<button type="button" class="col-auto btn btn-light btn-lg px-3 py-1 rounded-1" id="beginTournament">
 							<p class="display-5 text-capitalize text-black text-wrap p-0 m-0 g-0" style="font-size: calc(100% + 0.5vw);">start tournament</p>
 						</button>
 					</div>
