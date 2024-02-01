@@ -1,4 +1,4 @@
-
+import { loadToast } from "./loadComponent.js";
 
 export const querySelectIdEditInnerHTML = (docElement, id, innerHTML) => {
 	if (!docElement)
