@@ -356,18 +356,28 @@ export function loadGame(username, localPlayerMode) {
 				myGameState.opBall.y	-=	screenCenter.y;
 				return (myGameState);
 			};
+			function	updateGameState(players, ball, myGameState)
+			{
+				myGameState.myPaddle.y	=	players.left;
+				myGameState.myBall.x	=	ball.x;
+				myGameState.myBall.y	=	ball.y;
+				return (myGameState);
+			}
 			function	averageGameState(myGameState, gameStatePacket) {
-				myGameState.myPaddle.x	=	(myGameState.myPaddle.x + gameStatePacket.myPaddle.x) / 2;
-				myGameState.opPaddle.x	=	(myGameState.opPaddle.x + gameStatePacket.opPaddle.x) / 2;
+				// myGameState.myPaddle.x	=	(myGameState.myPaddle.x + gameStatePacket.myPaddle.x) / 2;
+				// myGameState.opPaddle.x	=	(myGameState.opPaddle.x + gameStatePacket.opPaddle.x) / 2;
 				myGameState.myBall.x	=	(myGameState.myBall.x + gameStatePacket.myBall.x) / 2;
 				myGameState.opBall.x	=	(myGameState.opBall.x + gameStatePacket.opBall.x) / 2;
 				myGameState.myPaddle.y	=	(myGameState.myPaddle.y + gameStatePacket.myPaddle.y) / 2;
 				myGameState.opPaddle.y	=	(myGameState.opPaddle.y + gameStatePacket.opPaddle.y) / 2;
 				myGameState.myBall.y	=	(myGameState.myBall.y + gameStatePacket.myBall.y) / 2;
 				myGameState.opBall.y	=	(myGameState.opBall.y + gameStatePacket.opBall.y) / 2;
+				return (myGameState);
 			};
             if (data.type == 'update') {
                 if (isGameOver) return;
+				gameState = updateGameState(players, ball, gameState);
+				gameState = averageGameState(gameState, gameStatePacket);
                 if (leftPlayer) {
                     if (data['key'] == 'w' && players.right > 0) players.right -= paddle.speed;
                     if (data['key'] == 's' && players.right < canvas.height - paddle.height) players.right += paddle.speed;
@@ -376,7 +386,7 @@ export function loadGame(username, localPlayerMode) {
                     if (data['key'] == 'w' && players.left > 0) players.left -= paddle.speed;
                     if (data['key'] == 's' && players.left < canvas.height - paddle.height) players.left += paddle.speed;
                 }
-				gameState = averageGameState(gameState, gameStatePacket);
+				gameState = updateGameState(players, ball, gameState);
             }
             else if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
                 gameSocket.close();
