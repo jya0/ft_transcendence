@@ -445,8 +445,8 @@ class GameConsumer(WebsocketConsumer):
             'game': event['game'],
                     'mode': mode,
                     'sender': sender,
-                    # 'player1': event['player1'],
-                    # 'player2': event['player2'],
+                    'player1': event['player1'],
+                    'player2': event['player2'],
         }))
 
     def disconnect(self, code):
