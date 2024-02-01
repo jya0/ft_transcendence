@@ -214,6 +214,7 @@ class GameConsumer(WebsocketConsumer):
                     'player1': text_data_json['player1'],
                     'player2': text_data_json['player2'],
                     'key': key,
+                    'gameState': text_data_json['gameState']
                 }
             )
 

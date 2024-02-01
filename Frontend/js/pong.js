@@ -27,6 +27,14 @@ export function loadGame(username, localPlayerMode) {
     const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
     const keys = {};
 
+	let	screenCenter = { x: canvas.width / 2, y: canvas.height / 2 };
+	let	gameState = { 
+		myPaddle:	{ x: 0, y: (canvas.height - paddle.height) / 2 }, 
+		myBall:		{ x: canvas.width / 2, y: canvas.height / 2 }, 
+		opPaddle:	{ x: 0, y: (canvas.height - paddle.height) / 2 }, 
+		opBall:		{ x: canvas.width / 2, y: canvas.width / 2 }
+	};
+
     function resetGame(params) {
 
         ball.x = canvas.width / 2;
@@ -45,6 +53,35 @@ export function loadGame(username, localPlayerMode) {
     let rightPlayer = false;
 
 
+    function draw() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, gameState.myPaddle.y, paddle.width, paddle.height);
+        ctx.fillRect(canvas.width - paddle.width, gameState.opPaddle.y, paddle.width, paddle.height);
+        ctx.beginPath();
+        ctx.arc(gameState.myBall.x, gameState.myBall.y, ball.size, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(score.left, canvas.width / 4, 50);
+        ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+        ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
+        if (localPlayerMode) {
+            player2 = "guest";
+        }
+        if (leftPlayer) {
+            ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
+            ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
+        }
+        else {
+            ctx.fillText(player2, canvas.width / 4, canvas.height / 5);
+            ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
+        }
+
+    }
+/* 
     function draw() {
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -72,9 +109,10 @@ export function loadGame(username, localPlayerMode) {
             ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
         }
 
-    }
+    } */
 
     function updateBackend() {
+		gameState = normalizeGameState(gameState);
         if (rightPlayer) {
             if (keys['w'] && players.right > 0) {
                 players.right -= paddle.speed;
@@ -87,6 +125,7 @@ export function loadGame(username, localPlayerMode) {
                     'player2':player2,
                     'username': username,
                     'key': keyPressed,
+					'gameState': gameState
                 }))
             }
             if (keys['s'] && players.right < canvas.height - paddle.height) {
@@ -99,7 +138,8 @@ export function loadGame(username, localPlayerMode) {
                     'player2':player2,
                     'mode': 'single',
                     'username': username,
-                    'key': keyPressed
+                    'key': keyPressed,
+					'gameState': gameState
                 }))
             }
         }
@@ -114,7 +154,8 @@ export function loadGame(username, localPlayerMode) {
                     'player2':player2,
                     'mode': 'single',
                     'username': username,
-                    'key': keyPressed
+                    'key': keyPressed,
+					'gameState': gameState
                 }))
             }
             if (keys['s'] && players.left < canvas.height - paddle.height) {
@@ -127,7 +168,8 @@ export function loadGame(username, localPlayerMode) {
                     'player2':player2,
                     'mode': 'single',
                     'username': username,
-                    'key': keyPressed
+                    'key': keyPressed,
+					'gameState': gameState
                 }))
             }
         }
@@ -303,9 +345,29 @@ export function loadGame(username, localPlayerMode) {
             if (data.sender == username)
                 return;
 
+			function	normalizeGameState(myGameState) {
+				myGameState.myPaddle.x	-=	screenCenter.x;
+				myGameState.opPaddle.x	-=	screenCenter.x;
+				myGameState.myBall.x	-=	screenCenter.x;
+				myGameState.opBall.x	-=	screenCenter.x;
+				myGameState.myPaddle.y	-=	screenCenter.y;
+				myGameState.opPaddle.y	-=	screenCenter.y;
+				myGameState.myBall.y	-=	screenCenter.y;
+				myGameState.opBall.y	-=	screenCenter.y;
+				return (myGameState);
+			};
+			function	averageGameState(myGameState, gameStatePacket) {
+				myGameState.myPaddle.x	=	(myGameState.myPaddle.x + gameStatePacket.myPaddle.x) / 2;
+				myGameState.opPaddle.x	=	(myGameState.opPaddle.x + gameStatePacket.opPaddle.x) / 2;
+				myGameState.myBall.x	=	(myGameState.myBall.x + gameStatePacket.myBall.x) / 2;
+				myGameState.opBall.x	=	(myGameState.opBall.x + gameStatePacket.opBall.x) / 2;
+				myGameState.myPaddle.y	=	(myGameState.myPaddle.y + gameStatePacket.myPaddle.y) / 2;
+				myGameState.opPaddle.y	=	(myGameState.opPaddle.y + gameStatePacket.opPaddle.y) / 2;
+				myGameState.myBall.y	=	(myGameState.myBall.y + gameStatePacket.myBall.y) / 2;
+				myGameState.opBall.y	=	(myGameState.opBall.y + gameStatePacket.opBall.y) / 2;
+			};
             if (data.type == 'update') {
                 if (isGameOver) return;
-
                 if (leftPlayer) {
                     if (data['key'] == 'w' && players.right > 0) players.right -= paddle.speed;
                     if (data['key'] == 's' && players.right < canvas.height - paddle.height) players.right += paddle.speed;
@@ -314,6 +376,7 @@ export function loadGame(username, localPlayerMode) {
                     if (data['key'] == 'w' && players.left > 0) players.left -= paddle.speed;
                     if (data['key'] == 's' && players.left < canvas.height - paddle.height) players.left += paddle.speed;
                 }
+				gameState = averageGameState(gameState, gameStatePacket);
             }
             else if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
                 gameSocket.close();
