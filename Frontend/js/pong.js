@@ -187,9 +187,9 @@ export function loadGame(username, localPlayerMode) {
         let winner;
 
         if (score.left > score.right) {
-            winner = "Left Player";
+            winner = player1;
         } else {
-            winner = "Right Player";
+            winner = "Guest";
         }
 
         isGameOver = true;
