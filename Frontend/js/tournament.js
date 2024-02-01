@@ -968,7 +968,7 @@ export function loadTournament(username, localPlayerMode) {
     async function playOnlineTournamentMatch() {
         resetGame();
         isGameOver = true;
-        print("gcount = " + g_count);
+        console.log("gcount = " + g_count);
         if (g_count == 0) {
             isGameOver = false;
             score.left = 0;
