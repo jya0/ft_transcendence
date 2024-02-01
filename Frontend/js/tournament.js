@@ -623,7 +623,7 @@ export function loadTournament(localMode) {
 								</div>
 							</div>
 						</div>
-						<button type="button" class="col-auto btn btn-light btn-lg px-3 py-1 rounded-1" id="beginTournament">
+						<button type="submit" class="col-auto btn btn-light btn-lg px-3 py-1 rounded-1" id="beginTournament">
 							<p class="display-5 text-capitalize text-black text-wrap p-0 m-0 g-0" style="font-size: calc(100% + 0.5vw);">start tournament</p>
 						</button>
 					</div>
@@ -819,23 +819,24 @@ export function loadTournament(localMode) {
                 return;
             }
             if (data.length > 55) {
-                loadModal('modalGameBody', data);
-                showModal("modalGame");
-                document.getElementById('createTourn').addEventListener('click', async function (event) {
-                    event.preventDefault();
-                    await submitTournament();
-                });
-                const joinButtons = document.querySelectorAll('[id="joinTourn"]');
+				displayTournamentLobby(data);
+                // loadModal('modalGameBody', data);
+                // showModal("modalGame");
+                // document.getElementById('createTourn').addEventListener('submit', async function (event) {
+                //     event.preventDefault();
+                //     await submitTournament();
+                // });
+                // const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
-                joinButtons?.forEach(function (button) {
-                    button.addEventListener('click', function () {
-                        // Extract the tournament name from the closest card
-                        const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
+                // joinButtons?.forEach(function (button) {
+                //     button.addEventListener('click', function () {
+                //         // Extract the tournament name from the closest card
+                //         const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
 
-                        // Call joinTournament with the extracted tournament name
-                        joinTournament(tournamentName);
-                    });
-                });
+                //         // Call joinTournament with the extracted tournament name
+                //         joinTournament(tournamentName);
+                //     });
+                // });
             }
 
 
@@ -846,6 +847,7 @@ export function loadTournament(localMode) {
 
 
     }
+
 
     async function joinTournament(tournamentName) {
         // Perform logic to join the selected tournament
@@ -944,32 +946,36 @@ export function loadTournament(localMode) {
             if (!data) {
                 return;
             }
-            loadModal('modalGameBody', data);
-            showModal("modalGame");
+			displayTournamentLobby(data);
         }).catch((error) => {
             console.error('Error:', error);
         });
 
         // const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
-        const joinButtons = document.querySelectorAll('[id="joinTourn"]');
-
-        joinButtons?.forEach(function (button) {
-            button.addEventListener('click', function () {
-                // Extract the tournament name from the closest card
-                const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
-
-                // Call joinTournament with the extracted tournament name
-                joinTournament(tournamentName);
-            });
-        });
-
-        document.getElementById('createTourn')?.addEventListener('click', async () => {
-            await submitTournament();
-        });
-
 
     };
+
+	function	displayTournamentLobby(data) {
+		loadModal('modalGameBody', data);
+		const joinButtons = document.querySelectorAll('[id="joinTourn"]');
+
+		joinButtons?.forEach(function (button) {
+			button.addEventListener('click', function () {
+				// Extract the tournament name from the closest card
+				const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
+
+				// Call joinTournament with the extracted tournament name
+				joinTournament(tournamentName);
+			});
+		});
+
+		document.getElementById('createTournForm')?.addEventListener('submit', async (event) => {
+			event.preventDefault();
+			await submitTournament();
+		});
+		showModal("modalGame");
+	}
 
     // async function gameLoop(timestamp) {
     //     if (continueExecution == false)
