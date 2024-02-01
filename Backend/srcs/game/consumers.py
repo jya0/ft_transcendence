@@ -10,7 +10,7 @@ from datetime import date
 def create_new_game_lobby(game):
     dummy = Tournament.objects.all()[0]
     Match.objects.create(tournament_id_id=dummy.tournament_id, id1_id=2,
-                         id2_id=3, score1=0, score2=0, ongoing=False, type=game)
+                         id2_id=3, score1=0, score2=0, ongoing=False, type=game, time = date.today())
 
 
 def prepare_final_round(tourn, user):
@@ -20,7 +20,7 @@ def prepare_final_round(tourn, user):
         print("creating a final round now...")
         print(game.__dict__)
         game = Match.objects.create(
-            tournament_id_id=tourn.tournament_id, id1_id=2, id2_id=5, score1=0, score2=0, ongoing=True)
+            tournament_id_id=tourn.tournament_id, id1_id=2, id2_id=5, score1=0, score2=0, ongoing=True, time = date.today())
         game.id1 = user
         game.save()
         return False
