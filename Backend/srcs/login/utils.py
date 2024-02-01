@@ -18,10 +18,6 @@ def send_otp(request, username):
     totp = pyotp.TOTP(secret_key, interval=300)
     otp = totp.now()
     user.otp_secret_key = secret_key
-    # rm in production
-    # valid_date = datetime.now() + timedelta(minutes=300)
-    # valid_date_utc_aware = valid_date.replace(tzinfo=timezone.utc)
-    # user.otp_valid_date = valid_date_utc_aware
     user.save()
     subject = "Your OTP"
     message = f"Your OTP is: {otp}"
