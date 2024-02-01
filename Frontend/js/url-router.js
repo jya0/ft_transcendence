@@ -4,7 +4,7 @@ import { loadTournament, stopTournamentExecution } from './tournament.js';
 import { loadTicTac, closeTicTac1v1Socket, stopTicTacExecution } from './tic_tac.js'
 import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
 
-import { elementIdEditInnerHTML } from './utility.js';
+import { elementIdEditInnerHTML, checkName } from './utility.js';
 
 const urlRoutes = {
     404: {
@@ -397,14 +397,8 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
         const nicknameValue = newDisplayName.value;
         const displayNameElement = document.getElementById('displayName');
 
-        if (!nicknameValue || nicknameValue.trim().length === 0 || nicknameValue.trim().length < 5) {
-            loadToast('Display name should not be empty, more than 5 characters and less than 50 characters');
-            return;
-        }
-        else if (nicknameValue.length >= 50) {
-            loadToast('Size of display name should be less than 50 characters');
-            return;
-        }
+		if (!checkName(nicknameValue))
+			return ;
 
         await fetch('/api/update_display_name/', {
             method: 'POST',
