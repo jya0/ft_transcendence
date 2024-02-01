@@ -60,17 +60,18 @@ export function loadGame(username, localPlayerMode) {
         ctx.fillText(score.left, canvas.width / 4, 50);
         ctx.fillText(score.right, 3 * canvas.width / 4, 50);
         ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
-        if (!localPlayerMode) {
-            if (leftPlayer)
-            {
-                ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
-                ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
-            }
-            else {
-                ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
-                ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
-            }
-        }
+        if (localPlayerMode) {
+			player2 = "guest";
+		}
+		if (leftPlayer)
+		{
+			ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
+			ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
+		}
+		else {
+			ctx.fillText(player2, canvas.width / 4, canvas.height / 5);
+			ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
+		}
 
     }
 

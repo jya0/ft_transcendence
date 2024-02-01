@@ -633,13 +633,10 @@ export function loadTournament(localMode) {
             const playerNames = Array.from(document.getElementById('formPlayerNames').querySelectorAll('input[id^="player"]')).map(input => input.value);
 
             console.log(playerNames);
-			for (let i = 0; i < playerNames.length(); ++i)
+			for (let i = 0; i < playerNames.length; ++i)
 			{
 				if (!checkName(playerNames[i]))
-				{
-					loadToast("Player name is not valid");
 					return ;
-				}
 			}
             // Check if all player names are unique
             if (hasDuplicates(playerNames)) {
