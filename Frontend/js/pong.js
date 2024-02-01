@@ -426,7 +426,7 @@ export function closePong1v1Socket() {
     gameSocket.send(JSON.stringify({
         'game': 'pong',
         'type': 'terminate',
-        'mode': 'online1v1',
+        'mode': 'single',
         'sender': user_name,
     }))
     gameSocket.close();

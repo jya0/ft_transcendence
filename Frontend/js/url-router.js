@@ -529,11 +529,11 @@ export const urlLocationHandler = async () => {
                 break;
             case '/games_pong_local_tournament':
                 gameMode = 'pong tournament';
-                loadTournament(true);
+                loadTournament(localStorage.getItem('username'), true);
                 break;
             case '/games_pong_online_tournament':
                 gameMode = 'pong tournament';
-                loadTournament(false);
+                loadTournament(localStorage.getItem('username'), false);
                 break;
             default:
                 break;
