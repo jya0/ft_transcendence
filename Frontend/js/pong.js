@@ -6,10 +6,10 @@ let gameSocket = "";
 let user_name = "";
 
 export function loadGame(username, localPlayerMode) {
-	const docModalGame = document.getElementById('modalGame');
-	const canvas = document.getElementById('gameCanvas');
-	if (!docModalGame || !canvas)
-		return ;
+    const docModalGame = document.getElementById('modalGame');
+    const canvas = document.getElementById('gameCanvas');
+    if (!docModalGame || !canvas)
+        return;
     let player1 = username;
     user_name = username;
     let player2 = "";
@@ -61,17 +61,16 @@ export function loadGame(username, localPlayerMode) {
         ctx.fillText(score.right, 3 * canvas.width / 4, 50);
         ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
         if (localPlayerMode) {
-			player2 = "guest";
-		}
-		if (leftPlayer)
-		{
-			ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
-			ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
-		}
-		else {
-			ctx.fillText(player2, canvas.width / 4, canvas.height / 5);
-			ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
-		}
+            player2 = "guest";
+        }
+        if (leftPlayer) {
+            ctx.fillText(player1, canvas.width / 4, canvas.height / 5);
+            ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
+        }
+        else {
+            ctx.fillText(player2, canvas.width / 4, canvas.height / 5);
+            ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
+        }
 
     }
 
@@ -260,7 +259,7 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    let url = `wss://10.11.6.4:9090/ws/socket-server/`;
+    let url = `wss://localhost:9090/ws/socket-server/`;
     // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
@@ -274,7 +273,7 @@ export function loadGame(username, localPlayerMode) {
             if (btnCounter == 0)
                 return;
             if (data.game === 'tic')
-                return ;
+                return;
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 // loadSpinner("modalGameBody", "text-black");

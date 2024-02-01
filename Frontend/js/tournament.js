@@ -26,7 +26,7 @@ export function loadTournament(localMode) {
     const ctx = canvas.getContext('2d');
 
     let localPlayerMode = true;
-	let localCurrentPair = [];
+    let localCurrentPair = [];
     let pairings = [];
     let winners = [];
 
@@ -47,22 +47,22 @@ export function loadTournament(localMode) {
     let rightPlayer = false;
     let g_count = 0;
 
-/*     function draw() {
-        ctx.fillStyle = '#000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#fff';
-        ctx.fillRect(0, players.left, paddle.width, paddle.height);
-        ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
-        ctx.textAlign = "center";
-        ctx.textBaseline = "top";
-        ctx.fillText(score.left, canvas.width / 4, 50);
-        ctx.fillText(score.right, 3 * canvas.width / 4, 50);
-        ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
-    } */
+    /*     function draw() {
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, players.left, paddle.width, paddle.height);
+            ctx.fillRect(canvas.width - paddle.width, players.right, paddle.width, paddle.height);
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.font = (canvas.width * 0.08) + 'px ArgentPixel';
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top";
+            ctx.fillText(score.left, canvas.width / 4, 50);
+            ctx.fillText(score.right, 3 * canvas.width / 4, 50);
+            ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
+        } */
     function draw() {
         ctx.fillStyle = '#000';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -79,9 +79,9 @@ export function loadTournament(localMode) {
         ctx.fillText(score.right, 3 * canvas.width / 4, 50);
         ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
         if (localPlayerMode === true) {
-			ctx.fillText(localCurrentPair[0], canvas.width / 4, canvas.height / 5);
-			ctx.fillText(localCurrentPair[1], 3 * canvas.width / 4, canvas.height / 5);
-		}
+            ctx.fillText(localCurrentPair[0], canvas.width / 4, canvas.height / 5);
+            ctx.fillText(localCurrentPair[1], 3 * canvas.width / 4, canvas.height / 5);
+        }
     }
 
     function updateBackend() {
@@ -223,13 +223,13 @@ export function loadTournament(localMode) {
         //update winners
         if (g_count == 0 || g_count == 1) {
             winners += getWinner(score, pairings[g_count][0], pairings[g_count][1]);
-			console.log("winners: ", winners);
+            console.log("winners: ", winners);
         }
-		if (score)
+        if (score)
 
-        // resetGame();
-        //reset
-        isGameOver = false;
+            // resetGame();
+            //reset
+            isGameOver = false;
         socketStatus = false;
         leftPlayer = true;
         rightPlayer = false;
@@ -251,7 +251,7 @@ export function loadTournament(localMode) {
             toggleHighlight("tPlayer4Highlight");
             showModal("modalGame");
             isGameOver = true;
-			updateLocalPlayerDisplay(pairings[1][0], pairings[1][1]);
+            updateLocalPlayerDisplay(pairings[1][0], pairings[1][1]);
             await delay(4000);
             hideModal("modalGame");
             isGameOver = false;
@@ -267,7 +267,7 @@ export function loadTournament(localMode) {
             toggleHighlight("tWinnerP2Highlight");
             showModal("modalGame");
             isGameOver = true;
-			updateLocalPlayerDisplay(winners[0], winners[1]);
+            updateLocalPlayerDisplay(winners[0], winners[1]);
             await delay(4000);
             hideModal("modalGame");
 
@@ -296,10 +296,9 @@ export function loadTournament(localMode) {
             g_count++;
     }
 
-	function	getWinner(scoreObj, playerLeft, playerRight)
-	{
-		return (scoreObj.left > scoreObj.right ? playerLeft : playerRight);
-	}
+    function getWinner(scoreObj, playerLeft, playerRight) {
+        return (scoreObj.left > scoreObj.right ? playerLeft : playerRight);
+    }
 
     function handleOnlineWinner() {
         let buttonText;
@@ -346,7 +345,7 @@ export function loadTournament(localMode) {
 
     let player_count = 0;
     // let url = `wss://localhost:9090/ws/socket-server/`
-    let url = `wss://10.11.6.4:9090/ws/socket-server/`;
+    let url = `wss://localhost:9090/ws/socket-server/`;
 
     let gameSocket;
 
@@ -419,7 +418,7 @@ export function loadTournament(localMode) {
         for (let i = 0; i < shuffledPlayers.length; i += 2) {
             pairings.push([shuffledPlayers[i], shuffledPlayers[i + 1]]);
         }
-		console.log("match1: ", pairings[0], " match2: ", pairings[1]);
+        console.log("match1: ", pairings[0], " match2: ", pairings[1]);
         return pairings;
     }
 
@@ -567,7 +566,7 @@ export function loadTournament(localMode) {
             toggleHighlight("tPlayer1Highlight");
             toggleHighlight("tPlayer2Highlight");
             showModal("modalGame");
-			updateLocalPlayerDisplay(pairings[0][0], pairings[0][1]);
+            updateLocalPlayerDisplay(pairings[0][0], pairings[0][1]);
             await delay(4000);
             hideModal("modalGame");
             resetBall();
@@ -575,11 +574,11 @@ export function loadTournament(localMode) {
         }
     }
 
-	function updateLocalPlayerDisplay(playerLeft, playerRight) {
-		localCurrentPair = [playerLeft, playerRight];
-		// localCurrentPair.push(playerLeft, playerRight);
-		console.log("player left:", localCurrentPair[0], " player right:", localCurrentPair[1]);
-	};
+    function updateLocalPlayerDisplay(playerLeft, playerRight) {
+        localCurrentPair = [playerLeft, playerRight];
+        // localCurrentPair.push(playerLeft, playerRight);
+        console.log("player left:", localCurrentPair[0], " player right:", localCurrentPair[1]);
+    };
 
     function setupLocalTournament() {
 
@@ -657,11 +656,10 @@ export function loadTournament(localMode) {
             const playerNames = Array.from(document.getElementById('formPlayerNames').querySelectorAll('input[id^="player"]')).map(input => input.value);
 
             console.log(playerNames);
-			for (let i = 0; i < playerNames.length; ++i)
-			{
-				if (!checkName(playerNames[i]))
-					return ;
-			}
+            for (let i = 0; i < playerNames.length; ++i) {
+                if (!checkName(playerNames[i]))
+                    return;
+            }
             // Check if all player names are unique
             if (hasDuplicates(playerNames)) {
                 loadToast("Player names must be unique. Please enter distinct names for each player.");
@@ -819,7 +817,7 @@ export function loadTournament(localMode) {
                 return;
             }
             if (data.length > 55) {
-				displayTournamentLobby(data);
+                displayTournamentLobby(data);
                 // loadModal('modalGameBody', data);
                 // showModal("modalGame");
                 // document.getElementById('createTourn').addEventListener('submit', async function (event) {
@@ -946,7 +944,7 @@ export function loadTournament(localMode) {
             if (!data) {
                 return;
             }
-			displayTournamentLobby(data);
+            displayTournamentLobby(data);
         }).catch((error) => {
             console.error('Error:', error);
         });
@@ -956,26 +954,26 @@ export function loadTournament(localMode) {
 
     };
 
-	function	displayTournamentLobby(data) {
-		loadModal('modalGameBody', data);
-		const joinButtons = document.querySelectorAll('[id="joinTourn"]');
+    function displayTournamentLobby(data) {
+        loadModal('modalGameBody', data);
+        const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
-		joinButtons?.forEach(function (button) {
-			button.addEventListener('click', function () {
-				// Extract the tournament name from the closest card
-				const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
+        joinButtons?.forEach(function (button) {
+            button.addEventListener('click', function () {
+                // Extract the tournament name from the closest card
+                const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
 
-				// Call joinTournament with the extracted tournament name
-				joinTournament(tournamentName);
-			});
-		});
+                // Call joinTournament with the extracted tournament name
+                joinTournament(tournamentName);
+            });
+        });
 
-		document.getElementById('createTournForm')?.addEventListener('submit', async (event) => {
-			event.preventDefault();
-			await submitTournament();
-		});
-		showModal("modalGame");
-	}
+        document.getElementById('createTournForm')?.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            await submitTournament();
+        });
+        showModal("modalGame");
+    }
 
     // async function gameLoop(timestamp) {
     //     if (continueExecution == false)

@@ -101,10 +101,12 @@ async function loadLoginPage(message) {
         })
     const docModalAll = document.querySelectorAll(".modal");
     const tmpModalBs = '';
-    docModalAll.forEach(element => {
-        tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
-        tmpModalBs.hide();
-    });
+    if (docModalAll) {
+        docModalAll.forEach(element => {
+            tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
+            tmpModalBs.hide();
+        });
+    }
 }
 
 console.log(sessionStorage.getItem('username'))
@@ -170,7 +172,6 @@ const addFriend = async (button, username, newFriend) => {
 
         if (!response.ok) {
             elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-            // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
             loadToast('Unauthorized, please login again!')
             localStorage.clear();
             return;
@@ -200,20 +201,6 @@ navbarLinks?.forEach(function (link) {
         urlLocationHandler();
     });
 });
-
-
-const urlRoute = (event) => {
-    console.log('urlroute event--------------------------------------------------------', event);
-    event = event || window.event; // get window.event if event argument not provided
-    event.preventDefault();
-    let href = event.target.parentElement.parentElement.parentElement.href;
-    console.log('urlroute href', href);
-    console.log('urlroute event.target.tagName', event.target.tagName);
-    if (event.target.tagName !== 'A')
-        href = event.target.parentElement.href;
-    window.history.pushState({}, "", href);
-    urlLocationHandler();
-};
 
 function setMainWindowframe() {
     insertOrCreateContent();
@@ -397,8 +384,8 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
         const nicknameValue = newDisplayName.value;
         const displayNameElement = document.getElementById('displayName');
 
-		if (!checkName(nicknameValue))
-			return ;
+        if (!checkName(nicknameValue))
+            return;
 
         await fetch('/api/update_display_name/', {
             method: 'POST',
@@ -764,8 +751,6 @@ async function handleUserData() {
                                     window.history.pushState({}, "", '/desktop');
 
                                     window.onpopstate = urlLocationHandler;
-                                    // call the urlLocationHandler function to handle the initial url
-                                    window.route = urlRoute;
                                     urlLocationHandler();
                                 }
                                 else {
@@ -801,8 +786,6 @@ async function handleUserData() {
                 window.history.pushState({}, "", '/desktop');
 
                 window.onpopstate = urlLocationHandler;
-                // call the urlLocationHandler function to handle the initial url
-                window.route = urlRoute;
                 urlLocationHandler();
 
 
@@ -810,8 +793,6 @@ async function handleUserData() {
         return;
     }
     window.onpopstate = urlLocationHandler;
-    // call the urlLocationHandler function to handle the initial url
-    window.route = urlRoute;
     urlLocationHandler();
 }
 
@@ -899,7 +880,6 @@ async function getAllFriends(override) {
         if (!data) {
             return;
         }
-        // console.log(data);
         users = data;
         console.log(users);
         return users;
@@ -924,7 +904,7 @@ async function insertAllUsers(users) {
         let isFriend = false;
         console.log(user.username);
         isFriend = elementExistsInArray(friends, user.intra)
-        const userImage = `https://10.11.6.4:9090/api/get_image/${user.username}`;
+        const userImage = `https://localhost:9090/api/get_image/${user.username}`;
         const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
