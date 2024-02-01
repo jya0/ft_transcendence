@@ -101,8 +101,6 @@ AUTH_USER_MODEL = "login.UserProfile"
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # needed for browser api REMOVE IT IN PRODUCTION
-        # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
