@@ -83,6 +83,8 @@ export function loadGame(username, localPlayerMode) {
                     'game': 'pong',
                     'type': 'update',
                     'mode': 'single',
+                    'player1':player1,
+                    'player2':player2,
                     'username': username,
                     'key': keyPressed,
                 }))
@@ -93,6 +95,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
+                    'player1':player1,
+                    'player2':player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -106,6 +110,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
+                    'player1':player1,
+                    'player2':player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -117,6 +123,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
+                    'player1':player1,
+                    'player2':player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -219,6 +227,8 @@ export function loadGame(username, localPlayerMode) {
                 'game': 'pong',
                 'type': 'end',
                 'mode': 'single',
+                'player1':player1,
+                'player2':player2,
                 'username': winner,
                 'score1': score.left,
                 'score2': score.right,
@@ -259,7 +269,7 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    let url = `wss://localhost:9090/ws/socket-server/`;
+    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
     // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
@@ -274,6 +284,8 @@ export function loadGame(username, localPlayerMode) {
                 return;
             if (data.game === 'tic')
                 return;
+            if (data.player1 != username && data.player2 != username)
+                return ;
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 // loadSpinner("modalGameBody", "text-black");
@@ -427,7 +439,7 @@ export function closePong1v1Socket() {
     gameSocket.send(JSON.stringify({
         'game': 'pong',
         'type': 'terminate',
-        'mode': 'online1v1',
+        'mode': 'single',
         'sender': user_name,
     }))
     gameSocket.close();
