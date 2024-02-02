@@ -67,8 +67,11 @@ def intra_link(request):
 @permission_classes([IsAuthenticated])
 def get_all_users(request):
     users = UserProfile.objects.exclude(username='admin')
+    users = users.exclude(username='temp1')
+    users = users.exclude(username='temp2')
     serializer = UserProfileSerializer(users, many=True)
     return JsonResponse(serializer.data, safe=False)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -141,7 +144,8 @@ def user_view(request, intra):
     usernames_list = [friend.username for friend in unique_friends]
 
     # Get a list of unique friends
-    games_list = Match.objects.filter(Q(id1=user) | Q(id2=user)).all().order_by('match_id')
+    games_list = Match.objects.filter(
+        Q(id1=user) | Q(id2=user)).all().order_by('match_id')
 
     template = get_template('user_profile.html')
     template_content = template.template.source
@@ -152,13 +156,13 @@ def user_view(request, intra):
 
     if request.user.username == intra:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'same', 'image': 'same', 't_wins':t_wins, 'm_wins':m_wins})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'same', 'image': 'same', 't_wins': t_wins, 'm_wins': m_wins})
     elif request.user.username in usernames_list:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': True, 't_wins':t_wins, 'm_wins':m_wins})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': True, 't_wins': t_wins, 'm_wins': m_wins})
     else:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': False, 't_wins':t_wins, 'm_wins':m_wins})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': False, 't_wins': t_wins, 'm_wins': m_wins})
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')

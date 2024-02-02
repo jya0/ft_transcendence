@@ -73,8 +73,8 @@ export function loadTournament(username, localPlayerMode) {
             ctx.fillText(player2, 3 * canvas.width / 4, canvas.height / 5);
             // }
             // else {
-                // ctx.fillText(player2, canvas.width / 4, canvas.height / 5);
-                // ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
+            // ctx.fillText(player2, canvas.width / 4, canvas.height / 5);
+            // ctx.fillText(player1, 3 * canvas.width / 4, canvas.height / 5);
             // }
         }
         ctx.font = (canvas.width * 0.02) + 'px ArgentPixel';
@@ -94,8 +94,8 @@ export function loadTournament(username, localPlayerMode) {
                     'game': 'pong',
                     'mode': 'tournament',
                     'round': round,
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'tournament_name': tournament_name,
                     'username': localStorage.getItem('username'),
                     'key': keyPressed
@@ -107,8 +107,8 @@ export function loadTournament(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
                     'game': 'pong',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'round': round,
                     'mode': 'tournament',
                     'tournament_name': tournament_name,
@@ -124,8 +124,8 @@ export function loadTournament(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
                     'game': 'pong',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'round': round,
 
                     'mode': 'tournament',
@@ -140,8 +140,8 @@ export function loadTournament(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'type': 'update',
                     'game': 'pong',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'round': round,
 
                     'mode': 'tournament',
@@ -235,14 +235,12 @@ export function loadTournament(username, localPlayerMode) {
         //show results
         if (g_count != 2) {
 
-            // console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
         }
 
         //update winners
         if (g_count == 0 || g_count == 1) {
             winners.push(getWinner(score, pairings[g_count][0], pairings[g_count][1]));
             winners.reverse();
-            console.log("winners: ", winners);
         }
         // if (score)
 
@@ -318,11 +316,8 @@ export function loadTournament(username, localPlayerMode) {
     }
 
     async function handleOnlineWinner() {
-        console.log("sup mfs");
         let winnerMsg;
         let winner;
-        console.log("leftPlayer = " + leftPlayer)
-        console.log("rightPlayer = " + rightPlayer)
 
         if (tournReady == false)
             return;
@@ -339,18 +334,15 @@ export function loadTournament(username, localPlayerMode) {
             // toggleHighlight("tPlayer3Highlight");
             // toggleHighlight("tPlayer4Highlight");
             // showModal("modalGame");
-            console.log("player 1 = " + player1)
-            console.log("player 2 = " + player2)
 
             winner = getWinner(score, player1, player2);
-            console.log("winner = " + winner);
             if (winner === user_name) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'end',
                     'mode': 'tournament',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'round': round,
 
                     'tournament_name': tournament_name,
@@ -369,18 +361,17 @@ export function loadTournament(username, localPlayerMode) {
                 gameSocket = "";
                 isGameOver = true;
                 socketStatus = false;
-                if (winner === user_name)
-                {
-					// showModal("modalGame");
+                if (winner === user_name) {
+                    // showModal("modalGame");
                     initiateSocket();
                 }
                 else {
                     showGameWinner(`TBA - Sorry you lost your chance. Please try again later`);
                     // hideModal("modalGame");
-					showModal("modalGame");
+                    showModal("modalGame");
                     window.history.pushState({}, "", '/play');
                     urlLocationHandler();
-					hideModal("modalGame");
+                    hideModal("modalGame");
                 }
             }
             );
@@ -394,12 +385,12 @@ export function loadTournament(username, localPlayerMode) {
             tournReady = false;
             isGameOver = true;
 
-			elementIdEditInnerHTML("winner-final", champion);
+            elementIdEditInnerHTML("winner-final", champion);
             showGameWinner(champion);
-			showModal("modalGame");
+            showModal("modalGame");
             window.history.pushState({}, "", '/play');
             urlLocationHandler();
-			hideModal("modalGame");
+            hideModal("modalGame");
             return;
         }
         else
@@ -427,17 +418,16 @@ export function loadTournament(username, localPlayerMode) {
     });
 
     let player_count = 0;
-    // let url = `wss://10.11.6.2:9090/ws/socket-server/`
-    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
+    // let url = `wss://localhost:9090/ws/socket-server/`
+    let url = `wss://localhost:9090/ws/socket-server/`;
 
     // let gameSocket;
 
     function initiateSocket() {
-		document.dispatchEvent(modalMenuDisposeEvent);
+        document.dispatchEvent(modalMenuDisposeEvent);
         gameSocket = new WebSocket(url);
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
-            console.log('Data: ', data)
 
             if (data.mode === 'single')
                 return;
@@ -447,14 +437,13 @@ export function loadTournament(username, localPlayerMode) {
                 return;
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
-				if (data.sender === "server")
-				{
-					loadModal("modalGameBody", TM_BRACKET);
-					elementIdEditInnerHTML("game1p1", data.player1);
+                if (data.sender === "server") {
+                    loadModal("modalGameBody", TM_BRACKET);
+                    elementIdEditInnerHTML("game1p1", data.player1);
                     elementIdEditInnerHTML("game1p2", data.player2);
                     elementIdEditInnerHTML("game2p1", data.game2p1);
                     elementIdEditInnerHTML("game2p2", data.game2p2);
-				}
+                }
                 if (data["player2"] == user_name)
                     player2 = data["player1"];
                 else
@@ -465,19 +454,18 @@ export function loadTournament(username, localPlayerMode) {
                 }
                 player1 = data.player1;
                 player2 = data.player2;
-				// showModal("modalGame");
+                // showModal("modalGame");
                 tournReady = true;
                 if (round == 'final') {
-					elementIdEditInnerHTML("winner-p1", data.player1);
-					elementIdEditInnerHTML("winner-p2", data.player2);
-					// showModal("modalGame");
+                    elementIdEditInnerHTML("winner-p1", data.player1);
+                    elementIdEditInnerHTML("winner-p2", data.player2);
+                    // showModal("modalGame");
                     playOnlineGame();
                 }
-                else
-				{
-					// showModal("modalGame");
-					playOnlineTournamentMatch();
-				}
+                else {
+                    // showModal("modalGame");
+                    playOnlineTournamentMatch();
+                }
             }
 
             if (data.sender == username)
@@ -512,7 +500,6 @@ export function loadTournament(username, localPlayerMode) {
                 gameSocket.close();
             }
             else {
-                // console.log("woops not yet...")
             }
         }
 
@@ -531,7 +518,6 @@ export function loadTournament(username, localPlayerMode) {
             }));
 
             player_count = 1;
-            console.log("waiting for a second player...")
         });
         player_count = 1;
     }
@@ -545,7 +531,6 @@ export function loadTournament(username, localPlayerMode) {
         for (let i = 0; i < shuffledPlayers.length; i += 2) {
             pairings.push([shuffledPlayers[i], shuffledPlayers[i + 1]]);
         }
-        console.log("match1: ", pairings[0], " match2: ", pairings[1]);
         return pairings;
     }
 
@@ -565,16 +550,15 @@ export function loadTournament(username, localPlayerMode) {
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     async function startLocalTournament() {
-        console.log("sup mfs");
         // if (tournReady == false)
         //     return;
         let winners = [];
         localPlayerMode = true;
         loadModal('modalGameBody', TM_BRACKET);
-		elementIdEditInnerHTML("game1p1", pairings[0][0]);
-		elementIdEditInnerHTML("game1p2", pairings[0][1]);
-		elementIdEditInnerHTML("game2p1", pairings[1][0]);
-		elementIdEditInnerHTML("game2p2", pairings[1][1]);
+        elementIdEditInnerHTML("game1p1", pairings[0][0]);
+        elementIdEditInnerHTML("game1p2", pairings[0][1]);
+        elementIdEditInnerHTML("game2p1", pairings[1][0]);
+        elementIdEditInnerHTML("game2p2", pairings[1][1]);
         if (g_count == 0) {
             isGameOver = false;
             score.left = 0;
@@ -593,7 +577,6 @@ export function loadTournament(username, localPlayerMode) {
     function updateLocalPlayerDisplay(playerLeft, playerRight) {
         localCurrentPair = [playerLeft, playerRight];
         // localCurrentPair.push(playerLeft, playerRight);
-        console.log("player left:", localCurrentPair[0], " player right:", localCurrentPair[1]);
     };
 
     function setupLocalTournament() {
@@ -651,7 +634,6 @@ export function loadTournament(username, localPlayerMode) {
 
             const playerNames = Array.from(document.getElementById('formPlayerNames').querySelectorAll('input[id^="player"]')).map(input => input.value);
 
-            console.log(playerNames);
             for (let i = 0; i < playerNames.length; ++i) {
                 if (!checkName(playerNames[i]))
                     return;
@@ -667,8 +649,8 @@ export function loadTournament(username, localPlayerMode) {
             //@todo: show pairings via modal:
 
             tournReady = true;
-			document.dispatchEvent(modalMenuDisposeEvent);
-			startLocalTournament();
+            document.dispatchEvent(modalMenuDisposeEvent);
+            startLocalTournament();
             // playerNameContainer.remove();
         });
 
@@ -721,12 +703,10 @@ export function loadTournament(username, localPlayerMode) {
         }).then(response => {
             if (!response.ok) {
                 localStorage.clear();
-                console.log(response.statusText);
                 return;
             }
             return response.text();
         }).then(data => {
-            console.log(data);
             if (!data) {
                 return;
             }
@@ -749,7 +729,6 @@ export function loadTournament(username, localPlayerMode) {
         // You can make an API call or update the game state accordingly
         if (!tournamentName)
             return;
-        console.log(`Joining tournament with name ${tournamentName}`);
         tournament_name = tournamentName;
         await fetch(`/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
             method: 'POST',
@@ -783,7 +762,6 @@ export function loadTournament(username, localPlayerMode) {
                     // startLocalButton.style.visibility = 'hidden';
 
                     //@TODO : Display WAIT message
-                    console.log("Waiting for lobby to fill & tournament to start ...");
 
                     //@TODO : Open socket
                     initiateSocket();
@@ -798,7 +776,6 @@ export function loadTournament(username, localPlayerMode) {
                     // startLocalButton.style.visibility = 'hidden';
 
                     //@TODO : Display WAIT message
-                    console.log("Waiting for lobby to fill & tournament to start ...");
                 } else {
                     console.error('Failed to join tournament', data);
                 }
@@ -808,8 +785,7 @@ export function loadTournament(username, localPlayerMode) {
         rightPlayer = false;
     }
     function playOnlineGame() {
-        console.log("gameover = " + isGameOver + " and animationid = " + animationFrameId);
-		// hideModal("modalGame");
+        // hideModal("modalGame");
         if (isGameOver || !animationFrameId) {
             isGameOver = false;
             score.left = 0;
@@ -822,7 +798,6 @@ export function loadTournament(username, localPlayerMode) {
     async function playOnlineTournamentMatch() {
         resetGame();
         isGameOver = true;
-        console.log("gcount = " + g_count);
         if (g_count == 0) {
             isGameOver = false;
             score.left = 0;
@@ -856,13 +831,11 @@ export function loadTournament(username, localPlayerMode) {
             if (!response.ok) {
                 // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
                 localStorage.clear();
-                console.log(response.statusText);
                 // loadToast('Please login to continue');
                 return null;
             }
             return response.text();
         }).then(data => {
-            console.log(data);
             if (!data) {
                 return;
             }
@@ -877,7 +850,7 @@ export function loadTournament(username, localPlayerMode) {
     };
 
     function displayTournamentLobby(data) {
-		loadModalMenu("modalMenu", data);
+        loadModalMenu("modalMenu", data);
         const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
         joinButtons?.forEach(function (button) {
@@ -894,7 +867,7 @@ export function loadTournament(username, localPlayerMode) {
             event.preventDefault();
             await submitTournament();
         });
-		//display Tournament Lobby
+        //display Tournament Lobby
         showModal("modalMenu");
     }
 
@@ -904,7 +877,6 @@ export function loadTournament(username, localPlayerMode) {
             return;
 
         const elapsed = timestamp - lastTimestamp;
-        // console.log(timestamp);
 
         lastTimestamp = timestamp;
         if (elapsed == 0 || elapsed >= (frameInterval / 2)) {

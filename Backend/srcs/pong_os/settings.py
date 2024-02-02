@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 FORTY_TWO_URL = os.environ.get("FORTY_TWO_URL")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -35,7 +35,7 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 CSRF_TRUSTED_ORIGINS = [f'https://{host}:9090' for host in ALLOWED_HOSTS]
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 5
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 10
 
 # Application definition
 

@@ -127,22 +127,6 @@ export const loadSpinner = (elementId, color) => {
 		`);
 }
 
-// export function loadLoginPage(message) {
-// 	console.log("loadLoginPage");
-// 	elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-// 	if (!document.getElementById("main-content"))
-// 		return ;
-// 	// document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-// 	if (message) {
-// 		console.log("loadLoginPage message");
-// 		loadToast(message);
-// 	}
-// 	localStorage.clear();
-// 	const docModalSetting = document.getElementById('modalSetting');
-// 	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalSetting);
-// 	tmpModalSetting.hide();
-// }
-
 
 export function getCookie(name) {
 	let cookieValue = null;
