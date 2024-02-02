@@ -31,7 +31,7 @@ def prepare_final_round(tourn, user):
         print("creating a final round now...")
         print(game.__dict__)
         game = Match.objects.create(
-            tournament_id_id=tourn.tournament_id, id1=user, id2=temp, score1=0, score2=0, ongoing=False, open_lobby=True, time = date.today())
+            tournament_id_id=tourn.tournament_id, id1=user, id2=temp2, score1=0, score2=0, ongoing=False, open_lobby=True, time = date.today())
         game.save()
         return False, game
     game = game[0]
