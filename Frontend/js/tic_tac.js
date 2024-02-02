@@ -251,6 +251,19 @@ export function loadTicTac(username, localPlayerMode) {
 
             if (data.game === 'pong')
                 return;
+            if (data.type === 'terminate' && (data.player1 === user_name || data.player2 === user_name)) {
+                    gameSocket.close();
+                    gameSocket = "";
+                    isGameOver = true;
+                    socketStatus = false;
+                    continueExecution = false;
+                    showGameWinner(' You Win!');
+                    window.history.pushState({}, "", '/play');
+                    urlLocationHandler();
+                    return;
+            }
+            if (data.player1 != username && data.player2 != username)
+                return ;
             if (data.type === 'start' && data["status"] === "start") {
                 player_count = 2;
                 console.log("BOYS U CAN START NOW!");
@@ -290,18 +303,6 @@ export function loadTicTac(username, localPlayerMode) {
             if (data.type == 'update') {
                 // if (isGameOver) return;
                 handleMove(data);
-            }
-
-            else if (data.type === 'terminate' && (data.player1 === user_name || data.player2 === user_name)) {
-                gameSocket.close();
-                gameSocket = "";
-                isGameOver = true;
-                socketStatus = false;
-                continueExecution = false;
-                showGameWinner(' You Win!');
-                window.history.pushState({}, "", '/play');
-                urlLocationHandler();
-                return;
             }
             else if (data.type === 'close') {
                 isGameOver = true;
