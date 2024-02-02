@@ -930,7 +930,7 @@ export function loadTournament(username, localPlayerMode) {
 			document.dispatchEvent(modalMenuDisposeEvent);
             await submitTournament();
         });
-        // showModal("modalMenu");
+        showModal("modalMenu");
     }
 
     async function gameLoop(timestamp) {
