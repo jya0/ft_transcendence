@@ -262,12 +262,14 @@ class GameConsumer(WebsocketConsumer):
                     async_to_sync(self.channel_layer.group_send)(
                         self.room_group_name,
                         {
-                            'type': 'start_game',
+                            'type': 'start_game_tourn',
                             'game': 'pong',
                             'mode': mode,
                             'sender': 'server',
                             'player1': games[0].id1.intra,
                             'player2': games[0].id2.intra,
+                            'game2p1': games[1].id1.intra,
+                            'game2p2': games[1].id2.intra,
                             'status': status,
                         }
                     )
@@ -288,13 +290,15 @@ class GameConsumer(WebsocketConsumer):
                     async_to_sync(self.channel_layer.group_send)(
                         self.room_group_name,
                         {
-                            'type': 'start_game',
+                            'type': 'start_game_tourn',
                             'game': 'pong',
                             'mode': mode,
                             'round': 'final',
                             'sender': 'server',
                             'player1': games[1].id1.intra,
                             'player2': games[1].id2.intra,
+                            'game2p1': games[0].id1.intra,
+                            'game2p2': games[0].id2.intra,
                             'status': status
                         }
                     )
@@ -440,7 +444,9 @@ class GameConsumer(WebsocketConsumer):
             'player2': event['player2'],
 
         }))
-
+        
+	
+        
     def update_game(self, event):
         message = event['key']
         sender = event['sender']
@@ -479,3 +485,20 @@ class GameConsumer(WebsocketConsumer):
         )
         print('closing socket bruv')
         self.close()
+
+
+	def	start_game_tourn(self, event):
+		message = event['status']
+		sender = event['sender']
+		mode = event['mode']
+		self.send(text_data=json.dumps({
+			'type': 'start',
+			'game': event['game'],
+			'mode': mode,
+			'sender': sender,
+			'status': message,
+			'player1': event['player1'],
+			'player2': event['player2'],
+			'game2p1': event['game2p1'],
+			'game2p2': event['game2p2']
+		}))
