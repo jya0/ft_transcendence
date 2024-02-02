@@ -187,6 +187,9 @@ class GameConsumer(WebsocketConsumer):
                 if (current_game.id1.intra == current_game.winner):
                     current_game.score1 = 1
                     current_game.score2 = 0
+                elif (current_game.winner == 'NONE'):
+                    current_game.score1 = 0
+                    current_game.score2 = 0
                 else :
                     current_game.score1 = 0 
                     current_game.score2 = 1
