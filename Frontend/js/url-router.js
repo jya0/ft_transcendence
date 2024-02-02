@@ -535,6 +535,8 @@ export const urlLocationHandler = async () => {
                 urlLocationHandler();
             });
         });
+        loadToast( "Pong: use 'w' & 's' for player 1 | use '↑' & '↓' for player 2" + "\n" +
+                    "Tic Tac Toe: use clicks to play")
         document.title = route.title;
         return;
     }
