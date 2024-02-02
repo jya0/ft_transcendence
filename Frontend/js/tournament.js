@@ -373,7 +373,11 @@ export function loadTournament(username, localPlayerMode) {
                 {
                     initiateSocket();
                 }
-
+                else {
+                    window.history.pushState({}, "", '/play');
+                    urlLocationHandler();
+                    hideModal("modalGame");
+                }
             }
             );
             // hideModal("modalGame");
