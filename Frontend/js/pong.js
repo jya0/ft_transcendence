@@ -461,7 +461,7 @@ export function closePong1v1Socket() {
         'type': 'terminate',
         'player1':player1,
         'player2':player2,
-        'mode': 'single',
+																																																																																								        'mode': 'single',
         'sender': user_name,
     }))
     gameSocket.close();
