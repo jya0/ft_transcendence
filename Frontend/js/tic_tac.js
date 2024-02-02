@@ -1,4 +1,4 @@
-import { hideModal, loadModal, loadSpinner, showGameWinner, showModal } from "./loadComponent.js";
+import { loadModalMenu, loadSpinner, modalMenuDisposeEvent, showGameWinner, showModal } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
 
 let continueExecution = true;
@@ -267,7 +267,7 @@ export function loadTicTac(username, localPlayerMode) {
             if (data.type === 'start' && data["status"] === "start") {
                 player_count = 2;
                 console.log("BOYS U CAN START NOW!");
-                hideModal("modalGame");
+                document.dispatchEvent(modalMenuDisposeEvent);
                 window.addEventListener('beforeunload', function (event) {
                     console.info("This page is reloaded");
                     // console.log(btnCounter);
@@ -329,8 +329,9 @@ export function loadTicTac(username, localPlayerMode) {
             player_count = 1;
 
             console.log("waiting for a second player...");
-            loadSpinner("modalGameBody", "text-black");
-            showModal("modalGame");
+			loadModalMenu("modalMenu", "");
+            loadSpinner("modalMenuBody", "text-black");
+            showModal("modalMenu");
             console.log("showing");
         });
         player_count = 1;
@@ -414,7 +415,7 @@ export function loadTicTac(username, localPlayerMode) {
     function handleMove(data) {
         if (continueExecution == false)
             return;
-        hideModal("modalGame");
+        document.dispatchEvent(modalMenuDisposeEvent);
         if (data['key'] >= 0 && data['key'] < boxes.length && boxes[data['key']].innerHTML === EMPTY) {
             boxes[data['key']].innerHTML = turn;
             moves += 1;
