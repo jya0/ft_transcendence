@@ -29,7 +29,7 @@ def prepare_final_round(tourn, user):
         print(game.__dict__)
         temp = UserProfile.objects.get(intra='temp1')
         game = Match.objects.create(
-            tournament_id_id=tourn.tournament_id, id1=user, id2_id=temp, score1=0, score2=0, ongoing=False, open_lobby=True, time = date.today())
+            tournament_id_id=tourn.tournament_id, id1=user, id2=temp, score1=0, score2=0, ongoing=False, open_lobby=True, time = date.today())
         game.save()
         return False
     game = game[0]
