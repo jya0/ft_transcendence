@@ -371,6 +371,9 @@ export function loadTournament(username, localPlayerMode) {
                 socketStatus = false;
                 if (winner === user_name)
                 {
+					showModal("modalGame");
+					await(4000);
+					hideModal("modalGame");
                     initiateSocket();
                 }
                 else {
@@ -431,7 +434,6 @@ export function loadTournament(username, localPlayerMode) {
 
     function initiateSocket() {
 		document.dispatchEvent(modalMenuDisposeEvent);
-		loadModal("modalGame", TM_BRACKET);
         gameSocket = new WebSocket(url);
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
@@ -456,27 +458,27 @@ export function loadTournament(username, localPlayerMode) {
                 player1 = data.player1;
                 player2 = data.player2;
 
-				if (round == "semifinal")
+				// showModal("modalGame");
+                tournReady = true;
+                if (round == 'final') {
+					elementIdEditInnerHTML("winner-p1", player1);
+					elementIdEditInnerHTML("winner-p2", player2);
+					showModal("modalGame");
+					await(4000);
+					hideModal("modalGame");
+                    playOnlineGame();
+                }
+                else
 				{
-					console.log("leftPlayer = " + leftPlayer)
-					console.log("rightPlayer = " + rightPlayer)
 					elementIdEditInnerHTML("game1p1", player1);
 					elementIdEditInnerHTML("game1p2", player2);
 					elementIdEditInnerHTML("game2p1", data.game2p1);
 					elementIdEditInnerHTML("game2p2", data.game2p2);
+					showModal("modalGame");
+					await(4000);
+					hideModal("modalGame");
+					playOnlineTournamentMatch();
 				}
-				else if (round == "final")
-				{
-					elementIdEditInnerHTML("winner-p1", player1);
-					elementIdEditInnerHTML("winner-p2", player2);
-				}
-				// showModal("modalGame");
-                tournReady = true;
-                if (round == 'final') {
-                    playOnlineGame();
-                }
-                else
-                    playOnlineTournamentMatch();
             }
 
             if (data.sender == username)
@@ -850,6 +852,7 @@ export function loadTournament(username, localPlayerMode) {
     async function setupOnlineTournament() {
         localPlayerMode = false;
         // displayMenu();
+		loadModal("modalGame", TM_BRACKET);
         await fetch(`/api/tournaments`, {
             method: 'GET',
             headers: {
@@ -898,6 +901,7 @@ export function loadTournament(username, localPlayerMode) {
 			document.dispatchEvent(modalMenuDisposeEvent);
             await submitTournament();
         });
+		//display Tournament Lobby
         showModal("modalMenu");
     }
 
