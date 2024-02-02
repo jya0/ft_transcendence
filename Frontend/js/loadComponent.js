@@ -16,7 +16,7 @@ await fetch('/components/tournament-bracket.html').then(response => response.tex
 
 export	let	GAME_MENU = "";
 
-await fetch('/components/game-meu.html').then(response => response.text()).then(data => {
+await fetch('/components/game-menu.html').then(response => response.text()).then(data => {
 	GAME_MENU = data;
 });
 
