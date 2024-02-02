@@ -82,13 +82,11 @@ export function loadTicTac(username, localPlayerMode) {
             }
         }
         // board.classList.add("ratio", "ratio-1x1");
-        console.log(docWinScreen.getBoundingClientRect().height);
         board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
         docWinScreen.appendChild(container);
         // board.classList.add("ratio", "ratio-1x1");
-        console.log(docWinScreen.getBoundingClientRect().height);
         board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
@@ -126,8 +124,8 @@ export function loadTicTac(username, localPlayerMode) {
                 if (!localPlayerMode && turn === currentPlayerSymbol) {
                     handleOnlineWinner(true); // true indicates the current player is the winner
                 }
-				window.history.pushState({}, "", '/play');
-				urlLocationHandler();
+                window.history.pushState({}, "", '/play');
+                urlLocationHandler();
                 return true;
             }
         }
@@ -172,8 +170,8 @@ export function loadTicTac(username, localPlayerMode) {
     }
 
     let player_count = 0;
-    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
-    // let url = `wss://10.11.6.2:9090/ws/socket-server/`;
+    let url = `wss://localhost:9090/ws/socket-server/`;
+    // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
 
@@ -247,30 +245,29 @@ export function loadTicTac(username, localPlayerMode) {
 
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
-            console.log('Data: ', data)
 
             if (data.game === 'pong')
                 return;
             if (data.type === 'terminate' && (data.player1 === user_name || data.player2 === user_name)) {
-                    gameSocket.close();
-                    gameSocket = "";
-                    isGameOver = true;
-                    socketStatus = false;
-                    continueExecution = false;
-                    showGameWinner(' You Win!');
-                    window.history.pushState({}, "", '/play');
-                    urlLocationHandler();
-                    return;
+                gameSocket.close();
+                gameSocket = "";
+                isGameOver = true;
+                socketStatus = false;
+                continueExecution = false;
+                showGameWinner(' You Win!');
+                window.history.pushState({}, "", '/play');
+                urlLocationHandler();
+                return;
             }
             if (data.player1 != username && data.player2 != username)
-                return ;
+                return;
             if (data.type === 'start' && data["status"] === "start") {
                 player_count = 2;
+                hideModal("modalGame");
                 console.log("BOYS U CAN START NOW!");
                 document.dispatchEvent(modalMenuDisposeEvent);
                 window.addEventListener('beforeunload', function (event) {
                     console.info("This page is reloaded");
-                    // console.log(btnCounter);
                     if (gameSocket !== "" && player2 != "") {
                         // Call the closePong1v1Socket function to terminate the game
                         closeTicTac1v1Socket();
@@ -310,7 +307,6 @@ export function loadTicTac(username, localPlayerMode) {
                 gameSocket.close();
             }
             else {
-                // console.log("woops not yet...")
             }
         }
 
@@ -369,7 +365,6 @@ export function loadTicTac(username, localPlayerMode) {
                 cell.addEventListener("click", function () {
                     // Send the clicked cell information to the server
                     if (this.innerHTML === EMPTY) {
-                        console.log("SENDING!");
                         const cellIndex = boxes.indexOf(this);
                         if (turn !== currentPlayerSymbol)
                             return;
@@ -403,7 +398,6 @@ export function loadTicTac(username, localPlayerMode) {
             }
         }
         // document.getElementById('tictactoe').appendChild(board);
-        console.log(docWinScreen.getBoundingClientRect().height);
         board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
@@ -430,7 +424,7 @@ export function loadTicTac(username, localPlayerMode) {
                         gameSocket = "";
                         socketStatus = false;
                     }
-                    
+
                     window.history.pushState({}, "", '/play');
                     urlLocationHandler();
                 }
@@ -459,7 +453,6 @@ export function stopTicTacExecution() {
 export function closeTicTac1v1Socket() {
     if (gameSocket === "")
         return;
-    console.log("terminating....");
     gameSocket.send(JSON.stringify({
         'game': 'tic',
         'type': 'terminate',
