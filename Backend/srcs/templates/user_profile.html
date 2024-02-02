@@ -108,7 +108,7 @@
                         {% if game.winner == game.id1.intra or game.winner == game.id2.intra %}
 						<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)"> Winner</p>
                         {% else %}
-						<p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)"> Draw</p>
+                        <p class="p-0 m-0" style="font-size: calc(50% + 0.3vw)">{% if game.type == 'tic' %} Draw {% else %} winner {% endif %}</p>
                         {% endif %}
 						<p class="p-0 m-0" style="font-size: calc(50% + 0.2vw)">{{game.time}}</p>
 					</div>
