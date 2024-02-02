@@ -29,7 +29,7 @@ export const checkName = (name) => {
 	var usernameRegex = /^[a-zA-Z0-9]+$/;
 
 	if (!name || name.trim().length === 0 || name.trim().length < 5) {
-		loadToast('Display name should not be empty, more than 5 characters and less than 50 characters');
+		loadToast('Display name invalid');
 		return (false);
 	}
 	else if (!name.match(usernameRegex)) {
