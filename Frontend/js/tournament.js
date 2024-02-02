@@ -269,7 +269,7 @@ export function loadTournament(username, localPlayerMode) {
             showModal("modalGame");
             isGameOver = true;
             updateLocalPlayerDisplay(pairings[1][0], pairings[1][1]);
-            await delay(4000);
+            delay(4000);
             hideModal("modalGame");
             isGameOver = false;
             resetGame();
@@ -285,7 +285,7 @@ export function loadTournament(username, localPlayerMode) {
             showModal("modalGame");
             isGameOver = true;
             updateLocalPlayerDisplay(winners[0], winners[1]);
-            await delay(4000);
+            delay(4000);
             hideModal("modalGame");
 
             isGameOver = false;
@@ -372,7 +372,7 @@ export function loadTournament(username, localPlayerMode) {
                 if (winner === user_name)
                 {
 					showModal("modalGame");
-					await delay(4000);
+					delay(4000);
 					hideModal("modalGame");
                     initiateSocket();
                 }
@@ -572,7 +572,7 @@ export function loadTournament(username, localPlayerMode) {
             toggleHighlight("tPlayer2Highlight");
             showModal("modalGame");
             updateLocalPlayerDisplay(pairings[0][0], pairings[0][1]);
-            await delay(4000);
+            delay(4000);
             hideModal("modalGame");
             resetBall();
             playGame();
@@ -801,7 +801,7 @@ export function loadTournament(username, localPlayerMode) {
         elementIdEditInnerHTML("winner-p1", player1);
         elementIdEditInnerHTML("winner-p2", player2);
         showModal("modalGame");
-        await delay(4000);
+        delay(4000);
         hideModal("modalGame");
         if (isGameOver || !animationFrameId) {
             isGameOver = false;
