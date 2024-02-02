@@ -497,8 +497,8 @@ export function loadTournament(username, localPlayerMode) {
 					console.log("rightPlayer = " + rightPlayer)
 					elementIdEditInnerHTML("game1p1", player1);
 					elementIdEditInnerHTML("game1p2", player2);
-					elementIdEditInnerHTML("game2p1", data.game2.player1);
-					elementIdEditInnerHTML("game2p2", data.game2.player2);
+					elementIdEditInnerHTML("game2p1", data.game2p1);
+					elementIdEditInnerHTML("game2p2", data.game2p2);
 				}
 				else if (round == "final")
 				{
