@@ -447,7 +447,7 @@ export const urlLocationHandler = async () => {
         const tictacContainer = document.getElementById("tictac-container");
         if (tictacContainer) {
             console.log("YAOOOOOOOOOOOOOOOO");
-            // closeTicTac1v1Socket();
+            closeTicTac1v1Socket();
             tictacContainer.remove();
             if (gameMode === 'tic tac single')
                 stopTicTacExecution();
@@ -502,6 +502,7 @@ export const urlLocationHandler = async () => {
                 loadGame(localStorage.getItem('username'), false);
                 break;
             case '/games_tictactoe_local':
+                gameMode = 'tic tac single';
                 loadTicTac(localStorage.getItem('username'), true);
                 break;
             case '/games_tictactoe_online':
