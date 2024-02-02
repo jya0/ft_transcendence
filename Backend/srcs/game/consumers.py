@@ -15,23 +15,33 @@ def create_new_game_lobby(game):
 
 def prepare_final_round(tourn, user):
     game = Match.objects.filter(
-        Q(tournament_id_id=tourn.tournament_id) & (Q(id1_id=2) | Q(id2_id=3)))
+        Q(tournament_id_id=tourn.tournament_id) & (Q(id1=user) | Q(id2=user)) & Q(open_lobby=True))
+    print("--------------------------------------------------------------------------------")
+    print("--------------------------------------------------------------------------------")
+    print("--------------------------------------------------------------------------------")
+    if (game):
+        print(game[0].__dict__)
+    print("--------------------------------------------------------------------------------")
+    print("--------------------------------------------------------------------------------")
+    print("--------------------------------------------------------------------------------")
+    
     if (not game):
         print("creating a final round now...")
         print(game.__dict__)
+        temp = UserProfile.objects.get(intra='temp2')
         game = Match.objects.create(
-            tournament_id_id=tourn.tournament_id, id1_id=2, id2_id=5, score1=0, score2=0, ongoing=True, time = date.today())
-        game.id1 = user
+            tournament_id_id=tourn.tournament_id, id1=user, id2=temp, score1=0, score2=0, ongoing=False, open_lobby=True, time = date.today())
         game.save()
-        return False
+        return False, game
+    game = game[0]
     game = Match.objects.get(match_id=game.match_id)
     print("getting second player to the final round now...")
     print(game.__dict__)
     game.id2 = user
     game.save()
     print("heres the final round now...")
-    print(game)
-    return True
+    print(game.__dict__)
+    return True, game
 
 
 def remove_from_lobbies(text_data_json):
@@ -246,7 +256,7 @@ class GameConsumer(WebsocketConsumer):
                     status = 'start'
                     print("game 1: " + games[0].id1.intra + games[0].id2.intra)
                     print("game 2: " + games[1].id1.intra + games[1].id2.intra)
-
+                    games[0].open_lobby = False
                     sender = games[0].id2.intra
                     print("sender :" + sender)
                     async_to_sync(self.channel_layer.group_send)(
@@ -258,13 +268,21 @@ class GameConsumer(WebsocketConsumer):
                             'sender': 'server',
                             'player1': games[0].id1.intra,
                             'player2': games[0].id2.intra,
-                            'status': status
+                            'status': status,
                         }
                     )
-                    games[0].ongoing = True
-                    games[1].ongoing = True
-                    games[0].open_lobby = False
-                    games[1].open_lobby = False
+                    # games[0].ongoing = True
+                    # games[1].ongoing = True
+                    # games[0].open_lobby = False
+                    # games[1].open_lobby = False
+                    game = Match.objects.filter(match_id=games[0].match_id).get()
+                    game.ongoing = True
+                    game.open_lobby = False
+                    game.save()
+                    game = Match.objects.filter(match_id=games[1].match_id).get()
+                    game.ongoing = True
+                    game.open_lobby = False
+                    game.save()
                     sender = games[1].id2.intra
                     print("sender :" + sender)
                     async_to_sync(self.channel_layer.group_send)(
@@ -289,8 +307,8 @@ class GameConsumer(WebsocketConsumer):
                 player = UserProfile.objects.get(intra=username)
                 print("player = ")
                 print(player.__dict__)
-                ready = prepare_final_round(tourn, player)
-                final_game = Match.objects.filter(Q(tournament_id_id=tourn.tournament_id) & Q(open_lobby=True)).get()
+                ready, final_game = prepare_final_round(tourn, player)
+                # final_game = Match.objects.filter(Q(tournament_id_id=tourn.tournament_id) & Q(open_lobby=True)).get()
                 status = 'waiting'
                 if (ready):
                     status = 'start'
@@ -327,7 +345,7 @@ class GameConsumer(WebsocketConsumer):
                 player = UserProfile.objects.get(intra=username)
                 # print("tourn = " + tourn)
                 # print("player = " + player)
-                games = Match.objects.filter(Q(tournament_id=tourn.tournament_id))
+                games = Match.objects.filter(Q(tournament_id=tourn.tournament_id) & Q(open_lobby=False))
                 if (games[0].id1 == player or games[0].id2 == player):
                     current_game = games[0]
                 else:
