@@ -27,7 +27,7 @@ def logout(request):
 def auth(request):
     code = request.GET.get("code")
     if code:
-        print("code", code)
+        ("code", code)
         data = {
             "grant_type": "authorization_code",
             "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),
