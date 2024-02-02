@@ -273,11 +273,11 @@ class GameConsumer(WebsocketConsumer):
                     # games[1].ongoing = True
                     # games[0].open_lobby = False
                     # games[1].open_lobby = False
-                    game = Match.objects.filter(match_id=games[0].match_id)
+                    game = Match.objects.filter(match_id=games[0].match_id).get()
                     game.ongoing = True
                     game.open_lobby = False
                     game.save()
-                    game = Match.objects.filter(match_id=games[1].match_id)
+                    game = Match.objects.filter(match_id=games[1].match_id).get()
                     game.ongoing = True
                     game.open_lobby = False
                     game.save()
