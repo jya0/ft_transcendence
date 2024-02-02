@@ -142,8 +142,13 @@
 						</div>
 					</div>
 					<div class="col-2 border flex-column text-truncate border border-1 justify-content-around h-100">
+                        {% if game.tournament_id == 1 %}
 						<p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Online</p>
 						<p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Multiplayer</p>
+                        {% else %}
+                        <p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Online</p>
+						<p class="p-0 m-0 border border-0 border-dark" style="font-size: calc(50% + 0.2vw)">Tournament</p>
+                        {% endif %}
 					</div>
 				</div>
 			{% endfor %}

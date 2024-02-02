@@ -141,7 +141,7 @@ def user_view(request, intra):
     usernames_list = [friend.username for friend in unique_friends]
 
     # Get a list of unique friends
-    games_list = Match.objects.filter(Q(id1=user) | Q(id2=user)).all()
+    games_list = Match.objects.filter(Q(id1=user) | Q(id2=user)).all().order_by('match_id')
 
     template = get_template('user_profile.html')
     template_content = template.template.source
