@@ -126,7 +126,8 @@ export function loadTicTac(username, localPlayerMode) {
                 if (!localPlayerMode && turn === currentPlayerSymbol) {
                     handleOnlineWinner(true); // true indicates the current player is the winner
                 }
-
+				window.history.pushState({}, "", '/play');
+				urlLocationHandler();
                 return true;
             }
         }
@@ -214,8 +215,6 @@ export function loadTicTac(username, localPlayerMode) {
         isGameOver = true;
         socketStatus = false;
         showGameWinner(winnerMsg);
-        window.history.pushState({}, "", '/play');
-        urlLocationHandler();
     }
     function handleOnlineDraw(winner) {
         let winnerMsg;

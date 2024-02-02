@@ -1,7 +1,7 @@
 // import {io} from "socket.io-client";
-import { loadLoginPage, modalMenuDisposeEvent, getCookie, loadModal, loadModalMenu, showGameWinner, loadToast, showModal, hideModal } from "./loadComponent.js";
+import { loadLoginPage, modalMenuDisposeEvent, getCookie, loadModal, loadModalMenu, showGameWinner, loadToast, showModal, hideModal, TM_BRACKET } from "./loadComponent.js";
 import { urlLocationHandler } from "./url-router.js"
-import { querySelectIdEditInnerHTML, checkName } from "./utility.js";
+import { querySelectIdEditInnerHTML, checkName, elementIdEditInnerHTML } from "./utility.js";
 
 let continueExecution = true;
 let gameSocket = "";
@@ -382,13 +382,12 @@ export function loadTournament(username, localPlayerMode) {
             tournReady = false;
             isGameOver = true;
 
-            // querySelectIdEditInnerHTML(docModalGame, "winner-final", champion);
-            // toggleHighlight("tWinnerP1Highlight");
-            // toggleHighlight("tWinnerP2Highlight");
-            // toggleHighlight("tWinnerHighlight");
+			elementIdEditInnerHTML("winner-final", champion);
+			showModal("modalGame");
             showGameWinner(champion);
             window.history.pushState({}, "", '/play');
             urlLocationHandler();
+			hideModal("modalGame");
             return;
         }
         else
@@ -466,6 +465,7 @@ export function loadTournament(username, localPlayerMode) {
 
     function initiateSocket() {
 		document.dispatchEvent(modalMenuDisposeEvent);
+		loadModal("modalGame", TM_BRACKET);
         gameSocket = new WebSocket(url);
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
@@ -490,8 +490,21 @@ export function loadTournament(username, localPlayerMode) {
                 player1 = data.player1;
                 player2 = data.player2;
 
-                console.log("leftPlayer = " + leftPlayer)
-                console.log("rightPlayer = " + rightPlayer)
+				if (round == "semifinal")
+				{
+					console.log("leftPlayer = " + leftPlayer)
+					console.log("rightPlayer = " + rightPlayer)
+					elementIdEditInnerHTML("game1p1", player1);
+					elementIdEditInnerHTML("game1p2", player2);
+					elementIdEditInnerHTML("game2p1", data.game2.player1);
+					elementIdEditInnerHTML("game2p2", data.game2.player2);
+				}
+				else if (round == "final")
+				{
+					elementIdEditInnerHTML("winner-p1", player1);
+					elementIdEditInnerHTML("winner-p2", player2);
+				}
+				showModal("modalGame");
                 tournReady = true;
                 playOnlineTournamentMatch();
             }
@@ -587,122 +600,11 @@ export function loadTournament(username, localPlayerMode) {
         //     return;
         let winners = [];
         localPlayerMode = true;
-        loadModal('modalGameBody',
-            `
-				<div class="container p-5 h-100 w-100 mh-100 mw-100 overflow-auto bg-black border border-1 border-white">
-					<div class="row border border-0 border-white">
-						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
-							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
-								${pairings[0][0]}
-							</p>
-							<p class="p-0 m-0 placeholder-glow" id="tPlayer1Highlight" style="display: none;">
-								<span class="placeholder col-12"></span>
-							</p>
-						</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="row m-0 p-0 border border-0 border-white">
-							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-						</div>
-						<div class="row m-0 p-0 border border-0 border-white">
-							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-							<div class="col-4 border-top border-end border-3 border-white">&nbsp;</div>
-						</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
-							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
-								${pairings[0][1]}
-							</p>
-							<p class="p-0 m-0 placeholder-glow" id="tPlayer2Highlight" style="display: none;">
-								<span class="placeholder col-12"></span>
-							</p>
-						</div>
-						<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="col-6 border-end border-3 border-white"> <h1 class="h-1">&nbsp;</h1></div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="col-4">&nbsp;</div>
-						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
-							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white" id="winner-p1">
-								-
-							</p>
-							<p class="p-0 m-0 placeholder-glow" id="tWinnerP1Highlight" style="display: none;">
-								<span class="placeholder col-12"></span>
-							</p>
-						</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="row m-0 p-0 border border-0 border-white">
-							<div class="col-4">&nbsp;</div>
-							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-						</div>
-						<div class="row m-0 p-0 border border-0 border-white">
-							<!-- <div class="col-2 border-end border-3 border-white">&nbsp;</div> -->
-							<div class="col-3">&nbsp;</div>
-							<div class="col-6 py-2 px-5 rounded bg-white border border-0 border-white">
-								<p class="p-0 m-0 display-3 text-center font--argent text-truncate border border-0 border-white text-uppercase" id="winner-final">
-									-
-								</p>
-								<p class="p-0 m-0 placeholder-glow" id="tWinnerHighlight" style="display: none;">
-									<span class="placeholder col-12"></span>
-								</p>
-							</div>
-						</div>
-						<div class="row m-0 p-0 border border-0 border-white">
-							<div class="col-4">&nbsp;</div>
-							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-							<!-- <div class="col-4">&nbsp;</div> -->
-						</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="col-4">&nbsp;</div>
-						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
-							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white" id="winner-p2">
-								-
-							</p>
-							<p class="p-0 m-0 placeholder-glow" id="tWinnerP2Highlight" style="display: none;">
-								<span class="placeholder col-12"></span>
-							</p>
-						</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="col-6 border-end border-3 border-white"> <h1 class="h-1">&nbsp;</h1></div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white" id="tPlayer3">
-							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
-								${pairings[1][0]}
-							</p>
-							<p class="p-0 m-0 placeholder-glow" id="tPlayer3Highlight" style="display: none;">
-								<span class="placeholder col-12"></span>
-							</p>
-						</div>
-						<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="row m-0 p-0">
-							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-							<div class="col-4 border-bottom border-end border-3 border-white">&nbsp;</div>
-						</div>
-						<div class="row m-0 p-0">
-							<div class="col-2 border-end border-3 border-white">&nbsp;</div>
-						</div>
-					</div>
-					<div class="row border border-0 border-white">
-						<div class="col-4 py-2 px-5 rounded bg-white border border-0 border-white">
-							<p class="p-0 m-0 display-5 text-capitalize text-center font--argent text-truncate border border-0 border-white">
-								${pairings[1][1]}
-							</p>
-							<p class="p-0 m-0 placeholder-glow" id="tPlayer4Highlight" style="display: none;">
-								<span class="placeholder col-12"></span>
-							</p>
-						</div>
-					</div>
-				</div>
-				`);
+        loadModal('modalGameBody', TM_BRACKET);
+		elementIdEditInnerHTML("game1p1", pairings[0][0]);
+		elementIdEditInnerHTML("game1p2", pairings[0][1]);
+		elementIdEditInnerHTML("game2p1", pairings[1][0]);
+		elementIdEditInnerHTML("game2p2", pairings[1][1]);
         if (g_count == 0) {
             isGameOver = false;
             score.left = 0;
@@ -860,23 +762,6 @@ export function loadTournament(username, localPlayerMode) {
             }
             if (data.length > 55) {
                 displayTournamentLobby(data);
-                // loadModal('modalGameBody', data);
-                // showModal("modalGame");
-                // document.getElementById('createTourn').addEventListener('submit', async function (event) {
-                //     event.preventDefault();
-                //     await submitTournament();
-                // });
-                // const joinButtons = document.querySelectorAll('[id="joinTourn"]');
-
-                // joinButtons?.forEach(function (button) {
-                //     button.addEventListener('click', function () {
-                //         // Extract the tournament name from the closest card
-                //         const tournamentName = button.closest('.card')?.querySelector('#tname')?.innerText.trim();
-
-                //         // Call joinTournament with the extracted tournament name
-                //         joinTournament(tournamentName);
-                //     });
-                // });
             }
 
 
@@ -949,7 +834,6 @@ export function loadTournament(username, localPlayerMode) {
                 }
             });
         // await
-        hideModal('modalGame');
         leftPlayer = true;
         rightPlayer = false;
     }
@@ -977,7 +861,7 @@ export function loadTournament(username, localPlayerMode) {
             // toggleHighlight("tPlayer1Highlight");
             // toggleHighlight("tPlayer2Highlight");
             await delay(4000);
-            // hideModal("modalGame");
+            hideModal("modalGame");
             resetBall();
             canvas.dataset.animationFrameId = animationFrameId;
             playOnlineGame();
