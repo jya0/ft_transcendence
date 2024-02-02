@@ -369,7 +369,8 @@ export function loadTournament(username, localPlayerMode) {
                 gameSocket = "";
                 isGameOver = true;
                 socketStatus = false;
-                initiateSocket();
+                if (winner === user_name)
+                    initiateSocket();
             }
             );
             // hideModal("modalGame");
