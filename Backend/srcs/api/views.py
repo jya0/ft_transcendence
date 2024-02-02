@@ -147,15 +147,18 @@ def user_view(request, intra):
     template_content = template.template.source
     template = Template(template_content)
 
+    m_wins = Match.objects.filter(Q(winner=intra))
+    t_wins = Tournament.objects.filter(Q(winner=intra))
+
     if request.user.username == intra:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'same', 'image': 'same'})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'same', 'image': 'same', 't_wins':t_wins, 'm_wins':m_wins})
     elif request.user.username in usernames_list:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': True})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': True, 't_wins':t_wins, 'm_wins':m_wins})
     else:
         context = Context(
-            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': False})
+            {'user': user, 'users_list': unique_friends, 'games_list': games_list, 'user_tag': 'other', 'image': 'other', 'is_friend': False, 't_wins':t_wins, 'm_wins':m_wins})
 
     rendered_template = template.render(context)
     return HttpResponse(rendered_template, content_type='text/html')
