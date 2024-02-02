@@ -389,7 +389,12 @@ export function loadTournament(username, localPlayerMode) {
         }
         if (g_count == 1) {
             tournReady = false;
-            let champion = getWinner(score, winners[1], winners[0]);
+            let champion = "";
+            // let champion = getWinner(score, winners[1], winners[0]);
+            if (score.left > score.right)
+                champion = player1;
+            else
+                champion = player2;
             g_count = 0;
             tournReady = false;
             isGameOver = true;
