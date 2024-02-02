@@ -852,7 +852,6 @@ export function loadTournament(username, localPlayerMode) {
     async function setupOnlineTournament() {
         localPlayerMode = false;
         // displayMenu();
-		loadModal("modalGame", TM_BRACKET);
         await fetch(`/api/tournaments`, {
             method: 'GET',
             headers: {
@@ -884,6 +883,8 @@ export function loadTournament(username, localPlayerMode) {
 
     function displayTournamentLobby(data) {
 		loadModalMenu("modalMenu", data);
+        loadModal('modalGameBody', TM_BRACKET);
+        console.log(TM_BRACKET);
         const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
         joinButtons?.forEach(function (button) {
