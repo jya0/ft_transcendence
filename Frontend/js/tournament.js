@@ -372,7 +372,7 @@ export function loadTournament(username, localPlayerMode) {
                 if (winner === user_name)
                 {
 					showModal("modalGame");
-					// await delay(4000);
+					await delay(4000);
 					hideModal("modalGame");
                     initiateSocket();
                 }
@@ -397,9 +397,9 @@ export function loadTournament(username, localPlayerMode) {
 			elementIdEditInnerHTML("winner-final", champion);
 			showModal("modalGame");
             showGameWinner(champion);
+			hideModal("modalGame");
             window.history.pushState({}, "", '/play');
             urlLocationHandler();
-			hideModal("modalGame");
             return;
         }
         else
@@ -461,22 +461,10 @@ export function loadTournament(username, localPlayerMode) {
 				// showModal("modalGame");
                 tournReady = true;
                 if (round == 'final') {
-					elementIdEditInnerHTML("winner-p1", player1);
-					elementIdEditInnerHTML("winner-p2", player2);
-					showModal("modalGame");
-					// await delay(4000);
-					hideModal("modalGame");
                     playOnlineGame();
                 }
                 else
 				{
-					elementIdEditInnerHTML("game1p1", player1);
-					elementIdEditInnerHTML("game1p2", player2);
-					elementIdEditInnerHTML("game2p1", data.game2p1);
-					elementIdEditInnerHTML("game2p2", data.game2p2);
-					showModal("modalGame");
-					// await delay(4000);
-					hideModal("modalGame");
 					playOnlineTournamentMatch();
 				}
             }
@@ -810,6 +798,11 @@ export function loadTournament(username, localPlayerMode) {
     }
     function playOnlineGame() {
         console.log("gameover = " + isGameOver + " and animationid = " + animationFrameId);
+        elementIdEditInnerHTML("winner-p1", player1);
+        elementIdEditInnerHTML("winner-p2", player2);
+        showModal("modalGame");
+        await delay(4000);
+        hideModal("modalGame");
         if (isGameOver || !animationFrameId) {
             isGameOver = false;
             score.left = 0;
@@ -828,11 +821,13 @@ export function loadTournament(username, localPlayerMode) {
             score.left = 0;
             score.right = 0;
 
-            // showModal("modalGame");
-            // toggleHighlight("tPlayer1Highlight");
-            // toggleHighlight("tPlayer2Highlight");
+            elementIdEditInnerHTML("game1p1", player1);
+            elementIdEditInnerHTML("game1p2", player2);
+            elementIdEditInnerHTML("game2p1", data.game2p1);
+            elementIdEditInnerHTML("game2p2", data.game2p2);
+            showModal("modalGame");
             await delay(4000);
-            // hideModal("modalGame");
+            hideModal("modalGame");
             resetBall();
             canvas.dataset.animationFrameId = animationFrameId;
             playOnlineGame();
