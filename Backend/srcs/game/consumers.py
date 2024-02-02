@@ -92,7 +92,7 @@ class GameConsumer(WebsocketConsumer):
             #If the game is part of a tournament, prepare for the final round
             if text_data_json['mode'] == 'tournament':
                 tourn = Tournament.objects.get(tournament_id=game.tournament_id_id)
-                player = UserProfile.objects.get(intra=username)
+                player = UserProfile.objects.get(intra=game.winner)
                 prepare_final_round(tourn, player)
 
             async_to_sync(self.channel_layer.group_send)(
