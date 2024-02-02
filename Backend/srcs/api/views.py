@@ -147,8 +147,8 @@ def user_view(request, intra):
     template_content = template.template.source
     template = Template(template_content)
 
-    m_wins = Match.objects.filter(Q(winner=intra))
-    t_wins = Tournament.objects.filter(Q(winner=intra))
+    m_wins = Match.objects.filter(Q(winner=intra)).count()
+    t_wins = Tournament.objects.filter(Q(winner=intra)).count()
 
     if request.user.username == intra:
         context = Context(
