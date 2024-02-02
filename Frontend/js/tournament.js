@@ -376,7 +376,12 @@ export function loadTournament(username, localPlayerMode) {
 					hideModal("modalGame");
                     initiateSocket();
                 }
-
+                else {
+                    showGameWinner(`TBA - Sorry you lost your chance. Please try again later`);
+                    window.history.pushState({}, "", '/play');
+                    urlLocationHandler();
+                    hideModal("modalGame");
+                }
             }
             );
             // hideModal("modalGame");
