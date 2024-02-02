@@ -31,6 +31,7 @@ def prepare_final_round(tourn, user):
             tournament_id_id=tourn.tournament_id, id1_id=user, id2_id=3, score1=0, score2=0, ongoing=False, open_lobby=True,time = date.today())
         game.save()
         return False
+    game = game[0]
     game = Match.objects.get(match_id=game.match_id)
     print("getting second player to the final round now...")
     print(game.__dict__)
