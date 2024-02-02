@@ -4,4 +4,3 @@ requests==2.26.0
 pyotp==2.3.0
 faker
 channels==3.0.5
-gunicorn

@@ -535,8 +535,8 @@ export const urlLocationHandler = async () => {
                 urlLocationHandler();
             });
         });
-        loadToast( "Pong: use 'w' & 's' for player 1 | use '↑' & '↓' for player 2" + "\n" +
-                    "Tic Tac Toe: use clicks to play")
+        loadToast("Pong: use 'w' & 's' for player 1 | use '↑' & '↓' for player 2" + "\n" +
+            "Tic Tac Toe: use clicks to play")
         document.title = route.title;
         return;
     }
@@ -906,7 +906,7 @@ async function insertAllUsers(users) {
         let isFriend = false;
         console.log(user.username);
         isFriend = elementExistsInArray(friends, user.intra)
-        const userImage = `https://10.11.6.2:9090/api/get_image/${user.username}`;
+        const userImage = `https://localhost:9090/api/get_image/${user.username}`;
         const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">

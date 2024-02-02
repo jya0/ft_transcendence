@@ -84,8 +84,8 @@ export function loadGame(username, localPlayerMode) {
                     'game': 'pong',
                     'type': 'update',
                     'mode': 'single',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'username': username,
                     'key': keyPressed,
                 }))
@@ -96,8 +96,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -111,8 +111,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -124,8 +124,8 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
                     'type': 'update',
-                    'player1':player1,
-                    'player2':player2,
+                    'player1': player1,
+                    'player2': player2,
                     'mode': 'single',
                     'username': username,
                     'key': keyPressed
@@ -136,7 +136,7 @@ export function loadGame(username, localPlayerMode) {
 
     async function update() {
         if (isGameOver) return;
-		// document.dispatchEvent(modalMenuDisposeEvent);
+        // document.dispatchEvent(modalMenuDisposeEvent);
         ball.x += ball.speedX;
         ball.y += ball.speedY;
 
@@ -227,8 +227,8 @@ export function loadGame(username, localPlayerMode) {
                 'game': 'pong',
                 'type': 'end',
                 'mode': 'single',
-                'player1':player1,
-                'player2':player2,
+                'player1': player1,
+                'player2': player2,
                 'username': winner,
                 'score1': score.left,
                 'score2': score.right,
@@ -269,8 +269,8 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    let url = `wss://10.11.6.2:9090/ws/socket-server/`;
-    // let url = `wss://10.11.6.2:9090/ws/socket-server/`;
+    let url = `wss://localhost:9090/ws/socket-server/`;
+    // let url = `wss://localhost:9090/ws/socket-server/`;
 
 
     async function initiateSocket() {
@@ -298,9 +298,9 @@ export function loadGame(username, localPlayerMode) {
                 urlLocationHandler();
                 return;
             }
-            
+
             if (data.player1 != username && data.player2 != username)
-                return ;
+                return;
             if (data.type === 'start' && data["status"] == "start") {
                 player_count = 2;
                 // loadSpinner("modalGameBody", "text-black");
@@ -370,7 +370,7 @@ export function loadGame(username, localPlayerMode) {
             console.log("waiting for a second player...");
             console.log(player1);
             console.log(player2);
-			loadModalMenu("modalMenu", "");
+            loadModalMenu("modalMenu", "");
             loadSpinner("modalMenuBody", "text-black");
             showModal("modalMenu");
         });
@@ -378,7 +378,7 @@ export function loadGame(username, localPlayerMode) {
     }
 
     async function gameLoop(timestamp) {
-		// document.dispatchEvent(modalMenuDisposeEvent);
+        // document.dispatchEvent(modalMenuDisposeEvent);
 
         window.addEventListener('beforeunload', function (event) {
             console.info("This page is reloaded");
@@ -432,7 +432,7 @@ export function loadGame(username, localPlayerMode) {
                 score.right = 0;
                 resetBall();
                 // await delay(3000);
-        		
+
 
                 animationFrameId = requestAnimationFrame(gameLoop);
                 //TODO
@@ -459,8 +459,8 @@ export function closePong1v1Socket() {
     gameSocket.send(JSON.stringify({
         'game': 'pong',
         'type': 'terminate',
-        'player1':player1,
-        'player2':player2,
+        'player1': player1,
+        'player2': player2,
         'mode': 'single',
         'sender': user_name,
     }))
