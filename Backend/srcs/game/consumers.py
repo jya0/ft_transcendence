@@ -254,7 +254,7 @@ class GameConsumer(WebsocketConsumer):
                     status = 'start'
                     print("game 1: " + games[0].id1.intra + games[0].id2.intra)
                     print("game 2: " + games[1].id1.intra + games[1].id2.intra)
-
+                    games[0].open_lobby = False
                     sender = games[0].id2.intra
                     print("sender :" + sender)
                     async_to_sync(self.channel_layer.group_send)(
@@ -269,10 +269,18 @@ class GameConsumer(WebsocketConsumer):
                             'status': status,
                         }
                     )
-                    games[0].ongoing = True
-                    games[1].ongoing = True
-                    games[0].open_lobby = False
-                    games[1].open_lobby = False
+                    # games[0].ongoing = True
+                    # games[1].ongoing = True
+                    # games[0].open_lobby = False
+                    # games[1].open_lobby = False
+                    game = Match.objects.filter(match_id=games[0].match_id)
+                    game.ongoing = True
+                    game.open_lobby = False
+                    game.save()
+                    game = Match.objects.filter(match_id=games[1].match_id)
+                    game.ongoing = True
+                    game.open_lobby = False
+                    game.save()
                     sender = games[1].id2.intra
                     print("sender :" + sender)
                     async_to_sync(self.channel_layer.group_send)(
