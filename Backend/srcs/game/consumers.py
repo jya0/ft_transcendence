@@ -38,7 +38,7 @@ def prepare_final_round(tourn, user):
     game.id2 = user
     game.save()
     print("heres the final round now...")
-    print(game.__dict)
+    print(game)
     return True
 
 
