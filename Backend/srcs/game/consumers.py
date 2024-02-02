@@ -468,6 +468,21 @@ class GameConsumer(WebsocketConsumer):
                     'player2': event['player2'],
         }))
 
+    def start_game_tourn(self, event):
+        message = event['status']
+        sender = event['sender']
+        mode = event['mode']
+        self.send(text_data=json.dumps({
+            'type': 'terminate',
+            'game': event['game'],
+                    'mode': mode,
+                    'sender': sender,
+                    'player1': event['player1'],
+                    'player2': event['player2'],
+                    'game2p1': event['game2p1'],
+                    'game2p2': event['game2p2']
+        }))
+
     def disconnect(self, code):
 
         # remmove players from any games with open lobbies
