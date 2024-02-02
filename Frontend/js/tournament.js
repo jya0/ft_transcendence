@@ -377,8 +377,10 @@ export function loadTournament(username, localPlayerMode) {
                 else {
                     showGameWinner(`TBA - Sorry you lost your chance. Please try again later`);
                     // hideModal("modalGame");
+					showModal("modalGame");
                     window.history.pushState({}, "", '/play');
                     urlLocationHandler();
+					hideModal("modalGame");
                 }
             }
             );
@@ -394,9 +396,10 @@ export function loadTournament(username, localPlayerMode) {
 
 			elementIdEditInnerHTML("winner-final", champion);
             showGameWinner(champion);
+			showModal("modalGame");
             window.history.pushState({}, "", '/play');
             urlLocationHandler();
-			// hideModal("modalGame");
+			hideModal("modalGame");
             return;
         }
         else
@@ -446,11 +449,11 @@ export function loadTournament(username, localPlayerMode) {
                 player_count = 2;
 				if (data.sender === "server")
 				{
-					// loadModal("modalGameBody", TM_BRACKET);
-					// elementIdEditInnerHTML("game1p1", data.player1);
-                    // elementIdEditInnerHTML("game1p2", data.player2);
-                    // elementIdEditInnerHTML("game2p1", data.game2p1);
-                    // elementIdEditInnerHTML("game2p2", data.game2p2);
+					loadModal("modalGameBody", TM_BRACKET);
+					elementIdEditInnerHTML("game1p1", data.player1);
+                    elementIdEditInnerHTML("game1p2", data.player2);
+                    elementIdEditInnerHTML("game2p1", data.game2p1);
+                    elementIdEditInnerHTML("game2p2", data.game2p2);
 				}
                 if (data["player2"] == user_name)
                     player2 = data["player1"];
@@ -465,8 +468,8 @@ export function loadTournament(username, localPlayerMode) {
 				// showModal("modalGame");
                 tournReady = true;
                 if (round == 'final') {
-					// elementIdEditInnerHTML("winner-p1", data.player1);
-					// elementIdEditInnerHTML("winner-p2", data.player2);
+					elementIdEditInnerHTML("winner-p1", data.player1);
+					elementIdEditInnerHTML("winner-p2", data.player2);
 					// showModal("modalGame");
                     playOnlineGame();
                 }
