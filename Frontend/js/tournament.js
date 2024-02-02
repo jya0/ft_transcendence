@@ -372,7 +372,7 @@ export function loadTournament(username, localPlayerMode) {
                 if (winner === user_name)
                 {
 					showModal("modalGame");
-					await(4000);
+					// await delay(4000);
 					hideModal("modalGame");
                     initiateSocket();
                 }
@@ -464,7 +464,7 @@ export function loadTournament(username, localPlayerMode) {
 					elementIdEditInnerHTML("winner-p1", player1);
 					elementIdEditInnerHTML("winner-p2", player2);
 					showModal("modalGame");
-					await(4000);
+					// await delay(4000);
 					hideModal("modalGame");
                     playOnlineGame();
                 }
@@ -475,7 +475,7 @@ export function loadTournament(username, localPlayerMode) {
 					elementIdEditInnerHTML("game2p1", data.game2p1);
 					elementIdEditInnerHTML("game2p2", data.game2p2);
 					showModal("modalGame");
-					await(4000);
+					// await delay(4000);
 					hideModal("modalGame");
 					playOnlineTournamentMatch();
 				}
