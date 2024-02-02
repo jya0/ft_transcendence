@@ -39,7 +39,7 @@ def prepare_final_round(tourn, user):
     game.save()
     print("heres the final round now...")
     print(game)
-    return True
+    return True, game
 
 
 def remove_from_lobbies(text_data_json):
@@ -305,8 +305,8 @@ class GameConsumer(WebsocketConsumer):
                 player = UserProfile.objects.get(intra=username)
                 print("player = ")
                 print(player.__dict__)
-                ready = prepare_final_round(tourn, player)
-                final_game = Match.objects.filter(Q(tournament_id_id=tourn.tournament_id) & Q(open_lobby=True)).get()
+                ready, final_game = prepare_final_round(tourn, player)
+                # final_game = Match.objects.filter(Q(tournament_id_id=tourn.tournament_id) & Q(open_lobby=True)).get()
                 status = 'waiting'
                 if (ready):
                     status = 'start'
