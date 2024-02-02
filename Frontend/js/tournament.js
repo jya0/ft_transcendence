@@ -370,7 +370,10 @@ export function loadTournament(username, localPlayerMode) {
                 isGameOver = true;
                 socketStatus = false;
                 if (winner === user_name)
+                {
                     initiateSocket();
+                }
+
             }
             );
             // hideModal("modalGame");
@@ -393,49 +396,6 @@ export function loadTournament(username, localPlayerMode) {
         }
         else
             g_count++;
-
-
-
-
-
-
-
-
-        // if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3)) {
-        //     winner = player2;
-        //     winnerMsg = ` ${winner}
-        //     Sorry You lose!`;
-        // }
-        // else {
-        //     winner = player1;
-        //     winnerMsg = ` ${winner}
-        //     Congrats You won!`;
-        //     gameSocket.send(JSON.stringify({
-        //         'game': 'pong',
-        //         'type': 'end',
-        //         'mode': 'tournament',
-        //         'tournament_name': tournament_name,
-        //         'username': winner,
-        //         'score1': score.left,
-        //         'score2': score.right,
-        //     }));
-        // }
-        // console.log("winner = " + winner);
-        // // document.getElementById("startOnlineTournButton").innerHTML = buttonText;
-        // gameSocket.close();
-        // gameSocket = "";
-        // isGameOver = true;
-        // socketStatus = false;
-        // if (!semiFinal)
-        // {
-        //     window.history.pushState({}, "", '/play');
-        //     urlLocationHandler();
-        // }
-        // else {
-        //     window.cancelAnimationFrame(animationFrameId);
-        //     initiateSocket();
-        //     semiFinal = false;
-        // }
     }
 
     async function checkForWinner() {
@@ -507,7 +467,11 @@ export function loadTournament(username, localPlayerMode) {
 				}
 				// showModal("modalGame");
                 tournReady = true;
-                playOnlineTournamentMatch();
+                if (round == 'final') {
+                    playOnlineGame();
+                }
+                else
+                    playOnlineTournamentMatch();
             }
 
             if (data.sender == username)
@@ -555,7 +519,6 @@ export function loadTournament(username, localPlayerMode) {
                 'type': 'start',
                 'game': 'pong',
                 'round': round,
-
                 'mode': 'tournament',
                 'tournament_name': tournament_name,
                 'username': localStorage.getItem('username')
