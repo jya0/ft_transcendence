@@ -234,8 +234,8 @@ export function loadGame(username, localPlayerMode) {
                 'score2': score.right,
             }))
         }
-
-        gameSocket.close();
+        if (gameSocket !== "")
+            gameSocket.close();
         gameSocket = "";
         isGameOver = true;
         socketStatus = false;
@@ -269,8 +269,8 @@ export function loadGame(username, localPlayerMode) {
 
     let player_count = 0;
     let animationFrameId;
-    let url = `wss://localhost:9090/ws/socket-server/`;
-    // let url = `wss://localhost:9090/ws/socket-server/`;
+    let url = `wss://10.13.1.12:9090/ws/socket-server/`;
+    // let url = `wss://10.13.1.12:9090/ws/socket-server/`;
 
 
     async function initiateSocket() {
@@ -285,7 +285,9 @@ export function loadGame(username, localPlayerMode) {
             if (data.game === 'tic')
                 return;
             if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
                 gameSocket = "";
                 isGameOver = true;
                 socketStatus = false;
@@ -329,7 +331,9 @@ export function loadGame(username, localPlayerMode) {
                 }
             }
             else if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
                 gameSocket = "";
                 isGameOver = true;
                 socketStatus = false;
@@ -342,7 +346,9 @@ export function loadGame(username, localPlayerMode) {
             else if (data.type === 'close') {
                 isGameOver = true;
                 player_count = 1;
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
             }
             else {
             }
@@ -373,7 +379,6 @@ export function loadGame(username, localPlayerMode) {
         // document.dispatchEvent(modalMenuDisposeEvent);
 
         window.addEventListener('beforeunload', function (event) {
-            console.info("This page is reloaded");
 
             if (gameSocket !== "" && player2 != "") {
                 // Call the closePong1v1Socket function to terminate the game
@@ -455,7 +460,9 @@ export function closePong1v1Socket() {
         'mode': 'single',
         'sender': user_name,
     }))
-    gameSocket.close();
+    if (gameSocket !== "") {
+        gameSocket.close();
+    }
     gameSocket = "";
 }
 

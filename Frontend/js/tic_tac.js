@@ -170,8 +170,8 @@ export function loadTicTac(username, localPlayerMode) {
     }
 
     let player_count = 0;
-    let url = `wss://localhost:9090/ws/socket-server/`;
-    // let url = `wss://localhost:9090/ws/socket-server/`;
+    let url = `wss://10.13.1.12:9090/ws/socket-server/`;
+    // let url = `wss://10.13.1.12:9090/ws/socket-server/`;
 
 
 
@@ -208,7 +208,9 @@ export function loadTicTac(username, localPlayerMode) {
             winnerMsg = `Sorry, you lost!`;
         }
 
-        gameSocket.close();
+        if (gameSocket !== "") {
+            gameSocket.close();
+        }
         gameSocket = "";
         isGameOver = true;
         socketStatus = false;
@@ -230,7 +232,9 @@ export function loadTicTac(username, localPlayerMode) {
             }));
         }
 
-        gameSocket.close();
+        if (gameSocket !== "") {
+            gameSocket.close();
+        }
         gameSocket = "";
         isGameOver = true;
         socketStatus = false;
@@ -249,7 +253,9 @@ export function loadTicTac(username, localPlayerMode) {
             if (data.game === 'pong')
                 return;
             if (data.type === 'terminate' && (data.player1 === user_name || data.player2 === user_name)) {
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
                 gameSocket = "";
                 isGameOver = true;
                 socketStatus = false;
@@ -265,7 +271,6 @@ export function loadTicTac(username, localPlayerMode) {
                 player_count = 2;
                 document.dispatchEvent(modalMenuDisposeEvent);
                 window.addEventListener('beforeunload', function (event) {
-                    console.info("This page is reloaded");
                     if (gameSocket !== "" && player2 != "") {
                         // Call the closePong1v1Socket function to terminate the game
                         closeTicTac1v1Socket();
@@ -302,7 +307,9 @@ export function loadTicTac(username, localPlayerMode) {
             else if (data.type === 'close') {
                 isGameOver = true;
                 player_count = 1;
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
             }
             else {
             }
@@ -416,7 +423,9 @@ export function loadTicTac(username, localPlayerMode) {
                     showGameWinner(` ${player2}
                     Sorry, you lost!`);
                     if (!localPlayerMode) {
-                        gameSocket.close();
+                        if (gameSocket !== "") {
+                            gameSocket.close();
+                        }
                         gameSocket = "";
                         socketStatus = false;
                     }
@@ -454,6 +463,8 @@ export function closeTicTac1v1Socket() {
         'mode': 'online1v1',
         'sender': user_name,
     }))
-    gameSocket.close();
+    if (gameSocket !== "") {
+        gameSocket.close();
+    }
     gameSocket = "";
 }

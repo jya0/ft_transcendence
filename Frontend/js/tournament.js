@@ -357,7 +357,9 @@ export function loadTournament(username, localPlayerMode) {
             await delay(4000).then(() => {
                 isGameOver = false;
                 resetGame();
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
                 gameSocket = "";
                 isGameOver = true;
                 socketStatus = false;
@@ -418,8 +420,8 @@ export function loadTournament(username, localPlayerMode) {
     });
 
     let player_count = 0;
-    // let url = `wss://localhost:9090/ws/socket-server/`
-    let url = `wss://localhost:9090/ws/socket-server/`;
+    // let url = `wss://10.13.1.12:9090/ws/socket-server/`
+    let url = `wss://10.13.1.12:9090/ws/socket-server/`;
 
     // let gameSocket;
 
@@ -484,7 +486,9 @@ export function loadTournament(username, localPlayerMode) {
                 }
             }
             else if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
                 gameSocket = "";
                 isGameOver = true;
                 socketStatus = false;
@@ -497,7 +501,9 @@ export function loadTournament(username, localPlayerMode) {
             else if (data.type == 'close') {
                 gameOver = true;
                 player_count = 1;
-                gameSocket.close();
+                if (gameSocket !== "") {
+                    gameSocket.close();
+                }
             }
             else {
             }
@@ -904,7 +910,9 @@ export function closePongTournSocket() {
         'tournament_name': tournament_name,
         'sender': user_name,
     }));
-    gameSocket.close();
+    if (gameSocket !== "") {
+        gameSocket.close();
+    }
     gameSocket = "";
 }
 

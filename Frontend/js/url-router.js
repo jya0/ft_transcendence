@@ -859,7 +859,7 @@ async function insertAllUsers(users) {
     users?.forEach(user => {
         let isFriend = false;
         isFriend = elementExistsInArray(friends, user.intra)
-        const userImage = `https://localhost:9090/api/get_image/${user.username}`;
+        const userImage = `https://10.13.1.12:9090/api/get_image/${user.username}`;
         const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
