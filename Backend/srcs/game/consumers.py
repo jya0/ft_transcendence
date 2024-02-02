@@ -14,8 +14,10 @@ def create_new_game_lobby(game):
 
 
 def prepare_final_round(tourn, user):
+    temp1 = UserProfile.objects.get(intra='temp1')
+    temp2 = UserProfile.objects.get(intra='temp2')
     game = Match.objects.filter(
-        Q(tournament_id_id=tourn.tournament_id) & (Q(id1=user) | Q(id2=user)) & Q(open_lobby=True))
+        Q(tournament_id_id=tourn.tournament_id) & (Q(id1=temp1) | Q(id2=temp2)) & Q(open_lobby=True))
     print("--------------------------------------------------------------------------------")
     print("--------------------------------------------------------------------------------")
     print("--------------------------------------------------------------------------------")
@@ -28,7 +30,6 @@ def prepare_final_round(tourn, user):
     if (not game):
         print("creating a final round now...")
         print(game.__dict__)
-        temp = UserProfile.objects.get(intra='temp2')
         game = Match.objects.create(
             tournament_id_id=tourn.tournament_id, id1=user, id2=temp, score1=0, score2=0, ongoing=False, open_lobby=True, time = date.today())
         game.save()
