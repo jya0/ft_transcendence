@@ -372,15 +372,13 @@ export function loadTournament(username, localPlayerMode) {
                 if (winner === user_name)
                 {
 					showModal("modalGame");
-					delay(4000);
-					hideModal("modalGame");
                     initiateSocket();
                 }
                 else {
                     showGameWinner(`TBA - Sorry you lost your chance. Please try again later`);
+                    hideModal("modalGame");
                     window.history.pushState({}, "", '/play');
                     urlLocationHandler();
-                    hideModal("modalGame");
                 }
             }
             );
@@ -395,11 +393,10 @@ export function loadTournament(username, localPlayerMode) {
             isGameOver = true;
 
 			elementIdEditInnerHTML("winner-final", champion);
-			showModal("modalGame");
             showGameWinner(champion);
-			hideModal("modalGame");
             window.history.pushState({}, "", '/play');
             urlLocationHandler();
+			hideModal("modalGame");
             return;
         }
         else
@@ -465,6 +462,11 @@ export function loadTournament(username, localPlayerMode) {
                 }
                 else
 				{
+                    elementIdEditInnerHTML("game1p1", player1);
+                    elementIdEditInnerHTML("game1p2", player2);
+                    elementIdEditInnerHTML("game2p1", data.game2p1);
+                    elementIdEditInnerHTML("game2p2", data.game2p2);
+                    showModal("modalGame");
 					playOnlineTournamentMatch();
 				}
             }
@@ -801,8 +803,6 @@ export function loadTournament(username, localPlayerMode) {
         elementIdEditInnerHTML("winner-p1", player1);
         elementIdEditInnerHTML("winner-p2", player2);
         showModal("modalGame");
-        delay(4000);
-        hideModal("modalGame");
         if (isGameOver || !animationFrameId) {
             isGameOver = false;
             score.left = 0;
@@ -821,11 +821,6 @@ export function loadTournament(username, localPlayerMode) {
             score.left = 0;
             score.right = 0;
 
-            elementIdEditInnerHTML("game1p1", player1);
-            elementIdEditInnerHTML("game1p2", player2);
-            elementIdEditInnerHTML("game2p1", data.game2p1);
-            elementIdEditInnerHTML("game2p2", data.game2p2);
-            showModal("modalGame");
             await delay(4000);
             hideModal("modalGame");
             resetBall();
@@ -894,7 +889,6 @@ export function loadTournament(username, localPlayerMode) {
 
         document.getElementById('createTournForm')?.addEventListener('submit', async (event) => {
             event.preventDefault();
-			document.dispatchEvent(modalMenuDisposeEvent);
             await submitTournament();
         });
 		//display Tournament Lobby
@@ -909,10 +903,10 @@ export function loadTournament(username, localPlayerMode) {
         const elapsed = timestamp - lastTimestamp;
         // console.log(timestamp);
 
+        lastTimestamp = timestamp;
         if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
             draw();
             await update();
-            lastTimestamp = timestamp;
             if (isGameOver)
                 return;
             requestAnimationFrame(gameLoop);
