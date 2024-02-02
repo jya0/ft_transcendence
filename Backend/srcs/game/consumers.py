@@ -329,6 +329,7 @@ class GameConsumer(WebsocketConsumer):
 
             # handle game ends
             if (type == 'end'):
+                
                 print("************************************************")
                 print("________________________________________________")
                 print("________________________________________________")
@@ -346,6 +347,23 @@ class GameConsumer(WebsocketConsumer):
                 player = UserProfile.objects.get(intra=username)
                 # print("tourn = " + tourn)
                 # print("player = " + player)
+                if (Match.objects.filter(Q(tournament_id=tourn.tournament_id)).count() == 3):
+                    game = Match.objects.filter(Q(tournament_id=tourn.tournament_id) & Q(ongoing=True)).get()
+                    game.winner = username
+                    game.score1 = text_data_json['score1']
+                    game.score2 = text_data_json['score2']
+                    game.winner = game.id2.intra
+                    if (score1 > score2):
+                        game.winner = game.id1.intra
+                    game.save()
+                    tourn.winner = game.winner
+                    game.ongoing = False
+                    game.open_lobby = False
+                    game.save()
+                    self.close()
+                    return 
+                    
+
                 games = Match.objects.filter(Q(tournament_id=tourn.tournament_id) & Q(open_lobby=False))
                 if (games[0].id1 == player or games[0].id2 == player):
                     current_game = games[0]
