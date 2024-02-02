@@ -22,7 +22,7 @@ export function loadGame(username, localPlayerMode) {
     let btnCounter = 0;
     const ctx = canvas.getContext('2d');
 
-    const paddle = { width: canvas.width / 200, height: canvas.width / 200 * 25, speed: canvas.width / 100 };
+    const paddle = { width: canvas.width / 5, height: canvas.width / 200 * 25, speed: canvas.width / 100 };
     const ball = { size: canvas.width / 100, x: canvas.width / 2, y: canvas.height / 2, speedX: canvas.width / 150, speedY: canvas.width / 150 };
     const score = { left: 0, right: 0 };
     const players = { left: (canvas.height - paddle.height) / 2, right: (canvas.height - paddle.height) / 2 };
@@ -216,12 +216,12 @@ export function loadGame(username, localPlayerMode) {
         let winner;
         if ((rightPlayer && score.left >= 3) || (leftPlayer && score.right >= 3)) {
             winner = player2;
-            winnerMsg = ` ${winner}
+            winnerMsg = ` ${winner} |
             Sorry You lose!`;
         }
         else {
             winner = player1;
-            winnerMsg = ` ${winner}
+            winnerMsg = ` ${winner} |
             Congrats You won!`;
             gameSocket.send(JSON.stringify({
                 'game': 'pong',
