@@ -15,11 +15,12 @@ def create_new_game_lobby(game):
 
 def prepare_final_round(tourn, user):
     game = Match.objects.filter(
-        Q(tournament_id_id=tourn.tournament_id) & (Q(id1=user) | Q(id2=user)))
+        Q(tournament_id_id=tourn.tournament_id) & (Q(id1=user) | Q(id2=user)) & Q(open_lobby=True))
     print("--------------------------------------------------------------------------------")
     print("--------------------------------------------------------------------------------")
     print("--------------------------------------------------------------------------------")
-    print(game.__dict__)
+    if (game):
+        print(game[0].__dict__)
     print("--------------------------------------------------------------------------------")
     print("--------------------------------------------------------------------------------")
     print("--------------------------------------------------------------------------------")
@@ -39,7 +40,7 @@ def prepare_final_round(tourn, user):
     game.id2 = user
     game.save()
     print("heres the final round now...")
-    print(game)
+    print(game.__dict__)
     return True, game
 
 
