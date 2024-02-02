@@ -546,7 +546,7 @@ export const urlLocationHandler = async () => {
             console.error('Error:', error);
         });
 
-        document.getElementById('2fa-button').addEventListener('click', async () => {
+        document.getElementById('2fa-button')?.addEventListener('click', async () => {
             try {
                 const response = await fetch(`api/enable_or_disable_2fa/?username=${user.username}`, {
                     method: 'POST',
