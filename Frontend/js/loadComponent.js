@@ -30,8 +30,6 @@ export const loadGameCanvas = () => {
 	canvasElement.id = 'gameCanvas';
 	canvasElement.width = 1200;
 	canvasElement.height = 900;
-	// canvasElement.style.margin = '0 auto';
-	// let scale =	(document.getElementById('windowScreen').getBoundingClientRect().width) / (canvasElement.width);
 	canvasElement.style.scale = 1;
 	const ctx = canvasElement.getContext('2d');
 	ctx.fillStyle = '#000';
@@ -126,23 +124,6 @@ export const loadSpinner = (elementId, color) => {
 			</div>
 		`);
 }
-
-// export function loadLoginPage(message) {
-// 	console.log("loadLoginPage");
-// 	elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-// 	if (!document.getElementById("main-content"))
-// 		return ;
-// 	// document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-// 	if (message) {
-// 		console.log("loadLoginPage message");
-// 		loadToast(message);
-// 	}
-// 	localStorage.clear();
-// 	const docModalSetting = document.getElementById('modalSetting');
-// 	const tmpModalSetting = bootstrap.Modal.getOrCreateInstance(docModalSetting);
-// 	tmpModalSetting.hide();
-// }
-
 
 export function getCookie(name) {
 	let cookieValue = null;

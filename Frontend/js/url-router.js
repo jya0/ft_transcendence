@@ -70,7 +70,6 @@ await fetch('/components/login.html').then(response => response.text()).then(dat
 });
 
 function checkAuth() {
-    console.log(localStorage.getItem('access_token'))
     fetch('api/check_auth/', {
         method: 'GET',
         headers: {
@@ -78,7 +77,6 @@ function checkAuth() {
         },
     }).then(response => {
         if (!response.ok) {
-            console.log('response', response);
             loadLoginPage('Unauthorized, please login again!');
         }
     });
@@ -109,18 +107,15 @@ async function loadLoginPage(message) {
     }
 }
 
-console.log(sessionStorage.getItem('username'))
 
 await fetch(`/api/get_user_data/`, {
     method: 'GET',
 }).then(response => {
     if (response.status === 204) {
-        console.log('User is not authenticated');
         localStorage.clear();
         return null;
     }
     else if (!response.ok) {
-        console.log(`response`, response.status);
         return null;
     }
     return response.json();
@@ -128,16 +123,13 @@ await fetch(`/api/get_user_data/`, {
     if (!data) {
         return false;
     }
-    console.log('Data fetched:', data);
     user = data.user_data;
     if (user) {
-        console.log('user is authenticated');
         sessionStorage.setItem('user', JSON.stringify(user));
     }
 })
 
 const viewUserProfile = (username) => {
-    console.log(`Viewing profile for ${username}`);
     const url = `/api/users/${username}?username=${user.username}}`;
     fetch(url, {
         method: 'GET',
@@ -147,7 +139,6 @@ const viewUserProfile = (username) => {
     })
         .then(response => response.text())
         .then(data => {
-            console.log(data);
             elementIdEditInnerHTML("windowScreen", data);
             const addFriendButton = document.getElementById('add-friend');
             addFriendButton?.addEventListener('click', async () => {
@@ -160,7 +151,6 @@ const viewUserProfile = (username) => {
 }
 
 const addFriend = async (button, username, newFriend) => {
-    console.log(`Forming friendship for ${username} with ${newFriend}`);
     try {
         const response = await fetch(`/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
             method: 'POST',
@@ -178,8 +168,6 @@ const addFriend = async (button, username, newFriend) => {
         }
 
         const data = await response.text();
-        console.log("Data = ");
-        console.log(data);
         if (data === 'Added') {
             button.innerHTML = 'Remove Friend';
             loadToast('Friend Added successfully :(');
@@ -233,7 +221,6 @@ function setMainWindowframe() {
         if (gameMode !== 'none') {
             closePong1v1Socket();
             closeTicTac1v1Socket();
-            console.log("heyyyyyyyyyyyyyyyyyyyyyy");
             const canvasElement = document.getElementById("gameCanvas");
             if (canvasElement) {
                 let animationId = canvasElement.dataset.animationFrameId;
@@ -281,7 +268,6 @@ async function updateProfile(file) {
     })
         .then(response => {
             if (!response.ok) {
-                console.log('response', response);
                 elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Failed to update Image, You have to login again for security reasons!');
                 localStorage.clear();
@@ -293,7 +279,6 @@ async function updateProfile(file) {
 
         }).then(data => {
             if (!data) {
-                console.log("data is null");
                 return;
             }
             loadToast('Image updated successfully');
@@ -354,7 +339,6 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
     document.getElementById('modal-inputFile')?.addEventListener('change', loadModalFile, false);
     document.getElementById('logout')?.addEventListener('click', () => {
         localStorage.clear();
-        console.log('logout');
         fetch('/api/logout', {
             credentials: 'include',
         })
@@ -367,7 +351,6 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
             })
             .then(async data => {
                 if (!data) return;
-                console.log('Data fetched:', data);
                 if (data.message === 'Logged out successfully') {
                     elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                     loadToast('You have been logged out successfully ;(');
@@ -400,7 +383,6 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
 
         ).then(response => {
             if (!response.ok) {
-                console.log('response', response);
                 elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 loadToast('Failed to update display name, You have to login again for security reasons!');
                 hideModal("modalSetting");
@@ -426,11 +408,9 @@ export const urlLocationHandler = async () => {
         elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
         return;
     }
-    console.log("gamemode = " + gameMode);
 
     if (gameMode !== 'none') {
 
-        console.log("heyyyyyyyyyyyyyyyyyyyyyy");
         const canvasElement = document.getElementById("gameCanvas");
         if (canvasElement) {
             closePong1v1Socket();
@@ -446,7 +426,6 @@ export const urlLocationHandler = async () => {
         //tic
         const tictacContainer = document.getElementById("tictac-container");
         if (tictacContainer) {
-            console.log("YAOOOOOOOOOOOOOOOO");
             // closeTicTac1v1Socket();
             tictacContainer.remove();
             if (gameMode === 'tic tac single')
@@ -464,22 +443,16 @@ export const urlLocationHandler = async () => {
     if (location.length == 0) {
         location = "/";
     }
-    console.log('after login -> ', location);
-    console.log('after login -> ', localStorage.getItem('access_token'));
     if (location === '/' && localStorage.getItem('access_token')) {
-        console.log('desktop route');
         location = '/desktop';
     }
     if (!localStorage.getItem('access_token')) {
-        console.log('no access route');
         location = '/';
     }
     const route = urlRoutes[location] || urlRoutes["404"];
 
     if (location === '/') {
-        console.log('login route');
         document.getElementById("navbar")?.remove();
-        console.log('login route')
         elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
         return;
     }
@@ -545,7 +518,6 @@ export const urlLocationHandler = async () => {
     }
     else if (location === '/profile') {
         setMainWindowframe();
-        console.log(user)
         if (!user) {
             elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
             localStorage.clear();
@@ -560,13 +532,11 @@ export const urlLocationHandler = async () => {
             if (!response.ok) {
                 elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
                 localStorage.clear();
-                console.log(response.statusText);
                 loadToast('Please login to continue');
                 return null;
             }
             return response.text();
         }).then(data => {
-            // console.log(data);
             if (!data) {
                 return;
             }
@@ -576,7 +546,6 @@ export const urlLocationHandler = async () => {
         });
 
         document.getElementById('2fa-button').addEventListener('click', async () => {
-            console.log('2fa-button clicked');
             try {
                 const response = await fetch(`api/enable_or_disable_2fa/?username=${user.username}`, {
                     method: 'POST',
@@ -656,14 +625,12 @@ async function handleUserData() {
     const mainUrl = url.toString();
 
     history.replaceState({}, '', mainUrl);
-    console.log('code', code)
 
     if (code) {
         loadSpinner("content", "text-white");
         if (document.getElementById("navbar")) {
             document.getElementById("navbar").style.display = 'none';
         }
-        console.log("starting fetching....");
         await fetch(`/api/auth/?code=${code}`, {
             method: 'GET',
             headers: {
@@ -671,7 +638,6 @@ async function handleUserData() {
             },
         })
             .then(response => {
-                console.log('response', response)
                 if (!response.ok) {
                     if (response.status === 400) {
                         elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
@@ -693,7 +659,6 @@ async function handleUserData() {
                     if (data.message === 'hacker') {
                         window.location.href = `https://www.google.com/search?q=hello%20mr%20${data.name}%20how%20are%20you%20today`;
                     }
-                    console.log('message', data.message)
                     return;
                 }
                 userToken = data.token;
@@ -701,7 +666,6 @@ async function handleUserData() {
                 sessionStorage.setItem('user', JSON.stringify(user));
                 const otp = data.otp
                 if (otp === 'validate_otp') {
-                    console.log('validate otp');
                     setMainWindowframe();
                     elementIdEditInnerHTML("windowScreen",
                         `
@@ -715,7 +679,6 @@ async function handleUserData() {
 						`);
 
                     document.getElementById('submit-otp').addEventListener('click', async () => {
-                        console.log('submit otp clicked');
                         let otp = document.getElementById('otp-input').value;
                         if (!otp) {
                             loadToast('Please enter OTP code');
@@ -746,7 +709,6 @@ async function handleUserData() {
                             .then(data => {
                                 // Handle the response data here
                                 if (data.message === 'OTP is valid') {
-                                    console.log(data);
                                     localStorage.setItem('access_token', userToken);
                                     elementIdEditInnerHTML("windowScreen", "");
                                     loadToast('OTP is valid, enjoy pongos');
@@ -778,10 +740,6 @@ async function handleUserData() {
                 if (userToken && user) {
                     localStorage.setItem('access_token', userToken);
                     localStorage.setItem('username', user.username);
-                    console.log(userToken);
-                    console.log(user);
-                    console.log(csrfToken);
-                    console.log(data.sessionId);
 
                 }
 
@@ -815,7 +773,6 @@ async function getAllUsers(override) {
     if (location !== '/users')
         return;
     let users;
-    console.log * 'access_token', localStorage.getItem('access_token');
     await fetch('/api/get_all_users/', {
         method: 'GET',
         headers: {
@@ -836,10 +793,8 @@ async function getAllUsers(override) {
         if (!data) {
             return;
         }
-        console.log(data);
         let sameUser = user['username'];
         users = data.filter(item => (item.username !== "admin" && item.username !== sameUser));
-        console.log('filtered users -> ', users);
         return users;
     }).catch((error) => {
         console.error('Error:', error);
@@ -883,7 +838,6 @@ async function getAllFriends(override) {
             return;
         }
         users = data;
-        console.log(users);
         return users;
     }).catch((error) => {
         console.error('Error:', error);
@@ -900,11 +854,9 @@ async function insertAllUsers(users) {
     playerCardDiv.innerHTML = "";
     let friends = await getAllFriends();
     //call getAllFriends here:
-    console.log(friends);
 
     users?.forEach(user => {
         let isFriend = false;
-        console.log(user.username);
         isFriend = elementExistsInArray(friends, user.intra)
         const userImage = `https://localhost:9090/api/get_image/${user.username}`;
         const playerCard = `

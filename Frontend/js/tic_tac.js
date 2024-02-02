@@ -82,13 +82,11 @@ export function loadTicTac(username, localPlayerMode) {
             }
         }
         // board.classList.add("ratio", "ratio-1x1");
-        console.log(docWinScreen.getBoundingClientRect().height);
         board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
         docWinScreen.appendChild(container);
         // board.classList.add("ratio", "ratio-1x1");
-        console.log(docWinScreen.getBoundingClientRect().height);
         board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
@@ -247,7 +245,6 @@ export function loadTicTac(username, localPlayerMode) {
 
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
-            console.log('Data: ', data)
 
             if (data.game === 'pong')
                 return;
@@ -266,11 +263,9 @@ export function loadTicTac(username, localPlayerMode) {
                 return;
             if (data.type === 'start' && data["status"] === "start") {
                 player_count = 2;
-                console.log("BOYS U CAN START NOW!");
                 hideModal("modalGame");
                 window.addEventListener('beforeunload', function (event) {
                     console.info("This page is reloaded");
-                    // console.log(btnCounter);
                     if (gameSocket !== "" && player2 != "") {
                         // Call the closePong1v1Socket function to terminate the game
                         closeTicTac1v1Socket();
@@ -310,7 +305,6 @@ export function loadTicTac(username, localPlayerMode) {
                 gameSocket.close();
             }
             else {
-                // console.log("woops not yet...")
             }
         }
 
@@ -328,10 +322,8 @@ export function loadTicTac(username, localPlayerMode) {
 
             player_count = 1;
 
-            console.log("waiting for a second player...");
             loadSpinner("modalGameBody", "text-black");
             showModal("modalGame");
-            console.log("showing");
         });
         player_count = 1;
     }
@@ -368,7 +360,6 @@ export function loadTicTac(username, localPlayerMode) {
                 cell.addEventListener("click", function () {
                     // Send the clicked cell information to the server
                     if (this.innerHTML === EMPTY) {
-                        console.log("SENDING!");
                         const cellIndex = boxes.indexOf(this);
                         if (turn !== currentPlayerSymbol)
                             return;
@@ -402,7 +393,6 @@ export function loadTicTac(username, localPlayerMode) {
             }
         }
         // document.getElementById('tictactoe').appendChild(board);
-        console.log(docWinScreen.getBoundingClientRect().height);
         board.style.scale = docWinScreen.getBoundingClientRect().width / 300 * 0.5;
         container.querySelector("#tictactoe").appendChild(board);
         docWinScreen.innerHTML = "";
@@ -458,7 +448,6 @@ export function stopTicTacExecution() {
 export function closeTicTac1v1Socket() {
     if (gameSocket === "")
         return;
-    console.log("terminating....");
     gameSocket.send(JSON.stringify({
         'game': 'tic',
         'type': 'terminate',

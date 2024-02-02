@@ -235,14 +235,12 @@ export function loadTournament(username, localPlayerMode) {
         //show results
         if (g_count != 2) {
 
-            // console.log(`Match ${g_count + 1}: ${pairings[g_count][0]} vs ${pairings[g_count][1]} *** Result: ${score.left} - ${score.right}`);
         }
 
         //update winners
         if (g_count == 0 || g_count == 1) {
             winners.push(getWinner(score, pairings[g_count][0], pairings[g_count][1]));
             winners.reverse();
-            console.log("winners: ", winners);
         }
         // if (score)
 
@@ -318,11 +316,8 @@ export function loadTournament(username, localPlayerMode) {
     }
 
     async function handleOnlineWinner() {
-        console.log("sup mfs");
         let winnerMsg;
         let winner;
-        console.log("leftPlayer = " + leftPlayer)
-        console.log("rightPlayer = " + rightPlayer)
 
         if (tournReady == false)
             return;
@@ -339,11 +334,8 @@ export function loadTournament(username, localPlayerMode) {
             // toggleHighlight("tPlayer3Highlight");
             // toggleHighlight("tPlayer4Highlight");
             // showModal("modalGame");
-            console.log("player 1 = " + player1)
-            console.log("player 2 = " + player2)
 
             winner = getWinner(score, player1, player2);
-            console.log("winner = " + winner);
             if (winner === user_name) {
                 gameSocket.send(JSON.stringify({
                     'game': 'pong',
@@ -437,7 +429,6 @@ export function loadTournament(username, localPlayerMode) {
         gameSocket = new WebSocket(url);
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
-            console.log('Data: ', data)
 
             if (data.mode === 'single')
                 return;
@@ -501,7 +492,6 @@ export function loadTournament(username, localPlayerMode) {
                 gameSocket.close();
             }
             else {
-                // console.log("woops not yet...")
             }
         }
 
@@ -520,7 +510,6 @@ export function loadTournament(username, localPlayerMode) {
             }));
 
             player_count = 1;
-            console.log("waiting for a second player...")
         });
         player_count = 1;
     }
@@ -534,7 +523,6 @@ export function loadTournament(username, localPlayerMode) {
         for (let i = 0; i < shuffledPlayers.length; i += 2) {
             pairings.push([shuffledPlayers[i], shuffledPlayers[i + 1]]);
         }
-        console.log("match1: ", pairings[0], " match2: ", pairings[1]);
         return pairings;
     }
 
@@ -554,7 +542,6 @@ export function loadTournament(username, localPlayerMode) {
     const delay = ms => new Promise(res => setTimeout(res, ms));
 
     async function startLocalTournament() {
-        console.log("sup mfs");
         // if (tournReady == false)
         //     return;
         let winners = [];
@@ -582,7 +569,6 @@ export function loadTournament(username, localPlayerMode) {
     function updateLocalPlayerDisplay(playerLeft, playerRight) {
         localCurrentPair = [playerLeft, playerRight];
         // localCurrentPair.push(playerLeft, playerRight);
-        console.log("player left:", localCurrentPair[0], " player right:", localCurrentPair[1]);
     };
 
     function setupLocalTournament() {
@@ -640,7 +626,6 @@ export function loadTournament(username, localPlayerMode) {
 
             const playerNames = Array.from(document.getElementById('formPlayerNames').querySelectorAll('input[id^="player"]')).map(input => input.value);
 
-            console.log(playerNames);
             for (let i = 0; i < playerNames.length; ++i) {
                 if (!checkName(playerNames[i]))
                     return;
@@ -710,12 +695,10 @@ export function loadTournament(username, localPlayerMode) {
         }).then(response => {
             if (!response.ok) {
                 localStorage.clear();
-                console.log(response.statusText);
                 return;
             }
             return response.text();
         }).then(data => {
-            console.log(data);
             if (!data) {
                 return;
             }
@@ -738,7 +721,6 @@ export function loadTournament(username, localPlayerMode) {
         // You can make an API call or update the game state accordingly
         if (!tournamentName)
             return;
-        console.log(`Joining tournament with name ${tournamentName}`);
         tournament_name = tournamentName;
         await fetch(`/api/join/?username=${localStorage.getItem('username')}&tournament_name=${tournamentName}`, {
             method: 'POST',
@@ -772,7 +754,6 @@ export function loadTournament(username, localPlayerMode) {
                     // startLocalButton.style.visibility = 'hidden';
 
                     //@TODO : Display WAIT message
-                    console.log("Waiting for lobby to fill & tournament to start ...");
 
                     //@TODO : Open socket
                     initiateSocket();
@@ -787,7 +768,6 @@ export function loadTournament(username, localPlayerMode) {
                     // startLocalButton.style.visibility = 'hidden';
 
                     //@TODO : Display WAIT message
-                    console.log("Waiting for lobby to fill & tournament to start ...");
                 } else {
                     console.error('Failed to join tournament', data);
                 }
@@ -797,7 +777,6 @@ export function loadTournament(username, localPlayerMode) {
         rightPlayer = false;
     }
     function playOnlineGame() {
-        console.log("gameover = " + isGameOver + " and animationid = " + animationFrameId);
         elementIdEditInnerHTML("winner-p1", player1);
         elementIdEditInnerHTML("winner-p2", player2);
         showModal("modalGame");
@@ -815,7 +794,6 @@ export function loadTournament(username, localPlayerMode) {
     async function playOnlineTournamentMatch() {
         resetGame();
         isGameOver = true;
-        console.log("gcount = " + g_count);
         if (g_count == 0) {
             isGameOver = false;
             score.left = 0;
@@ -856,13 +834,11 @@ export function loadTournament(username, localPlayerMode) {
             if (!response.ok) {
                 // document.getElementById("content").innerHTML = LOGIN_PAGE_HTML;
                 localStorage.clear();
-                console.log(response.statusText);
                 // loadToast('Please login to continue');
                 return null;
             }
             return response.text();
         }).then(data => {
-            console.log(data);
             if (!data) {
                 return;
             }
@@ -879,7 +855,6 @@ export function loadTournament(username, localPlayerMode) {
     function displayTournamentLobby(data) {
 		loadModalMenu("modalMenu", data);
         loadModal('modalGameBody', TM_BRACKET);
-        console.log(TM_BRACKET);
         const joinButtons = document.querySelectorAll('[id="joinTourn"]');
 
         joinButtons?.forEach(function (button) {
@@ -907,7 +882,6 @@ export function loadTournament(username, localPlayerMode) {
             return;
 
         const elapsed = timestamp - lastTimestamp;
-        // console.log(timestamp);
 
         if (elapsed == 0 || elapsed >= (frameInterval / 2)) {
             draw();

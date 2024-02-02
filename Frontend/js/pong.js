@@ -278,16 +278,13 @@ export function loadGame(username, localPlayerMode) {
 
         gameSocket.onmessage = function (e) {
             let data = JSON.parse(e.data)
-            console.log('Data: ', data)
 
             if (btnCounter == 0)
                 return;
-            console.log('_>>>>>>Data: ', data)
 
             if (data.game === 'tic')
                 return;
             if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
-                console.log("TERMINATING HERE TOO CUZ I GOT A MESG TO DO SO");
                 gameSocket.close();
                 gameSocket = "";
                 isGameOver = true;
@@ -332,7 +329,6 @@ export function loadGame(username, localPlayerMode) {
                 }
             }
             else if (data.type === 'terminate' && (data.player1 == user_name || data.player2 == user_name)) {
-                console.log("TERMINATING HERE TOO CUZ I GOT A MESG TO DO SO");
                 gameSocket.close();
                 gameSocket = "";
                 isGameOver = true;
@@ -349,7 +345,6 @@ export function loadGame(username, localPlayerMode) {
                 gameSocket.close();
             }
             else {
-                // console.log("woops not yet...")
             }
         }
 
@@ -367,9 +362,6 @@ export function loadGame(username, localPlayerMode) {
 
             player_count = 1;
 
-            console.log("waiting for a second player...");
-            console.log(player1);
-            console.log(player2);
             loadModalMenu("modalMenu", "");
             loadSpinner("modalMenuBody", "text-black");
             showModal("modalMenu");
@@ -422,7 +414,6 @@ export function loadGame(username, localPlayerMode) {
         else {
             if (btnCounter == 0) {
                 initiateSocket();
-                console.log("first press - ready to play!");
                 btnCounter = btnCounter + 1;
                 return;
             }
