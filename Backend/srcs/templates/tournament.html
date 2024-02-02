@@ -3,17 +3,20 @@
 		<div class="d-flex flex-row w-100 flex-grow-1 flex-wrap gap-5 pt-5 justify-content-start border border-0 border-white">
 		{% if tournaments %}
         	{% for tournament in tournaments %}
-				<div class="card w-25 align-self-baseline">
-					<div class="card-body d-flex flex-column justify-content-around font--argent">
-						<p id="tname" class="card-title h3">{{tournament.name}}</p>
-						<p id="tcount" class="card-text flex-grow-1 h-5">{{tournament.count}}/{4}</p>
+            
+            <div class="card w-25 align-self-baseline overflow-hidden">
+                <div class="ratio ratio-1x1">
+                <div class="card-body d-flex flex-column justify-content-around font--argent">
+                        <p id="tname" class="card-title h3 text-center">{{tournament.name}}</p>
+						{% comment %} <p id="tcount" class="card-text flex-grow-1 h-5">{{tournament.count}}/{4}</p> {% endcomment %}
 						<button type="button" id="joinTourn" class="container-fluid btn btn-outline-dark text-capitalize rounded">Join</button>
 					</div>
+                </div>
 				</div>
 			{% endfor %}
 		{% endif %}
         </div>
-        <div class="card rounded-0 align-self-baseline">
+        <div class="card rounded-0 align-self-baseline overflow-hidden">
             <div class="card-body d-flex flex-column justify-content-around font--argent">
                 <form id="createTournForm">
                     <p class="card-title text-uppercase text-center h3">CREATE TOURNAMENT</p>
