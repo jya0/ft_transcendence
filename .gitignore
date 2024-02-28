@@ -2,7 +2,6 @@
 __pycache
 .DS_Store
 /django
-mediafiles
 migrations
 test.py
 *.env
