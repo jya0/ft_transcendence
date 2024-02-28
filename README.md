@@ -21,7 +21,7 @@ FT_Transcendence is an online Pong game that utilizes the Docker platform for co
 ![Login Page](Backend/srcs/mediafiles/mediafiles/login.png)
 
 ### Online Pong Game Demonstration
-[Watch the Video](path/to/video-link) *(Add a link to the video demonstrating the online Pong game and 2FA)*
+[Watch the Video](Backend/srcs/mediafiles/mediafiles/movie.png) *(Add a link to the video demonstrating the online Pong game and 2FA)*
 
 ## Getting Started
 
