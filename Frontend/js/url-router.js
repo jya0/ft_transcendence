@@ -1,211 +1,221 @@
 const urlPageTitle = "Pong Os";
-import { loadGameMenu, loadGameCanvas, loadToast, loadModal, showModal, hideModal, loadSpinner, getCookie } from './loadComponent.js';
-import { loadTournament, stopTournamentExecution } from './tournament.js';
-import { loadTicTac, closeTicTac1v1Socket, stopTicTacExecution } from './tic_tac.js'
-import { loadGame, stopPongExecution, closePong1v1Socket } from './pong.js';
+import {
+  loadGameMenu,
+  loadGameCanvas,
+  loadToast,
+  loadModal,
+  showModal,
+  hideModal,
+  loadSpinner,
+  getCookie,
+} from "./loadComponent.js";
+import { loadTournament, stopTournamentExecution } from "./tournament.js";
+import {
+  loadTicTac,
+  closeTicTac1v1Socket,
+  stopTicTacExecution,
+} from "./tic_tac.js";
+import { loadGame, stopPongExecution, closePong1v1Socket } from "./pong.js";
 
-import { elementIdEditInnerHTML, checkName } from './utility.js';
+import { elementIdEditInnerHTML, checkName } from "./utility.js";
 
 const urlRoutes = {
-    404: {
-        title: "404 | " + urlPageTitle,
-        description: "Page not found",
-    },
-    "/": {
-        title: "login | " + urlPageTitle,
-        description: "Pongos login page",
-    },
-    "/desktop": {
-        title: "Desktop | " + urlPageTitle,
-        description: "Pongos desktop page",
-    },
-    "/profile": {
-        title: "Profile | " + urlPageTitle,
-        description: "Pongos myprofile page",
-    },
-    "/play": {
-        title: "Play | " + urlPageTitle,
-        description: "Pongos play page",
-    },
-    "/users": {
-        title: "Users | " + urlPageTitle,
-        description: "Pongos users page",
-    },
+  404: {
+    title: "404 | " + urlPageTitle,
+    description: "Page not found",
+  },
+  "/": {
+    title: "login | " + urlPageTitle,
+    description: "Pongos login page",
+  },
+  "/desktop": {
+    title: "Desktop | " + urlPageTitle,
+    description: "Pongos desktop page",
+  },
+  "/profile": {
+    title: "Profile | " + urlPageTitle,
+    description: "Pongos myprofile page",
+  },
+  "/play": {
+    title: "Play | " + urlPageTitle,
+    description: "Pongos play page",
+  },
+  "/users": {
+    title: "Users | " + urlPageTitle,
+    description: "Pongos users page",
+  },
 };
 
 const gameRoutes = {
-    "/games_pong_local": {
-        title: "local pong | " + urlPageTitle,
-        description: "Pongos local page",
-    },
-    "/games_pong_online": {
-        title: "online pong | " + urlPageTitle,
-        description: "Pongos online page",
-    },
-    "/games_pong_local_tournament": {
-        title: "local tournaments pong | " + urlPageTitle,
-        description: "Pongos local tournament page",
-    },
-    "/games_pong_online_tournament": {
-        title: "online tournaments pong | " + urlPageTitle,
-        description: "Pongos online tournaments page",
-    },
-    "/games_tictactoe_local": {
-        title: "tic tac toe | " + urlPageTitle,
-        description: "Pongos tic tac toe page",
-    },
-    "/games_tictactoe_online": {
-        title: "tic tac toe | " + urlPageTitle,
-        description: "Pongos tic tac toe page",
-    },
+  "/games_pong_local": {
+    title: "local pong | " + urlPageTitle,
+    description: "Pongos local page",
+  },
+  "/games_pong_online": {
+    title: "online pong | " + urlPageTitle,
+    description: "Pongos online page",
+  },
+  "/games_pong_local_tournament": {
+    title: "local tournaments pong | " + urlPageTitle,
+    description: "Pongos local tournament page",
+  },
+  "/games_pong_online_tournament": {
+    title: "online tournaments pong | " + urlPageTitle,
+    description: "Pongos online tournaments page",
+  },
+  "/games_tictactoe_local": {
+    title: "tic tac toe | " + urlPageTitle,
+    description: "Pongos tic tac toe page",
+  },
+  "/games_tictactoe_online": {
+    title: "tic tac toe | " + urlPageTitle,
+    description: "Pongos tic tac toe page",
+  },
 };
 
 let userToken;
 let user;
-let LOGIN_PAGE_HTML = '';
-let gameMode = 'none';
+let LOGIN_PAGE_HTML = "";
+let gameMode = "none";
 
-await fetch('/components/login.html').then(response => response.text()).then(data => {
+await fetch("/components/login.html")
+  .then((response) => response.text())
+  .then((data) => {
     LOGIN_PAGE_HTML = data;
-});
+  });
 
 function checkAuth() {
-    console.log(localStorage.getItem('access_token'))
-    fetch('api/check_auth/', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-    }).then(response => {
-        if (!response.ok) {
-            console.log('response', response);
-            loadLoginPage('Unauthorized, please login again!');
-        }
-    });
+  fetch("api/check_auth/", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
+  }).then((response) => {
+    if (!response.ok) {
+      loadLoginPage("Unauthorized, please login again!");
+    }
+  });
 }
 
 async function loadLoginPage(message) {
-    document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
-    if (message) {
-        loadToast(message);
+  document.getElementById("main-content").innerHTML = LOGIN_PAGE_HTML;
+  if (message) {
+    loadToast(message);
+  }
+  localStorage.clear();
+  await fetch("/api/logout/", {
+    credentials: "include",
+  }).then((response) => {
+    if (!response.ok) {
+      return null;
     }
-    localStorage.clear();
-    await fetch('/api/logout/', {
-        credentials: 'include',
-    })
-        .then(response => {
-            if (!response.ok) {
-                return null
-            }
-            return null;
-        })
-    const docModalAll = document.querySelectorAll(".modal");
-    const tmpModalBs = '';
-    if (docModalAll) {
-        docModalAll.forEach(element => {
-            tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
-            tmpModalBs.hide();
-        });
+    if (response.status === 204) {
+      localStorage.clear();
+      loadLoginPage();
     }
+    return null;
+  });
+  const docModalAll = document.querySelectorAll(".modal");
+  const tmpModalBs = "";
+  if (docModalAll) {
+    docModalAll.forEach((element) => {
+      tmpModalBs = bootstrap.Modal.getOrCreateInstance(element);
+      tmpModalBs.hide();
+    });
+  }
 }
-
-console.log(sessionStorage.getItem('username'))
 
 await fetch(`/api/get_user_data/`, {
-    method: 'GET',
-}).then(response => {
+  method: "GET",
+})
+  .then((response) => {
     if (response.status === 204) {
-        console.log('User is not authenticated');
-        localStorage.clear();
-        return null;
-    }
-    else if (!response.ok) {
-        console.log(`response`, response.status);
-        return null;
+      localStorage.clear();
+      return null;
+    } else if (!response.ok) {
+      return null;
     }
     return response.json();
-}).then(data => {
+  })
+  .then((data) => {
     if (!data) {
-        return false;
+      return false;
     }
-    console.log('Data fetched:', data);
     user = data.user_data;
     if (user) {
-        console.log('user is authenticated');
-        sessionStorage.setItem('user', JSON.stringify(user));
+      sessionStorage.setItem("user", JSON.stringify(user));
     }
-})
+  });
 
 const viewUserProfile = (username) => {
-    console.log(`Viewing profile for ${username}`);
-    const url = `/api/users/${username}?username=${user.username}}`;
-    fetch(url, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
+  const url = `/api/users/${username}?username=${user.username}}`;
+  fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      elementIdEditInnerHTML("windowScreen", data);
+      const addFriendButton = document.getElementById("add-friend");
+      addFriendButton?.addEventListener("click", async () => {
+        addFriend(addFriendButton, user.username, username);
+      });
     })
-        .then(response => response.text())
-        .then(data => {
-            console.log(data);
-            elementIdEditInnerHTML("windowScreen", data);
-            const addFriendButton = document.getElementById('add-friend');
-            addFriendButton?.addEventListener('click', async () => {
-                addFriend(addFriendButton, user.username, username);
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+};
 
 const addFriend = async (button, username, newFriend) => {
-    console.log(`Forming friendship for ${username} with ${newFriend}`);
-    try {
-        const response = await fetch(`/api/toggle_friend/?user1=${username}&user2=${newFriend}`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                'x-csrftoken': getCookie('csrftoken'),
-            },
-        });
+  try {
+    const response = await fetch(
+      `/api/toggle_friend/?user1=${username}&user2=${newFriend}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          "x-csrftoken": getCookie("csrftoken"),
+        },
+      }
+    );
 
-        if (!response.ok) {
-            elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-            loadToast('Unauthorized, please login again!')
-            localStorage.clear();
-            return;
-        }
-
-        const data = await response.text();
-        console.log("Data = ");
-        console.log(data);
-        if (data === 'Added') {
-            button.innerHTML = 'Remove Friend';
-            loadToast('Friend Added successfully :(');
-        } else {
-            button.innerHTML = 'Add Friend';
-            loadToast('Friend Removed succesfully :)');
-        }
-    } catch (error) {
-        console.error('Error:', error);
+    if (!response.ok) {
+      elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+      loadToast("Unauthorized, please login again!");
+      localStorage.clear();
+      return;
     }
-}
 
-let navbarLinks = document.querySelectorAll('#navbar a');
+    const data = await response.text();
+    if (data === "Added") {
+      button.innerHTML = "Remove Friend";
+      loadToast("Friend Added successfully :(");
+    } else {
+      button.innerHTML = "Add Friend";
+      loadToast("Friend Removed succesfully :)");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
+
+let navbarLinks = document.querySelectorAll("#navbar a");
 
 navbarLinks?.forEach(function (link) {
-    link.addEventListener('click', function (event) {
-        event.preventDefault();
-        window.history.pushState({}, "", link);
-        urlLocationHandler();
-    });
+  link.addEventListener("click", function (event) {
+    event.preventDefault();
+    window.history.pushState({}, "", link);
+    urlLocationHandler();
+  });
 });
 
 function setMainWindowframe() {
-    insertOrCreateContent();
-    elementIdEditInnerHTML("content",
-        `
+  insertOrCreateContent();
+  elementIdEditInnerHTML(
+    "content",
+    `
 				<div class="container p-0 m-0 border border-0 border-light" id="closeWindow">
 					<div class="p-0 rounded-1 d-flex flex-column overflow-hidden shadow-lg border border-0 border-light">
 						<!-- WINDOW-BAR -->
@@ -228,102 +238,98 @@ function setMainWindowframe() {
 						</div>
 					</div>
 				</div>
-			`);
-    document.getElementById('close-me')?.addEventListener('click', () => {
-        if (gameMode !== 'none') {
-            closePong1v1Socket();
-            closeTicTac1v1Socket();
-            console.log("heyyyyyyyyyyyyyyyyyyyyyy");
-            const canvasElement = document.getElementById("gameCanvas");
-            if (canvasElement) {
-                let animationId = canvasElement.dataset.animationFrameId;
-                window.cancelAnimationFrame(animationId);
-                canvasElement.remove();
-                if (gameMode === 'pong single')
-                    stopPongExecution();
-                if (gameMode === 'pong tournament')
-                    stopTournamentExecution();
-                gameMode = 'none';
-
-            }
-            const tictacContainer = document.getElementById("tictac-container");
-            if (tictacContainer) {
-                tictacContainer.remove();
-                if (gameMode === 'tic tac single')
-                    stopTicTacExecution();
-                gameMode = 'none';
-            }
-        }
-        elementIdEditInnerHTML("closeWindow", "");
-    });
+			`
+  );
+  document.getElementById("close-me")?.addEventListener("click", () => {
+    if (gameMode !== "none") {
+      closePong1v1Socket();
+      closeTicTac1v1Socket();
+      const canvasElement = document.getElementById("gameCanvas");
+      if (canvasElement) {
+        let animationId = canvasElement.dataset.animationFrameId;
+        window.cancelAnimationFrame(animationId);
+        canvasElement.remove();
+        if (gameMode === "pong single") stopPongExecution();
+        if (gameMode === "pong tournament") stopTournamentExecution();
+        gameMode = "none";
+      }
+      const tictacContainer = document.getElementById("tictac-container");
+      if (tictacContainer) {
+        tictacContainer.remove();
+        if (gameMode === "tic tac single") stopTicTacExecution();
+        gameMode = "none";
+      }
+    }
+    elementIdEditInnerHTML("closeWindow", "");
+  });
 }
 
 async function updateProfile(file) {
+  const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
 
-    const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
+  if (file.size > maxSizeInBytes) {
+    loadToast("File size is too large, Please choose a smaller file.");
+    return;
+  }
 
-    if (file.size > maxSizeInBytes) {
-        loadToast('File size is too large, Please choose a smaller file.');
-        return;
-    }
+  let formData = new FormData();
+  formData.append("image", file);
+  formData.append("username", user.username);
+  await fetch("/api/update_user_profile/", {
+    method: "POST",
+    body: formData,
+    headers: {
+      "X-CSRFToken": getCookie("csrftoken"),
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+    },
+    credentials: "include",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+        loadToast(
+          "Failed to update Image, You have to login again for security reasons!"
+        );
+        localStorage.clear();
+        hideModal("modalSetting");
 
-    let formData = new FormData();
-    formData.append('image', file);
-    formData.append('username', user.username);
-    await fetch('/api/update_user_profile/', {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        credentials: 'include',
+        return null;
+      }
+      return response.json();
     })
-        .then(response => {
-            if (!response.ok) {
-                console.log('response', response);
-                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                loadToast('Failed to update Image, You have to login again for security reasons!');
-                localStorage.clear();
-                hideModal("modalSetting");
-
-                return null;
-            }
-            return response.json()
-
-        }).then(data => {
-            if (!data) {
-                console.log("data is null");
-                return;
-            }
-            loadToast('Image updated successfully');
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    .then((data) => {
+      if (!data) {
+        return;
+      }
+      loadToast("Image updated successfully");
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
 }
 
-
 let loadModalFile = async function (event) {
-    let image = document.getElementById('output');
+  let image = document.getElementById("output");
 
-    document.getElementById('inputFile-btn')?.addEventListener('click', async () => {
-        let modalInput = document.getElementById('modal-inputFile');
-        if (modalInput) {
-            let modalFile = modalInput.files[0];
+  document
+    .getElementById("inputFile-btn")
+    ?.addEventListener("click", async () => {
+      let modalInput = document.getElementById("modal-inputFile");
+      if (modalInput) {
+        let modalFile = modalInput.files[0];
 
-            updateProfile(modalFile, image);
-            if (image)
-                image.src = URL.createObjectURL(event.target.files[0]);
-        }
+        updateProfile(modalFile, image);
+        if (image) image.src = URL.createObjectURL(event.target.files[0]);
+      }
     });
-
 };
 
-
-document.getElementById('modalSettingBtn')?.addEventListener('click', async () => {
-    loadModal('modalSettingBody',
-        `
+document
+  .getElementById("modalSettingBtn")
+  ?.addEventListener("click", async () => {
+    loadModal(
+      "modalSettingBody",
+      `
 			<div class="d-flex flex-column align-items-center rounded p-5 border border-1 border-black w-100 h-100 font--argent gap-5">
 				<div class="input-group w-50">
 					<input type="file" class="form-control border border-1 border-black" accept="image/*" id="modal-inputFile"
@@ -349,363 +355,362 @@ document.getElementById('modalSettingBtn')?.addEventListener('click', async () =
 					</p>
 				</button>
 			</div>
-		`);
+		`
+    );
 
-    document.getElementById('modal-inputFile')?.addEventListener('change', loadModalFile, false);
-    document.getElementById('logout')?.addEventListener('click', () => {
-        localStorage.clear();
-        console.log('logout');
-        fetch('/api/logout', {
-            credentials: 'include',
+    document
+      .getElementById("modal-inputFile")
+      ?.addEventListener("change", loadModalFile, false);
+    document.getElementById("logout")?.addEventListener("click", () => {
+      localStorage.clear();
+      fetch("/api/logout", {
+        credentials: "include",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            loadLoginPage("Please login to continue");
+            return null;
+          }
+          if (response.status === 204) {
+            localStorage.clear();
+            loadLoginPage();
+            return null;
+          }
+          return response.json();
         })
-            .then(response => {
-                if (!response.ok) {
-                    loadLoginPage('Please login to continue');
-                    return null
-                }
-                return response.json();
-            })
-            .then(async data => {
-                if (!data) return;
-                console.log('Data fetched:', data);
-                if (data.message === 'Logged out successfully') {
-                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                    loadToast('You have been logged out successfully ;(');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-        hideModal("modalSetting");
+        .then(async (data) => {
+          if (!data) return;
+          if (data.message === "Logged out successfully") {
+            elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+            loadToast("You have been logged out successfully ;(");
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+      hideModal("modalSetting");
     });
-    document.getElementById('nickname-btn')?.addEventListener('click', async () => {
-
-        const newDisplayName = document.getElementById('displayNameInput');
+    document
+      .getElementById("nickname-btn")
+      ?.addEventListener("click", async () => {
+        const newDisplayName = document.getElementById("displayNameInput");
         const nicknameValue = newDisplayName.value;
-        const displayNameElement = document.getElementById('displayName');
+        const displayNameElement = document.getElementById("displayName");
 
-        if (!checkName(nicknameValue))
-            return;
+        if (!checkName(nicknameValue)) return;
 
-        await fetch('/api/update_display_name/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': getCookie('csrftoken'),
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            },
-            credentials: 'include',
-            body: JSON.stringify({ display_name: nicknameValue }),
-        },
-
-        ).then(response => {
+        await fetch("/api/update_display_name/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+          credentials: "include",
+          body: JSON.stringify({ display_name: nicknameValue }),
+        })
+          .then((response) => {
             if (!response.ok) {
-                console.log('response', response);
-                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                loadToast('Failed to update display name, You have to login again for security reasons!');
-                hideModal("modalSetting");
-                return null;
+              elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+              loadToast(
+                "Failed to update display name, You have to login again for security reasons!"
+              );
+              hideModal("modalSetting");
+              return null;
             }
-            return response.json()
-
-        }).then(data => {
+            return response.json();
+          })
+          .then((data) => {
             if (!data) {
-                return;
+              return;
             }
             if (displayNameElement) {
-                displayNameElement.textContent = nicknameValue;
+              displayNameElement.textContent = nicknameValue;
             }
-            loadToast('Display name updated successfully');
-        })
-    });
-});
-
+            loadToast("Display name updated successfully");
+          });
+      });
+  });
 
 export const urlLocationHandler = async () => {
+  if (!user) {
+    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+    return;
+  }
+
+  if (gameMode !== "none") {
+    const canvasElement = document.getElementById("gameCanvas");
+    if (canvasElement) {
+      closePong1v1Socket();
+      let animationId = canvasElement.dataset.animationFrameId;
+      window.cancelAnimationFrame(animationId);
+      canvasElement.remove();
+      if (gameMode === "pong single") stopPongExecution();
+      if (gameMode === "pong tournament") stopTournamentExecution();
+      gameMode = "none";
+    }
+    //tic
+    const tictacContainer = document.getElementById("tictac-container");
+    if (tictacContainer) {
+      closeTicTac1v1Socket();
+      tictacContainer.remove();
+      if (gameMode === "tic tac single") stopTicTacExecution();
+      gameMode = "none";
+    }
+  }
+
+  insertOrCreateContent();
+  elementIdEditInnerHTML("content", "");
+  let location = window.location.pathname;
+  if (location[location.length - 1] === "/") {
+    location = location.slice(0, location.length - 1);
+  }
+  if (location.length == 0) {
+    location = "/";
+  }
+  if (location === "/" && localStorage.getItem("access_token")) {
+    location = "/desktop";
+  }
+  if (!localStorage.getItem("access_token")) {
+    location = "/";
+  }
+  const route = urlRoutes[location] || urlRoutes["404"];
+
+  if (location === "/") {
+    document.getElementById("navbar")?.remove();
+    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+    return;
+  }
+
+  document.getElementById("navbar").style.display = "flex";
+  elementIdEditInnerHTML("username-welcome", `${user ? user.username : ""}`);
+
+  if (gameRoutes.hasOwnProperty(location)) {
+    checkAuth();
+    const gameRoute = gameRoutes[location];
+    setMainWindowframe();
+    loadGameCanvas();
+    switch (location) {
+      case "/games_pong_local":
+        gameMode = "pong single";
+        loadGame(localStorage.getItem("username"), true);
+        break;
+      case "/games_pong_online":
+        gameMode = "pong single";
+        loadGame(localStorage.getItem("username"), false);
+        break;
+      case "/games_tictactoe_local":
+        gameMode = "tic tac single";
+        loadTicTac(localStorage.getItem("username"), true);
+        break;
+      case "/games_tictactoe_online":
+        gameMode = "tic tac single";
+        loadTicTac(localStorage.getItem("username"), false);
+        break;
+      case "/games_pong_local_tournament":
+        gameMode = "pong tournament";
+        loadTournament(localStorage.getItem("username"), true);
+        break;
+      case "/games_pong_online_tournament":
+        gameMode = "pong tournament";
+        loadTournament(localStorage.getItem("username"), false);
+        break;
+      default:
+        break;
+    }
+    document.title = gameRoute.title;
+    return;
+  } else if (location === "/play") {
+    checkAuth();
+    setMainWindowframe();
+    loadGameMenu();
+    let gameMenu = document.querySelectorAll("#gameMenu a");
+
+    gameMenu?.forEach(function (link) {
+      link.addEventListener("click", function (event) {
+        event.preventDefault();
+        window.history.pushState({}, "", link);
+        urlLocationHandler();
+      });
+    });
+    loadToast(
+      "Pong: use 'w' & 's' for player 1 | use '↑' & '↓' for player 2" +
+        "\n" +
+        "Tic Tac Toe: use clicks to play"
+    );
+    document.title = route.title;
+    return;
+  } else if (location === "/desktop") {
+    loadToast(`Welcome ${user.username}!`);
+  } else if (location === "/profile") {
+    setMainWindowframe();
     if (!user) {
-        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-        return;
+      elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+      localStorage.clear();
+      return;
     }
-    console.log("gamemode = " + gameMode);
-
-    if (gameMode !== 'none') {
-
-        console.log("heyyyyyyyyyyyyyyyyyyyyyy");
-        const canvasElement = document.getElementById("gameCanvas");
-        if (canvasElement) {
-            closePong1v1Socket();
-            let animationId = canvasElement.dataset.animationFrameId;
-            window.cancelAnimationFrame(animationId);
-            canvasElement.remove();
-            if (gameMode === 'pong single')
-                stopPongExecution();
-            if (gameMode === 'pong tournament')
-                stopTournamentExecution();
-            gameMode = 'none';
+    await fetch(`/api/users/${user.username}?username=${user.username}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+          localStorage.clear();
+          loadToast("Please login to continue");
+          return null;
         }
-        //tic
-        const tictacContainer = document.getElementById("tictac-container");
-        if (tictacContainer) {
-            console.log("YAOOOOOOOOOOOOOOOO");
-            closeTicTac1v1Socket();
-            tictacContainer.remove();
-            if (gameMode === 'tic tac single')
-                stopTicTacExecution();
-            gameMode = 'none';
+        return response.text();
+      })
+      .then((data) => {
+        if (!data) {
+          return;
         }
-    }
+        elementIdEditInnerHTML("windowScreen", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
 
-    insertOrCreateContent();
-    elementIdEditInnerHTML("content", "");
-    let location = window.location.pathname;
-    if (location[location.length - 1] === '/') {
-        location = location.slice(0, location.length - 1);
-    }
-    if (location.length == 0) {
-        location = "/";
-    }
-    console.log('after login -> ', location);
-    console.log('after login -> ', localStorage.getItem('access_token'));
-    if (location === '/' && localStorage.getItem('access_token')) {
-        console.log('desktop route');
-        location = '/desktop';
-    }
-    if (!localStorage.getItem('access_token')) {
-        console.log('no access route');
-        location = '/';
-    }
-    const route = urlRoutes[location] || urlRoutes["404"];
+    document
+      .getElementById("2fa-button")
+      ?.addEventListener("click", async () => {
+        try {
+          const response = await fetch(
+            `api/enable_or_disable_2fa/?username=${user.username}`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+                "x-csrftoken": getCookie("csrftoken"),
+              },
+            }
+          );
 
-    if (location === '/') {
-        console.log('login route');
-        document.getElementById("navbar")?.remove();
-        console.log('login route')
-        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-        return;
-    }
+          if (!response.ok) {
+            elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+            loadToast("Please login to to verify your identity");
+            localStorage.clear();
+            throw new Error(
+              response.statusText === "Unauthorized"
+                ? "Unauthorized"
+                : "Network response was not ok"
+            );
+          }
 
-    document.getElementById("navbar").style.display = 'flex';
-    elementIdEditInnerHTML("username-welcome", `${user ? user.username : ''}`);
+          const data = await response.text();
 
-    if (gameRoutes.hasOwnProperty(location)) {
-        checkAuth();
-        const gameRoute = gameRoutes[location];
-        setMainWindowframe();
-        loadGameCanvas();
-        switch (location) {
-            case '/games_pong_local':
-                gameMode = 'pong single';
-                loadGame(localStorage.getItem('username'), true);
-                break;
-            case '/games_pong_online':
-                gameMode = 'pong single';
-                loadGame(localStorage.getItem('username'), false);
-                break;
-            case '/games_tictactoe_local':
-                gameMode = 'tic tac single';
-                loadTicTac(localStorage.getItem('username'), true);
-                break;
-            case '/games_tictactoe_online':
-                gameMode = 'tic tac single';
-                loadTicTac(localStorage.getItem('username'), false);
-                break;
-            case '/games_pong_local_tournament':
-                gameMode = 'pong tournament';
-                loadTournament(localStorage.getItem('username'), true);
-                break;
-            case '/games_pong_online_tournament':
-                gameMode = 'pong tournament';
-                loadTournament(localStorage.getItem('username'), false);
-                break;
-            default:
-                break;
-        }
-        document.title = gameRoute.title;
-        return;
-    }
-    else if (location === '/play') {
-        checkAuth();
-        setMainWindowframe();
-        loadGameMenu();
-        let gameMenu = document.querySelectorAll('#gameMenu a');
+          if (data === "2FA disabled successfully") {
+            elementIdEditInnerHTML("2fa-button", "Enable 2FA");
 
-        gameMenu?.forEach(function (link) {
-            link.addEventListener('click', function (event) {
-                event.preventDefault();
-                window.history.pushState({}, "", link);
-                urlLocationHandler();
-            });
-        });
-        loadToast( "Pong: use 'w' & 's' for player 1 | use '↑' & '↓' for player 2" + "\n" +
-                    "Tic Tac Toe: use clicks to play")
-        document.title = route.title;
-        return;
-    }
-    else if (location === '/desktop') {
-        loadToast(`Welcome ${user.username}!`);
-    }
-    else if (location === '/profile') {
-        setMainWindowframe();
-        console.log(user)
-        if (!user) {
+            loadToast("2FA disabled successfully");
+          } else {
+            document.getElementById("navbar").style.display = "none";
             elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
             localStorage.clear();
-            return;
+            loadToast("2FA enabled successfully, please login again");
+          }
+        } catch (error) {
+          console.error("Error:", error);
         }
-        await fetch(`/api/users/${user.username}?username=${user.username}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            },
-        }).then(response => {
-            if (!response.ok) {
-                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                localStorage.clear();
-                console.log(response.statusText);
-                loadToast('Please login to continue');
-                return null;
-            }
-            return response.text();
-        }).then(data => {
-            // console.log(data);
-            if (!data) {
-                return;
-            }
-            elementIdEditInnerHTML("windowScreen", data);
-        }).catch((error) => {
-            console.error('Error:', error);
-        });
+      });
+  } else if (location === "/users") {
+    setMainWindowframe();
+    await fetch("/components/player-card.html")
+      .then((response) => response.text())
+      .then((data) => {
+        elementIdEditInnerHTML("windowScreen", data);
+      });
+    let users = getAllUsers();
 
-        document.getElementById('2fa-button').addEventListener('click', async () => {
-            console.log('2fa-button clicked');
-            try {
-                const response = await fetch(`api/enable_or_disable_2fa/?username=${user.username}`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                        'x-csrftoken': getCookie('csrftoken'),
-                    },
-                });
+    const input = document.getElementById("search-user");
+    users.then((data) => {
+      users = data;
+      insertAllUsers(users);
+    });
+    // handling search input
+    input.addEventListener("keyup", () => {
+      let inputValue = input.value;
 
-                if (!response.ok) {
-                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                    loadToast('Please login to to verify your identity');
-                    localStorage.clear();
-                    throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
-                }
+      if (!inputValue) {
+        insertAllUsers(users);
+        return;
+      }
+      insertAllUsers(
+        users.filter((user) =>
+          user.username.startsWith(inputValue.toLowerCase())
+        )
+      );
+    });
+  } else {
+    await fetch("/components/404.html")
+      .then((response) => response.text())
+      .then((data) => {
+        elementIdEditInnerHTML("main-content", data);
+      });
+  }
 
-                const data = await response.text();
-
-                if (data === '2FA disabled successfully') {
-                    elementIdEditInnerHTML("2fa-button", "Enable 2FA");
-
-                    loadToast('2FA disabled successfully');
-                } else {
-                    document.getElementById("navbar").style.display = 'none';
-                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                    localStorage.clear();
-                    loadToast('2FA enabled successfully, please login again');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        });
-
-    }
-    else if (location === '/users') {
-        setMainWindowframe();
-        await fetch('/components/player-card.html').then(response => response.text()).then(data => {
-            elementIdEditInnerHTML("windowScreen", data);
-        });
-        let users = getAllUsers();
-
-        const input = document.getElementById("search-user");
-        users.then((data) => {
-            users = data;
-            insertAllUsers(users);
-        });
-        // handling search input
-        input.addEventListener("keyup", () => {
-            let inputValue = input.value;
-
-            if (!inputValue) {
-                insertAllUsers(users);
-                return;
-            }
-            insertAllUsers(users.filter((user) => user.username.startsWith(inputValue.toLowerCase())));
-        });
-    }
-    else {
-        await fetch('/components/404.html').then(response => response.text()).then(data => {
-            elementIdEditInnerHTML("main-content", data);
-        });
-    }
-
-    document.title = route.title;
+  document.title = route.title;
 };
-
 
 handleUserData();
 
 async function handleUserData() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const code = urlParams.get("code");
+  const url = new URL(window.location.href);
+  url.search = "";
+  const mainUrl = url.toString();
 
+  history.replaceState({}, "", mainUrl);
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    const url = new URL(window.location.href);
-    url.search = '';
-    const mainUrl = url.toString();
-
-    history.replaceState({}, '', mainUrl);
-    console.log('code', code)
-
-    if (code) {
-        loadSpinner("content", "text-white");
-        if (document.getElementById("navbar")) {
-            document.getElementById("navbar").style.display = 'none';
+  if (code) {
+    loadSpinner("content", "text-white");
+    if (document.getElementById("navbar")) {
+      document.getElementById("navbar").style.display = "none";
+    }
+    await fetch(`/api/auth/?code=${code}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (!response.ok) {
+          if (response.status === 400) {
+            elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+            loadToast("Invalid code");
+            localStorage.clear();
+            return;
+          }
+          elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+          loadToast("Please login to continue");
+          localStorage.clear();
+          return;
         }
-        console.log("starting fetching....");
-        await fetch(`/api/auth/?code=${code}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            .then(response => {
-                console.log('response', response)
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                        loadToast('Invalid code');
-                        localStorage.clear();
-                        return;
-                    }
-                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                    loadToast('Please login to continue');
-                    localStorage.clear();
-                    return;
-                }
-                return response.json();
-            }).then(data => {
-                if (!data) {
-                    return;
-                }
-                if (data.message) {
-                    if (data.message === 'hacker') {
-                        window.location.href = `https://www.google.com/search?q=hello%20mr%20${data.name}%20how%20are%20you%20today`;
-                    }
-                    console.log('message', data.message)
-                    return;
-                }
-                userToken = data.token;
-                user = data.user;
-                sessionStorage.setItem('user', JSON.stringify(user));
-                const otp = data.otp
-                if (otp === 'validate_otp') {
-                    console.log('validate otp');
-                    setMainWindowframe();
-                    elementIdEditInnerHTML("windowScreen",
-                        `
+        return response.json();
+      })
+      .then((data) => {
+        if (!data) {
+          return;
+        }
+        if (data.message) {
+          if (data.message === "hacker") {
+            window.location.href = `https://www.google.com/search?q=hello%20mr%20${data.name}%20how%20are%20you%20today`;
+          }
+          return;
+        }
+        userToken = data.token;
+        user = data.user;
+        sessionStorage.setItem("user", JSON.stringify(user));
+        const otp = data.otp;
+        if (otp === "validate_otp") {
+          setMainWindowframe();
+          elementIdEditInnerHTML(
+            "windowScreen",
+            `
 							<div class="d-flex flex-column h-100 w-100 mh-100 mw-100 gap-5 justify-content-center align-items-center font--argent" id="otp-container">
 								<div class="p-5">
 									<label for="otp-input" class="form-label">Your OTP Code is valid for 5 minutes</label>
@@ -713,211 +718,215 @@ async function handleUserData() {
 								</div>
 								<button type="submit-otp" id="submit-otp" class="btn btn-outline-dark border border-2 border-black rounded">Validate OTP</button>
 							</div>
-						`);
+						`
+          );
 
-                    document.getElementById('submit-otp').addEventListener('click', async () => {
-                        console.log('submit otp clicked');
-                        let otp = document.getElementById('otp-input').value;
-                        if (!otp) {
-                            loadToast('Please enter OTP code');
-                            return;
-                        }
-                        const requestBody = new URLSearchParams();
-                        requestBody.append('username', data.user.username);
-                        requestBody.append('otp', otp);
+          document
+            .getElementById("submit-otp")
+            .addEventListener("click", async () => {
+              let otp = document.getElementById("otp-input").value;
+              if (!otp) {
+                loadToast("Please enter OTP code");
+                return;
+              }
+              const requestBody = new URLSearchParams();
+              requestBody.append("username", data.user.username);
+              requestBody.append("otp", otp);
 
-                        await fetch('api/validate_otp/', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'Authorization': `Bearer ${userToken}`,
-                                'x-csrftoken': getCookie('csrftoken'),
-                            },
-                            body: requestBody.toString(),
-                        })
-                            .then(response => {
-                                if (!response.ok) {
-                                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                                    loadToast('Please login to continue');
-                                    localStorage.clear();
-                                    throw new Error(response.statusText === 'Unauthorized' ? 'Unauthorized' : 'Network response was not ok');
-                                }
-                                return response.json();
-                            })
-                            .then(data => {
-                                // Handle the response data here
-                                if (data.message === 'OTP is valid') {
-                                    console.log(data);
-                                    localStorage.setItem('access_token', userToken);
-                                    elementIdEditInnerHTML("windowScreen", "");
-                                    loadToast('OTP is valid, enjoy pongos');
-                                    window.history.pushState({}, "", '/desktop');
+              await fetch("api/validate_otp/", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                  Authorization: `Bearer ${userToken}`,
+                  "x-csrftoken": getCookie("csrftoken"),
+                },
+                body: requestBody.toString(),
+              })
+                .then((response) => {
+                  if (!response.ok) {
+                    elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+                    loadToast("Please login to continue");
+                    localStorage.clear();
+                    throw new Error(
+                      response.statusText === "Unauthorized"
+                        ? "Unauthorized"
+                        : "Network response was not ok"
+                    );
+                  }
+                  return response.json();
+                })
+                .then((data) => {
+                  // Handle the response data here
+                  if (data.message === "OTP is valid") {
+                    localStorage.setItem("access_token", userToken);
+                    elementIdEditInnerHTML("windowScreen", "");
+                    loadToast("OTP is valid, enjoy pongos");
+                    window.history.pushState({}, "", "/desktop");
 
-                                    window.onpopstate = urlLocationHandler;
-                                    urlLocationHandler();
-                                }
-                                else {
-                                    loadToast('Invalid OTP code');
-                                    const tryAgainButton = '<button type="" id="try-again-btn" class="btn btn-outline-dark border border-2 border-black rounded">Go back to Login</button>';
-                                    if (!document.getElementById('try-again-btn')) {
-                                        document.getElementById('otp-container').insertAdjacentHTML('beforeend', tryAgainButton);
-                                    }
-                                    document.getElementById('try-again-btn').addEventListener('click', () => {
-                                        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                                        localStorage.clear();
-                                    });
-                                }
+                    window.onpopstate = urlLocationHandler;
+                    urlLocationHandler();
+                  } else {
+                    loadToast("Invalid OTP code");
+                    const tryAgainButton =
+                      '<button type="" id="try-again-btn" class="btn btn-outline-dark border border-2 border-black rounded">Go back to Login</button>';
+                    if (!document.getElementById("try-again-btn")) {
+                      document
+                        .getElementById("otp-container")
+                        .insertAdjacentHTML("beforeend", tryAgainButton);
+                    }
+                    document
+                      .getElementById("try-again-btn")
+                      .addEventListener("click", () => {
+                        elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+                        localStorage.clear();
+                      });
+                  }
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+            });
+          return;
+        }
+        let csrfToken = data.csrfToken;
+        if (userToken && user) {
+          localStorage.setItem("access_token", userToken);
+          localStorage.setItem("username", user.username);
+        }
 
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                    });
-                    return;
-                }
-                let csrfToken = data.csrfToken
-                if (userToken && user) {
-                    localStorage.setItem('access_token', userToken);
-                    localStorage.setItem('username', user.username);
-                    console.log(userToken);
-                    console.log(user);
-                    console.log(csrfToken);
-                    console.log(data.sessionId);
+        window.history.pushState({}, "", "/desktop");
 
-                }
-
-                window.history.pushState({}, "", '/desktop');
-
-                window.onpopstate = urlLocationHandler;
-                urlLocationHandler();
-
-
-            })
-        return;
-    }
-    window.onpopstate = urlLocationHandler;
-    urlLocationHandler();
+        window.onpopstate = urlLocationHandler;
+        urlLocationHandler();
+      });
+    return;
+  }
+  window.onpopstate = urlLocationHandler;
+  urlLocationHandler();
 }
 
-
 function insertOrCreateContent() {
-    if (!document.getElementById("content")) {
-        const content = document.createElement('div');
-        content.id = 'content';
-        document.body.appendChild(content);
-    }
+  if (!document.getElementById("content")) {
+    const content = document.createElement("div");
+    content.id = "content";
+    document.body.appendChild(content);
+  }
 }
 
 async function getAllUsers(override) {
-    let location = window.location.pathname;
-    if (location[location.length - 1] === '/') {
-        location = location.slice(0, location.length - 1);
-    }
-    if (location !== '/users')
-        return;
-    let users;
-    console.log * 'access_token', localStorage.getItem('access_token');
-    await fetch('/api/get_all_users/', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json'
-        },
-    }).then(response => {
+  let location = window.location.pathname;
+  if (location[location.length - 1] === "/") {
+    location = location.slice(0, location.length - 1);
+  }
+  if (location !== "/users") return;
+  let users;
+  await fetch("/api/get_all_users/", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
         if (!response.ok) {
-            if (!response.ok) {
-                localStorage.clear();
-                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                loadToast('Please login to continue');
-                return null;
-            }
+          localStorage.clear();
+          elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+          loadToast("Please login to continue");
+          return null;
         }
-        return response.json();
-    }).then(data => {
-        if (!data) {
-            return;
-        }
-        console.log(data);
-        let sameUser = user['username'];
-        users = data.filter(item => (item.username !== "admin" && item.username !== sameUser));
-        console.log('filtered users -> ', users);
-        return users;
-    }).catch((error) => {
-        console.error('Error:', error);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (!data) {
+        return;
+      }
+      let sameUser = user["username"];
+      users = data.filter(
+        (item) => item.username !== "admin" && item.username !== sameUser
+      );
+      return users;
+    })
+    .catch((error) => {
+      console.error("Error:", error);
     });
-    return users;
+  return users;
 }
 function elementExistsInArray(array, element) {
-    for (let i = 0; i < array.length; i++) {
-        if (array[i] === element) {
-            return true;
-        }
+  for (let i = 0; i < array.length; i++) {
+    if (array[i] === element) {
+      return true;
     }
-    return false;
+  }
+  return false;
 }
 async function getAllFriends(override) {
-    let location = window.location.pathname;
-    if (location[location.length - 1] === '/') {
-        location = location.slice(0, location.length - 1);
-    }
-    if (location !== '/users')
-        return;
-    let users = [];
-    await fetch(`/api/friends/${user.username}`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            'Content-Type': 'application/json'
-        },
-    }).then(response => {
+  let location = window.location.pathname;
+  if (location[location.length - 1] === "/") {
+    location = location.slice(0, location.length - 1);
+  }
+  if (location !== "/users") return;
+  let users = [];
+  await fetch(`/api/friends/${user.username}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      "Content-Type": "application/json",
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
         if (!response.ok) {
-            if (!response.ok) {
-                localStorage.clear();
-                elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
-                loadToast('Please login to continue');
-                return null;
-            }
+          localStorage.clear();
+          elementIdEditInnerHTML("main-content", LOGIN_PAGE_HTML);
+          loadToast("Please login to continue");
+          return null;
         }
-        return response.json();
-    }).then(data => {
-        if (!data) {
-            return;
-        }
-        users = data;
-        console.log(users);
-        return users;
-    }).catch((error) => {
-        console.error('Error:', error);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (!data) {
+        return;
+      }
+      users = data;
+      return users;
+    })
+    .catch((error) => {
+      console.error("Error:", error);
     });
-    return users;
+  return users;
 }
 
 async function insertAllUsers(users) {
-    let playerCardDiv = document.getElementById("player-card-div");
+  let playerCardDiv = document.getElementById("player-card-div");
 
-    if (!users || !playerCardDiv) {
-        return;
-    }
-    playerCardDiv.innerHTML = "";
-    let friends = await getAllFriends();
-    //call getAllFriends here:
-    console.log(friends);
+  if (!users || !playerCardDiv) {
+    return;
+  }
+  playerCardDiv.innerHTML = "";
+  let friends = await getAllFriends();
+  //call getAllFriends here:
 
-    users?.forEach(user => {
-        let isFriend = false;
-        console.log(user.username);
-        isFriend = elementExistsInArray(friends, user.intra)
-        const userImage = `https://10.11.6.2:9090/api/get_image/${user.username}`;
-        const playerCard = `
+  users?.forEach((user) => {
+    let isFriend = false;
+    isFriend = elementExistsInArray(friends, user.intra);
+    const userImage = `https://10.13.5.14:9090/api/get_image/${user.username}`;
+    const playerCard = `
 								<div class="d-flex flex-row p-0 g-0">
 								<div class="col-2 p-0 border border-1 border-dark">
 									<div class="ratio ratio-1x1 bg-black mh-100 mw-100">
-										<img src="${user.image ? userImage : user.picture.link}" class="object-fit-cover rounded-circle img-fluid p-1" alt="...">
+										<img src="${
+                      user.image ? userImage : user.picture.link
+                    }" class="object-fit-cover rounded-circle img-fluid p-1" alt="...">
 									</div>
 								</div>
 								<div class="col d-flex flex-column ps-2 justify-content-center text-truncate text-break border border-1 border-dark">
 									<p class="font--argent p-0 m-0" style="font-size: 1.5vw;">${user.intra}</p>
-									<p class="font--argent p-0 m-0" style="font-size: 0.75vw;">${user.is_online ? "online 🟢" : "offline ⚪"}</p>
+									<p class="font--argent p-0 m-0" style="font-size: 0.75vw;">${
+                    user.is_online ? "online 🟢" : "offline ⚪"
+                  }</p>
 									<p class="font--argent text-capitalize p-0 m-0" style="font-size: 0.9vw;">ranking</p>
 								</div>
 								<div class="col-2 p-0 text-truncate border border-1 border-dark">
@@ -933,20 +942,20 @@ async function insertAllUsers(users) {
 									</div>
 								</div>
 								</div>`;
-        playerCardDiv.innerHTML += playerCard;
+    playerCardDiv.innerHTML += playerCard;
+  });
+  const buttons = document.getElementsByClassName("view-profile-btn");
+  for (let i = 0; i < buttons.length; i++) {
+    const button = buttons[i];
+    button.addEventListener("click", function () {
+      viewUserProfile(users[i].username);
     });
-    const buttons = document.getElementsByClassName('view-profile-btn');
-    for (let i = 0; i < buttons.length; i++) {
-        const button = buttons[i];
-        button.addEventListener('click', function () {
-            viewUserProfile(users[i].username);
-        });
-    }
-    const addFriendButtons = document.getElementsByClassName('add-friend-btn');
-    for (let i = 0; i < addFriendButtons.length; i++) {
-        const button = addFriendButtons[i];
-        button.addEventListener('click', function () {
-            addFriend(button, user.username, users[i].username);
-        });
-    }
+  }
+  const addFriendButtons = document.getElementsByClassName("add-friend-btn");
+  for (let i = 0; i < addFriendButtons.length; i++) {
+    const button = addFriendButtons[i];
+    button.addEventListener("click", function () {
+      addFriend(button, user.username, users[i].username);
+    });
+  }
 }

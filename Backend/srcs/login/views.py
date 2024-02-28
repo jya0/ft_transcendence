@@ -19,7 +19,14 @@ secret_key = settings.SECRET_KEY
 
 @api_view(['get'])
 def logout(request):
+    try:
+        user = UserProfile.objects.get(username=request.session['username'])
+    except:
+        return JsonResponse({'message': 'User not found'}, status=204)
+    request.user = user
     auth_logout(request)
+    request.session.flush()
+    user.is_online = False
     return JsonResponse({'message': 'Logged out successfully'}, status=200)
 
 
@@ -27,7 +34,7 @@ def logout(request):
 def auth(request):
     code = request.GET.get("code")
     if code:
-        print("code", code)
+        ("code", code)
         data = {
             "grant_type": "authorization_code",
             "client_id": os.environ.get("FORTY_TWO_CLIENT_ID"),

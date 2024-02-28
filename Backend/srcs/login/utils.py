@@ -48,9 +48,6 @@ def get_user_token(request, username, password):
     if response.status_code == 200:
         token_pair = response.json()
         access_token = token_pair['access']
-        print(f'Access Token: {access_token}')
         return access_token
     else:
-        print(response.json())
-        print('Token generation failed.')
         return None

@@ -25,9 +25,6 @@ for _ in range(num_users):
     profile = UserProfile.objects.create(
         username=username, intra=username,email=email, display_name=display_name, picture=picture)
 
-    print(
-        f'User "{username}" created successfully with email "{email}" and display name "{display_name}".')
-
 u1 = UserProfile.objects.all()[0]
 u2 = UserProfile.objects.all()[1]
 u3 = UserProfile.objects.all()[2]
