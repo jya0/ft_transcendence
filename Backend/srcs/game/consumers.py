@@ -18,30 +18,29 @@ def prepare_final_round(tourn, user):
     temp2 = UserProfile.objects.get(intra='temp2')
     game = Match.objects.filter(
         Q(tournament_id_id=tourn.tournament_id) & (Q(id1=temp1) | Q(id2=temp2)) & Q(open_lobby=True))
-    print("--------------------------------------------------------------------------------")
-    print("--------------------------------------------------------------------------------")
-    print("--------------------------------------------------------------------------------")
-    if (game):
-        print(game[0].__dict__)
-    print("--------------------------------------------------------------------------------")
-    print("--------------------------------------------------------------------------------")
-    print("--------------------------------------------------------------------------------")
+    ("--------------------------------------------------------------------------------")
+    ("--------------------------------------------------------------------------------")
+    ("--------------------------------------------------------------------------------")
+
+    ("--------------------------------------------------------------------------------")
+    ("--------------------------------------------------------------------------------")
+    ("--------------------------------------------------------------------------------")
     
     if (not game):
-        print("creating a final round now...")
-        print(game.__dict__)
+        ("creating a final round now...")
+        (game.__dict__)
         game = Match.objects.create(
             tournament_id_id=tourn.tournament_id, id1=user, id2=temp2, score1=0, score2=0, ongoing=False, open_lobby=True, time = date.today())
         game.save()
         return False, game
     game = game[0]
     game = Match.objects.get(match_id=game.match_id)
-    print("getting second player to the final round now...")
-    print(game.__dict__)
+    ("getting second player to the final round now...")
+    (game.__dict__)
     game.id2 = user
     game.save()
-    print("heres the final round now...")
-    print(game.__dict__)
+    ("heres the final round now...")
+    (game.__dict__)
     return True, game
 
 
@@ -53,10 +52,10 @@ def remove_from_lobbies(text_data_json):
     for game in open_lobbies:
         if game.id1.intra == sender:
             game.id1 = UserProfile.objects.get(intra='temp1')
-            print("succesfully removed from a lobby")
+            ("succesfully removed from a lobby")
         elif game.id2.intra == sender:
             game.id2 = UserProfile.objects.get(intra='temp2')
-            print("succesfully removed from a lobby")
+            ("succesfully removed from a lobby")
         game.save()
 
 
@@ -71,7 +70,7 @@ class GameConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        print('openng a connection')
+        ('openng a connection')
         self.accept()
 
     def kick_out_of_game(self, text_data_json):
@@ -135,7 +134,7 @@ class GameConsumer(WebsocketConsumer):
                 dummy = Tournament.objects.all()[0]
                 open_lobby = Match.objects.filter(Q(open_lobby=True) & Q(
                     tournament_id_id=dummy) & Q(type='tic')).exists()
-                print(open_lobby)
+                (open_lobby)
                 game = Match.objects.filter(Q(open_lobby=True) & Q(
                     tournament_id_id=dummy) & Q(type='tic'))
                 if (not game):
@@ -146,13 +145,13 @@ class GameConsumer(WebsocketConsumer):
                 if (open_lobby == True):
                     # case 1: no players yet
                     if (game.id1.intra == 'temp1'):
-                        print("looks like ur the first player!!!!")
+                        ("looks like ur the first player!!!!")
                         # self.room_group_name = username
                         game.id1 = player
                     # case 2: lobby half full
                     else:
                         if (game.id1 != player):
-                            print("we found u a match!!!!!!!")
+                            ("we found u a match!!!!!!!")
                             # self.room_group_name = game.id1.intra
                             game.id2 = player
                             status = 'start'
@@ -199,7 +198,7 @@ class GameConsumer(WebsocketConsumer):
     def receive(self, text_data):
 
         text_data_json = json.loads(text_data)
-        print('receieved from client: ', text_data_json)
+        ('receieved from client: ', text_data_json)
         type = text_data_json['type']
 
         if (type == 'terminate'):
@@ -232,7 +231,7 @@ class GameConsumer(WebsocketConsumer):
             )
 
         if (mode == 'tournament'):
-            print(text_data_json)
+            (text_data_json)
             t_name = text_data_json['tournament_name']
             # handle new game request:
             if (type == 'start' and text_data_json['round'] != 'final'):
@@ -258,11 +257,11 @@ class GameConsumer(WebsocketConsumer):
                     
                 if (lobbyFull):
                     status = 'start'
-                    print("game 1: " + games[0].id1.intra + games[0].id2.intra)
-                    print("game 2: " + games[1].id1.intra + games[1].id2.intra)
+                    ("game 1: " + games[0].id1.intra + games[0].id2.intra)
+                    ("game 2: " + games[1].id1.intra + games[1].id2.intra)
                     games[0].open_lobby = False
                     sender = games[0].id2.intra
-                    print("sender :" + sender)
+                    ("sender :" + sender)
                     async_to_sync(self.channel_layer.group_send)(
                         self.room_group_name,
                         {
@@ -288,7 +287,7 @@ class GameConsumer(WebsocketConsumer):
                     game.open_lobby = False
                     game.save()
                     sender = games[1].id2.intra
-                    print("sender :" + sender)
+                    ("sender :" + sender)
                     async_to_sync(self.channel_layer.group_send)(
                         self.room_group_name,
                         {
@@ -306,11 +305,11 @@ class GameConsumer(WebsocketConsumer):
 
             if (type == 'start' and text_data_json['round'] == 'final'):
                 tourn = Tournament.objects.get(name=t_name)
-                print("tourn = ")
-                print(tourn.__dict__)
+                ("tourn = ")
+                (tourn.__dict__)
                 player = UserProfile.objects.get(intra=username)
-                print("player = ")
-                print(player.__dict__)
+                ("player = ")
+                (player.__dict__)
                 ready, final_game = prepare_final_round(tourn, player)
                 # final_game = Match.objects.filter(Q(tournament_id_id=tourn.tournament_id) & Q(open_lobby=True)).get()
                 status = 'waiting'
@@ -333,23 +332,23 @@ class GameConsumer(WebsocketConsumer):
             # handle game ends
             if (type == 'end'):
                 
-                print("************************************************")
-                print("________________________________________________")
-                print("________________________________________________")
-                print("________________________________________________")
-                print("___________________EENNNDDD_____________________")
+                ("************************************************")
+                ("________________________________________________")
+                ("________________________________________________")
+                ("________________________________________________")
+                ("___________________EENNNDDD_____________________")
 
 
-                print(text_data_json)
-                print("________________________________________________")
-                print("________________________________________________")
-                print("________________________________________________")
-                print("************************************************")
+                (text_data_json)
+                ("________________________________________________")
+                ("________________________________________________")
+                ("________________________________________________")
+                ("************************************************")
 
                 tourn = Tournament.objects.get(name=t_name)
                 player = UserProfile.objects.get(intra=username)
-                # print("tourn = " + tourn)
-                # print("player = " + player)
+                # ("tourn = " + tourn)
+                # ("player = " + player)
                 if (Match.objects.filter(Q(tournament_id=tourn.tournament_id)).count() == 3):
                     game = Match.objects.filter(Q(tournament_id=tourn.tournament_id) & Q(ongoing=True)).get()
                     game.winner = username
@@ -393,20 +392,20 @@ class GameConsumer(WebsocketConsumer):
                 dummy = Tournament.objects.all()[0]
                 open_lobby = Match.objects.filter(
                     Q(open_lobby=True) & Q(tournament_id_id=dummy) & Q(type='pong')).exists()
-                print(open_lobby)
+                (open_lobby)
                 game = Match.objects.filter(Q(open_lobby=True) & Q(tournament_id_id=dummy) & Q(type='pong'))[0]
-                print(game)
+                (game)
                 player = UserProfile.objects.filter(Q(intra=username)).all()[0]
                 if (open_lobby == True):
                     # case 1: no players yet
                     if (game.id1.intra == 'temp1'):
-                        print("looks like ur the first player!!!!")
+                        ("looks like ur the first player!!!!")
                         # self.room_group_name = username
                         game.id1 = player
                     # case 2: lobby half full
                     else:
                         if (game.id1 != player):
-                            print("we found u a match!!!!!!!")
+                            ("we found u a match!!!!!!!")
                             # self.room_group_name = game.id1.intra
                             game.id2 = player
                             status = 'start'
@@ -514,5 +513,5 @@ class GameConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        print('closing socket bruv')
+        ('closing socket bruv')
         self.close()

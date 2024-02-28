@@ -5,4 +5,4 @@ __pycache
 mediafiles
 migrations
 test.py
-.env
+*.env
